@@ -1,0 +1,224 @@
+<?php
+
+/*echo Tag::javascriptInclude('backoffice/ui/workspace');
+echo Tag::javascriptInclude('backoffice/ui/windows');
+echo Tag::javascriptInclude('backoffice/comprobante');
+echo Tag::javascriptInclude('backoffice/hyperform/hyperform');
+echo Tag::javascriptInclude('backoffice/json/json');
+echo Tag::javascriptInclude('backoffice/sortable/tablesort');*/
+
+?>
+
+<style type="text/css">
+input[type="button"] {
+	background: -moz-linear-gradient(top center, #B9E0F5, #83B0CA);
+	border: 1px solid #648A9F;
+	padding: 5px;
+	padding-left: 7px;
+	padding-right: 7px;
+	-moz-border-radius: 5px;
+	font-size: 12px;
+	font-weight: bold;
+	color: #0D3346;
+}
+
+body {
+	background: #ffffff;
+}
+
+div.select-widget table {
+	cursor: pointer;
+}
+
+div.select-widget div.pull {
+	background-image: -moz-linear-gradient(top center, #B9E0F5, #83B0CA);
+	border: 1px solid #648A9F;
+	height: 20px;
+	padding-top: 5px;
+	padding-left: 9px;
+	padding-right: 9px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-bottomright: 3px;
+}
+
+div.select-widget div.options {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAYCAIAAAC0rgCNAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAC1JREFUCFtj2rt3L5OVlRXTt2/fmP79+8f0//9/MI2M//79i5WNjY9sxoULFwBPdEPtOkpElQAAAABJRU5ErkJggg==);
+	border: 1px solid #969696;
+	border-right: none;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	height: 22px;
+	padding-top: 3px;
+	padding-left: 9px;
+	padding-right: 25px;
+	font-size: 13px;
+	color: #4F4F4F;
+}
+
+div.select-widget table.select-widget-focus {
+	-moz-box-shadow: 0 0 13px #5F83B9;
+}
+
+div.combo-popup {
+	position: absolute;
+	background: #F4F4F4;
+	-moz-box-shadow: 5px 5px 5px rgba(71, 71, 71, 0.5);
+}
+
+div.combo-popup ul {
+	margin: 0px;
+	padding: 0px;
+}
+
+div.combo-popup li {
+	list-style-type: none;
+	color: #464545;
+	font-weight: bold;
+	padding-left: 15px;
+	padding: 5px;
+	cursor: pointer;
+}
+
+div.combo-popup li.selected {
+	background: #dadada;
+}
+
+div.combo-popup li:hover {
+	background: #5F83B9;
+	color: #ffffff;
+}
+
+</style>
+
+<script type="text/javascript">
+new Event.observe(window, "load", function(){
+	window.setTimeout(function(){
+		$('ex').setValue(100);
+	}, 5000);
+})
+
+var HfosWidget = { };
+
+HfosWidget.ComboUtils = {
+
+	removeComboPopup: function(){
+		$$('.combo-popup').each(function(element){
+			element.hide();
+		});
+		$$('.select-table').each(function(element){
+			element.removeClassName('select-widget-focus');
+		});
+		new Event.stopObserving(window, 'click', HfosWidget.ComboUtils.removeComboPopup);
+	}
+
+};
+
+HfosWidget.Combo = Class.create({
+
+	_combo: null,
+	_element: null,
+	_popup: null,
+	_value: null,
+
+	initialize: function(element){
+		this._combo = $(element);
+		this._combo.hide();
+		var content = '<div class="select-widget">'
+		content+= '<table cellspacing="0" cellpadding="0" class="select-table"><tr>';
+		content+= '<td><div class="options">val 1</div></td><td><div class="pull">'
+		content+= '<img src="'+$Kumbia.path+'img/backoffice/pull.png">';
+		content+= '</div></td></tr></table></div>';
+		this._value = $F(this._combo);
+		this._element = document.createElement('DIV');
+		this._element.observe('click', this.popUp.bind(this));
+		this._element.innerHTML = content;
+		this._combo.insert({
+			after: this._element
+		});
+		this._combo.observe('propertychange', this.changeHandler.bind(this));
+	},
+
+	changeHandler: function(){
+		alert(F(this._combo));
+	},
+
+	popUp: function(){
+
+		if(this._popup==null){
+			this._popup = document.createElement('DIV');
+			this._popup.addClassName('combo-popup');
+			this._popup.hide();
+			document.body.appendChild(this._popup);
+		};
+
+		var position = this._element.positionedOffset();
+		var selectedValue = $F(this._combo);
+		var content = '<ul>';
+		for(var i=0;i<this._combo.options.length;i++){
+			if(this._combo.options[i].value==selectedValue){
+				content+='<li class="selected"'
+			} else {
+				content+='<li'
+			};
+			content+=' id="';
+			content+=this._combo.options[i].value+'">';
+			if(this._combo.options[i].value==selectedValue){
+				content+=' ';
+			}
+			content+=this._combo.options[i].text+'</li>';
+		}
+		content+='</ul>';
+		this._popup.update(content);
+		this._popup.show();
+		var tableElement = this._element.getElement('select-table');
+		this._popup.setStyle({
+			'top': (position[1]+this._element.getHeight()-1)+'px',
+			'left': (position[0])+'px',
+			'width': tableElement.getWidth()+'px'
+		});
+		tableElement.addClassName('select-widget-focus');
+		var liElements = this._popup.select('li');
+		for(var j=0;j<liElements.length;j++){
+			liElements[j].observe('click', this.selectOption.bind(liElements[j], this));
+		};
+		window.setTimeout(function(){
+			new Event.observe(window, 'click', HfosWidget.ComboUtils.removeComboPopup)
+		}.bind(this), 300);
+	},
+
+	getWidgetList: function(){
+		return this._element;
+	},
+
+	getCombo: function(){
+		return this._combo;
+	},
+
+	getValue: function(){
+		return this._value;
+	},
+
+	selectOption: function(widget){
+		var optionsElement = widget.getWidgetList().getElement('options');
+		optionsElement.update(this.innerHTML);
+		widget.getCombo().setValue(this.id);
+	},
+
+	removeHandler: function(){
+		return this.removePopup.bind(this);
+	}
+
+});
+
+</script>
+
+<div style="padding:20px">
+	<select id="ex">
+		<option value="val-1">val 1</option>
+		<option value="val-2">val 2</option>
+		<option value="val-3">val 3</option>
+		<option value="val-4">val 4</option>
+	</select>
+</div>
+
+<input type="button" value="OK" onclick="new HfosWidget.Combo('ex')"/>

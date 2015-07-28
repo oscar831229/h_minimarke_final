@@ -1,0 +1,21 @@
+<? View::getContent() ?>
+
+<h1>Saldos de Dependencias</h1>
+
+<?php echo Tag::formTag("saldos/process") ?>
+<table>
+	<tr>
+		<td align="right"><b>Dependencia:</b></td>
+		<td>
+			<select id='comedor'>
+				<option value='@'>CUALQUIERA...</option>
+				<?php
+					foreach($Almacenes->find("tipo='D'", "order: nom_almacen") as $salon){
+						print "<option value='{$salon->id}'>{$salon->nombre}\n";
+					}
+				?>
+			</select>
+		</td>
+	</tr>
+</table>
+<?= end_form_tag() ?>

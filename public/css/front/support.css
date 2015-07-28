@@ -1,0 +1,109 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Back-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+fieldset {
+	margin: 5px;
+	background: #282B2E;
+	border: 1px solid #222527;
+}
+
+legend {
+	color: #ffffff;
+	font-weight: normal;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+fieldset input[type="text"] {
+	font-size: 18px;
+}
+
+fieldset b,
+fieldset label {
+	color: #fafafa;
+	font-weight: normal;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+#editorcontainer {
+	background: #e8e8e8;
+	border: 1px solid #969696;
+}
+
+span.titulo {
+	padding-left: 0px;
+	font-size: 22px;
+}
+
+#mTd {
+	background-color: #2D3033;
+}
+
+div#site {
+	background: #282B2E;
+	border: 1px solid #222527;
+	-moz-border-radius: 20px;
+	padding: 40px;
+	padding-top: 20px;
+	margin: 30px;
+}
+
+div#support {
+	padding: 10px;
+}
+
+div#support.write h1 {
+	font-size: 18px;
+}
+
+div#support h1,
+div#support label {
+	color: #ffffff;
+	font-weight: normal;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+div#support img {
+	border: none;
+	cursor: pointer;
+	margin-bottom: 15px;
+}
+
+div#write-label {
+	color: #ffffff;
+	font-weight: normal;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+	margin-bottom: 30px;
+}
+
+form p {
+	background: #464646;
+	padding: 20px;
+	color: #ffffff;
+	line-height: 30px;
+}
+
+form input[type="text"],
+form select {
+	background: #464646;
+	font-family: inherit;
+	border-color: -moz-use-text-color -moz-use-text-color #767676;
+	border-style: none none solid;
+	border-width: 0 0 1px;
+	color: #fafafa;
+}
+
+form input[type="text"]:focus,
+select:focus {
+	-moz-box-shadow: none;
+}

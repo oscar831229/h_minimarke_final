@@ -1,0 +1,64 @@
+@font-face {
+	font-family: 'Anivers';
+	src: local('Anivers'),
+		url('/h/files/pos2/Anivers.otf') format('opentype');
+}
+
+h1.kardex, h2.kardex {
+	font-family: Anivers;
+}
+
+table.kardex th, table.kardex td, b.kardex, span.kardex {
+	font-family: Verdana;
+}
+
+h1.kardex {
+	font-size: 28px;
+}
+
+h2.kardex {
+	font-size: 22px;
+}
+
+b.kardex, span.kardex {
+	font-size: 11px;
+}
+
+h1.kardex, h2.kardex {
+	margin: 0px;
+}
+
+table.kardex {
+	border-top: 1px solid #969696;
+	border-right: 1px solid #969696;
+}
+
+table.kardex td {
+	border-left: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+	font-size: 11px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+table.kardex th {
+	background: #eaeaea;
+	border-left: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+	font-size: 11px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+table.kardex {
+	background: #fff;
+}
+
+table.kardex tr:nth-child(even) {
+	background: #fafafa;
+}
+
+table.kardex tr:nth-child(odd) {
+	background: #ffffff;
+}
+

@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<table width="100%" align="center" cellspacing="20">
+	<tr>
+		<td valign="top" width="130" align="center">
+			<?php echo Tag::image('backoffice/bug.png', 'width: 128') ?>
+		</td>
+		<td>
+			<h1>Ha ocurrido un problema</h1>
+			<p>
+				Se ha producido un problema inesperado en la aplicación, por favor envíe este reporte
+				para que podamos evaluarlo y ayudarle a solucionar el problema.
+				<div>
+					<div align="center"></div>
+
+					<div align="right">
+						<div id="sendMessage" style="display:none" align="center">
+							<div id="sendMessageDiv">
+								<table align="center">
+									<tr>
+										<td><?php echo Tag::image('backoffice/load-sm.gif') ?></td>
+										<td>Se está enviando el reporte...</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div align="right" id="buttonPanel">
+						<input type="submit" class="controlButton" id="sendButton" value="Enviar Reporte">
+						<input type="submit" class="controlButtonBack" id="missButton" value="Omitir">
+					</div>
+				</div>
+			</p>
+		</td>
+	</tr>
+</table>

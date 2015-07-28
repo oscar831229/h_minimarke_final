@@ -1,0 +1,27 @@
+<?php
+
+echo View::getContent();
+
+if(Router::wasRouted()==false){
+	echo '<div class="notice" id="notice">'.sprintf($traslate['Welcome'], JASMIN_SYSTEM_CAPTION).'</div>';
+}
+
+echo '<div align="center" id="mainContent"><div class="form-checkin" id="formCheckin">';
+echo Tag::form('webcheckin/validateCode'); ?>
+
+<table align="center">
+	<tr>
+		<td align="left"><label for="numeroReserva"><?php echo $traslate['NumeroReserva'] ?></label></td>
+		<td align="left"><label for="clave"><?php echo $traslate['Password'] ?></label></td>
+	</tr>
+	<tr>
+		<td><?php echo Tag::numericField('numeroReserva', 'size: 20') ?></td>
+		<td><?php echo Tag::passwordField('clave', 'size: 20') ?></td>
+		<td><?php echo Tag::submitButton(array($traslate['Enter'], 'style' => 'background:' .JASMIN_TEXT_COLOR . ';color:#ffffff;border:none;padding:5px')) ?></td>
+	</tr>
+</table>
+<?php
+
+echo Tag::hiddenField(array('code', 'value' => $id));
+echo Tag::endForm();
+echo '</div></div>';

@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('refresh.png', 'Reabrir Mes Cerrado') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="70%" align="center">
+
+			<?php echo Tag::form('reabrir/process', 'class: reabrirForm', 'autocomplete: off') ?>
+				<table align="center">
+					<tr>
+						<td align="right">
+							<label for="anteriorCierre">Fecha Cierre Anterior</label>
+						</td>
+						<td>
+							<td id="anteriorCierre"><?php echo $anteriorCierre->getLocaleDate('long') ?></td>
+						</td>
+					</tr>
+				</table>
+			<?php echo Tag::endForm() ?>
+
+			<div class="resultados"></div>
+		</td>
+		<td valign="top" width="30%" align="center">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td id="cierreActual"><?php echo $fechaCierre->getLocaleDate('long') ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>

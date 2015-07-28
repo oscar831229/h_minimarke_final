@@ -1,0 +1,196 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Back-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+#mainTd,
+#mTd {
+	background: transparent;
+	padding: 0px;
+}
+
+#mTr {
+	/*background-color: rgb(42, 52, 59);
+	background-color: rgba(42, 52, 59, 0.97);*/
+	background-image: -moz-linear-gradient(top center, rgba(42, 52, 59, 0.7), rgba(42, 52, 59, 0.95));
+}
+
+#mTr2 {
+	background: rgba(42, 52, 59, 0.93);
+}
+
+#div_inicio {
+	width: 100%;
+}
+
+#div_inicio .active_tab {
+	border: 1px solid #88A8CE;
+	border-bottom: none;
+	font-size: 11px;
+	cursor: pointer;
+	background: #212831;
+	color: #ffffff;
+	-webkit-border-radius-topleft: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+}
+
+#div_inicio .inactive_tab {
+	font-size: 11px;
+	border: 1px solid #29323F;
+	padding: 5px;
+	border-bottom: 1px solid #88A8CE;
+	cursor: pointer;
+	background: #14191F;
+	color: #eaeaea;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+}
+
+#div_inicio .tab_content {
+	background-image: -moz-linear-gradient(top center, #212831, #171C22);
+	padding: 5px;
+	height: 140px;
+}
+
+#div_inicio .n_link {
+	padding: 5px;
+}
+
+#div_inicio .n_link a {
+	color: #e0e0e0;
+	font-size: 12px;
+}
+
+#div_inicio .n_link_hover {
+	padding: 5px;
+	background: #3875D7;
+	color: #fff;
+	font-size: 12px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+#div_inicio .n_link:hover a {
+	color: #fff;
+}
+
+#div_inicio .new_message,
+#div_inicio .new_event {
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	background: #586981;
+	padding: 4px;
+	margin: 3px;
+	width: 90px;
+	text-align: center;
+}
+
+#div_inicio .new_event {
+	width: 110px;
+}
+
+#div_inicio .new_message td,
+#div_inicio .new_event td,
+#div_inicio .new_message a,
+#div_inicio .new_event a {
+	color: #fafafa;
+	font-size: 11px;
+}
+
+#div_inicio .n_title {
+	color: #f2f2f2;
+	text-shadow: 2px 2px 2px #333;
+}
+
+#div_inicio .group_tabs {
+	border: 1px solid #88A8CE;
+	border-top: none;
+	-moz-border-radius-bottomleft: 5px;
+	-moz-border-radius-bottomright: 5px;
+}
+
+#div_inicio .wheater_info {
+	color: #fff;
+}
+
+#div_inicio .wheater_info b {
+	color: #7198A8;
+	font-size: 18px;
+	font-weight: normal;
+	margin-bottom: 3px;
+}
+
+#div_inicio #titulo_welcome {
+	padding-left: 10px;
+	padding-top: 10px;
+}
+
+#div_inicio #titulo_welcome .titulo {
+	font-size: 24px;
+	color: #fff;
+	padding-left: 5px;
+	text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+#div_inicio #titulo_welcome .stitulo {
+	font-size: 14px;
+	color: #7198A8;
+	padding-left: 5px;
+	text-shadow: 0 0 3px rgba(113, 152, 168, 0.85);
+}
+
+#logoContainer {
+	padding-top: 10px;
+}
+
+#dashboard {
+	background-color: rgb(42, 52, 59);
+	background-color: rgba(42, 52, 59, 0.5);
+	background-image: -moz-linear-gradient(top center, transparent, #212A30);
+	border: 1px solid #212A30;
+	padding: 5px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+
+div.notice-dark {
+	border: none;
+	background: url("../img/idea.png") #212831;
+	background-position: 2px center;
+	background-repeat: no-repeat;
+	margin: 2px;
+	padding: 5px;
+	padding-left: 22px;
+	text-align: left;
+
+}
+
+div.notice-dark a {
+	font-weight: normal;
+	font-size: 11px;
+	color: #fafafa;
+}
+
+.tab_content img {
+	margin-top: 10px;
+}
+
+div#div-tabs {
+	padding-left: 15px;
+	padding-right: 20px;
+	width: 95%;
+}
+
+.border_bottom {
+	border-bottom: 1px solid #88A8CE;
+}

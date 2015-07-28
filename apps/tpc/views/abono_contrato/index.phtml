@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('attibutes.png', 'Consultar Contrato') ?>
+
+<div class="formContent">
+	<div class="formBusqueda formPannel">
+		<?php echo Tag::form('abono_contrato/buscar', 'class: buscarForm', 'autocomplete: off') ?>
+			<table align="center" cellspacing="0">
+				<tr>
+					<td align="right"><label for="numeroContrato">Número de Contrato</label></td>
+					<td><?php echo Tag::textUpperField('numeroContrato') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="identificacion">Cédula</label></td>
+					<td><?php echo Tag::numericField('identificacion') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nombres">Nombres</label></td>
+					<td><?php echo Tag::textUpperField('nombres') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="apellidos">Apellidos</label></td>
+					<td><?php echo Tag::textUpperField('apellidos') ?></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td colspan="2">
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Consultar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		<?php echo Tag::endForm() ?>
+	</div>
+	<div align="center">
+		<div class="resultados"></div>
+	</div>
+</div>

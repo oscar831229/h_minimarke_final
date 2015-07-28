@@ -1,0 +1,76 @@
+img {
+    behavior: url("pngbehavior.htc");
+}
+
+div.autocomplete {
+    position: absolute;
+    width: 250px;
+    border: 1px solid #888;
+    margin: 0px;
+    padding: 0px;
+}
+
+input, select, .iNormal, button {
+    font-family: Verdana;
+    font-size: 12px;
+    color: #000000;
+    border: none;
+}
+
+input[disabled], select[disabled], textarea[readonly] {
+	color: black;
+}
+
+#dock_bar {
+	position: absolute;
+	left: 105px;
+	top: 30px;
+	background: url(img/localnavg.gif);
+	filter: alpha(opacity=50);
+	width: 780px;
+	height:50px;
+}
+
+#m_table {
+	position: absolute;
+	left: 53px;
+	top: 10px;
+	padding: 0px;
+	z-index: 100;
+}
+
+#m_left_td {
+	background-image: url("img/left.png") !important;
+	width: 25px;
+	background-image: none;
+	filter: none !important;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="img/left.png");
+}
+
+#m_right_td {
+	background-image: url("img/right.png") !important;
+	width: 25px;
+	background-image: none;
+	filter: none !important;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="img/right.png");
+}
+
+#m_down_td {
+	background-image: url("img/down.png") !important;
+	width: 25px;
+	background-image: none;
+	filter: none !important;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="img/down.png");
+}
+
+#logonTable {
+	background-image:none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="img/loginn.png");
+	width:656px;
+	height:499px;
+	padding:20px;
+}
+
+#logonTable td {
+	padding-right: 10px;
+}

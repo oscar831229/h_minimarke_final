@@ -1,0 +1,15 @@
+
+#m_left_td {
+	background: url("img/left.png");
+	width: 18px;
+}
+
+#m_down_td {
+	background: url("img/down.png");
+	height: 7px;
+}
+
+#m_right_td {
+	background: url("img/right.png");
+	width: 25px;
+}

@@ -1,0 +1,169 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div align="center">
+	<div class="formExternal">
+		<div class="externalHeader">
+			<table width="95%" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<h1>
+							Selección de fecha para facturar a todos los socios
+						</h1>
+					</td>
+					<td align="right"><div class="window-close"></div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="messages"></div>
+			<table align="center">
+				<?php
+					//Si se da Personal es para un solo socio
+					if ($personal) {
+						?>
+						<tr>
+							<td align="right"><label for="sociosId">Socio</label></td>
+							<td align="left">
+								<?php
+									echo HfosTag::addHyperFormSpecialField(array(
+										'type' => 'Socio',
+										'name' => 'sociosId',
+										'classForm' => 'formExternal',
+										'class' => 'sociosId'
+									));
+								?>
+							</td>
+						</tr>
+						<?php		
+					}
+				?>
+				<tr>
+					<td align="right"><label for="dateIni">Fecha Factura</label></td>
+					<td align="left"><?php echo Tag::dateField('dateIni') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="dateFin">Fecha Vencimiento</label></td>
+					<td align="left"><?php echo Tag::dateField('dateFin') ?></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<fieldset>
+							<legend>Que facturar:</legend>
+							<table>
+								<tr>
+									<td>
+										<strong>Sostenimiento</strong>
+									</td>
+									<td>
+										<input type="checkbox" id="sostenimiento" name="sostenimiento" value="S">
+									</td>
+									<td>
+										<small>
+											(Solo cargos fijos con clase Sostenimiento en Asignacion de Cargos)
+											<?php
+												echo $cargosFijos = EntityManager::get('CargosFijos')->count("clase_cargo='S' AND estado='A'");
+											?>
+										</small>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong>Administración</strong>
+									</td>
+									<td>
+										<input type="checkbox" id="administracion" name="administracion" value="A">
+									</td>
+									<td>
+										<small>
+											(Solo cargos fijos con clase Administración en Asignacion de Cargos)
+											<?php
+												echo $cargosFijos = EntityManager::get('CargosFijos')->count("clase_cargo='A' AND estado='A'");
+											?>
+										</small>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong>Novedades</strong>
+									</td>
+									<td>
+										<input type="checkbox" id="novedades" name="novedades" value="N">
+									</td>
+									<td>
+										<small>
+											(Solo Novedades de Factura con periodo de la fecha de factura)
+											<?php
+												echo $novedades = EntityManager::get('NovedadesFactura')->count("estado='A'");
+											?>
+										</small>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong>Calcular Consumo Mínimo</strong>
+									</td>
+									<td>
+										<input type="checkbox" id="consumoMinimo" name="consumoMinimo" value="C">
+									</td>
+									<td>
+										<small>
+											(Calcula automaticamente el consumo mínimo en base a consumos de cartera en contabilidad que ha causado el Punto de Venta)
+										</small>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong>Calcular Intereses de Mora</strong>
+									</td>
+									<td>
+										<input type="checkbox" id="interesesMora" name="interesesMora" value="M">
+									</td>
+									<td>
+										<small>
+											(Calcula automaticamente el interes de mora en base a valores pendientes de pago de cartera en contabilidad)
+										</small>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong>Calcular Ajuste Sostenimiento</strong>
+									</td>
+									<td>
+										<input type="checkbox" id="ajusteSostenimiento" name="ajusteSostenimiento" value="T">
+									</td>
+									<td>
+										<small>
+											(Calcula automaticamente el ajuste de sostenimiento por pasarce la fecha de pago acordada)
+										</small>
+									</td>
+								</tr>
+							</table>
+						</fieldset>
+					</td>
+				</tr>
+				<tr>
+					<td align="right" colspan="2">
+						<input type="button" value="Generar" class='selectPeriodoButton'/>
+					</td>
+					<td align="left" colspan="2">
+						<div class="formSpinner" style="display:none"></div>
+					</td>
+				</tr>
+			</table>
+	</div>
+</div>

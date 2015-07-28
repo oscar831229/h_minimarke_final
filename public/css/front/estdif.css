@@ -1,0 +1,58 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+.tablaDatos th {
+	font-size: 11px;
+	background: url("../img/localnavg.gif");
+}
+
+.tablaDatos .enlace {
+	padding: 5px;
+	text-align: center;
+	border: 1px solid #333333;
+	background: #333333;
+	margin: 5px;
+	-moz-border-radius: 5px;
+	font-size: 11px;
+}
+
+.dayInfo {
+	background: #fafafa;
+}
+
+.tablaDatos .enlace a {
+	font-size: 10px;
+	color: white;
+}
+
+.tablaDatos td {
+	font-size: 11px;
+	padding: 5px;
+}
+
+.zebraOdd {
+	background: #ccdeff;
+}
+
+.zebraEven {
+	background: white;
+}
+
+.zebraOther {
+	background: #ffffc2;
+}
+
+.zebraOther td {
+	border-bottom: 1px dotted #969696;
+}

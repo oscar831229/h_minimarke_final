@@ -1,0 +1,63 @@
+<style type="text/css">
+#test {
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	background: red;
+	height: 100px;
+	width: 100px;
+}
+
+</style>
+
+<script type="text/javascript">
+var deg = 30;
+function hello(){
+	//$('divx').setStyle("-webkit-transform: traslate3d(0, 0, 20px)");
+	//$('divx').setStyle("-webkit-transform: perspective(500px)");
+	//$('divx').setStyle("-moz-transform: rotate("+deg+"deg)");
+	//$('divx').setStyle("-moz-transform: translateX(100px)");
+
+	//$('divx').setStyle("-moz-transform: matrix(1, -0.2, 0, 1, 0, 0);");
+	var st = "";
+	var os = $('divx').getStyle('-moz-transform');
+	if(os!="none"){
+		st+=(os+" rotate(30deg)");
+	} else {
+		st = "rotate(30deg)"
+	}
+	$('divx').setStyle("-moz-transform: "+st);
+}
+
+//skewY(-30deg)
+function h(){
+	var st = "";
+	var os = $('divx').getStyle('-moz-transform');
+	if(os!="none"){
+		st+=(os+" skewY(-30deg)");
+	} else {
+		st = "skewY(-30deg)"
+	}
+	$('divx').setStyle("-moz-transform: "+st);
+}
+
+
+
+function mv(){
+	var start = (new Date).getTime(), duration = 1000, finish = start+duration;
+	var interval = setInterval(function(){
+		var time = (new Date).getTime(),pos = time>finish ? 1 : (time-start)/duration;
+		//element.style.left = (100*pos) + 'px';
+		element.setStyle('-moz-transform: skewX(-'+(180*pos)+'deg)');
+		//document.title = 'rotate('+(30*pos)+'deg)';
+		if(time>finish) clearInterval(interval);
+	},10);
+}
+
+</script>
+
+<div id="test"></div>
+
+<input type="button" value="Hello" onclick="hello()"/>
+<input type="button" value="Hello 2" onclick="h()"/>
+<input type="button" value="2" onclick="mv()"/>

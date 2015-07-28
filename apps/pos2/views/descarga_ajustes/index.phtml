@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo View::getContent() ?>
+
+<h1>Reporte Costo de Ajustes</h1>
+
+<?php echo Tag::form(array('descarga_ajustes/proceso', 'target' => '_new', 'autocomplete' => 'off')) ?>
+<table align="center">
+	<tr>
+		<td align="right">
+			<b>Comprobante:</b>
+		</td>
+		<td>
+			<?php echo Tag::textField(array('comprob', 'size' => '4', 'maxlength' => '4')) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<b>Número:</b>
+		</td>
+		<td>
+			<?php echo Tag::numericField(array('numero', 'size' => '7', 'maxlength' => '7')) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right"></td>
+		<td><?php echo Tag::submitButton(array('Procesar', 'class' => 'controlButton')) ?></td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>
+

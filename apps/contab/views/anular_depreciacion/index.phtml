@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('deprec.png', 'Anular Depreciación Mensual de Activos Fijos') ?>
+
+<?php echo Tag::form('anular_depreciacion/anular', 'class: anularDepreciacionForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Anular"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Periodo Activo</b></td>
+						<td><?php echo $periodoActivo ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

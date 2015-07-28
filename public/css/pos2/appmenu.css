@@ -1,0 +1,85 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body {
+  	margin: 0px;
+  	background-image: url("../../img/pos2/food4.png");
+}
+
+button, .menuButton {
+  	font-size: 11px;
+  	width: 158px;
+  	height: 158px;
+  	background-color: transparent;
+  	background-image: -moz-linear-gradient(top center, rgba(22, 22, 22, 0.95), rgba(22, 22, 22, 0.8));
+  	background-image: -webkit-linear-gradient(rgba(22, 22, 22, 0.95), rgba(22, 22, 22, 0.8));
+  	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#111111', EndColorStr='#111111')";
+  	border: 2px solid #717171;
+  	color: #ffffff;
+  	cursor: pointer;
+  	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0,0,0, .4) 1px 1px 1px;
+	border-radius: 15px;
+}
+
+.appmenuup {
+	padding: 5px;
+	padding-top: 7px;
+	padding-left: 7px;
+	font-size: 18px;
+	color: #fff;
+	background-image: -moz-linear-gradient(top center, rgba(22, 22, 22, 0.8), rgba(22, 22, 22, 0.95));
+	background-image: -webkit-linear-gradient(rgba(22, 22, 22, 0.8), rgba(22, 22, 22, 0.95));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#111111', EndColorStr='#111111')";
+	border: 1px solid #333333;
+	opacity: 0.8;
+	height: 30px;
+	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0, 0, 0, .4) 1px 1px 1px;
+}
+
+div#hotelname {
+	font-size: 12px;
+	float: right;
+}
+
+.appmenuup_fecha {
+	color: #e2e2e2;
+	font-size: 14px;
+}
+
+.appmenu_bg {
+
+}
+
+div.messages {
+	margin: 4px;
+	margin-bottom: 15px;
+}
+
+.appmenu_adv {
+	border: 1px solid #969696;
+	background: url("../../img/pos2/bg-texture-1.png");
+	-webkit-box-shadow: 4px 4px 7px rgba(71, 71, 71, 0.7);
+	-moz-box-shadow: 4px 4px 7px rgba(71, 71, 71, 0.7);
+}
+
+.appmenu_adv img {
+	margin: 10px;
+}
+
+.appmenu_adv td {
+	font-size: 13px;
+	padding-right: 10px;
+}

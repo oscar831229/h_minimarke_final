@@ -1,0 +1,103 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+.hoverclass123 {
+  	color: #3875D7;
+}
+
+.tab_main {
+	border: 1px solid #969696;
+	border-top: 0px;
+	background: #fafafa;
+}
+
+#asicam_div .active_tab {
+	border: 1px solid #969696;
+	border-bottom: none;
+	font-size: 13px;
+	cursor: pointer;
+	padding: 7px;
+	background: #fafafa;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+#asicam_div .inactive_tab {
+	font-size: 13px;
+	border:1px solid #969696;
+	background: #dadada;
+	cursor: pointer;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+#asicam_div .tab_content {
+	padding: 20px;
+}
+
+div.hab_pendent {
+	border: 1px solid #969696;
+	background: url("../img/localnavg.gif");
+	padding: 5px;
+	width: 670px;
+	margin: 1px;
+}
+
+div.hab_pendent_sel {
+	background: url("../img/localnavgd.gif");
+	border: 1px solid #737373;
+}
+
+div.hab_div {
+	padding: 5px;
+	width: 300px;
+	color: #ffffff;
+}
+
+label {
+	margin-left: 20px;
+	font-weight: bold;
+}
+
+.selectPanel {
+	margin: 5px;
+	padding: 10px;
+}
+
+.cam_asig {
+	border: 1px solid #969696;
+	padding: 10px;
+	background: url("../img/localnavg.gif");
+	width: 750px;
+}
+
+.hab_to_ready {
+	color: #FFFFFF;
+	cursor: move;
+	padding: 10px;
+	-moz-border-radius: 2px;
+}
+
+.hab_ready {
+	color: #FFFFFF;
+	padding: 10px;
+	-moz-border-radius: 2px;
+}
+
+img.arrow_note {
+	border: none;
+	cursor: pointer;
+}

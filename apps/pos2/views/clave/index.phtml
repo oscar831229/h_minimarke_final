@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div style="padding:5px">
+	<table cellspacing='0' align='center' class="claveTable">
+		<tr>
+		 	<td>
+			    <input type='password' value='' readonly="readonly" autocomplete='off' class='mediumBox' id='view_pass'>
+			</td>
+		</tr>
+		<tr>
+		 	<td>
+		 	<table cellspacing='0'>
+				<tr>
+					<td><input type='button' value='7' id='b7' class='bigButton'/></td>
+					<td><input type='button' value='8' id='b8' class='bigButton'/></td>
+					<td><input type='button' value='9' id='b9' class='bigButton'/></td>
+				</tr>
+				<tr>
+					<td><input type='button' value='4' id='b4' class='bigButton'/></td>
+					<td><input type='button' value='5' id='b5' class='bigButton'/></td>
+					<td><input type='button' value='6' id='b6' class='bigButton'/></td>
+				</tr>
+				<tr>
+					<td><input type='button' value='1' id='b1' class='bigButton'></td>
+					<td><input type='button' value='2' id='b2' class='bigButton'/></td>
+					<td><input type='button' value='3' id='b3' class='bigButton'/></td>
+				</tr>
+				<tr>
+					<td>
+						<!--<input type='button' value='No' class='bigButtonCancel' onclick='cancelPassword()'>-->
+
+						<button class='bigButtonCancel' onclick='cancelPassword()'>
+							<?php echo Tag::image("pos2/delete-pr.png", "width: 23") ?><br>
+							<b>NO</b><br>
+					 	</button>
+
+					</td>
+					<td><input type='button' value='0' id='b0' class='bigButton' /></td>
+					<td>
+						<button class='bigButtonOK' id='okButton' disabled="disabled" onclick='acceptPassword("<?php echo $id ?>")'>
+							<?php echo Tag::image("pos2/accept-pg.png", "width: 23") ?><br>
+							<b>OK</b><br>
+					 	</button>
+					</td>
+				</tr>
+			</table>
+			<input type='hidden' id='clave' name='clave' value=''>
+		  </td>
+	  </tr>
+	</table>
+</div>

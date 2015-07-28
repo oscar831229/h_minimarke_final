@@ -1,0 +1,51 @@
+<div align="center" class="chartContainer">
+	<div class="chart"></div>
+</div>
+
+<?php echo Tag::form('comportamiento/getDatos') ?>
+<div align="center">
+	<div class="rangoPeriodos">
+		<table width="100%">
+			<tr>
+				<td>
+					<label for="periodoInicial">Periodo Inicial</label>
+					<?php echo Tag::selectStatic('periodoInicial', $periodos) ?>
+				</td>
+				<td>
+					<label for="periodoFinal">Periodo Final</label>
+					<?php echo Tag::selectStatic('periodoFinal', $periodos) ?>
+				</td>
+				<td>
+					<input type="button" value="Ver" class="verButton"/>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="fieldsetGroup">
+	<fieldset class="tabbed">
+		<legend>Referencias</legend>
+		<table width="95%" align="center">
+			<tr>
+				<td>
+					<table cellspacing="0">
+						<tr>
+							<td><label for="item">Referencia</label></td>
+							<td><?php echo HfosTag::itemField('item') ?></td>
+							<td><input type="button" value="Agregar" class="addButton"/></td>
+						</tr>
+					</table>
+				</td>
+				<td>
+					<div class="referencias">
+						<div class="sin-referencias" align="center">
+							Agregue referencias a ser comparadas
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+</div>
+<?php echo Tag::endForm() ?>

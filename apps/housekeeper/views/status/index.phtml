@@ -1,0 +1,48 @@
+<?php
+
+View::getContent();
+
+echo '<div data-role="navbar"><ul data-type="horizontal" data-role="controlgroup">';
+if($order=='ready'){
+	echo '<li>', Tag::linkTo(array('status/index/pendent', 'Pendientes', 'data-transition' => 'slideup')), '</li>';
+	echo '<li>', Tag::linkTo(array('status/index/ready', 'Listas', 'class' => 'ui-btn-active')), '</li>';
+} else {
+	echo '<li>', Tag::linkTo(array('status/index/pendent', 'Pendientes', 'class' => 'ui-btn-active')), '</li>';
+	echo '<li>', Tag::linkTo(array('status/index/ready', 'Listas', 'data-transition' => 'slidedown')), '</li>';
+}
+echo '</ul></div>';
+
+echo '<div class="hab-container">';
+
+if(!count($asicams)){
+	echo '<div class="ui-body ui-body-e">';
+	echo '<h4>Información</h4>';
+	echo 'No hay habitaciones pendientes asignadas';
+	echo '</div>';
+} else {
+
+	if(isset($message)){
+		echo '<p><ul data-role="listview" data-dividertheme="h">
+			<li data-role="list-divider">', $message, '</li>
+		</ul><br/></p>';
+	}
+
+	echo '<table>';
+	foreach($asicams as $asicam){
+		$habitacion = $asicam->getHabitacion();
+		echo '<tr>';
+		echo '<td>';
+			echo '<div class="hab-estado hab-estado-', $habitacion->getCodest(), '">',
+			$asicam->getNumhab(), '/', $habitacion->getEsthab()->getDetalle(), '</div>';
+		echo '</td>';
+		if($asicam->getEstado()=='N'){
+			echo '<td width="20%">';
+			echo Tag::linkTo(array('status/preChange/'.$habitacion->getNumhab(), 'Lista', "data-role" => "button", "data-transition" => "none"));
+			echo '</td>';
+		}
+		echo '</tr>';
+	}
+	echo '</table>';
+}
+
+echo '</div>';

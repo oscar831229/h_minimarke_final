@@ -1,0 +1,23 @@
+
+<!---->
+
+<script type="text/javascript">
+
+/*var bgProcess = new HfosBgProcess();
+bgProcess.request('xa', {
+	onSuccess: function(){
+		alert('yeah!');
+	}
+})*/
+
+</script>
+
+<div id="x"><div id="local-data">
+
+<input type="button" value="Hello" onclick="alert('a')"/>
+
+</div></div>
+
+<input type="button" value="Restore" onclick="$('x').appendChild(localStorage['localData'])"/>
+
+<input type="button" value="Save" onclick="localStorage['localData'] = document.getElementById('local-data')"/>

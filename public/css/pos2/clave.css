@@ -1,0 +1,114 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+.claveTable {
+
+}
+
+.bigButton {
+  	font-family: Verdana,sans-serif;
+	font-size: 30px;
+	width: 70px;
+	height: 70px;
+	background-image: -moz-linear-gradient(top center, #363636, #1E1E1E);
+	background-image: -webkit-linear-gradient(#363636, #1E1E1E);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#111111', EndColorStr='#111111')";
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: 2px solid #000;
+	color: #f2f2f2;
+	text-shadow: rgba(0, 0, 0, .4) 1px 1px 1px;
+}
+
+.bigButton2 {
+  	font-family: Verdana,sans-serif;
+	font-size: 44px;
+	width: 70px;
+	height: 70px;
+	background-image: -moz-linear-gradient(top center, rgba(33, 33, 33, 0.7), rgba(22, 22, 22, 0.95));
+	background-image: -webkit-linear-gradient(rgba(33, 33, 33, 0.7), rgba(22, 22, 22, 0.95));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#111111', EndColorStr='#111111')";
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: none;
+	color: #f2f2f2;
+}
+
+/*.bigButtonOK {
+  	font-family: Verdana;
+	font-size: 22px;
+	width: 68px;
+	height: 68px;
+	background: -moz-linear-gradient(top center, #4B6800, #3A5000);
+	color: #8FB42B;
+	font-weight: bold;
+	border: 2px solid #8FB42B;
+	-moz-border-radius: 7px;
+	text-shadow: rgba(0, 0, 0, .02) 0px 1px 0px;
+}*/
+
+.bigButtonOK {
+  	font-family: Verdana,sans-serif;
+	font-size: 18px;
+	width: 68px;
+	height: 68px;
+	background: -moz-linear-gradient(top center, #8FC161, #5C8837);
+	background: -webkit-linear-gradient(#8FC161, #5C8837);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#8FC161', EndColorStr='#5C8837')";
+	color: #294617;
+	font-weight: bold;
+	border: 1px solid #72A04D;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+	text-shadow: rgba(0, 0, 0, .02) 0px 1px 0px;
+}
+
+/*.bigButtonOK[disabled="disabled"] {
+	color: #006600;
+}*/
+
+.bigButtonCancel {
+  	font-family: Verdana,sans-serif;
+	font-size: 18px;
+	width: 68px;
+	height: 68px;
+	background: -moz-linear-gradient(top center, #C66161, #A84848) transparent;
+	background: -webkit-linear-gradient(#C66161, #A84848);
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#C66161', EndColorStr='#A84848')";
+	color: #581717;
+	font-weight: bold;
+	border: 1px solid #973636;
+	-moz-border-radius: 7px;
+	text-shadow: rgba(0, 0, 0, .02) 0px 1px 0px;
+}
+
+.mediumButton {
+  	background: url("../../img/pos2/letter_button.gif");
+    border: none;
+    width: 32px;
+    height: 32px;
+    color: #fff;
+}
+.mediumBox {
+  	font-family: Verdana;
+	font-size: 28px;
+	width: 97%;
+	height: 38px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+.claveTable .bigButtonCancel {
+	font-size: 14px;
+}

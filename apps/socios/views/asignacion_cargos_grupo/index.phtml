@@ -1,0 +1,61 @@
+<div style="" class="hyNewDiv hyFormDiv">
+    <table class="hyTitle">
+        <tbody>
+            <tr>
+                <td>
+                    <?php
+                        echo Tag::image('cartera.png');
+                    ?>
+                </td>
+                <td><h2>Crear un Asignación de Cargo Por Tipo de Socio</h2></td>
+            </tr>
+        </tbody>
+   </table>
+   <?php echo Tag::form('asignacion_cargos_grupo/asignar', 'class: asignarCargoFijoGrupoForm', 'autocomplete: off') ?>
+        <table cellspacing="0" cellpadding="2" align="center">
+            <tbody>
+                <tr></tr>
+                <tr>
+                  <td align="right">
+                    <label for="socios_id">Tipo de Socio</label>
+                  </td>
+                  <td>
+                    <?php
+                        $TipoSocios = new TipoSocios();
+                        echo Tag::selectMixed('tipo_socios_id',$TipoSocios->find('order: nombre ASC'),
+                        'using: id,nombre','use_dummy: true','class: tipo_socios_id');
+                    ?>
+		          </td>
+		        </tr>
+		        <tr>
+		          <td align="right">
+		              <label for="tipos_pago_id">A quien se factura?</label>
+		          </td>
+		          <td>
+		            <select usedummy="yes" name="tipo" id="tipo" class="tipo">
+                    	<option value="@">Seleccione...</option>
+                    	<option value="N">Solo los que no tienen cargo fijos asignados</option>
+                    	<option value="C">Solo los que tienen cargo fijos asignados</option>
+                    	<option value="T">Todos los socios</option>
+                    </select>
+                    <span class="notNullMark">!</span>
+                 </td>
+              </tr>                  
+              <tr>
+                <td align="right"><label for="cargos_fijos_id">Cargo Fijo</label></td>
+                <td>
+                      <?php
+                        $CargosFijos = new CargosFijos();
+                        echo Tag::selectMixed('cargos_fijos_id',$CargosFijos->find('order: nombre ASC'),
+                        'using: id,nombre','use_dummy: true','class: cargos_fijos_id');
+                      ?>
+                    <span class="notNullMark">!</span>
+                </td>
+              </tr>
+            </tbody>
+         </table>
+         <input type="hidden" value="create" name="hyperAction">
+    <?php
+        echo Tag::endForm();
+    ?>
+</div>

@@ -1,0 +1,31 @@
+@font-face {
+        font-family: 'Anivers';
+        src: local('Anivers'),
+             url('../font/Fonts/Anivers.otf') format('opentype');
+}
+
+#rulfac {
+	margin: 10px;
+	background: #fff;
+	padding: 10px;
+	border: 1px solid #969696;
+}
+
+.cuename {
+	background: #dedede;
+}
+
+.cuename td {
+	padding: 5px;
+	font-size: 15px;
+}
+
+.cueoption {
+	background: url("../img/localnavg.gif");
+}
+
+.cueoption td {
+	padding: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}

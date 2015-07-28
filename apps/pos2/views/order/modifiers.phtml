@@ -1,0 +1,170 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/order');
+	echo Tag::javascriptLibrary('windows');
+	echo Tag::javascriptInclude('pos2/modal');
+	echo Tag::javascriptInclude('pos2/order');
+	echo Tag::javascriptInclude('pos2/numero');
+} else {
+	Tag::stylesheetLink('pos2/production/order', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/order', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+View::getContent();
+
+?>
+<div id="modifiers">
+	<div id='messages'></div>
+	<table cellspacing="0" align='center' cellpadding="0">
+		<tr>
+			<td class='titulo' align='left'>
+				Seleccione Modificadores
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table  cellspacing="0" cellpadding="0" align="center" class="mod_table">
+					<tr>
+				 	<td valign="top">
+				 	<table cellspacing="0" cellpadding="0">
+				 	<tr>
+				 	<td valign="top">
+				 		<?php
+					 		if(!isset($_GET['sel'])||($_GET['sel']=='Todas')){
+						 		echo "<input type='button' class='letterModifierSelected' value='*'></td>";
+								$_GET['sel'] = 'Todas';
+							} else {
+						 		echo "<input type='button' class='letterModifier' value='*'></td>";
+							}
+					 	?>
+				 	</tr>
+				 	<tr>
+				 	<td align='center' valign="top">
+						<table cellspacing="0" cellpadding="0">
+							<tr>
+							<?php
+								foreach(range('A', 'Z') as $letra){
+								    if($_GET['sel']!=$letra){
+										echo "<td><input type='button' class='letterModifier' value='$letra'></td>";
+								    } else {
+										echo "<td><input type='button' class='letterModifierSelected' value='$letra'></td>";
+								    }
+									Tag::trBreak(2);
+								}
+							?>
+							</tr>
+						</table>
+					</tr></table>
+					</td>
+					<td>
+					</td>
+					<td width="500" id="modifiersList" valign="top" align="center">
+						<div id="buscar-div">
+							<?php echo Tag::textField('buscar') ?>
+						</div>
+						<!--<table cellspacing="0" cellpadding="0"><tr>
+							<?php
+								$cond = "SELECT * FROM modifiers ";
+								if($_GET['sel']!='Todas'){
+									$cond.= "WHERE nombre LIKE '".$_GET['sel']."%'";
+								}
+								if(isset($_GET['tip'])){
+									if($_GET['sel']!='Todas'){
+								  		$cond.= " AND tipo = '".$_GET['tip']."'";
+									} else {
+										$cond.= " WHERE tipo = '".$_GET['tip']."'";
+									}
+								}
+								Tag::trBreak();
+								$Account->find($last_menus_items);
+								$MenusItems->find($Account->menus_items_id);
+								foreach($Modifiers->findAllBySql($cond." limit 32") as $modifier){
+								  	echo  "<td><input type='button' class='modifierItem'
+								  	onclick='addModifier(this, {$modifier->id})'
+									value='".str_replace(" ", "\n", $modifier->nombre)."'></td>\n";
+									Tag::trBreak(4);
+								}
+							?>
+							</tr>
+						</table>
+						-->
+							<div align='center' id='spinner' style='display:none;padding:5px'>
+						 		<table>
+							 		<tr>
+								 		<td><?php echo  Tag::image("spinner.gif") ?></td>
+								 		<td style='font-size:11px'>Guardando...</td>
+							 		</tr>
+						 		</table>
+					 		</div>
+						</td>
+						<td valign='top' align='center'>
+							<h3>Items de Esta Mesa</h3>
+							<select multiple id='items'>
+								<?php
+									foreach($Account->find("salon_mesas_id='$account_id' and estado = 'S'") as $AccountItem){
+										$MenusItems->find($AccountItem->menus_items_id);
+										$MenusItems->nombre = ucwords($MenusItems->nombre);
+										if(i18n::strlen($MenusItems->nombre)>25){
+											$MenusItems->nombre = i18n::substr($MenusItems->nombre, 0, 25)." ...";
+										}
+										if($AccountItem->id==$last_menus_items){
+											echo  "<option selected value='{$AccountItem->id}'>[$AccountItem->cuenta] ".$MenusItems->nombre;
+										} else {
+											echo  "<option value='{$AccountItem->id}'>[$AccountItem->cuenta] ".$MenusItems->nombre;
+										}
+									}
+								?>
+							</select>
+							<br/><br/>
+							<?php
+								$tipos = array(
+									"S" => 'Sin ...',
+									"P" => 'Partes ...',
+									"A" => 'Acompañamientos...',
+									"W" => 'Adicionales...',
+									"U" => "De Usuario"
+								);
+								foreach($tipos as $tipo => $nombre){
+								  	echo "&nbsp;<input type='button' value='$nombre' class='letterModifierLong' title='$tipo'/><br/>";
+								}
+
+							?>
+							<br>
+							    <?php echo Tag::buttonToAction('Nuevo Modificador', 'order/manual', 'letterModifierLong') ?><br>
+							    <?php echo Tag::buttonToAction('Agregar Nota', 'order/notes', 'letterModifierLong') ?><br>
+							<br>
+						<table>
+							<tr>
+							 	<td>
+								 <button class='cancelButton' onclick='new Utils.redirectToAction("order/add/<?php echo $account_id ?>")'>Volver</button>
+								</td>
+							</tr>
+						</table>
+					</td>
+
+					</tr>
+				</table>
+		</td>
+		<td class='sh_right'></td>
+		</tr>
+	</table>
+</div>
+
+<script type="text/javascript">
+new Event.observe(window, "load", addModifiersCallback)
+</script>

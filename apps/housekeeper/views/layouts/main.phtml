@@ -1,0 +1,68 @@
+<?php
+
+$controllers = array(
+	'status' => array(
+		'description' => 'Habitaciones Asignadas',
+		'action' => ''
+	),
+	'rack' => array(
+		'description' => 'Información Habitaciones',
+		'action' => ''
+	),
+	/*'forgot' => array(
+		'description' => 'Objetos Olvidados',
+		'action' => ''
+	)*/
+);
+
+$controllerName = Router::getController();
+if(isset($controllers[$controllerName])){
+	$title = $controllers[$controllerName]['description'];
+} else {
+	$title = '';
+}
+
+?>
+<div data-role="page" class="type-interior">
+
+	<div data-role="header" data-theme="g">
+		<h1><?php echo $title ?></h1>
+		<?php echo Tag::linkTo(array(
+			"session/end",
+			"Salida Segura",
+			"data-icon" => "delete",
+			"data-iconpos" => "notext",
+			"data-direction" => "reverse",
+			"class" => "ui-btn-right"
+		)) ?>
+	</div>
+
+	<div data-role="content">
+
+		<div class="content-primary">
+			<?php View::getContent() ?>
+		</div>
+
+		<div class="content-secondary">
+			<div data-role="collapsible" data-collapsed="true" data-theme="b" data-content-theme="d">
+				<h3>Más Opciones</h3>
+				<ul data-role="listview" data-theme="c" data-dividertheme="d">
+
+					<li data-role="list-divider">Opciones</li>
+
+					<?php
+						foreach($controllers as $name => $controller){
+							if($controllerName==$name){
+								echo '<li data-theme="a">', Tag::linkTo($name.'/'.$controller['action'], $controller['description']), '</li>';
+							} else {
+								echo '<li>', Tag::linkTo(array($name.'/'.$controller['action'], $controller['description'], "data-transition" => "slide")), '</li>';
+							}
+						}
+					?>
+
+				</ul>
+			</div>
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,146 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+#cargohab th {
+	border-right: 1px solid #ababab;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+	font-size: 11px;
+	padding: 5px;
+}
+
+#cargohab .lb {
+	border-left: 1px solid #ababab;
+}
+
+#cargohab .nb {
+	border: none;
+}
+
+#cargohab .de {
+	padding-left: 5px;
+}
+
+#cargohab .de span {
+	font-size: 10px;
+	color: #333;
+}
+
+#cargohab td.tlb {
+	border-left: 1px solid #ababab;
+	background: #fafafa;
+	font-size: 13px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+#cargohab td {
+	border-right: 1px solid #ababab;
+	border-bottom: 1px solid #ababab;
+	padding-right: 3px;
+	font-size: 12px;
+}
+
+#cargohab td.to {
+	background: #fff;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+#customer_info {
+	font-size: 11px;
+	background: #ffffff;
+	border: 1px solid #969696;
+	width: 95%;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding: 3px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+}
+
+#customer_info b {
+	color: #333333;
+}
+
+#trans_table {
+	background: url("../img/bg2.jpg");
+	border:1px solid #969696;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+#trans_table b {
+	color: #333333;
+}
+
+.ac_button {
+	background: url("../img/s_button.png");
+	border: none;
+	width: 100px;
+	height: 34px;
+	cursor:pointer
+}
+
+#table_main {
+	background: #dadada;
+	width: 100%;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+}
+
+#fvalor,
+#fiva,
+#fcantidad,
+#fnumdoc,
+#cargos,
+#ftotal {
+	width: 100%;
+}
+
+tr.cargo_borrado td,
+tr.cargo_borrado div {
+	color: #969696;
+}
+
+#note_dialog {
+	position: absolute;
+	background: rgba(255, 255, 255, 0.93);
+	width: 650px;
+	z-index: 710;
+	padding: 10px;
+	border: 1px solid #969696;
+	-webkit-box-shadow: 5px 7px 10px rgba(33, 33, 33, 0.7);
+	-moz-box-shadow: 5px 7px 10px rgba(21, 21, 21, 0.7);
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+}
+
+.controlButtonBack {
+	padding: 10px;
+	padding-right: 13px;
+	padding-left: 13px;
+}
+
+#numfol {
+	width: 75%;
+}
+
+input.valor {
+	text-align: right;
+}
+
+.left-bourded {
+	border-left: 1px solid #ababab;
+}

@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('special-offer.png', 'Comprobante de Cierre Anual') ?>
+
+<?php echo Tag::form('comprobante_cierre/generar', 'class: cierreForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="comprobante">Comprobante</label></td>
+					<td><?php echo $nombreComprobante ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaInicial">Primer Cuenta de PyG</label></td>
+					<td><?php echo HfosTag::cuentaField('cuentaInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaFinal">Última Cuenta de PyG</label></td>
+					<td><?php echo HfosTag::cuentaField('cuentaFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="codigoEjercicio">Cuenta Resultado Ejercicio</label></td>
+					<td><?php echo HfosTag::cuentaField('codigoEjercicio') ?></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

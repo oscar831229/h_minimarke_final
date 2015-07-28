@@ -1,0 +1,45 @@
+<?php Tag::stylesheetLink('pos2/status') ?>
+
+<table align='center' cellspacing="0" cellpadding="0">
+	<tr>
+		<td class='sh_left'></td>
+		<td>
+			<table cellspacing="0" width='800'>
+				<tr>
+					<td class='titulo' align='center'>
+						Problema inesperado
+					</td>
+				</tr>
+				<tr>
+				<td id="cancelarMain">
+					<div align="center" id="status">
+						<?php View::getContent(); ?>
+						<table width="100%" align="center" cellspacing="20">
+							<tr>
+								<td valign="top" width="130" align="center">
+									<?php echo Tag::image('pos2/bug.png', 'width: 128') ?>
+								</td>
+								<td>
+									<span class='titulo_p'>Ha ocurrido un problema</span><br>
+									<p>
+										Se ha producido un problema inesperado en la aplicación. Se ha enviado un reporte
+										a soporte técnico con el fin de evaluarlo y ayudarle a solucionar el problema.
+										<div align="right" id="buttonPanel">
+											<?php echo Tag::buttonToAction('Volver al Inicio', 'appmenu', 'class: controlButton') ?>
+										</div>
+									</p>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td class='sh_right'></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td class='sh_down'></td>
+		<td></td>
+	</tr>
+</table>

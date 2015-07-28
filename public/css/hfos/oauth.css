@@ -1,0 +1,14 @@
+.header-oauth {
+    background-color: #2D2D2D;
+    background-image: none;
+    background-position: 0 -138px;
+    background-repeat: repeat-x;
+    border-bottom: 1px solid #000000;
+    font-size: 24px;
+    height: 29px;
+    opacity: 1;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 990;
+}

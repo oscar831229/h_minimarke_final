@@ -1,0 +1,214 @@
+@font-face {
+	font-family: 'Anivers';
+	src: local('Anivers'),
+		url('../font/Fonts/Anivers.otf') format('opentype');
+}
+
+body {
+	margin: 0px;
+	background-color: #202128;
+	background-image: none;
+}
+
+.load_fore {
+	font-size: 18px;
+	font-family: Tahoma;
+	color: #fff;
+}
+
+table#controlTopBar {
+	background: #f2f2f2;
+	border: 1px solid #969696;
+	margin: 5px;
+	-moz-border-radius: 10px;
+}
+
+table#controlTopBar td {
+	font-size: 11px;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+table#controlTopBar td.spacer {
+	width: 30px;
+}
+
+table#controlTopBar input[type="text"] {
+	background: #ffffff;
+	border: 1px solid #969696;
+}
+
+.controlButton {
+	font-size: 11px;
+	padding: 5px;
+	padding-left: 7px;
+	padding-right: 7px;
+}
+
+.hoverDay {
+	background: #E0E0E0;
+}
+
+.occuped {
+	border: 1px ridge #333333;
+	font-family: Verdana;
+	cursor:pointer;
+	font-size:10px;
+}
+
+.dia1 {
+	font-family:Verdana;
+	background: white;
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	background: #cecece;
+	text-align: center;
+	height: 20px;
+	width: 20px;
+	font-size:10px;
+}
+
+.dia11 {
+	font-family: Tahoma,Verdana;
+	background: #fff;
+	border-left: 1px solid #eaeaea;
+	border-bottom: 1px solid #eaeaea;
+	background: #ccdeff;
+	text-align: center;
+	height: 15px;
+	width: 15px;
+	font-size: 10px;
+	font-weight: bold;
+	cursor: help;
+}
+
+.dia2 {
+	font-family:Verdana;
+	background: #fff;
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	text-align: center;
+	height: 20px;
+	width: 20px;
+	font-size: 10px;
+}
+
+.dia22 {
+	font-family:Verdana;
+	background: #f2f2f2;
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	text-align: center;
+	height: 20px;
+	width: 20px;
+	font-size:10px;
+}
+
+.dia3 {
+	font-family: Verdana;
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	background: #9CCDEF;
+	text-align: center;
+	height: 20px;
+	width: 20px;
+	font-size: 10px;
+	color: #181F25;
+}
+
+.dia4 {
+  font-family:Verdana;
+  border-left: 1px solid #cecece;
+  border-bottom: 1px solid #cecece;
+  background: #DFF4FF;
+  text-align: center;
+  height: 20px;
+  width: 20px;
+  font-size:10px;
+}
+
+.cell {
+  border-left: 1px solid #cecece;
+  border-bottom: 1px solid #cecece;
+  cursor: pointer;
+  font-size:10px;
+}
+
+.cell1 {
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	cursor: pointer;
+	background: #DFF4FF;
+	font-size: 10px;
+}
+
+.cell2 {
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	cursor: pointer;
+	background: #9CCDEF;
+	font-size:10px;
+}
+
+.cell3 {
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	cursor:pointer;
+	background: #cecece;
+	color: #515151;
+	text-align: center;
+	font-size:10px;
+}
+
+.cell33 {
+	border-left: 1px solid #eaeaea;
+	border-bottom: 1px solid #eaeaea;
+	cursor: pointer;
+	background: #ccdeff;
+	color: #515151;
+	text-align: center;
+	font-size: 9px;
+}
+
+.cell4 {
+	border-left: 1px solid #cecece;
+	border-bottom: 1px solid #cecece;
+	cursor:pointer;
+	background: #FFFFFF;
+	color: #969696;
+	text-align: center;
+	font-size: 10px;
+}
+
+.mes {
+	background: url(../img/localnav.png) #37373E;
+	border-left: 1px solid #333333;
+	border-bottom: 1px solid #333333;
+	border-top: 1px solid #717171;
+	font-family: Anivers, Tahoma;
+	font-size: 16px;
+	color: #f2f2f2;
+	font-weight: normal;
+	padding: 7px;
+}
+
+span, a, select {
+	font-size: 11px;
+}
+
+.legend {
+	border: 1px solid #969696;
+	position: absolute;
+	top: 10px;
+	left: 450px;
+}
+
+.cerrar {
+	padding: 10px;
+	background: #f2f2f2;
+	width: 150px;
+	margin: 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 13px;
+}

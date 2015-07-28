@@ -1,0 +1,37 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+#camhab {
+	padding: 15px;
+}
+
+#camhab select {
+	width: 410px;
+}
+
+#camhab #numhab_div,
+#camhab #numfol_div,
+#camhab #mothab_div {
+	background: url("../img/localnavg.gif") #bebebe;
+	background-repeat: repeat-x;
+	width: 590px;
+	padding: 10px;
+	border: 1px solid #969696;
+}
+
+#camhab #mothab,
+#camhab #numhab,
+#camhab #numfol {
+	font-size: 13px;
+}

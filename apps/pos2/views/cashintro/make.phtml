@@ -1,0 +1,67 @@
+<?= javascript_include_tag('cashintro') ?>
+<? stylesheet_link_tag('cashintro') ?>
+<center>
+<div style='width:600px;border:1px solid #969696;background:white;padding:10px'>
+<div id='messages'></div>
+<h1><?php print "Abrir Caja No $id"; ?></h1>
+<table>
+  <td>
+  <table>
+  	<tr>
+	  	<td align='center'><span style='color:#000080'><b>Efectivo</b></span></td>
+	  	<!-- <td align='center'><span style='color:#000080'><b>Cheques</b></span></td> -->
+	</tr>
+	<tr>
+	  	<td align='center' style='border:1px solid black'>
+	  		<table>
+	  			<tr>
+	  				<td></td>
+					<td style='font-size:11px' align='center'><b>Cant</b></td>
+					<td style='font-size:11px' align='center'><b>Total</b></td>
+				</tr>
+	  			<?php
+	  			$m = array(50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50);
+	  			$i = 1;
+	  			$t = 0;
+	  			foreach($m as $mm){
+	  			    if($CashMoney->count("cash_tray_id=$id and valor=$mm")){
+					    $CashMoney->find_first("cash_tray_id=$id and valor=$mm");
+					    $v = $CashMoney->cantidad;
+					    $vt = $CashMoney->cantidad * $mm;
+					} else {
+					 	$v = 0;
+						$vt = 0;
+					}
+					$t+=$vt;
+				    print "<tr><td style='font-size:12px' align='right'
+					><b>$ ".number_format($mm, 2, '.', ',')."</b></td>
+					<td style='border:1px solid black'>
+					<input type='text' class='box' size=3 id='c$id' value='$v'
+					style='text-align:center'
+					onblur='if(!parseInt(this.value)) this.value = 0
+					getObj(\"m$i\").value=parseInt(this.value)*$mm; sumCash(); save($id, $mm, this)'></td>
+					<td style='border:1px solid black'>
+					<input type='text' class='box2' size=7 id='m$i' readonly
+					value = '$vt'></td>
+					</tr>";
+					$i++;
+				}
+				?>
+	  		</table>
+		</td>
+	  	<td align='center'>
+
+		</td>
+	</tr>
+	<tr>
+		<td align='center'
+		style='border:1px solid black;font-size:22px;font-family:Verdana'
+		id='total_cash'>TOTAL: $<?php print $t; ?></td>
+	</tr>
+	</table>
+	</td>
+	<td valign='bottom'>
+		<button class='okButton' onclick='open_cash_tray(<?php print $id; ?>)'><b>Abrir</b></button>
+		<button class='cancelButton' onclick='window.location="?/appmenu/"'><b>Cancelar</b></button></td>
+	</td>
+  </diV>

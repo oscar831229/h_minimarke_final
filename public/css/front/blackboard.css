@@ -1,0 +1,44 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+@font-face {
+	font-family: 'Eraser';
+	src: url('../font/Fonts/Eraser.ttf') format('truetype');
+}
+
+#mTd {
+	background: url("../img/blackboard.png");
+}
+
+.titulop {
+	font-family: 'Eraser';
+	font-size: 32px;
+	color: #fafafa;
+}
+
+#blackboard {
+	width: 95%;
+	font-family: "Eraser";
+	background: transparent;
+	font-size: 40px;
+	color: white;
+	border: none;
+	height: 450px;
+	margin: 10px;
+}
+
+#blackboard:focus {
+	border: none;
+	-moz-box-shadow: none;
+}

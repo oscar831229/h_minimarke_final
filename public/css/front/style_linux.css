@@ -1,0 +1,16 @@
+
+a, td, label, div, p, span, strong {
+	font-family: "Helvetica", Verdana, sans-serif;
+}
+
+a.amenu {
+	font-family: "Helvetica", Verdana, sans-serif;
+}
+
+div#appLogo span {
+	font-family: "Helvetica", Verdana, sans-serif;
+}
+
+input, select, .iNormal, button, textarea {
+	font-family: sans-serif;
+}

@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Generar Movimiento de Cargos a socios para Facturar') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="50%" align="center">
+
+			<?php echo Tag::form('movimiento_cargos/generar', 'class: movimientoCargosForm', 'autocomplete: off') ?>
+				<table align="center">
+				    <tr>
+				        <td>
+				            Este proceso genera el movimiento de todos los cargos del periodo 
+				            <?php 
+				                echo Tag::hiddenField('periodo','value: '.$mes);
+				                echo $mes;
+				            ?>
+				            preparando la informaci&oacute;n existente para que puedan generarse facturas o cuentas de cobro y 
+				            recibos de caja.
+				            <br/>				            
+                            Una vez este proceso es ejecutado se procede a Facturar con la opci&oacute;n presente en el men&uacute;.
+				        </td>
+					</tr>
+				</table>
+			<?php echo Tag::endForm() ?>
+
+			<div class="resultados"></div>
+		</td>
+	</tr>
+</table>
+</div>

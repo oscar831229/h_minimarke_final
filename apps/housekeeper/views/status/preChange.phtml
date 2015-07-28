@@ -1,0 +1,24 @@
+<h2>Cambiar Estado</h2>
+
+<?php echo Tag::form(array('status/change', "data-ajax" => "false")) ?>
+
+<p>
+	<label for="nota">Observaciones de la habitación</label>
+	<?php echo Tag::textArea('nota') ?>
+</p>
+
+<p>
+	<label for="numeroAdultos">Adultos</label>
+	<?php echo Tag::numericField('numeroAdultos') ?>
+</p>
+
+<p>
+	<label for="numeroNinos">Niños</label>
+	<?php echo Tag::numericField('numeroNinos') ?>
+</p>
+
+<p>
+  	<?php echo Tag::submitButton(array('Cambiar Estado', "data-theme" => "f")); ?>
+</p>
+
+<?php echo Tag::endForm() ?>

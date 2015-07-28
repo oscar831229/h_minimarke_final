@@ -1,0 +1,79 @@
+<!--
+<style type="text/css">
+
+input[type="text"].cuenta {
+	width: 160px;
+}
+
+</style>
+
+<div style="padding:20px;background:#fafafa">
+	<table cellspacing="0" cellpadding="0">
+		<tr>
+			<td>
+				<input type="text" id="cuenta1" size="12" value="414005001002" class="cuenta"/>
+			</td>
+			<td><input type="text" id="detalle1" size="30"/></td>
+		</tr>
+	</table>
+	<table cellspacing="0" cellpadding="0">
+		<tr>
+			<td>
+				<input type="text" id="cuenta2" size="12" value="240805001010" class="cuenta"/>
+			</td>
+			<td><input type="text" id="detalle2" size="30"/></td>
+		</tr>
+	</table>
+</div>
+
+<script type="text/javascript">
+new Event.observe(document, 'dom:loaded', function(){
+	$('cuenta1').observe('focus', function(){
+		new HfosCuentasSelector('cuenta1', 'detalle1');
+	});
+	/*$('cuenta2').observe('focus', function(){
+		new HfosCuentasSelector('cuenta2', 'detalle2');
+	});
+
+	var a = new HfosAutocompleter('detalle2', 'cuentas/queryByName', {
+		paramName: 'nombre',
+		afterUpdateElement: function(option){
+			document.title = option.value;
+			a.destroy();
+		}
+	});*/
+
+	/*$('detalle1').observe('keyup', function(event){
+		if(this.value.length<this.size){
+			var start = this.selectionStart;
+			var end = this.selectionEnd;
+			this.value = this.value.toUpperCase();
+			this.selectionStart = start;
+			this.selectionEnd = end;
+		}
+	})*/
+
+	/*$('cuenta').observe('keydown', function(event){
+		switch(event.keyCode){
+			case 8:
+			case 48:
+			case 49:
+			case 50:
+			case 51:
+			case 52:
+			case 53:
+			case 54:
+			case 55:
+			case 56:
+			case 57:
+				new HfosCuentasSelector(this, 'detalle');
+				break;
+			default:
+				new Event.stop(event);
+		}
+	})*/
+});
+</script>
+-->
+
+<input type="text" onblur="NumericField.format(this);"/>

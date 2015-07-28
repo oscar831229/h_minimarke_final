@@ -1,0 +1,400 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2014
+ * @version		$Id$
+ */
+
+Flash::notice("Liquidando Cuenta: " . $cuentas[0][1]) ?>
+
+<div id='messages'></div>
+<?php
+
+$AccountMaster->findFirst((int)$cuentas[0][0]);
+$conditions = "cuenta={$cuentas[0][1]} AND account_master_id='{$cuentas[0][0]}' AND estado in ('A', 'B')";
+$accountCuenta = $AccountCuentas->findFirst($conditions);
+if ($accountCuenta != false) {
+	if($accountCuenta->habitacion_id != -1){
+		$Habitacion->findFirst($accountCuenta->habitacion_id);
+	}
+} else {
+	Flash::error('La cuenta a liquidar no existe');
+	return;
+}
+
+echo Tag::form("pay/savePay", 'autocomplete: off')
+
+?>
+<input type='hidden' name='pcuentas' value='<?php echo serialize($cuentas) ?>'>
+<div align="center">
+	<div id="dt_cuenta">
+		<table align='center' cellspacing="2" width="100%">
+			<tr>
+				<td align="right"><b>Documento</b></td>
+				<td><?php echo $accountCuenta->clientes_cedula ?></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td align="right"><b>Nombre</b></td>
+				<td><?php echo $accountCuenta->clientes_nombre ?></td>
+			</tr>
+			<tr>
+				<td align="right"><b>Habitación/Folio</b></td>
+				<td>
+					<?php
+						$habitacion = $Habitacion->find($accountCuenta->habitacion_id);
+						if ($habitacion) {
+							if ($habitacion->numhab) {
+								echo "{$habitacion->numhab} : $habitacion->nombre\n";
+							} else {
+								echo "F. DIRECTA : $habitacion->nombre\n";
+							}
+						} else {
+							$habitacion = new Habitacion();
+							echo "NINGUNO";
+						}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" valign="top"><b>Nota</b></td>
+				<td>
+					<?php echo $habitacion->nota ? $habitacion->nota : "NINGUNA" ?>
+				</td>
+			</tr>
+		</table>
+	</div>
+<br>
+<table class='items_cuenta' cellspacing="0" align='center'>
+<thead>
+	<tr>
+		<th>Mesa</th>
+		<th>No.</th>
+		<th>Valor</th>
+		<th>IVA</th>
+		<th>Servicio</th>
+		<th>Total</th>
+	</tr>
+</thead>
+<tbody>
+<?php
+
+	$total_cuentas = 0;
+	$total_servicio = 0;
+	foreach ($cuentas as $cue){
+		$valor_cuenta = 0;
+		$total_cuenta = 0;
+		$total_iva_cuenta = 0;
+		$total_servicio_cuenta = 0;
+		$conditions = "cuenta={$cue[1]} AND account_master_id='{$cue[0]}' AND estado in ('S', 'A', 'B')";
+		$resumen = array();
+		foreach ($Account->find($conditions) as $account) {
+			$MenusItems->findFirst($account->menus_items_id);
+			$tvalor = $account->valor * $account->cantidad;
+			foreach ($AccountModifiers->find("account_id='{$account->id}'") as $acc_mod) {
+				$modifier = $Modifiers->find($acc_mod->modifiers_id);
+				$tvalor+=$modifier->valor;
+				$total_cuenta+=$modifier->valor;
+			}
+			if ($account->descuento > 0) {
+				$tvalor -= (($tvalor*$account->descuento/100));
+				$account->total -= (($account->total*$account->descuento/100));
+				$account->iva -= (($account->iva*$account->descuento/100));
+				$account->servicio -= (($account->servicio*$account->descuento/100));
+			}
+			if (!isset($resumen[$MenusItems->tipo])) {
+				$resumen[$MenusItems->tipo] = 0;
+			}
+			$resumen[$MenusItems->tipo]+= $tvalor;
+			$valor_cuenta += ($tvalor);
+			$total_iva_cuenta += ($account->iva * $account->cantidad);
+			$total_servicio_cuenta += ($account->servicio * $account->cantidad);
+			$total_cuenta+= ($account->total * $account->cantidad);
+		}
+		$salonMesa = $SalonMesas->findFirst($account->salon_mesas_id);
+		$Salon->findFirst($SalonMesas->salon_id);
+		echo "<tr>
+			<td align='center'>", $salonMesa->numero, "</td>
+			<td align='center'>", $cue[1], "</td>
+			<td align='right'>", Currency::number($valor_cuenta), "</td>
+			<td align='right'>", Currency::number($total_iva_cuenta), "</td>
+			<td align='right'>", Currency::number($total_servicio_cuenta), "</td>
+			<td align='right'>", Currency::number($total_cuenta), "</td>
+		</tr>
+		<tr id='trx{$cue[1]}' style='display:none'>
+		<td colspan='7' class='item_list' align='center' bgcolor='#c0c0c0'>
+		<div class='comanda_content' align='left'>Items de la comanda:\n\n";
+		$total_cuentas+=$total_cuenta;
+		$total_servicio+=$total_servicio_cuenta;
+		$total = 0;
+		$tiva = 0;
+		$tser = 0;
+		$totr = 0;
+		$cuenta = "";
+		echo "<table width='95%'>";
+		$conditions = "cuenta='{$cue[1]}' and account_master_id='{$cue[0]}' and estado in ('A', 'S', 'B')";
+		foreach($Account->find($conditions) as $AccountItem){
+			$MenusItems->find($AccountItem->menus_items_id);
+			$t = $AccountItem->valor * $AccountItem->cantidad;
+			$valor = $AccountItem->valor;
+			if($AccountItem->descuento){
+				$valor -= ($valor * $AccountItem->descuento/100);
+				$t -= ($t*$AccountItem->descuento/100);
+			}
+			$total += $t;
+			echo "<tr>";
+			echo "<td style='font-family: Courier New; font-size: 12px'>";
+		  	echo $AccountItem->cantidad;
+		  	echo "</td>";
+		  	echo "<td width='200' style='font-family: Courier New; font-size: 12px'>";
+		  	echo $MenusItems->nombre;
+			/*sprintf("% -".(36-strlen($AccountItem->valor))."s",
+			substr($MenusItems->nombre, 0, 30)).
+			sprintf("% 8.2f", $t)."\n";*/
+			/*foreach($AccountModifiers->find(
+			"salon_mesas_id=".$AccountItem->salon_mesas_id."
+			 and menus_items_id=".$MenusItems->id) as $acc_mod){
+				$Modifiers->find($acc_mod->modifiers_id);
+				#echo "    + ".$Modifiers->nombre." ({$Modifiers->valor})\n";
+				echo "   + ".sprintf("% -".(36-strlen($Modifiers->valor))."s", substr($Modifiers->nombre, 0, 28)).
+				sprintf("% 8.2f", $Modifiers->valor)."\n";;
+				$total+=$Modifiers->valor;
+			}*/
+			echo "</td>";
+		  	echo "<td align='right' style='font-family: Courier New; font-size: 12px'>";
+		  	echo Currency::number($valor);
+		  	echo "</td>";
+		  	echo "<td align='right' style='font-family: Courier New; font-size: 12px'>";
+		  	echo Currency::number($t);
+		  	echo "</td>";
+			$tiva += $AccountItem->iva;
+			$tser += $AccountItem->servicio;
+		}
+		echo "</table>";
+		echo "---------------------------------------------------------";
+		echo "</div></td></tr>";
+	}
+	echo "<tr>
+	<td colspan='5' align='right' class='totales'><b>TOTAL A PAGAR</b></td>
+	<td align='right' class='totales TotalTotal'>
+		<input type='hidden' value='$total_cuentas' id='total_valor'/>
+		<input type='hidden' value='$total_servicio' id='total_servicio'/>
+		" . Currency::number($total_cuentas) . "
+	</td>
+	</tr>";
+?>
+</table>
+<?php if($accountCuenta->tipo_venta=='F'){ ?>
+<div align='right'>
+	<div id="add_forma_div">
+		<table cellspacing="0">
+			<tr>
+				<td width="15%">
+					<img width='15' height='15' src='<?php echo Core::getInstancePath() ?>img/pos2/plus.gif' border='0'/>
+				</td>
+				<td>
+					Agregar Forma de Pago
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<?php }
+
+$readOnly = "";
+if($accountCuenta->propina_fija=='N'){
+	if($Salon->propina_automatica=='S'){
+		if(!isset($resumen['A'])){
+			$resumen['A'] = 0;
+		}
+		if(!isset($resumen['B'])){
+			$resumen['B'] = 0;
+		}
+		$subtotalp = $resumen['A']+$resumen['B'];
+		$propina = $subtotalp*($Salon->porcentaje_servicio/100);
+	} else {
+		$propina = 0;
+	}
+} else {
+	$propina = $accountCuenta->propina;
+	$readOnly = 'readonly="readonly"';
+}
+$propina = LocaleMath::round($propina, 0);
+
+?>
+<br/>
+<div align="center">
+<table align='center' cellspacing="0" cellpadding='0' id='tab_formas'>
+	<thead>
+		<tr>
+			<th width="40%">Forma de Pago</th>
+			<th>Valor</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+	<?php
+	if($accountCuenta->tipo_venta=='F'){
+		$fpago = 8;
+	} else{
+		$fpago = 0;
+	}
+	for($i=0;$i<=$fpago;++$i){
+		if($i==0){
+			echo "<tr id='tr", $i, "' bgcolor='#FFFFFF'>";
+		} else {
+			echo "<tr id='tr", $i, "' style='display:none' bgcolor='#FFFFFF'>";
+		}
+	?>
+	<td align='center'>
+		<?php if($accountCuenta->tipo_venta == 'F'){ ?>
+			<select name='forma<?php echo  $i ?>' id='forma<?php echo  $i ?>' class='forma_p'>
+			<option value='@'>Seleccione...</option>
+			<?php
+				foreach($FormasPago->find() as $forma){
+					if($forma->detalle!='CARGO A LA HABITACION'){
+						echo Tag::option($forma->id, $forma->detalle);
+					}
+				}
+		} else {
+			echo "<span style='font-size:12px'>CARGO A LA HABITACION</span><input name='forma0' id='forma0' type='hidden' value='0'>";
+		} ?>
+		</select>
+	</td>
+	<td align='center'>
+		<input type='text' class='azul'
+		class='pago'
+		onkeydown="valNumeric(event);"
+		id='<?php echo  'pago' . $i; ?>'
+		name='<?php echo  'pago' . $i; ?>'
+		value='<?php echo  $i == 0 ? $total_cuentas + $propina : "" ?>'
+		onchange="totalPagos(this)"/>
+	</td>
+	<td align='center'>
+	<?php
+	if ($i > 0) {
+		echo Tag::image('pos2/minus.gif',
+			"onclick: if('.$i.'!=0) {
+				$('forma".$i."').selectedIndex=0;
+				$('tr".$i."').hide();
+				$('habsel".$i."').hide();
+				$('cuentas".$i."').hide();
+			}",
+			'title: Eliminar Forma de Pago',
+	        'style: cursor:pointer');
+	}
+	?></td>
+
+	</tr>
+
+	<?php if($accountCuenta->tipo_venta=='H'): ?>
+	<tr>
+		<td colspan="3">
+		<?php
+			if($i==0){
+				echo "<div class='habsel' id='habsel", $i, "'>";
+			} else {
+				echo "<div class='habsel' id='habsel", $i, "' style='display:none'>";
+			}
+		?>
+		<table>
+			<tr>
+				<td>
+					<span><b>Habitación/Folio</b></span><br/>
+					<?php
+						$habitacion = $Habitacion->findFirst($accountCuenta->habitacion_id);
+						if ($habitacion) {
+							if($habitacion->numhab){
+								echo "<span style='font-size:12px'>" . $habitacion->numhab." : " . $Habitacion->nombre."</span>";
+							} else {
+								echo "<span style='font-size:12px'>F.DIRECTA : " . $Habitacion->nombre."</span>";
+							}
+						} else {
+							echo "<span style='font-size:12px'>NO EXISTE EL FOLIO</span>";
+						}
+					?>
+					<input type='hidden' name='hab0' id='hab0' value='<?php echo  $Habitacion->id ?>'>
+				</td>
+				<td valign="top">
+					<span><b>Cuenta</b></span><br/>
+					<div id='cuentas<?php echo $i ?>'>
+					<select name="cuenta<?php echo $i ?>" id="cuenta<?php echo  $i ?>" class="f_cuenta">
+					<?php
+						if($i!=0){
+							echo "<option value='@'>Seleccione...</option>";
+						}
+						if($accountCuenta->habitacion_id!=-1&&$i==0){
+							$habitacion = $Habitacion->findFirst("cedula='$accountCuenta->clientes_cedula'");
+							if($habitacion){
+								foreach($Cuentas->find("numfol={$Habitacion->id}") as $cuenta){
+									echo "<option value='", $cuenta->numcue, "'>", $cuenta->nombre, "\n";
+								}
+							}
+						}
+					?>
+					</select>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</tr>
+	<?php endif;
+	if($accountCuenta->tipo_venta<>'H'){
+		echo "<tr id='trnum", $i, "' style='display:none'>"; ?>
+		<td colspan="3">
+			<table width="100%">
+				<tr>
+					<td>
+						<span><b>Número</b></span><br/>
+						<?php echo Tag::textField("numero$i", "style: width:250px") ?>
+					</td>
+					<td>
+						<span><b>Fecha</b></span><br/>
+						<?php echo Tag::textField("fecha$i", "size: 11") ?>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<?php }
+	} ?>
+</table>
+
+<input type='hidden' name='total_cuenta' id='total_cuenta' value="<?php echo $total_cuenta ?>"/>
+<table id="totales">
+	<tr class='tr_tot'>
+		<td align='right'><label for="total_pagos">TOTAL PAGOS</label></td>
+		<td>
+			<input type='text' class='TotalTotal' name='total_pagos' id='total_pagos' readonly="readonly"
+				value="<?php echo $total_cuenta+$propina ?>"/>
+		</td>
+		<td align='center' rowspan="3">
+			<?php echo Tag::button("value: Pagar", "class: okButton", "onclick: pay()") ?>
+		</td>
+	</tr>
+	<tr class='tr_tot'>
+		<td align='right'><label for="total_saldo">TOTAL SALDO</label></td>
+		<td>
+			<input type='text' class='Saldo' name='total_saldo' id='total_saldo' readonly="readonly" value="0"/>
+		</td>
+	</tr>
+	<tr class='tr_tot'>
+		<td align='right'><label for="total_propina">PROPINA</label></td>
+		<td>
+			<input type='text' class='Propina' name='total_propina' id='total_propina' value="<?php echo $propina ?>" <?php echo $readOnly ?> onchange="totalPagos(this)"/>
+		</td>
+	</tr>
+	</tbody>
+</table>
+</div>
+</div>
+<br/>
+<?php echo  Tag::endForm(); ?>

@@ -1,0 +1,84 @@
+@font-face {
+	font-family: 'Anivers';
+	font-style: italic;
+	font-weight: bold;
+	src: local('Anivers'), url('/h/files/backoffice/Anivers.otf') format('opentype');
+}
+
+body, td {
+	font-family: Candara;
+	font-size: 12px;
+}
+
+@media screen {
+	div.page {
+		width: 700px;
+		background: #fcfcfc;
+		padding: 5px;
+	}
+}
+
+div.logo {
+	padding: 10px;
+}
+
+div.datos {
+	color: #717171;
+}
+
+div.datos-c {
+	color: #333333;
+}
+
+div.datos-r {
+	color: #333333;
+}
+
+div.title {
+	font-family: Anivers;
+	font-weight: bold;
+	font-size: 21px;
+	padding: 3px;
+}
+
+table.spacer {
+	margin: 10px;
+	height: 10px;
+}
+
+table.spacer-small {
+	margin: 10px;
+	height: 3px;
+}
+
+div.concepto {
+	margin-top: 5px;
+	width: 95%;
+	background: #E1F4E0;
+}
+
+table.firmas td {
+	color: #515151;
+	font-size: 9px;
+}
+
+td.total {
+	font-size: 0.9em;
+	color:#002A12;
+}
+
+td.saldoTable table{
+	border: 1px solid #000;
+	font-size: 12px;
+}
+
+td.saldoTable table th{
+	border-bottom: 1px solid #000;
+	font-size: 12px;
+	background: #E1F4E0;
+}
+
+td.saldoTable table td{
+	border-bottom: 1px solid #000;
+	font-size: 12px;	
+}

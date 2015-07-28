@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo View::getContent() ?>
+
+<h1>Saldos de Inventarios</h1>
+
+<?php echo Tag::form(array('saldos/proceso', 'method' => 'get', 'target' => '_blank', 'autocomplete' => 'off')) ?>
+<table align="center">
+	<tr>
+		<td align="right"><label for="almacen">Almacén</label></td>
+		<td><?php echo Tag::select('almacen', $Almacenes->find("estado='A'"), 'using: codigo,nom_almacen') ?></td>
+	</tr>
+	<tr>
+		<td align="right"><label for="periodo">Periodo</label></td>
+		<td><?php echo Tag::selectStatic('periodo', $periodos) ?></td>
+	</tr>
+	<tr>
+		<td align="right"></td>
+		<td><?php echo Tag::submitButton('Consultar', 'class: controlButton') ?></td>
+	</tr>
+</table>
+<?php echo Tag::endForm();

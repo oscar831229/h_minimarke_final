@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div class="permisosPerfiles hfosContent">
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="right">
+					<table align="right">
+						<tr>
+							<td>
+								<input type="submit" id="submitButton" class="importButton" value="Cambiar Clave">
+							</td>
+							<td align="left">
+								<div class="headerSpinner" style="display:none"></div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="messages">
+		<div class="notice">Utilice esta opción para cambiar su contraseña</div>
+	</div>
+	<br><br>
+	<div class="PerfilesContent">
+		<table align="center" width="100%" colspan="0" cellspan="0">
+				<tr>
+					<td align="right">
+						<label for="password_actual">Contraseña actual</b>
+					</td>
+					<td>
+						<?php echo Tag::passwordField('password_actual') ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<label for="password_nuevo">Contraseña nueva</b>
+					</td>
+					<td>
+						<?php echo Tag::passwordField('password_nuevo') ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<label for="password_nuevo_confirm">Confirmar contraseña</b>
+					</td>
+					<td>
+						<?php echo Tag::passwordField('password_nuevo_confirm') ?>
+					</td>
+				</tr>
+
+		</table>
+	</div>
+</div>

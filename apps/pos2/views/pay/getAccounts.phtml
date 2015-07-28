@@ -1,0 +1,8 @@
+<select name='cuenta<?php echo $_GET['n'] ?>' id='cuenta<?php echo $_GET['n'] ?>' style='width:250px;font-size:12px'>
+	<option value='@'>Seleccione...</option>
+	<?php
+		foreach($cuentas as $cuenta){
+			echo "<option value='$cuenta->numcue'>$cuenta->nombre\n";
+		}
+	?>
+</select>

@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$guestInfo = SessionNamespace::get('guestInfo');
+$fecha = new Date();
+
+View::getContent();
+
+$currencyFactor = Session::get('currencyFactor');
+if(Session::get('currencyId')!=18){
+	Flash::notice($traslate['convUse'].' 1 COP = '.$currencyFactor.' '.Session::get('convSymbol').'. '.$traslate['convAldia']);
+}
+
+?>
+<table width="100%">
+	<tr>
+		<td>
+			<h1 class="no-screen"><?php echo $guestInfo->getHotel(); ?></h1>
+			<h2 class="no-screen"><?php echo $guestInfo->getCliente(), ' / ', $guestInfo->getHabitacion() ?></h1>
+			<h2><?php echo $traslate['datosHabitacion']; ?></h2>
+			<h3 class="no-screen"><?php echo $fecha->getLocaleDate().', '.date('H:i'); ?></h3>
+		</td>
+	</tr>
+</table>
+<br/><br/>
+
+<table align="center" cellspacing="7" class="table-white">
+	<tr>
+		<td align="right"><b><?php echo $traslate['numeroHabitacion'] ?></b></td>
+		<td><?php echo $folio->getNumhab(), ' / ', $clahab->getDescripcion() ?></td>
+	</tr>
+	<tr>
+		<td align="right"><b><?php echo $traslate['titularHuesped'] ?></b></td>
+		<td><?php echo $cliente->getNombre() ?></td>
+	</tr>
+	<tr>
+		<td align="right"><b><?php echo $traslate['fechaLlegada'] ?></b></td>
+		<td><?php
+			$fechaLlegada = new Date($folio->getFeclle());
+			echo $fechaLlegada->getLocaleDate('full');
+			if($fechaLlegada->isYesterday()){
+				echo ' (', $traslate['ayer'], ')';
+			}
+		?></td>
+	</tr>
+	<tr>
+		<td align="right"><b><?php echo $traslate['fechaSalida'] ?></b></td>
+		<td><?php
+			$fechaSalida = new Date($folio->getFecsal());
+			echo $fechaSalida->getLocaleDate('full');
+			if($fechaSalida->isTomorrow()){
+				echo ' (', $traslate['manana'], ')';
+			} else {
+				if($fechaSalida->isToday()){
+					echo ' (', $traslate['hoy'], ')';
+				}
+			}
+		?></td>
+	</tr>
+	<tr>
+		<td align="right"><b><?php echo $traslate['tarifas'] ?></b></td>
+		<td><?php echo $tarifas ?></td>
+	</tr>
+</table>
+<br/>
+
+<div id="accounts-resume" align="center">
+	<table cellspacing="0" class="table-white">
+		<tr>
+			<th><?php echo $traslate['cuenta'] ?></th>
+			<th><?php echo $traslate['impuestos'] ?></th>
+			<th><?php echo $traslate['cons/desc'] ?></th>
+			<th><?php echo $traslate['abon/dev'] ?></th>
+			<th><?php echo $traslate['saldo'] ?></th>
+		</tr>
+		<?php
+			foreach($cuentas as $n => $cuenta){
+				echo '<tr>
+					<td align="center">', $n, '</td>
+					<td align="right">', Currency::money($cuenta['iva']/$currencyFactor), '</td>
+					<td align="right">', Currency::money($cuenta['total']/$currencyFactor), '</td>
+					<td align="right">', Currency::money($cuenta['abonos']/$currencyFactor), '</td>
+					<td align="right"><b>', Currency::money(($cuenta['total']-$cuenta['abonos'])/$currencyFactor), '</b></td>
+					<td align="center" class="no-print border-b border-top">', Tag::linkTo('accounts/details/'.$n , $traslate['details']), '</td>
+				</tr>';
+			}
+		?>
+		<tr>
+			<td id="total-td" colspan="4" align="right"><?php echo $traslate['Total'] ?></td>
+			<td id="total-sum" align="right"><b><?php echo Currency::money($total/$currencyFactor) ?></b></td>
+		</tr>
+	</table>
+</div>
+
+<div align="right">
+	<div id="print-button" class="no-print">
+		<table align="center">
+			<tr>
+				<td width="30"><?php echo Tag::image('perse/print.png', 'width: 25') ?></td>
+				<td align="left"><a href="#" onclick="window.print(); return false"><?php echo $traslate['Imprimir'] ?></a></td>
+			</tr>
+		</table>
+	</div>
+</div>

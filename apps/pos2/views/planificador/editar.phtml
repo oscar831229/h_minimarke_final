@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo Tag::javascriptInclude('pos2/planificador');
+Tag::stylesheetLink('pos2/planificador');
+
+View::getContent();
+
+echo Tag::form('planificador/editar', 'autocomplete: off') ?>
+
+<table width="100%">
+	<tr>
+		<td><h1>Planificador de Producción</h1></td>
+		<td align="right" id="toolbar">
+			<?php echo Tag::linkTo('planificador/index', 'Cancelar') ?>&nbsp;&nbsp;<?php echo Tag::submitButton('Guardar', 'class: controlButton') ?>
+		</td>
+	</tr>
+</table>
+
+<table align="center" width="90%" cellpadding="5" cellspacing="0">
+	<tr bgcolor="#ffffff">
+		<td width="20%" align="right"><b>Fecha</b></td>
+		<td>
+			<?php echo $fecha ?>
+			<?php echo Tag::hiddenField(array('fecha', 'value' => $fecha)) ?>
+		</td>
+	</tr>
+	<tr bgcolor="#ffffff">
+		<td width="20%" align="right"><b>Ambiente</b></td>
+		<td>
+			<?php echo $salon->nombre ?>
+			<?php echo Tag::hiddenField(array('salonId', 'value' => $salon->id)) ?>
+		</td>
+	</tr>
+	<tr bgcolor="#ffffff">
+		<td width="20%" align="right"><b>Tipo Servicio</b></td>
+		<td>
+			<?php echo $tipoServicio->getNombre() ?>
+			<?php echo Tag::hiddenField(array('tipoServicioId', 'value' => $tipoServicio->getId())) ?>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="padding:10px" align="center">
+			<table class="lista_res sortable" cellspacing="0" id="modifiersTable">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Item de Menú</th>
+						<th>Cantidad</th>
+						<th>Costo</th>
+						<th>Valor Venta</th>
+						<th>% Costo</th>
+						<th>Utilidad</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+
+						$query = new ActiveRecordJoin(array(
+							'fields' => array('{#MenusItems}.id', '{#MenusItems}.nombre'),
+							'entities' => array('SalonMenusItems', 'MenusItems'),
+							'conditions' => "{#SalonMenusItems}.salon_id='{$salon->id}'",
+							'order' => '{#MenusItems}.nombre'
+						));
+						for($i=0;$i<32;$i++){
+							if($i>$numero){
+								echo '<tr style="display:none" id="row-'.$i.'"><td></td>';
+							} else {
+								echo '<tr id="row-'.$i.'"><td></td>';
+							}
+							echo '<td>', Tag::select('menuItemId'.$i, $query->getResultSet(), 'using: id,nombre', 'useDummy: yes', 'class: menuItem'), '</td>';
+							echo '<td>', Tag::numericField(array('cantidad'.$i, 'size' => 7, 'class' => 'cantidad')), '</td>';
+							echo '<td>', Tag::numericField(array('costo'.$i, 'size' => 10, 'class' => 'costo')), '</td>';
+							echo '<td>', Tag::numericField(array('valor'.$i, 'size' => 10, 'class' => 'valor')), '</td>';
+							echo '<td>', Tag::numericField(array('pcosto'.$i, 'size' => 7, 'class' => 'pcosto')), '</td>';
+							echo '<td>', Tag::numericField(array('utilidad'.$i, 'size' => 7, 'class' => 'utilidad')), '</td>';
+							echo '<td>', Tag::image(array('pos2/delete.gif', 'class' => 'delete')), '</td>';
+							echo '</tr>';
+						}
+						echo '<tr><td colspan="3"></td>';
+						echo '<td align="right" id="costo">0.00</td>';
+						echo '<td align="right" id="valor">0.00</td>';
+						echo '<td align="right" id="pcosto">0.00</td>';
+						echo '<td align="right" id="utilidad">0.00</td>';
+						echo '</tr>';
+					?>
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<?php echo Tag::endForm() ?>

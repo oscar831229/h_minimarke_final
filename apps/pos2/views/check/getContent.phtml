@@ -1,0 +1,24 @@
+<?php
+
+if(count($accounts)>0){
+	echo '<table cellspacing="0" cellpadding="5" align="center" width="98%" class="items_lista">';
+	echo '<tr>';
+	echo '<th>Item</th>';
+	echo '<th>Cantidad</th>';
+	echo '<th>Tiempo</th>';
+	echo '<th>Ambiente</th>';
+	echo '<th>Mesero</th>';
+	echo '<th>&nbsp;</th>';
+	echo '</tr>';
+	foreach($accounts as $account){
+		echo '<tr class="order_row">';
+		echo '<td>', i18n::strtoupper($account->nombre_pedido), '</td>';
+		echo '<td align="right">', $account->cantidad, '</td>';
+		echo '<td align="right">', $account->tiempo, '</td>';
+		echo '<td>', $account->ambiente, '</td>';
+		echo '<td>', $account->mesero, '</td>';
+		echo '<td><input type="button" class="ready" lang="', $account->id, '" value="LISTO"/></td>';
+		echo '</tr>';
+	}
+	echo '<table>';
+}

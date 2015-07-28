@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+echo '
+<div class="actividades">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
+		<thead>
+			<tr>
+				<th class="sortcol">Hobbies</th>
+				<th class="sortcol">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>';
+	if(isset($hobbiesArray) && count($hobbiesArray)){
+		foreach ($hobbiesArray as $hobbie){
+			echo '
+			<tr>
+				<td>
+					'.$hobbie->getNombre().'
+				</td>
+				<td>
+					';
+			$value = $hobbie->getId();
+			if(isset($actividadesArray[$hobbie->getId()])){
+				echo Tag::checkboxField(array('actividades[]','checked' => 'checked','value'=>$value));
+			} else {
+				echo Tag::checkboxField(array('actividades[]','value'=>$value));
+			}
+			echo '
+				</td>
+			</tr>
+			';
+		}
+	}
+	echo '
+		</tbody>
+	</table>';
+
+echo '
+</div>';

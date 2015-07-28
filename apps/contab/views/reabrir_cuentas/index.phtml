@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<?php echo HfosTag::iconTitle('switch.png', 'Reabrir Cuentas Retención ó IVA') ?>
+
+<?php echo Tag::form('reabrir_cuentas/reabrir', 'class: reabrirCuentasForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="tipo">Tipo</label></td>
+					<td><?php echo Tag::selectStatic('tipo', array(
+						'R' => 'RETENCIÓN',
+						'I' => 'IVA',
+					)) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaCierre">Fecha Cierre</label></td>
+					<td><?php echo Tag::dateField(array('fechaCierre', 'startYear' => '1995')) ?></td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Cierre Contable</b></td>
+						<td><?php echo $cierreContable->getLocaleDate('medium') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Último Cierre Retención</b></td>
+						<td><?php echo $cierreRetencion->getLocaleDate('medium') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Último Cierre IVA</b></td>
+						<td><?php echo $cierreIVA->getLocaleDate('medium') ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

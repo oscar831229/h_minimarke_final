@@ -1,0 +1,14 @@
+.head_td {
+	background: #EbEbEb;
+	border: 1px solid #969696;
+	font-size: 9px;
+}
+
+.head_td a {
+	font-size: 9px;
+}
+
+.t_lista td {
+	border: 1px solid #c0c0c0;
+	font-size: 9px;
+}

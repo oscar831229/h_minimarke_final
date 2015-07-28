@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<script type="text/javascript">
+function getModifiers(element){
+	new Ajax.Request(Utils.getKumbiaURL()+"modifiers_items/getModifiers/"+$F(element), {
+		onSuccess: function(transport){
+			$("modifiers").update(transport.responseText);
+			SortableTable.init($("modifiersTable"));
+			$$('.check_mod').each(function(element){
+				element.observe("click", function(){
+					var trElement = this.parentNode.parentNode;
+					if(this.checked==true){
+						trElement.addClassName("selectedRow");
+					} else {
+						trElement.removeClassName("selectedRow");
+					}
+				});
+			});
+			$$('.selectedRow').each(function(element){
+				element.addClassName("selectedRow");
+			});
+		},
+		onFailure: function(transport){
+			$("modifiers").update(transport.responseText)
+		}
+	});
+}
+</script>
+
+<?php View::getContent() ?>
+
+<h1>Modificadores de Items</h1>
+
+<?php echo Tag::form("modifiers_items/save") ?>
+<div align="center">
+	<b>Item:</b>
+
+	<select id='menusItemsId' name='menusItemsId' onchange='getModifiers(this)'>
+	<option value='@'>Seleccione...</option>
+	<?php
+		$controllerRequest = ControllerRequest::getInstance();
+		$menusItemsId = $controllerRequest->getParamPost('menusItemsId', 'int');
+		foreach($MenusItems->find("estado='A'", "order: nombre") as $menuItem){
+			if($menuItem->id==$menusItemsId){
+				echo "<option selected='selected' value='{$menuItem->id}'>{$menuItem->nombre}</option>";
+			} else {
+				echo "<option value='{$menuItem->id}'>{$menuItem->nombre}</option>";
+			}
+		}
+	?>
+	</select>
+
+	<div id='modifiers'></div>
+</div>
+
+<?php echo Tag::endForm() ?>
+
+<script type="text/javascript">
+new Event.observe(window, "load", function(){
+	if($F('menusItemsId')!="@"){
+		getModifiers($('menusItemsId'));
+	}
+});
+</script>

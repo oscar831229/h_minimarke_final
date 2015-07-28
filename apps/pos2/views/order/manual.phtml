@@ -1,0 +1,72 @@
+<?= Tag::javascriptInclude('pos2/order'); ?>
+<? Tag::stylesheetLink('pos2/order'); ?>
+<? View::getContent() ?>
+<table cellspacing="0" cellpadding="0" align='center'  >
+<tr><td class='titulo' style='opacity:0.8;background: url("<?= Core::getInstancePath() ?>img/localnav.gif"); height: 35px'>Nuevo Modificador</td></tr>
+<tr><td>
+<?= Tag::form('order/saveModifier') ?>
+<table  cellspacing="0" cellpadding="0" align="center">
+	<tr>
+ 	<td valign="top">
+ 	<?= Tag::textarea("texto", "cols: 60", "rows: 10") ?>
+ 	</tr>
+ 	<tr background="<?= Core::getInstancePath() ?>img/bg2.jpg">
+ 	<td align='center'>
+ 	<table>
+ 	<tr>
+ 	<td align='center'>
+ 	<?php
+ 		$keys = array("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "?", "DEL", "\n",
+ 					  "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "ENTER", "\n",
+ 					  "A", "S", "D", "F", "G", "H", "J", "K", "L", "�", "\n",
+ 					  "Z", "X", "C", "V", "B", "N", "M", ",", ".", "-", "\n",
+ 					  "SPACE");
+ 		foreach ($keys as $k) {
+ 			if($k!="\n") {
+ 				if($k=='SPACE')
+ 					print Tag::button("name: k$k", "value: $k", "class: letterSpace",
+ 								 "onclick: addLetter(this)");
+ 				else
+ 					print Tag::button("name: k$k", "value: $k", "class: letterModifier",
+ 								 "onclick: addLetter(this)");
+ 			} else print "<br>";
+ 		}
+
+ 	?>
+ 	</td>
+ 	<td align='center'>
+ 	<?php
+ 		$keys = array("/", "*", "-", "+", "\n",
+ 					  "7", "8", "9", "\n",
+ 					  "4", "5", "6", "\n",
+ 					  "1", "2", "3", "\n",
+ 					  "0", "."
+ 					  );
+
+ 		foreach ($keys as $k) {
+ 			if($k!="\n") {
+ 				print Tag::button("name: k$k", "value: $k", "class: letterModifier",
+ 								 "onclick: addLetter(this)");
+ 			} else print "<br>";
+ 		}
+
+ 	?>
+ 	</td>
+ 	<td>
+	<?= Tag::submitButton('OK', 'class: okButton') ?><br>
+	<?= Tag::buttonToAction('Salir', 'order/modifiers', 'cancelButton') ?>
+	<?= Tag::endForm() ?>
+ 	</td>
+ 	</tr>
+ 	</table>
+	</td>
+	</td>
+	</tr>
+</table>
+</td>
+<td style='background: url("<?= Core::getInstancePath() ?>img/right.png") transparent;width:25px'></td>
+</tr>
+<tr>
+ 	<td style='background: url("<?= Core::getInstancePath() ?>img/down.png");height:5px'></td>
+</tr>
+</table>

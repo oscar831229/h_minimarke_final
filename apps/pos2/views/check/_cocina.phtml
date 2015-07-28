@@ -1,0 +1,99 @@
+<div id='messages'></div>
+
+<table cellspacing="0" cellpadding="5" align="center" width="98%" class="items_lista">
+	<thead>
+		<th>Número Mesa</th>
+		<th>Ambiente</th>
+		<th>Estado</th>
+		<th>Mesero</th>
+		<th></th>
+	</thead>
+	<tbody>
+<?php
+
+foreach($salonMesas as $salonMesa){
+	Tag::trColor(array(array('#E3EDF9', '#FFFFFF')));
+	echo "<td align='center'>";
+	echo $salonMesa->numero;
+	echo "</td>";
+	$accountMaster = $AccountMaster->findFirst("salon_mesas_id=".$salonMesa->id." and estado = 'N'");
+	if($accountMaster){
+		$salon = $salonMesa->getSalon();
+		echo "<td>", $salon->nombre, "</td>";
+		echo "<td>PENDIENTE</td>";
+		echo "<td>", $accountMaster->nombre, "</td>";
+		echo "<td>", Tag::image('pos2/abajo.gif', "onclick: new Effect.toggle('ls".$salon->id."', 'blind', {duration:0.5})", 'style: cursor:pointer;'), "</td></tr>";
+		echo "<tr id='ls{$salon->id}' bgcolor='#F1F1F1'><td colspan='4' style='border: 1px solid #969696; padding: 0px' align='center'>
+		<div  style='display:none; padding: 5px'>
+		<table cellspacing='0' cellpadding='0' width='98%' class='items_lista'>
+			<thead>
+				<tr>
+					<th>Nombre Item</th>
+					<th>Estado</th>
+				</tr>
+			</thead>
+			<tbody>";
+
+		$i = 0;
+		$numberAccount = $Account->count("account_master_id={$accountMaster->id}");
+		if($numberAccount){
+			$accounts = $Account->find(array("account_master_id={$accountMaster->id}", "order" => "estado desc"));
+			foreach($accounts as $account){
+				$menuItem = $MenusItems->findFirst("id={$account->menus_items_id} and tipo='B'");
+				if($menuItem){
+					echo "<tr>";
+					if($account->estado=='C'){
+						echo "<td width='250' class='inactive_item'>";
+						echo "<span style='font-size:12px'>", $menuItem->nombre, " (", $account->cantidad, ") </span>";
+					} else {
+						echo "<td width='250' class='active_item'>";
+						echo $menuItem->nombre, " (", $account->cantidad, ") ";
+					}
+					/*echo "<br>";
+					foreach($AccountModifiers->find("salon_mesas_id={$AccountMaster->salon_mesas_id} and menus_items_id={$account->menus_items_id}") as $ac_modifier){
+						$Modifiers->findFirst($ac_modifier->modifiers_id);
+						echo $ac_modifier->valor;
+					}*/
+					echo "</td>";
+					if($account->estado=='C'){
+						echo "<td class='inactive_item' align='center'>";
+					} else {
+						echo "<td class='active_item' align='center'>";
+					}
+					if($account->estado=='S'){
+						echo "<span id='mess{$account->id}'><b>SIN ATENDER</b>";
+					} else {
+						if($account->estado=='A'){
+							$tiempo = ActiveRecordBase::singleSelect("time_format(timediff('{$account->tiempo_final}','{$account->tiempo}'), '%k:%i')");
+							echo "<span style='color:green' id='mess{$account->id}'>ATENDIDO ($tiempo)";
+						} else {
+							echo "<span style='color:red; font-size:12px' id='mess", $account->id, "'>CANCELADO";
+						}
+					}
+					echo "</span></td>";
+					if($account->estado=='S'){
+						echo "<td style='padding:2px' class='active_item' align='center'>".
+						Tag::buttonToRemoteAction('OK',
+						'check/status/'.$account->id,
+						'before: new Effect.Appear("spinner", {duration: 0.5})',
+						'success: new Effect.Fade("spinner"); $("mess'.$account->id.'").innerHTML = "ATENDIDA"',
+						'class: smallButton')."</td>";
+					}
+					echo "</tr>";
+					$i++;
+				}
+			}
+		}
+
+		/*if(!$i){
+			echo "<td class='no_hay' align='center' colspan='2'>No hay Elementos en esta Lista</td>";
+		} else {
+			echo "</table></div></td></tr>";
+		}*/
+		echo '</tr></table></td>';
+	}
+}
+
+?>
+</tbody>
+</table>

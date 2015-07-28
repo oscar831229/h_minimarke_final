@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+Tag::stylesheetLink('pos2/receta');
+echo Tag::javascriptInclude('pos2/receta');
+echo View::getContent();
+
+?>
+<h1>Buscar Receta Estándar</h1>
+<div align="right">
+	<?php echo Tag::buttonToAction('Crear Receta', 'receta/nuevo', 'controlButton') ?>
+</div>
+
+<table align="center" width="100%" class="container_tabs" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="tab_td" align="center">
+			<div id="tabdiv_1" class="tab_div tab_active">Por Nombre</div>
+		</td>
+		<td class="tab_td" align="center">&nbsp;</td>
+		<td class="tab_td" align="center">
+			<div id="tabdiv_2" class="tab_div tab_inactive">Por Componentes</div>
+		</td>
+		<td class="tab_blank" width="80%"></td>
+	</tr>
+	<tr>
+		<td colspan="4" class="tab_con">
+
+			<div id="search_con">
+				<?php echo Tag::form('receta/buscar','autocomplete: off') ?>
+					<table align="center">
+						<tbody id="normalSearch">
+							<tr>
+								<td align="right"><label for="num_receta">Número</label></td>
+								<td><?php echo Tag::numericField('num_receta', 'size: 7') ?></td>
+							</tr>
+							<tr>
+								<td align="right"><label for="nombre">Nombre</label></td>
+								<td><?php echo Tag::textUpperField('nombre','size: 50') ?></td>
+							</tr>
+						</tbody>
+						<tbody id="itemSearch" style="display: none;">
+							<tr>
+								<td align="right"><label for="item">Referencia</label></td>
+								<td><?php echo Tag::select('item', $Inve->find('estado="A"','order: descripcion'),'using: item,descripcion','use_dummy: true') ?></td>
+							</tr>
+							<tr>
+								<td align="right"><label for="subreceta">Sub-Receta</label></td>
+								<td><?php echo Tag::select('subreceta', $Recetap->find("almacen=1", 'order: nombre'),'using: numero_rec,nombre','use_dummy: true') ?></td>
+							</tr>
+						</tbody>
+						<tr>
+							<td>&nbsp;</td>
+							<td><?php echo Tag::submitButton('Buscar', 'class: controlButton') ?></td>
+						</tr>
+					</table>
+				<?php echo Tag::endForm() ?>
+			</div>
+
+		</td>
+	</tr>
+</table>
+
+<script type="text/javascript">
+new Event.observe(document, 'dom:loaded', Receta.initializeIndex);
+</script>

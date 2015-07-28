@@ -1,0 +1,71 @@
+%class CommandParser
+%start command
+
+command = statement { HfosCommandRunner::setOpCode($$); }
+.
+
+statement = grant_statement EOL { $$ = $1; }
+| aura_statement EOL { $$ = $1; }
+| tatico_statement EOL { $$ = $1; }
+| auth_statement EOL { $$ = $1; }
+| gc_statement EOL { $$ = $1; }
+| restart_service_statement EOL { $$ = $1; }
+| backup_statement EOL { $$ = $1; }
+| show_statement EOL { $$ = $1; }
+| PS EOL { $$ = array('PS'); }
+| WHOAMI EOL { $$ = array('WHOAMI'); }
+| DISK USAGE EOL { $$ = array('DISK_USAGE'); }
+| UPTIME EOL { $$ = array('UPTIME'); }
+| DATE EOL { $$ = array('DATE'); }
+| HELP EOL { $$ = array('HELP'); }
+.
+
+aura_statement = AURA var/v { $$ = array('AURA', $v); }
+.
+
+tatico_statement = TATICO var/v { $$ = array('TATICO', $v); }
+.
+
+auth_statement = AUTH var/v { $$ = array('AUTH', $v); }
+.
+
+grant_statement = GRANT privilege_list/pl ON COMPROBS comprob_list/cl TO username/u { $$ = array('GRANT', $pl, $cl, $u); }
+.
+
+gc_statement = GC var/v { $$ = array('GC', $v); }
+.
+
+restart_service_statement = RESTART SERVICE var/v { $$ = array('RESTART_SERVICE', $v); }
+.
+
+backup_statement = BACKUP var/v { $$ = array('BACKUP', $v); }
+| BACKUP { $$ = array('BACKUP'); }
+.
+
+show_statement = SHOW var/v1 var/v2 { $$ = array('SHOW', $v1, $v2); }
+.
+
+privilege_list = privilege_list/pl ',' privilege/p { $$ = array('PRIV_LIST', $pl, $p); }
+| privilege { $$ = $1; }
+.
+
+privilege = var { $$ = $1; }
+.
+
+comprob_list = comprob_list/cl ',' comprob/c { $$ = array('COMPROB_LIST', $cl, $c); }
+| comprob { $$ = $1; }
+.
+
+comprob = var { $$ = $1; }
+| literal { $$ = $1; }
+.
+
+username = var { $$ = $1; }
+| literal { $$ = $1; }
+.
+
+var = VARIABLE { $$ = array('VAR', $1); }
+.
+
+literal = STRING { $$ = array('LITERAL', 'STR', $1); }
+.

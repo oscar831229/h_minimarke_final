@@ -1,0 +1,22 @@
+<?php Tag::stylesheetLink('pos2/firefox') ?>
+
+<?php $url = 'http://'.$_SERVER['HTTP_HOST'].Core::getInstancePath().Router::getApplication(); ?>
+
+<div id="bg-fire">
+
+	<h1>Página no encontrada</h1>
+	<p>
+		Está intentando ingresar a un modulo del sistema que no existe. Por favor verifique
+		su pagina de inicio, marcadores o favoritos apunten a la página: <a href="<?php echo $url ?>"><?php echo $url ?></a>
+	</p>
+
+	<p>
+		Información útil:
+		<ul>
+			<li><a href="http://support.mozilla.org/es/kb/C%C3%B3mo%20establecer%20la%20p%C3%A1gina%20de%20inicio?s=cambiar+pagina+inicio&r=0&e=es&as=s">Como cambiar la página inicio</a></li>
+			<li><a href="http://support.mozilla.org/es/kb/Barra%20de%20marcadores?s=modificar+marcador&r=2&e=es&as=s">Actualizar marcadores</a></li>
+			<li><a href="http://support.mozilla.org/es/kb/como-uso-los-marcadores?s=modificar+marcador&r=9&e=es&as=s">Como usar marcadores</a></li>
+		</ul>
+	</p>
+
+</div>

@@ -1,0 +1,362 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div.movimiento h2 {
+	margin-bottom: 7px;
+}
+
+div.movimiento td.numero,
+div.ordenes td.numero {
+	color: #969696;
+	font-size: 18px;
+	font-family: Anivers;
+	text-align: right;
+	cursor: pointer;
+}
+
+div.movimiento tr.naturalezaD {
+	background: #eaeaea;
+}
+
+div.movimiento tr.lineaError {
+	background: #B53E27;
+}
+
+div.movimiento tr.lineaChanged {
+	background: #9ED1EB;
+}
+
+div.movimiento tr.selectedRow,
+div.ordenes tr.selectedRow {
+	background: #99C7D5;
+}
+
+div.movimiento tr.selectedRow td.numero,
+div.ordenes tr.selectedRow td.numero {
+	color: #ffffff;
+}
+
+div.movimiento tr.lineaError td.numero {
+	color: #ffffff;
+}
+
+div.movimiento tr.lineaChanged td.numero {
+	color: #111111;
+}
+
+div.movimiento input.valor {
+	text-align: right;
+}
+
+div.movimiento input.cuenta {
+	min-width: 140px;
+}
+
+div.movimiento-detail,
+div.ordenes-detail {
+	position: absolute;
+	background: -moz-linear-gradient(top center, rgba(226, 233, 241, 0.9), rgba(226, 233, 241, 1.0));
+	background: -webkit-linear-gradient(rgba(226, 233, 241, 0.9), rgba(226, 233, 241, 1.0));
+	padding: 5px;
+	padding-left: 5px;
+	box-shadow: 0 5px 5px -3px rgba(11, 11, 11, 0.5);
+	-moz-box-shadow: 3px 3px 5px rgba(70, 70, 70, 0.5);
+	z-index: 170;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-leftright: 5px;
+}
+
+div.movimiento-detail b,
+div.ordenes-detail b {
+	margin-top: 5px;
+	font-weight: normal;
+	cursor: move;
+}
+
+div.movimiento div.movimiento-detail input.detailButton {
+	background: #6C8C96;
+	border: none;
+	color: #ffffff;
+	padding: 3px;
+	font-size: 12px;
+}
+
+div.movimiento div.gridEdit,
+div.movimiento div.gridNuevo {
+	padding-bottom: 150px;
+}
+
+div.movimiento div.formNuevo,
+div.ordenes div.formNuevo {
+	background: rgba(11, 11, 11, 0.05);
+	-moz-border-radius: 10px;
+	width: 800px;
+	padding: 7px;
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-bottom: 3px;
+	margin: 5px;
+	margin-top: 5px;
+}
+
+div.movimiento div.fecha-comprob {
+	background: rgba(11, 11, 11, 0.05);
+	-moz-border-radius: 10px;
+	font-size: 12px;
+	width: 110px;
+	text-align: center;
+	padding: 4px;
+	color: #717171;
+}
+
+table.cuentaSelector td {
+	padding: 0px;
+	margin: 0px;
+}
+
+table.cuentaSelector input.cuentaSelectorPart {
+	border: none;
+	border-top: 1px solid #D8D8D8;
+	border-bottom: 1px solid #D8D8D8;
+	text-align: center;
+	-moz-border-radius: 0px;
+	margin: 0px;
+}
+
+table.cuentaSelector input.tipo {
+	border-left: 1px solid #D8D8D8;
+}
+
+table.cuentaSelector input.subaux {
+	border-right: 1px solid #D8D8D8;
+}
+
+table.cuentaSelector input.tipo,
+table.cuentaSelector .tipoTag,
+table.cuentaSelector input.mayor,
+table.cuentaSelector .mayorTag {
+	width: 12px;
+}
+
+table.cuentaSelector input.clase,
+table.cuentaSelector input.subclase {
+	width: 20px;
+}
+
+table.cuentaSelector input.auxiliar,
+table.cuentaSelector input.subaux {
+	width: 25px;
+}
+
+td.auxiliarTag {
+	padding-top: 3px;
+}
+
+td.auxiliarTag div {
+	text-align: left;
+	font-size: 13px;
+	-webkit-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	color: #151515;
+	padding: 0px;
+	margin-left: 3px;
+}
+
+table.movimientoStatusBar td {
+	color: #99C7D5;
+	font-size: 13px;
+}
+
+table.movimientoStatusBar table.sumasTable {
+
+}
+
+table.movimientoStatusBar table.sumasTable td {
+	font-family: Anivers;
+	font-size: 14px;
+	color: #6BA3DC;
+}
+
+table.movimientoStatusBar table.sumasTable td b {
+	color: #ffffff;
+	font-weight: normal;
+	font-size: 16px;
+	margin-right: 16px;
+}
+
+table.movimientoStatusBar table.sumasTable td b.descuadre {
+	color: #CE5A00;
+}
+
+div#cuentasDiv {
+	position: absolute;
+	top: 0px;
+	margin: 0px;
+	padding: 0px;
+	z-index: 1000;
+}
+
+div#cuentasDiv ul {
+	width: 400px;
+	margin: 0px;
+	padding: 0px;
+	border-top: 1px solid #bababa;
+	border-left: 1px solid #bababa;
+	background: rgba(254, 254, 254, 0.95);
+}
+
+div#cuentasDiv li {
+	margin-left: 0px;
+	padding: 5px;
+	padding-left: 3px;
+	list-style-type: none;
+	color: #222222;
+	font-size: 11px;
+	border-right: 1px solid #bababa;
+	border-bottom: 1px solid #bababa;
+}
+
+div#cuentasDiv li span.resAuxiliar {
+	color: #808080;
+	padding: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+div#cuentasDiv li.selected {
+	background: -moz-linear-gradient(top center, #333333, #454545);
+	color: #ffffff;
+}
+
+div#cuentasDiv li.selected span.resAuxiliar {
+	color: #c0c0c0;
+}
+
+div.cuadro-cierre {
+	margin: 10px;
+	background: #E2E9F1;
+	-moz-border-radius: 5px;
+	-moz-user-select: none;
+	padding: 5px;
+}
+
+div.cuadro-cierre td {
+	font-size: 11px;
+}
+
+input[type="button"].crearNit {
+	font-size: 10px;
+	padding: 2px;
+}
+
+ul.camposDisponibles,
+ul.camposSeleccionados {
+	padding-left: 0px;
+}
+
+ul.camposDisponibles li,
+ul.camposSeleccionados li {
+	list-style: none;
+	font-size: 11px;
+	margin: 2px;
+	padding: 3px;
+}
+
+ul.camposDisponibles li.selected {
+	background: #8BADD5;
+	font-weight: bold;
+	margin: 2px;
+	padding: 3px;
+	-moz-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+
+div.carteraContent tr.selected {
+	background: #8BADD5;
+	font-weight: bold;
+}
+
+ul.camposSeleccionados li {
+	background: #8BADD5;
+	font-weight: bold;
+	-moz-border-radius: 3px;
+	-moz-border-radius: 3px;
+}
+
+table.tablaCampos b {
+	font-weight: normal;
+	font-size: 12px;
+}
+
+div.camposContainer {
+	border: 1px solid #969696;
+	background: #ffffff;
+	height: 150px;
+	overflow-y: scroll;
+	padding: 7px;
+	padding-top: 0px;
+}
+
+div.ejecucion div.parametrosPres {
+	position: absolute;
+	padding: 10px;
+	padding-right: 0px;
+	padding-left: 0px;
+	width: 100%;
+	bottom: 0px;
+	border-top: 1px solid #333333;
+	background-color: #222222;
+	background-image: -moz-linear-gradient(top center, #171717, #222222);
+}
+
+div.ejecucion div.parametrosPres label {
+	color: #fff;
+	margin-left: 10px;
+}
+
+div.ejecucion div.cuentaSelector {
+	background: #c0c0c0;
+}
+
+table.tablaDatosCartera td {
+	font-size: 12px;
+}
+
+table.camposCuentasTable select,
+table.camposCuentasTable input {
+	width: 100%;
+}
+
+div.formatosDiv {
+	padding: 15px;
+}
+
+div.formatosCheques div.infoBox {
+	width: 210px;
+}
+
+div.formatosCheques div.infoBox strong {
+	font-family: Anivers;
+	font-size: 18px;
+	font-weight: normal;
+}
+
+div.formatoItems {
+	padding: 10px;
+}
+
+div.formatoItems input[type="text"] {
+	text-align: right;
+}
+

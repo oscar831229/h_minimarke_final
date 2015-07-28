@@ -1,0 +1,108 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2011
+ * @version		$Id$
+ */
+if(isset($prestamosSociosId)==true){
+	$amortizacionObj = EntityManager::get('Amortizacion')->find(array('conditions'=>'prestamos_socios_id='.$prestamosSociosId,'order'=>'numero_cuota ASC'));
+		$html = '
+		<table  class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center" width="100%">';
+		if(count($amortizacionObj) > 0){
+			$showPagado = '';
+			if(isset($config['showPagado']) && $config['showPagado']==true){
+				$showPagado = '<th class="sortcol">Pagado</th>';
+			}
+			$showEstado = '';
+			if(isset($config['showEstado']) && $config['showEstado']==true){
+				$showEstado = '<th class="sortcol">Estado</th>';
+			}
+			$html .= '
+				<tr>
+					<th class="sortcol">Número Cuota</th>
+					<th class="sortcol">Fecha Cuota</th>
+					<th class="sortcol">Cuota Fija</th>
+					<th class="sortcol">Capital</th>
+					<th class="sortcol">Interes Corriente</th>
+					<th class="sortcol">Saldo</th>
+					'.$showPagado.'
+					'.$showEstado.'
+				</tr>';
+				$nRc					= 0;
+				$totalCuotaFija			= 0;
+				$totalCapital			= 0;
+				$totalInteresCorriente	= 0;
+				$totalSaldo				= 0;
+				foreach($amortizacionObj as $amortizacion){
+					$estado = 'Debe';
+					if($amortizacion->getEstado()=='P'){
+					   $estado = 'Pagado';
+					}
+					$showPagado = '';
+					if(isset($config['showPagado']) && $config['showPagado']==true){
+						$showPagado = '<td align="right">'.Currency::number($amortizacion->getPagado()).'</td>';
+					}
+					$showEstado = '';
+					if(isset($config['showEstado']) && $config['showEstado']==true){
+						$showEstado = '<td align="center">'.$estado.'</td>';
+					}
+					$html .= '
+						<tr>
+							<td align="center">'.$amortizacion->getNumeroCuota().'</td>
+							<td align="center">'.$amortizacion->getFechaCuota().'</td>
+							<td align="right">'.Currency::number($amortizacion->getValor()).'</td>
+							<td align="right">'.Currency::number($amortizacion->getCapital()).'</td>
+							<td align="right">'.Currency::number($amortizacion->getInteres()).'</td>
+							<td align="right">'.Currency::number($amortizacion->getSaldo()).'</td>
+							'.$showPagado.'
+							'.$showEstado.'
+						</tr>
+					';
+					$nRc++;
+					$totalCuotaFija			+= $amortizacion->getValor();
+					$totalCapital			+= $amortizacion->getCapital();
+					$totalInteresCorriente	+= $amortizacion->getInteres();
+				}
+				$showPagado = '';
+				if(isset($config['showPagado']) && $config['showPagado']==true){
+					$showPagado = '<td align="center"></td>';
+				}
+				$html .= '
+					<tr>
+						<td align="center"><b>'.$nRc.'</b></td>
+						<td align="center"></td>
+						<td align="right"><b>'.Currency::number($totalCuotaFija).'</b></td>
+						<td align="right"><b>'.Currency::number($totalCapital).'</b></td>
+						<td align="right"><b>'.Currency::number($totalInteresCorriente).'</b></td>
+						<td align="right"><b></b></td>
+						'.$showPagado.'
+						<td align="center"></td>
+					</tr>
+				';
+				if(isset($config['printList']) && $config['printList']==true){
+					$html .= '
+					<tr>
+						<td colspan="7" align="right" class="hyTdLeftControlButton">
+						   <input type="button" id="amortizacionButton" value="Imprimir" class="hyControlButton printButton" >
+						</td>
+					</tr>
+					';
+				}
+			}else{
+			$html .= '
+				<tr>
+					<td colspan="7">No se encontró amortización del contrato</td>
+				</tr>';
+			}
+		$html .= '
+			</table><br><br><br>';
+		echo $html;
+}

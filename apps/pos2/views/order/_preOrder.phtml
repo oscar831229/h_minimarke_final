@@ -1,0 +1,461 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<table id='preOrderTable' cellspacing="0">
+<tr>
+<td align='right'>Cuenta</td>
+<td width="92">
+<select id='cuentas'>
+<?php
+
+	$s = "";
+	$exists_cuentas = false;
+	foreach ($AccountCuentas->find("account_master_id=".$current_master." AND estado IN ('A', 'B')") as $cuenta) {
+		if ($cuenta->estado == 'B') {
+			$b = "(LIQU)";
+			$s = "style='background: #FFCCE6'";
+		} else {
+			$b = "";
+			$s = "";
+		}
+		if ($cuenta->cuenta == $numero_cuenta) {
+			echo "<option $s value='$cuenta->cuenta' selected='selected'>$cuenta->cuenta $b</option>\n";
+		} else {
+			echo "<option $s value='$cuenta->cuenta'>$cuenta->cuenta $b</option>\n";
+		}
+		$exists_cuentas = true;
+	}
+	if (!$exists_cuentas) {
+		if ($numero_cuenta) {
+			echo "<option style='$s' value='$numero_cuenta' selected='selected'>$numero_cuenta</option>\n";
+		}
+	}
+?>
+</select>
+</td>
+<td width="25">
+<button class="addButton" id="plusCuenta"><i class="fa fa-plus"></i></button>
+</td>
+<td width="25">
+<button class="deleteButton" id="minusCuenta"><i class="fa fa-minus"></i></button>
+</td>
+<td width='20'></td>
+<td align='right'>Comanda</td>
+<td width="92">
+<select id='comandas'>
+<?php
+	$exists_comandas = false;
+	$comandas = $Account->distinct(array(
+		"comanda",
+		"conditions" => "salon_mesas_id=".$account_id." and estado  in ('S', 'A')"
+	));
+	foreach ($comandas as $comanda) {
+		$exists_comandas = true;
+		if ($comanda == $numero_comanda) {
+			echo "<option value='$comanda' selected='selected'>$comanda</option>\n";
+		} else {
+			echo "<option value='$comanda'>$comanda</option>\n";
+		}
+	}
+
+	if (!$exists_comandas) {
+		if ($numero_comanda) {
+			echo "<option value='$numero_comanda' selected='selected'>$numero_comanda</option>\n";
+		}
+	}
+?>
+</select>
+</td>
+<td width="25">
+<button class="addButton" id="plusComanda"><i class="fa fa-plus"></i></button>
+</td>
+<td width="25">
+<button class="deleteButton" id="minusComanda"><i class="fa fa-minus"></i></button>
+</td>
+</tr>
+</table>
+<div id='asientosDiv' align="right">
+<table cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="right"><b>Asientos</b></td>
+		<td>
+			<table>
+			<tr>
+				<?php
+				   $ds = "";
+				   for ($r = 1; $r < 15; $r++) {
+						echo "<td align='center'>";
+						if ($r > ($numero_asientos + 1)) {
+							$ds = "style='display:none'";
+						}
+						if ($silla != $r) {
+							echo "<input id='s$r' type='button' class='inactiveAsiento' $ds value='$r'/>";
+						} else {
+							echo "<input id='s$r' type='button' class='activeAsiento' $ds value='$r'/>";
+						}
+						echo "</td>\n";
+						//if ($r % 8 == 0) {
+						//	echo "</tr><tr>\n";
+						//}
+					}
+					echo '<td align="center"><button class="addButton" id="changeSillas"><i class="fa fa-users"></i></button></td>';
+				?>
+			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</div>
+
+<div id='listaPedido' align='left'>
+ <div align='right' style='padding:3px'>
+<?php
+
+	$totalCuentas = 0;
+	$tiva = 0;
+	$timpo = 0;
+	$totr = 0;
+	$comanda = "";
+	echo "<table cellspacing='0' align='center' width='100%'>
+	<tr>";
+	if ($order != 'comanda') {
+		echo "<td class='tabSelected' align='center' onclick='window.pedido.refresh(\"cuenta\")'>Ordenar por Cuenta</td>";
+		echo "<td class='tabInactive' align='center' onclick='window.pedido.refresh(\"comanda\")'>Ordenar por Comanda</td>";
+	} else {
+		echo "<td class='tabInactive' align='center' onclick='window.pedido.refresh(\"cuenta\")'>Ordenar por Cuenta</td>";
+		echo "<td class='tabSelected' align='center' onclick='window.pedido.refresh(\"comanda\")'>Ordenar por Comanda</td>";
+	}
+	echo "
+	<td width='60'>&nbsp;</td>
+	</tr>
+	<tr>
+	<td class='td_cuenta' colspan='3'>";
+	echo "<div id='content_cuenta'>
+	<table cellspacing='0' width='100%' id='tabAccount'>
+		<tr>
+			<th>" . Tag::image(array("pos2/arrow_down.gif", "id" => "selectAllArrow")) . "</th>
+			<th>#C</th>
+			<th>#S</th>
+			<th width='35%'>Item</th>
+			<th colspan='2'>CP</th>
+			<!--<th>CA</th>-->
+			<th colspan='2'>Desc.</th>
+			<th>Total</th>
+			<th></th>
+		</tr>";
+
+		$nn = 0;
+		$resumen = array();
+		$allMenusItems = array();
+		$delete = Core::getInstancePath()."img/pos2/delete-l.gif";
+		$accountCuenta = $AccountCuentas->findFirst("account_master_id = '".$current_master."' AND cuenta = '{$numero_cuenta}' AND estado IN ('A', 'N', 'B')");
+
+		$conditions = "salon_mesas_id='" . $account_id."' AND estado in ('S', 'A', 'B')";
+		if ($order != 'comanda') {
+			$accounts = $Account->find(array($conditions, 'order' => 'cuenta'));
+		} else {
+			$accounts = $Account->find(array($conditions, 'order' => 'comanda desc'));
+		}
+		foreach ($accounts as $account) {
+
+			$menuItem = $account->getMenusItems();
+			$total = $account->total * $account->cantidad;
+			$valor = $account->valor * $account->cantidad;
+
+			$itemChecked = "";
+			$itemDisabled = "";
+			if ($account->estado == 'B') {
+				echo "<tr title='{$account->id}' class='orderRow itemPayed'>";
+				$itemDisabled = "disabled='disabled'";
+			} else {
+				if ($account->id == $last_account_id) {
+					echo "<tr lang='", $account->id, "' class='orderRow itemSelected'>";
+					$itemChecked = "checked='checked'";
+				} else {
+					if ($last_changed_account_id == $account->id) {
+						echo "<tr lang='", $account->id, "' class='orderRow itemChanged'>";
+					} else {
+						echo "<tr lang='", $account->id, "' class='orderRow'>";
+					}
+				}
+			}
+
+			echo "<td><input type='checkbox' $itemChecked $itemDisabled class='checkItem' value='{$account->id}'></td>";
+			if ($account->estado == 'B') {
+				echo "<td>{$account->comanda}&nbsp; [{$account->cuenta}]</td>";
+				echo "<td align='center'>", $account->asiento, "</td>";
+				echo "<td width='100'>", $menuItem->nombre, "&nbsp;(", $account->total, ")";
+				foreach ($AccountModifiers->find("account_id='{$account->id}'") as $acc_mod) {
+					$modifier = $Modifiers->findFirst($acc_mod->modifiers_id);
+					echo "<br><a href='#' class='deleteModifier'>";
+					if ($modifier->valor > 0) {
+						echo "+ {$modifier->nombre}";
+					} else {
+						if ($modifier->valor < 0) {
+							echo "- {$modifier->nombre}";
+						} else {
+							echo "&gt; {$modifier->nombre}";
+						}
+					}
+					if($modifier->valor!=0){
+						echo "(".sprintf("% .2f", $modifier->valor).")";
+					}
+					echo "</a>\n";
+					$total+=$modifier->valor;
+					$valor+=$modifier->valor;
+				}
+				if ($account->note) {
+					echo "<br><div class='ac_note'>", $account->note, "</div>";
+				}
+				echo "</td>";
+				echo "<td align='center' colspan='2'>{$account->cantidad}</td>";
+				//echo "<td align='center'>{$account->cantidad_atendida}</td>";
+				if ($account->descuento == 0) {
+					echo "<td style='border-right:none' colspan='2' align='center'>0%</td>";
+				} else {
+					echo "<td style='border-right:none' colspan='2' align='center'>{$account->descuento}%</td>";
+				}
+				if ($account->descuento == 0) {
+					echo "<td align='right'>" . Currency::number($total) . "</td>";
+				} else {
+					$desc = ($total*$account->descuento/100);
+					$total-=$desc;
+					echo "<td align='right'>".sprintf("% .2f", $total)."&nbsp;<span class='desc'>(-".sprintf("% .2f", $desc).")</span></td>";
+				}
+			} else {
+				echo "<td>
+				<span class='ccom'>", $account->comanda, "</span>&nbsp;
+				<span class='ccue'>[", $account->cuenta, "]</span></td>";
+				echo "<td align='center'>", $account->asiento, "</td>";
+				echo "<td width='100'><span class='itemName'>{$menuItem->nombre}</span>&nbsp;";
+				if($menuItem->cambio_precio=="S"){
+					echo "<span class='cPrecio' lang='ch'>($account->total)</span>";
+				} else {
+					echo "<span class='cPrecio'>($account->total)</span>";
+				}
+				foreach($account->getAccountModifiers() as $accountModifier){
+					$modifier = $accountModifier->getModifiers();
+					echo "<br><a href='#' class='deleteModifier' lang='", $accountModifier->id, "'>";
+					if($modifier->valor>0){
+						echo "+ ", $modifier->nombre;
+					} else {
+						if($modifier->valor<0){
+							echo "- ", $modifier->nombre;
+						} else {
+							echo "&gt; ", $modifier->nombre;
+						}
+					}
+					if($modifier->valor!=0){
+						echo "(".sprintf("% .2f", $modifier->valor).")";
+					}
+					echo "</a>\n";
+					$total+=$modifier->valor;
+					$valor+=$modifier->valor;
+				}
+				if($account->note!=""){
+					echo "<br><div class='accountNote'>".Tag::linkTo("order/notes/{$account->id}", $account->note)."</div>";
+				}
+				echo "</td>";
+				echo "<td style='border-right:none' align='center'>{$account->cantidad}</td>";
+				echo "<td style='border-left:none' align='center'>", Tag::image(array("pos2/app.gif", "class" => "changeQuantity")), "</td>";
+				//echo "<td align='center'>{$account->cantidad_atendida}</td>";
+				if($account->descuento==0){
+					echo "<td style='border-right:none' align='center'>0%</td>";
+				} else {
+					echo "<td style='border-right:none' align='center'>";
+					if(LocaleMath::round($account->descuento, 0)!=$account->descuento){
+						echo $account->descuento;
+					} else {
+						echo LocaleMath::round($account->descuento, 0);
+					}
+					echo "%</td>";
+				}
+				echo "<td style='border-left:none' align='center'>", Tag::image(array("pos2/app.gif", "class" => "changeDiscount")), "</td>";
+				if($account->descuento==0){
+					echo "<td align='right'>", Currency::number($total), "</td>";
+				} else {
+					$desc = ($total*$account->descuento/100);
+					$total-=$desc;
+					echo "<td align='right'>", Currency::number($total), "<br><span class='desc'>-", Currency::number($desc), "</span></td>";
+				}
+				if($account->cantidad>$account->cantidad_atendida){
+					echo "<td align='center'><img src='$delete' class='deleteItem'/></td>";
+				} else {
+					echo "<td>&nbsp;</td>";
+				}
+			}
+			$totalCuentas += $total;
+			echo "</tr>";
+			$tiva += ($account->iva * $account->cantidad);
+			$timpo += ($account->impo * $account->cantidad);
+			if (!isset($resumen[$menuItem->tipo])) {
+				$resumen[$menuItem->tipo] = $valor;
+			} else {
+				$resumen[$menuItem->tipo]+= $valor;
+			}
+			$nn++;
+		}
+		if($nn==0){
+			echo "
+			<tr>
+			  <td colspan='10' align='center' class='noItems'>NO HAY ITEMS EN ESTA CUENTA</td>
+			</tr>";
+		}
+		echo "</table></div>";
+		echo "</td>
+		</tr>
+		</table>";
+
+ 		$desc = 0;
+ 		if($AccountDiscount->count("account_cuentas_id='".$AccountCuentas->id."'")){
+ 			echo "<div class='discountNote' align='center'>";
+ 			echo "<table cellspacing='0'>";
+ 			foreach($AccountDiscount->find("account_cuentas_id='".$AccountCuentas->id."'") as $accountDiscount){
+ 				$discount = $accountDiscount->getDiscount();
+ 				if($discount->tipo=='P'){
+	 				echo "<tr><td align='right'><b>Descuento aplicado:</b></td><td> {$discount->nombre} ($discount->valor%)</td>";
+ 				} else {
+ 					echo "<tr><td align='right'><b>Descuento aplicado:</b> {$discount->nombre} ($discount->valor)</td>";
+ 				}
+ 				echo "<td><a href='#' class='deleteDiscount' lang='", $discount->id, "'>", Tag::image(array("pos2/delete-l.gif", "border" => "0")), "</a></td></tr>";
+ 			}
+ 			echo "</table></div>";
+ 		}
+?>
+</div>
+</div>
+
+<div id="zigzag"></div>
+
+<div id='preOrderDown'>
+
+<div align='right' id='tipoPedidoDiv'>
+<?php
+
+if (!$accountCuenta || $accountCuenta->propina_fija == 'N') {
+	if(!isset($resumen['A'])){
+		$resumen['A'] = 0;
+	}
+	if(!isset($resumen['B'])){
+		$resumen['B'] = 0;
+	}
+	$subtotalp = $resumen['A'] + $resumen['B'];
+	if ($porcentaje_servicio > 0) {
+		$propina = $subtotalp * ($porcentaje_servicio / 100);
+		$propina = LocaleMath::round($propina, 0);
+	} else {
+		$propina = 0;
+	}
+} else {
+	$propina = $accountCuenta->propina;
+}
+
+if (!$tipo_venta) {
+	if (isset($salon)) {
+		$tipo_venta = $salon->tipo_venta_default;
+		if (!$tipo_venta) {
+			$tipo_venta = 'H';
+		}
+	} else {
+		$tipo_venta = 'H';
+	}
+}
+
+echo "<b>Tipo de Pedido &nbsp;</b><select name='tipo_venta' id='tipo_venta'>";
+foreach ($SalonTipoVenta->find("salon_id='{$salon_id}'") as $salonTipo) {
+	if ($tipo_venta == $salonTipo->getTipoVentaId()){
+		echo "<option value='", $salonTipo->getTipoVentaId(), "' selected='selected'>", $salonTipo->getTipoVenta()->detalle, "\n";
+	} else {
+		echo "<option value='", $salonTipo->getTipoVentaId(), "'>", $salonTipo->getTipoVenta()->detalle, "\n";
+	}
+}
+echo "</select>";
+
+?>
+</div>
+
+<table width="100%" align="center">
+	<tr>
+		<td width="85%">
+			<table align='right' cellspacing="0" id='totalTable'>
+				<tr>
+					<td rowspan="5" class='clienteTd' valign="top" width="45%">
+					<b>Cliente</b><br>
+					<?php
+						try {
+						 	$cedula = 0;
+						 	$nombre_cliente = "PARTICULAR";
+						 	$habitacion_id = "";
+						 	$nota = "";
+						 	$accountCuenta = $AccountCuentas->findFirst("account_master_id='".$current_master."' and cuenta='".$numero_cuenta."' and estado in ('A', 'B')");
+							if ($accountCuenta != false) {
+								$cedula = $accountCuenta->clientes_cedula;
+								$nombre_cliente = $accountCuenta->clientes_nombre;
+								$habitacion = $Habitacion->findFirst($accountCuenta->habitacion_id);
+								if($habitacion!=false){
+									$habitacion_id = $accountCuenta->habitacion_id != -1 ? $habitacion->numhab ? "[{$habitacion->numhab}]" : " [FACTURACION DIRECTA RECEPCION]" : "";
+									$tipo_venta = $accountCuenta->tipo_venta;
+								} else {
+									$accountCuenta->habitacion_id = -1;
+									$accountCuenta->save();
+								}
+								$nota = $accountCuenta->nota ? "<br><b>Nota:</b> {$accountCuenta->nota}" : "";
+							}
+							echo "<input id='documento' type='hidden' value='{$cedula}'>";
+							echo "<input id='nombre_cliente' type='hidden' value='{$nombre_cliente}'><span id='nombre_cliente_span'>{$nombre_cliente}</span>";
+							echo "<input id='habitacion_id' type='hidden' value='{$habitacion_id}'><span id='habitacion_id_span'>{$habitacion_id}</span>";
+							echo "<input id='nota' type='hidden' value='{$nota}'><span id='nota_span'>{$nota}</span>";
+							echo "<br/>";
+						} catch (DbLockAdquisitionException $e) {
+							Flash::error('No se pudo actualizar la base de datos porque está bloqueada, intente nuevamente en un segundo');
+						}
+					?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">TOTAL</td>
+					<td align="right">
+						<b><?php echo Currency::number($totalCuentas - $desc, 2) ?></b>
+					</td>
+				</tr>
+				<tr>
+					<td align="right" class='tdLabTotal'>IVA</td>
+					<td align="right" class='tdLabTotal'><?php echo Locale::number($tiva, 2) ?></td>
+				</tr>
+				<tr>
+					<td align="right" class='tdLabTotal'>IMPOCONSUMO</td>
+					<td align="right" class='tdLabTotal'><?php echo Locale::number($timpo, 2) ?></td>
+				</tr>
+				<tr>
+					<td align="right" class='tdLabTotal'>PROPINA/SERVICIO</td>
+					<td align="right" class='tdLabTotal'><?php echo Tag::numericField(array("servicio", "size" => 15, "value" => $propina, "onkeydown" => "addItemByCode(event)")) ?></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+</div>
+
+<?php if($current_master){ ?>
+	<script type="text/javascript">
+	if(window.pedido){
+		window.pedido.setAccountMasterId(<?php echo $current_master ?>);
+		window.pedido.setNumeroCuenta(<?php echo $numero_cuenta ?>);
+	}
+	</script>
+<?php } ?>

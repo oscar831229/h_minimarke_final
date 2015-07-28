@@ -1,0 +1,6 @@
+<?php View::getContent() ?>
+
+<h1>Imprimir Cheque</h1>
+<div align="right" style="padding:20px">
+	<input class="controlButton" type="button" value="Imprimir" onclick="window.open('<?php echo Utils::getKumbiaUrl('cheque/imprimir/'.$cheque->getId()) ?>')"/>
+</div>

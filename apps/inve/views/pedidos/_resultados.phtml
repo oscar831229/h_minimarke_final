@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+if(count($pedidos)){
+	echo '<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" id="pedidosTable" width="90%">
+		<thead>
+			<tr>
+				<th class="sortcol">Número</th>
+				<th class="sortcol">Almacén Solicitud</th>
+				<th class="sortcol">Almacén Destino</th>
+				<th class="sortcol">Fecha</th>
+				<th class="sortcol">Estado</th>
+				<th class="nosort">&nbsp;</th>
+			</tr>
+		</thead>
+	<tbody>';
+	foreach($pedidos as $pedido){
+		echo '<tr>
+			<td align="right">', $pedido->getNumero(), '</td>
+			<td>', $pedido->getAlmacenNombre(), '</td>
+			<td>', $pedido->getAlmacenDestinoNombre(), '</td>
+			<td>', $pedido->getFecha(), '</td>
+			<td>', $pedido->getEstadoDetalle(), '</td>';
+		if($pedido->getEstado()=='A'){
+			echo '<td><input type="button" class="seleccionarButton" value="Seleccionar" title="', $pedido->getAlmacen(), '-', $pedido->getNumero(), '"/></td>';
+		} else {
+			echo '<td>&nbsp;</td>';
+		}
+		echo '</tr>';
+	}
+	echo '</tbody></table>';
+}

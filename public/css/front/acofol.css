@@ -1,0 +1,52 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+input#qs {
+	width: 90%;
+}
+
+.aco_but_pannel {
+	margin: 5px;
+	width: 570px;
+	text-align: right;
+	margin-top: 15px;
+}
+
+.aco_pannel,
+.aco_pannelb {
+	border: 1px solid #969696;
+	padding: 5px;
+	background: #eaeaea;
+	margin: 5px;
+	width: 570px;
+	background: #fafafa;
+	padding: 10px;
+}
+
+#apofol .aco_pannelb {
+	background: #ccdeff;
+}
+
+#apofol .aco_pre {
+	background: #fff;
+	border: 1px solid #969696;
+	width: 585px;
+	text-align: left;
+	padding: 10px;
+}
+
+#apofol .aco_pre span {
+	font-size: 11px;
+	color: #969696;
+}

@@ -1,0 +1,49 @@
+
+#t_stadistics th {
+	border-top: 1px solid #969696;
+	border-right: 1px solid #969696;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+	font-size: 12px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#t_stadistics td {
+	border-top: 1px solid #969696;
+	border-right: 1px solid #969696;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	font-size: 12px;
+}
+
+#t_stadistics .total {
+	border-top: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+	padding: 14px;
+	font-weight: bold;
+	background: #fff;
+}
+
+#t_stadistics .ntotal {
+	border-top: 1px solid #969696;
+	border-left: none;
+}
+
+#t_stadistics .ltotal {
+	border-left: 1px solid #969696;
+}
+
+#t_stadistics .ttotal {
+	border-top: 1px solid #969696;
+}
+
+#t_stadistics .btotal {
+	border-bottom: 1px solid #969696;
+}
+
+table#criterio {
+	border:1px solid #C0C0C0;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+}

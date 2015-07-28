@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<?php echo HfosTag::iconTitle('attibutes.png', $cheque->getChequeras()->getCuentasBancos()->getDescripcion().'/'.$cheque->getNumero()) ?>
+
+<fieldset class="tabbed">
+	<legend>Datos Cheque</legend>
+	<table align="center">
+		<tr>
+			<td align="right"><label for="nit">Tercero</label></td>
+			<td>
+				<?php echo $cheque->getNit().'/'.$cheque->getNits()->getNombre() ?>
+			</td>
+		</tr>
+		<?php if($cheque->getEstado()!='A'){ ?>
+		<tr>
+			<td align="right"><label for="fechaMovi">Comprobante</label></td>
+			<td><?php echo $cheque->getComprob().'/'.$cheque->getNumero(); ?>&nbsp;<input type="button" class="verComprob" value="Ver" title="codigoComprobante=<?php echo $cheque->getComprob().'&numero='.$cheque->getNumero(); ?>"/></td>
+		</tr>
+		<?php } ?>
+		<tr>
+			<td align="right"><label for="fechaMovi">Fecha Comprobante</label></td>
+			<td><?php echo $cheque->getFecha()->getLocaleDate(); ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="fecha">Fecha Cheque</label></td>
+			<td><?php echo $cheque->getFechaCheque()->getLocaleDate(); ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="beneficiario">Beneficiario</label></td>
+			<td><?php echo $cheque->getBeneficiario(); ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="chequeraId">Chequera</label></td>
+			<td><?php echo $cheque->getChequeras()->getCuentasBancos()->getDescripcion() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="numeroCheque">Número Cheque</label></td>
+			<td><?php echo $cheque->getNumeroCheque(); ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="valor">Valor</label></td>
+			<td><?php echo Currency::money($cheque->getValor()) ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="observaciones">Observaciones</label></td>
+			<td><?php echo $cheque->getObservaciones(); ?></td>
+		</tr>
+	</table>
+</fieldset>

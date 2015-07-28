@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<div class="permisosPerfiles hfosContent">
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="right">
+					<table>
+						<tr>
+							<td>
+								<table>
+									<tr>
+										<td>
+											<table align="right">
+												<tr>
+													<td><label for="usuariosId">Usuarios</label></td>
+													<td><?php echo Tag::select('usuariosId', $usuarios, 'using: id,nombre_completo', 'useDummy: yes') ?></td>
+													<td>&nbsp;</td>
+													<td>
+														<table class="comprobBlock" style="display:none;">
+															<tr>
+																<td>
+																	<label for="comprob">
+																		Comprobante
+																	</label>
+																</td>
+																<td >
+																	<td><?php echo Tag::select('comprob', $comprob, 'using: codigo,nom_comprob', 'useDummy: yes') ?></td>
+																</td>
+															</tr>
+														</table>
+													</td>
+													<td>
+														<input type="submit" caption="Guardar" id="submitButton" class="saveButton" value="Guardar" style="display:none;">
+													</td>
+													<td align="left">
+														<div class="headerSpinner" style="display:none"></div>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="messages"></div>
+	<br><br>
+	<div class="PerfilesContent" style="display:none">
+		<table width="50%" align="center" class="hyBrowseTab zebraSt sortable" cellspcing="0" cellpading="0">
+			<th>
+				<b>Permisos</b>
+			</th>
+			<tr>
+				<td>
+					<table align="center" class="tabAppChoose" style="display:nones" width="100%" cellspacing="0" cellpading="0">
+						<?php
+							$permisos = Array(
+								'Crear' 	=> 'A',
+							 	'Modificar' => 'M',
+								'Consultar' => 'S',
+								'Borrar' 	=> 'D',
+								'Repetir' 	=> 'R'
+							);
+							foreach($permisos as $permiso => $val){
+
+								echo '
+								<tr>
+									<td class="resource-access">'.
+										'<input type="checkbox" name="permisos[]" value="'.$val.'" />'.
+										$permiso.
+									'</td>
+								</tr>';
+
+							}
+
+						?>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="permsContent"></div>
+
+	<div align="right">
+		<div class="chooseRole infoBox" align="center">
+			<table align="center">
+				<tr>
+					<td><strong>Seleccione un Usuario</strong></td>
+					<td><?php echo Tag::image('backoffice/arrow-alt-up.png') ?></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<div align="right">
+		<div class="chooseComprob infoBox" align="center" style="display:none;">
+			<table align="center">
+				<tr>
+					<td><strong>Seleccione un comprobante</strong></td>
+					<td><?php echo Tag::image('backoffice/arrow-alt-up.png') ?></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</div>

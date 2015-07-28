@@ -1,0 +1,172 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('billing.png', 'Generar Factura') ?>
+
+<div class="formContent" align="center">
+
+	<?php echo Tag::form('facturas/generar', 'class: grabarForm', 'autocomplete: off') ?>
+
+	<div class="formNuevo">
+		<table align="center">
+			<tr>
+				<td align="right"><label for="numeroContrato">Contrato</label></td>
+				<td><?php echo HfosTag::numericField(array('numeroContrato', 'size' => 14)) ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="nitFacturar">Facturar a</label></td>
+				<td><?php echo HfosTag::terceroField(array('nitFacturar', 'create' => true)) ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="nitEntregar">Entregar a</label></td>
+				<td><?php echo HfosTag::terceroField(array('nitEntregar', 'create' => true)) ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="fecha">Fecha</label></td>
+				<td><?php echo HfosTag::dateField(array('fecha', 'class' => 'date-field')) ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="fechaVencimiento">Fecha Vencimiento</label></td>
+				<td><?php echo HfosTag::dateField(array('fechaVencimiento', 'class' => 'date-field')) ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="numeroPedido">Pedido</label></td>
+				<td><?php echo HfosTag::numericField(array('numeroPedido', 'size' => 5)) ?>&nbsp;<a href="#" class="queryPedido">Consultar</a></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="descuentoGeneral">% Descuento</label></td>
+				<td><?php echo HfosTag::numericField(array('descuentoGeneral', 'size' => 5)) ?></td>
+			</tr>
+		</table>
+	</div>
+	<br/>
+
+	<fieldset class="tabbed">
+		<legend>Referencias</legend>
+
+		<table class="sortable detalle-grid" cellspacing="0" align="center">
+			<thead>
+				<tr>
+					<th class="sortcol sortasc" colspan="2"></th>
+					<th class="sortcol">Código</th>
+					<th class="sortcol">Descripción</th>
+					<th class="sortcol">Cantidad</th>
+					<th class="sortcol">Tipo</th>
+					<th class="sortcol">Precio Unitario</th>
+					<th class="sortcol">Total</th>
+				</tr>
+			</thead>
+			<tbody class="ordenes-body">
+			<?php
+				echo '<tr class="linea1 detalle-linea">
+					<td class="numero">1</td>
+					<td>',
+					Tag::checkboxField(array(
+						'itemCheck[]',
+						'class' => 'itemCheck'
+					)),
+					'</td><td>',
+					Tag::textField(array(
+						'item[]',
+						'class' => 'item numeric',
+						'size' => 7
+					)).
+					'<input type="hidden" class="itemPrecioVenta" name="itemIvaVenta[]" value="0"/>',
+					'<input type="hidden" class="itemIvaVenta" name="itemIvaVenta[]" value="0"/>',
+					'</td><td>',
+					Tag::textField(array(
+						'descripcion[]',
+						'class' => 'descripcion',
+						'size' => 20
+					)),
+					'</td><td>',
+					Tag::numericField(array(
+						'cantidad[]',
+						'class' => 'cantidad numeric',
+						'size' => 7
+					)),
+					'</td><td>',
+					Tag::selectStatic(array(
+						'tipo[]',
+						$tiposPrecio,
+						'class' => 'tipo',
+					)),
+					'</td><td>',
+					Tag::numericField(array(
+						'precio[]',
+						'class' => 'precio numeric',
+						'size' => 9,
+						'readonly' => 'readonly'
+					)),
+					'</td><td>',
+					Tag::numericField(array(
+						'total[]',
+						'class' => 'total numeric',
+						'size' => 9,
+						'readonly' => 'readonly'
+					)),
+					'</td>
+				</tr>';
+			?>
+			</tbody>
+		</table>
+
+	</fieldset>
+
+	<fieldset class="tabbed">
+		<legend>Formas de Pago</legend>
+		<table class="sortable formas-grid" cellspacing="0" align="center">
+			<thead>
+				<tr>
+					<th class="sortcol sortasc" colspan="2"></th>
+					<th class="sortcol">Forma de Pago</th>
+					<th class="sortcol">Valor</th>
+				</tr>
+			</thead>
+			<tbody class="ordenes-body">
+			<?php
+				echo '<tr class="lineaForma1 forma-linea">
+					<td class="numero">1</td>
+					<td>',
+					Tag::checkboxField(array(
+						'itemCheck[]',
+						'class' => 'itemCheck'
+					)),
+					'</td><td>',
+					Tag::select(array(
+						'formaPago[]',
+						$formasPago,
+						'class' => 'formaPago',
+						'using' => 'codigo,descripcion',
+					)),
+					'</td><td>',
+					Tag::numericField(array(
+						'valorForma[]',
+						'class' => 'valorForma numeric',
+						'size' => 10
+					)),
+					'</td>
+				</tr>';
+			?>
+			</tbody>
+		</table>
+
+	</fieldset>
+
+	<?php echo Tag::endForm() ?>
+
+</div>

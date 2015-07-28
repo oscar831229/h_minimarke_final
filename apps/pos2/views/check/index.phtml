@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if ($config->application->mode == 'development') {
+	Tag::stylesheetLink('pos2/check');
+	echo Tag::javascriptInclude('pos2/check');
+} else {
+	Tag::stylesheetLink('pos2/production/check', false, 'v=' . ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/check', true, 'v=' . ControllerBase::APP_VERSION);
+}
+
+?>
+<div align="center" id="status">
+	<div class="shadow-div">
+		<table id="shadow-div-descendant" cellspacing="0" width="100%">
+			<tr>
+				<td class='titulo' align='left'>
+					Revisar Pedido
+				</td>
+			</tr>
+			<tr>
+				<td id="main_div">
+					<?php echo Tag::select(array('screenId', $screens, 'using' => 'id,nombre')) ?>
+					<div id="content"></div>
+					<div align='center'>
+						<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+							<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+							<b>Salir</b>
+						</button>
+					</div>
+					<audio id="whistle" src="<?php echo Core::getInstancePath() ?>files/pos2/whistle.wav" preload="auto" controls>
+						<p>Your browser does not support the audio element.</p>
+					</audio>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+

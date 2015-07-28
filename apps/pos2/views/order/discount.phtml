@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div align="center">
+	<div id='messages'><?php View::getContent() ?></div>
+
+	<p>
+		<?php
+
+		   	foreach($discounts as $discount){
+				echo "<button class='commandButtonBig' lang='".$discount->id."'>", $discount->nombre, ' ';
+				if($discount->tipo=="P"){
+				 	echo "(-", ($discount->valor), "%)";
+				} else {
+					echo "(-", ($discount->valor), ")";
+				}
+				echo "</button>\n";
+			}
+
+		?>
+	</p>
+
+	<p>
+		<table align="center">
+			<tr>
+			 	<td><button class='cancelButton' onclick='$("myWindow").close();'>Volver</button></td>
+		 	</tr>
+	 	</table>
+	 </p>
+</div>

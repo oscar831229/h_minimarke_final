@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$Datos->findFirst();
+
+function center($text, $size){
+	if(strlen($text)>=$size){
+		return i18n::substr($text, 0, $size);
+	}
+	$spaces = str_repeat(" ", ($size-strlen($text))/2);
+	return $spaces.$text.$spaces;
+}
+
+?>
+<html>
+<head>
+<style type='text/css'>
+	td, span, div, th, pre {
+		font-family: 'Lucida Console', 'Courier New';
+		font-size: 12px;
+	}
+	body {
+		margin: 0px;
+	}
+</style>
+</head>
+<body>
+<pre>
+<?php
+
+echo center($Datos->getNombreCadena(), 40)."\n";
+echo center($Datos->getDocumento()." No. : ".$Datos->getNit(), 40)."\n";
+echo center(i18n::strtoupper($Datos->getNombreHotel()), 40)."\n";
+center("HUESPEDES", 40)."\n";
+if($fecha_inicial==$fecha_final){
+	echo center("Fecha: {$fecha_inicial}", 40)."\n";
+} else {
+	echo center("Fecha: {$fecha_inicial}/{$fecha_final}" , 40)."\n";
+}
+echo center("Cajero: ".strtoupper(Session::getData("usuarios_nombre")), 40)."\n";
+
+?>
+</pre>
+<table>
+<table style='pading: 20px; width:250px'>
+<tr>
+	<td align='center'>Nombre</td>
+	<td align='center'>Habitaci&oacute;n</td>
+</tr>
+<?php
+
+	$config = CoreConfig::readFromActiveApplication("app.ini", 'ini');
+
+	$hotel = $config->pos->hotel;
+
+	$db = DbBase::rawConnect();
+
+	$huespedes = $db->fetchAll("select c.nombre, f.numhab
+	from $hotel.clientes c, $hotel.folio f where c.cedula = f.cedula
+    and f.estado = 'I'
+    union
+    select a.nombre, f.numhab
+    from $hotel.folio f, $hotel.apofol a
+    where
+    f.numfol = a.numfol and f.estado = 'I'");
+
+	foreach($huespedes as $huesped){
+		echo  "<tr>";
+		echo  "<td>".$huesped['nombre']."</td>";
+		echo  "<td align='center'>".$huesped['numhab']."</td>";
+	}
+
+
+?>
+</table>
+<pre>
+--------------------------------------
+</pre>
+</body>
+</html>

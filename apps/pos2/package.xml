@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://loudertecnology.com/kef/application/1.0">
+        <id>hfos.pos2</id>
+        <version>0.1</version>
+        <filename>Perse</filename>
+        <initialWindow>
+                <content>index.html</content>
+                <visible>true</visible>
+                <width>1024</width>
+                <height>800</height>
+                <transparent>true</transparent>
+                <systemChrome>none</systemChrome>
+                <x>10</x>
+                <y>10</y>
+        </initialWindow>
+</application>

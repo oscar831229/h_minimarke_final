@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo "<span id='menu_up'></span>";
+$items = 0;
+$sql = "SELECT menus_items.id,
+   menus_items.nombre, if(salon_menus_items.valor is not null and salon_menus_items.valor != '',
+   salon_menus_items.valor, menus_items.valor) as valor
+   FROM menus_items, salon_menus_items
+   WHERE
+   menus_items.nombre LIKE '%$text%' AND
+   salon_menus_items.menus_items_id = menus_items.id AND
+   salon_menus_items.salon_id='".$salon_id."' AND
+   salon_menus_items.estado='A' AND
+   menus_items.estado='A'
+   ORDER BY menus_items.nombre";
+foreach($MenusItems->findAllBySql($sql) as $menuItem){
+	$numberModifiers = $MenusItemsModifiers->count("menus_items_id='{$menuItem->id}'");
+	if($numberModifiers>0){
+		$hasModifierValue = 'true';
+	} else {
+		$hasModifierValue = 'false';
+	}
+	$nombre = ucwords(i18n::strtolower($menuItem->nombre));
+	$nombre = str_ireplace($text, '<span class="highlight">'.$text.'</span>', $nombre);
+	echo "<div id='ti{$menuItem->id}'>
+	<button class='menuItemButton' onclick='loadItemAccount(this, ".$menuItem->id.", $hasModifierValue)'
+	title='".str_replace("<br>", "", $menuItem->nombre)."\nPrecio: $ {$menuItem->valor}'
+	id='i{$menuItem->id}'
+	onmouseover='$(\"ti{$menuItem->id}\").style.background=\"#CCDEFF\";$(\"codigoItem\").value = $menuItem->id;'
+	onmouseout='$(\"ti{$menuItem->id}\").style.background=\"\"'>";
+	echo "<span style='color:#818181'>".sprintf("%04s", $menuItem->id)."</span> ";
+	echo $nombre;
+	echo "</button></div>";
+	$items++;
+}
+echo "<span id='menu_down'></span>";
+if(!$items){
+	Flash::warning("No se encontraron items");
+}

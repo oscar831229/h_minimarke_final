@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2011
+ * @version		$Id$
+ */
+Core::importFromLibrary('Hfos/Tpc','TpcHelper.php');
+if(isset($sociosId)){
+	echo TpcHelper::generaAmortizacion(array('sociosId'=>$sociosId, 'printList'=>true, 'showPagado'=>false, 'showEstado'=>false));
+}
+

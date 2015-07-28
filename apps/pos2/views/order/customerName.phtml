@@ -1,0 +1,163 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+echo '<div id="customerNameDiv">
+<div style="padding:3px">';
+
+if (isset($accountCuenta) && $accountCuenta) {
+
+	if ($accountCuenta->clientes_nombre) {
+		echo "<strong>Nombre Actual</strong> $accountCuenta->clientes_nombre<br>";
+	}
+
+	echo '</div>
+	<div id="mess_customer"></div>
+	<div id="customer_messages"></div>
+
+	<div style="padding:5px">';
+
+	$appConfig = CoreConfig::readFromActiveApplication('app.ini');
+	if (isset($appConfig->pos->is_club) && $appConfig->pos->is_club == true) {
+		echo '<table align="center" id="customerTab" width="70%">
+			<tr>
+				<th>Socio ó Invitado</th>
+			</tr>
+			<tr>
+				<td align="center">
+					<b>Buscar por Número de Acción, Nombre, Número de Habitación ó Cédula</b><br>
+					', Tag::textField('numeroAccion', 'size: 30'), '
+				</td>
+			</tr>
+		</table>
+		<div id="socios"></div>
+		<div align="right" style="padding:5px">';
+		echo Tag::button("Cerrar", "class: cancelButton", "onclick: $('myWindow').close(); refresh()");
+		echo '</div>';
+	} else {
+		echo Tag::formRemote("order/saveClient", "update: customer_messages", "id: myform", 'autocomplete: off');
+		echo Tag::hiddenField(array('accountCuentasId', 'value' => $accountCuenta->id));
+		if ($accountCuenta->tipo_venta == "F" || $accountCuenta->tipo_venta == "U" || $accountCuenta->tipo_venta == "C") {
+			echo '<input type="hidden" id="tipo" name="tipo" value="P"/>
+				<table cellspacing="0" align="center">
+					<tr>
+						<td class="particularTd" width="500">Particular</td>
+					</tr>
+				<tr>
+					<td class="customerTdInfo">
+						<div id="pardiv">
+							<table>
+								<tr>
+									<td align="right"><b>Documento</b></td>
+									<td>
+										', Tag::textField("documento_cliente", "size: 15", "maxlength: 15",
+										"onblur: $(\"nombre\").value = AJAX.query(\"pay/getClientName/\"+this.value);
+										$(\"nombre\").activate()"), '
+										<div class="autocomplete" id="nombre_choices"></div>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Nombre</b></td>
+									<td>', Tag::textField(array("nombre", "size" => "40", "onblur" => "this.value = this.value.toUpperCase()")), '
+									</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>';
+		}
+
+		if ($accountCuenta->tipo_venta == "H" || $accountCuenta->tipo_venta == "P") {
+			echo '<input type="hidden" id="tipo" name="tipo" value="H">
+			<table cellspacing="0" align="center" >
+				<tr>
+					<td class="tdCustomerHuesped">
+						<span>Seleccione un Huésped ó Facturación Directa</span>
+						<span class="digiteInfo">Digite número de habitación', Tag::textField("numHabitacion", "size: 4"), '
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdSelectRoom">
+						<div id="habdiv" align="center">
+							<table align="center">';
+							$habitaciones = $Habitacion->find(array('order' => 'concat(space(6-length(numhab)), numhab), nombre'));
+							if (count($habitaciones)) {
+								foreach ($habitaciones as $hab) {
+									if ($hab->numhab == '0') {
+										$hab->numhab = 'F' . $hab->id;
+										$className = 'fDirectaButton';
+									} else {
+										$className = 'habitacionButton';
+									}
+									echo Tag::button(array($hab->numhab.' '.$hab->nombre, "class" => "$className huespedButton", "id" => $hab->id));
+								}
+							}
+							echo '</table>
+						</div>
+
+						<div align="right">
+							<div class="selectFolioDiv">
+								<table>
+									<tr>
+										<td><b>Ver acompañantes y Planes de</b></td>
+										<td>
+											<select name="habitacion" id="habitacion">
+												<option value="@">Seleccione...</option>';
+											foreach ($habitaciones as $hab) {
+												if ($hab->numhab == 0) {
+													$hab->numhab = "";
+													$hab->nombre.= " (F. DIRECTA)";
+												} else {
+													$hab->numhab.=' : ';
+												}
+												echo Tag::option($hab->id, $hab->numhab.$hab->nombre);
+											}
+											echo '</select>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>';
+		}
+		echo '</div>
+		<div id="huesped_info"></div>
+		<table width="100%"><tr><td>';
+		/*echo Tag::submitButton(array(
+			"Crear F. Directa",
+			"class" => "commandButton",
+			"id" => "createCustomerBtn",
+			"style" => "font-weight:bold;width:120px",
+			"onclick" => "window.open(\"/hotel5/index.php?action=regfac&option=5\")"
+		));*/
+		echo '</td><td align="right">';
+		echo Tag::submitButton(array("Aplicar", "class" => "okButton", "id" => "apl_submit"));
+		echo Tag::button(array("Cerrar", "class" => "cancelButton", "onclick" => "$('myWindow').close(); refresh()"));
+		echo '</tr></table>';
+	}
+} else {
+	echo '<div align="right" style="padding:5px">';
+	echo Flash::notice("Debe agregar items al pedido antes de definir el cliente");
+	echo Tag::button("Cerrar", "class: cancelButton", "onclick: $('myWindow').close();");
+	echo '</div>';
+}
+
+echo '</div>';
+echo Tag::endForm();

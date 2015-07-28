@@ -1,0 +1,121 @@
+td {
+	font-family: Verdana;
+}
+.header {
+	font-family: 'Courier New';
+	font-size: 13px;
+}
+.faccam {
+  	font-family: 'Verdana';
+  	font-size: 11px;
+}
+.nofac {
+	font-family: 'Courier New';
+	font-size: 18px
+}
+.small {
+	font-family: Verdana;
+	font-size:11px;
+}
+.medium {
+	font-family: Verdana;
+	font-size:16px;
+}
+.vsmall {
+	border: none;
+	font-family: Verdana;
+	font-size: 9px;
+}
+.trOdd {
+	background: #f7f7f7;
+}
+.trEven {
+	background: #ffffff;
+}
+.thr {
+ 	font-family: Verdana;
+	color: #333333;
+	font-weight: bold;
+	text-align: center;
+	font-size: 11px;
+	background: #eaeaea;
+}
+.tcr {
+ 	font-family: Verdana;
+	color: black;
+	font-size: 10px;
+}
+body {
+	background: #ffffff;
+}
+.tab, table {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.tab td {
+	font-size: 10px;
+}
+.noBorderBottom {
+	border-bottom: none;
+	border-bottom-color: transparent;
+}
+.noBorderTab td {
+	border: none;
+}
+.tabHead {
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.divResumen {
+	font-size: 9px;
+}
+.tabResumen td {
+	font-size: 9px;
+}
+h2 {
+	font-family: Tahoma;
+	font-weight: normal;
+	font-size: 16px;
+	margin: 0px;
+}
+h3 {
+	font-family: Tahoma;
+	font-weight: normal;
+	font-size: 12px;
+	margin: 0px;
+}
+div#advert {
+	font-family: Tahoma;
+}
+
+.trw {
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.lb {
+	border-left: 1px solid #eaeaea;
+}
+
+.lrb {
+	border-left: 1px solid #eaeaea;
+	border-right: 1px solid #eaeaea;
+}
+
+.ltb {
+	border-left: 1px solid #eaeaea;
+	border-top: 1px solid #eaeaea;
+}
+
+.tabMain td {
+	padding-right: 3px;
+}
+
+b {
+	color: #333333;
+}
+
+.smn {
+	font-size: 9px;
+}

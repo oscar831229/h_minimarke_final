@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2013
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<h1>Subir Carta</h1>
+
+<?php echo Tag::form(array('carta/subir', 'enctype' => 'multipart/form-data')) ?>
+<div align="center">
+	<fieldset>
+		<label>Items de Menús</label>
+		<input type="file" name="archivo" />
+		<input type="hidden" name="type" value="menus-items">
+		<input type="submit" value="Subir" class="controlButton">
+	</fieldset>
+</div>
+<?php echo Tag::endForm() ?>
+
+<?php echo Tag::form(array('carta/subir', 'enctype' => 'multipart/form-data')) ?>
+<div align="center">
+	<fieldset>
+		<label>Relación Items de Menús/Ambientes</label>
+		<input type="file" name="archivo" />
+		<input type="hidden" name="type" value="salon-menus-items">
+		<input type="submit" value="Subir" class="controlButton">
+	</fieldset>
+</div>
+<?php echo Tag::endForm() ?>

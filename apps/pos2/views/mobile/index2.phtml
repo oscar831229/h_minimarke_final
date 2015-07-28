@@ -1,0 +1,928 @@
+<style type="text/css">
+body {
+	margin: 0px;
+	background: #D1D7E2;
+	font-family: "Verdana";
+}
+
+#messages {
+	margin: 10px;
+	margin-top: 70px;
+	border-radius: 5px;
+	color: #ffffff;
+	background: #333333;
+	width: 170px;
+	padding: 3px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	font-size: 11px;
+
+}
+#clave {
+	font-size: 20px;
+}
+
+#claveForm, #selectMesaDiv, #setCantidadDiv {
+	padding-top: 0px;
+	border-radius: 5px;
+}
+#titleScreen {
+	padding: 5px;
+	background: url(<?php echo Core::getInstancePath() ?>img/pos2/localnav.gif) black;
+	color: white;
+}
+#ambientesContent input[type="button"] {
+	text-align: left;
+	width: 185px;
+	background: white;
+	border-radius: 5px;
+	padding: 5px;
+	border: 1px solid #969696;
+}
+#salirButton, .backToAmbientes, .backToMenus, .volverButton {
+	text-align: center;
+	width: 185px;
+	color: white;
+	background: #CC0000;
+	border-radius: 5px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+
+.controlButton,
+.sendToKitchen {
+	text-align: center;
+	width: 185px;
+	color: white;
+	background: #5A647E;
+	border-radius: 5px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+
+.sendToKitchen {
+	color: white;
+	background: green;
+	border-radius: 5px;
+}
+
+#escogerButton,
+#cantidadButton {
+	text-align: center;
+	width: 70px;
+	color: white;
+	background: green;
+	border-radius: 5px;
+	padding: 5px;
+}
+#pedidoContent div {
+	text-align: left;
+	border: 1px solid #969696;
+	background: white;
+}
+#pedidoContent input[type="button"],
+#pedidoAddContent input[type="button"],
+#menusAddContent input[type="button"],
+#modifiersAddContent input[type="button"] {
+	text-align: left;
+	width: 185px;
+	background: white;
+	border-radius: 5px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+.menuItemName {
+	font-size: 12px;
+}
+.menuItemQuantity, .menuItemPrice {
+	font-size: 12px;
+	color: #969696;
+}
+.menuItemQuantity {
+	padding-right: 15px;
+}
+#pedidoContent .menuItemOptions {
+	text-align: right;
+	border: none;
+}
+#pedidoContent .menuItemOptions .menuItemCancel {
+	text-align: center;
+	color: white;
+	width: 70px;
+	font-size: 9px;
+	background: #CC0000;
+	border-radius: 5px;
+	margin:3px;
+}
+#pedidoContent .menuItemOptions .menuItemSetQuantity {
+	text-align: center;
+	color: white;
+	width: 70px;
+	font-size: 9px;
+	background: #B49DC7;
+	border-radius: 5px;
+	margin:3px;
+	text-transform: uppercase;
+}
+#pedidoContent .menuItemOptions .menuItemSetMods {
+	text-align: center;
+	color: #000080;
+	width: 40px;
+	font-size: 9px;
+	background: #8A9ABE;
+	border-radius: 5px;
+	margin:3px;
+	text-transform: uppercase;
+}
+#modifiersAddContent {
+	background: white;
+}
+.modifierName {
+	font-size: 10px;
+	color: #222222;
+}
+</style>
+
+<?php echo Tag::javascriptInclude('pos2/gears_init', true, 'v='.filemtime('public/javascript/pos2/gears_init.js')) ?>
+
+<script type="text/javascript">
+
+//Variables Globales
+var accountId;
+var salonMesasId;
+var salonId;
+var modifierId;
+var salonNombre;
+var menusId;
+var menusNombre;
+var numeroMesa;
+var initAmbientes = false;
+var initMenus = false;
+var appPath = "<?php echo Core::getInstancePath() ?><?php echo Router::getApplication() ?>/";
+
+
+//Ajax Support
+jx = {
+
+	getHTTPObject : function() {
+		var http = false;
+		if(typeof ActiveXObject != 'undefined') {
+			try {http = new ActiveXObject("Msxml2.XMLHTTP");}
+			catch (e) {
+				try {http = new ActiveXObject("Microsoft.XMLHTTP");}
+				catch (E) {http = false;}
+			}
+		} else if (window.XMLHttpRequest) {
+			try {http = new XMLHttpRequest();}
+			catch (e) {http = false;}
+		}
+		return http;
+	},
+
+	load : function (url,callback,format,method, opt) {
+		var http = this.init();
+		if(!http||!url) return;
+
+		if (http.overrideMimeType) http.overrideMimeType('text/xml');
+
+		if(!method) method = "GET";
+		if(!format) format = "text";
+		if(!opt) opt = {};
+		format = format.toLowerCase();
+		method = method.toUpperCase();
+
+		var now = "uid=" + new Date().getTime();
+		url += (url.indexOf("?")+1) ? "&" : "?";
+		url += now;
+
+		var parameters = null;
+
+		if(method=="POST") {
+			var parts = url.split("\?");
+			url = parts[0];
+			parameters = parts[1];
+		}
+		http.open(method, url, true);
+
+		if(method=="POST") {
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.setRequestHeader("Content-length", parameters.length);
+			http.setRequestHeader("Connection", "close");
+		}
+
+		var ths = this;
+		if(opt.handler){
+			http.onreadystatechange = function(){
+				opt.handler(http);
+			};
+		} else {
+			http.onreadystatechange = function (){
+				if(http.readyState == 4){
+					if(http.status == 200){
+						var result = "";
+						if(http.responseText){
+							result = http.responseText;
+						}
+						if(format.charAt(0) == "j"){
+							result = result.replace(/[\n\r]/g,"");
+							result = eval('('+result+');');
+						} else if(format.charAt(0) == "x") {
+							result = http.responseXML;
+						}
+						if(callback) callback(result);
+					} else {
+						alert('Error al efectuar la operación. Verifique que esté conectado a la Red');
+					}
+				}
+			}
+		}
+		http.send(parameters);
+	},
+	bind : function(user_options) {
+		var opt = {
+			'url' : '', 			//URL to be loaded
+			'onSuccess' : false,	//Function that should be called at success
+			'onError' : false,	//Function that should be called at error
+			'format' : "text",	//Return type - could be 'xml','json' or 'text'
+			'method' : "GET",		//GET or POST
+			'update' : "",		//The id of the element where the resulting data should be shown.
+		};
+		for(var key in opt) {
+			if(user_options[key]){
+				opt[key] = user_options[key];
+			}
+		}
+		if(!opt.url) return;
+		this.load(opt.url, function(data){
+			if(opt.onSuccess) opt.onSuccess(data);
+			if(opt.update) document.getElementById(opt.update).innerHTML = data;
+		},opt.format,opt.method, opt);
+	},
+	init : function() {return this.getHTTPObject();}
+}
+
+//Db
+function fetch_one(sql, params){
+	var rs = db.execute(sql, params);
+	if(rs.isValidRow()){
+		return rs;
+	} else {
+		return false;
+	}
+}
+
+//El
+function $(element){
+	return document.getElementById(element);
+}
+
+function showEl(element){
+	$(element).style.display = "";
+}
+
+function hideEl(element){
+	$(element).style.display = "none";
+}
+
+function activateEl(element){
+	$(element).select();
+	$(element).focus();
+}
+
+//Scroll
+function takeAtTop(){
+	window.scrollTo(0, 0);
+}
+
+//POS
+function showClaveForm(){
+	hideEl('messages');
+	showEl('claveForm');
+	takeAtTop();
+	activateEl("clave")
+}
+
+function exitApp(){
+	hideEl('ambientesDiv');
+	showClaveForm();
+	$('clave').value = "";
+}
+
+function showAmbientes(){
+	hideEl('claveForm');
+	showEl('ambientesDiv');
+	if(initAmbientes==false){
+		var rs = db.execute('SELECT * FROM salon');
+		$('ambientesContent').innerHTML = "";
+		while(rs.isValidRow()){
+			var d = document.createElement("INPUT");
+			d.type = "button";
+			d.value = rs.field(1);
+			d.title = rs.field(0);
+			d.onclick = function(){
+				salonId = this.title;
+				salonNombre = this.value;
+				$('salonRef').innerHTML = salonNombre;
+				showSelectMesa();
+			}
+			$('ambientesContent').appendChild(d);
+	  		rs.next();
+		}
+		rs.close();
+		initAmbientes = true;
+	}
+	initMenus = false;
+	takeAtTop();
+}
+
+function showSelectMesa(){
+	hideEl('ambientesDiv');
+	showEl('selectMesaDiv');
+	takeAtTop();
+	activateEl("numeroMesa")
+}
+
+function showMenus(menuId){
+	hideEl('selectMesaDiv');
+	showEl('menusDiv');
+	var rs = db.execute('SELECT * FROM menus');
+	while(rs.isValidRow()){
+		rs.next();
+	}
+	rs.close();
+	takeAtTop();
+}
+
+function escogerMesa(){
+	try {
+		numeroMesa = $('numeroMesa').value;
+		if(numeroMesa!=0){
+			salonMesasId = 0;
+			var rs = db.execute('SELECT id FROM salon_mesas WHERE salon_id = ? AND numero = ?', [salonId, numeroMesa]);
+			if(rs.isValidRow()){
+				salonMesasId = rs.fieldByName('id');
+			}
+			rs.close();
+			if(salonMesasId==0){
+				alert('No existe la mesa número '+numeroMesa+' en el ambiente '+salonNombre);
+				activateEl("numeroMesa");
+				return;
+			}
+			rs.close();
+			$('mesaRef').innerHTML = numeroMesa;
+			showPedido();
+		} else {
+			alert('Debe indicar el número de la mesa en el ambiente '+salonNombre);
+			activateEl("numeroMesa");
+			return;
+		}
+	}
+	catch(e){
+		alert(e.message)
+	}
+}
+
+function reShowPedido(){
+	try {
+		hideEl('pedidoAddDiv');
+		hideEl('menusAddDiv');
+		hideEl('modifiersAddDiv');
+		hideEl('setCantidadDiv');
+		showEl('pedidoDiv');
+		renderPedido();
+		takeAtTop();
+	}
+	catch(e){
+		alert(e.messages)
+	}
+}
+
+function showPedido(){
+	try {
+		hideEl('selectMesaDiv');
+		showEl('messages');
+		$('messages').innerHTML = "Cargando Pedido...";
+		takeAtTop();
+		db.execute('DELETE FROM pedido');
+		db.execute('DELETE FROM pedido_modifiers');
+		var url = appPath+'order/add/'+salonMesasId;
+		jx.load(url, function(pedido){
+			hideEl('messages');
+			if(pedido.items.length==0){
+				showAddItem();
+			} else {
+				showEl('pedidoDiv');
+				var menusItemsId;
+				var items = pedido.items;
+				for(var i=0;i<items.length;i++){
+					db.execute('INSERT INTO pedido VALUES (?, ?, ?, ?)', [items[i].id, items[i].menus_items_id, items[i].cantidad, items[i].total]);
+				};
+				var modifiers = pedido.modifiers;
+				if(modifiers.length>0){
+					for(var i=0;i<modifiers.length;i++){
+						db.execute('INSERT INTO pedido_modifiers VALUES (?, ?, ?)', [modifiers[i].id, modifiers[i].account_id, modifiers[i].modifiers_id]);
+					}
+				}
+				renderPedido();
+			}
+		}, 'json', 'post');
+	}
+	catch(e){
+		alert(e.message);
+	}
+}
+
+//Visualiza el contenido del pedido
+function renderPedido(){
+	var rs = db.execute('SELECT * FROM pedido ORDER BY id');
+	$('pedidoContent').innerHTML = "";
+	while(rs.isValidRow()){
+		//Mostrar Item
+		var di = '<div id="item'+rs.fieldByName('id')+'">';
+		menusItems = fetch_one('SELECT * FROM menus_items WHERE id = ?', [rs.fieldByName('menus_items_id')]);
+		di+= '<span class="menuItemName">'+menusItems.fieldByName("nombre")+"</span><br>";
+		var rm = db.execute('SELECT pedido_modifiers.id, modifiers.nombre FROM pedido_modifiers,modifiers WHERE pedido_modifiers.account_id = ? AND pedido_modifiers.modifiers_id = modifiers.id ORDER BY 1', [rs.fieldByName('id')]);
+		while(rm.isValidRow()){
+			di+=" <span class='modifierName'> &gt; "+rm.fieldByName("nombre")+"</span><br>";
+			rm.next();
+		}
+		di+= '<span class="menuItemQuantity">Cantidad: '+ rs.fieldByName('cantidad')+'</span>';
+		di+= '<span class="menuItemPrice">Precio: '+ rs.fieldByName('total')+'</span>';
+		di+= '<div align="right" class="menuItemOptions">'+
+			 '<input type="button" class="menuItemSetMods" value="Mods" onclick="setModifier(this, '+rs.fieldByName('id')+')">'+
+			 '<input type="button" class="menuItemSetQuantity" value="Cantidad" onclick="showSetCantidad(this, '+rs.fieldByName('id')+')">'+
+			 '<input type="button" class="menuItemCancel" value="Cancelar" onclick="cancelItem(this, '+rs.fieldByName('id')+')">'+
+			 '</div>'
+		di+= '</div>';
+		$('pedidoContent').innerHTML+= di;
+		rs.next();
+	}
+	rs.close();
+	takeAtTop();
+}
+
+function showAddItem(){
+	hideEl('pedidoDiv');
+	showEl('pedidoAddDiv');
+	if(initMenus==false){
+		var rs = db.execute('SELECT DISTINCT menus.id, menus.nombre FROM menus,salon_menus_items,menus_items WHERE menus_items.id=salon_menus_items.menus_items_id AND menus.id = menus_items.menus_id AND salon_menus_items.salon_id = ?', [salonId]);
+		$('pedidoAddContent').innerHTML = "";
+		while(rs.isValidRow()){
+			var d = document.createElement("INPUT");
+			d.type = "button";
+			d.value = rs.field(1);
+			d.title = rs.field(0);
+			d.onclick = function(){
+				menusId = this.title;
+				menusNombre = this.value;
+				$('menuRef').innerHTML = menusNombre;
+				showMenusItems(menusId);
+			}
+			$('pedidoAddContent').appendChild(d);
+	  		rs.next();
+		}
+		rs.close();
+		initMenus = true;
+	}
+	takeAtTop();
+}
+
+function showMenusItems(menusId){
+	try {
+		hideEl('pedidoAddDiv');
+		showEl('menusAddDiv');
+		var rs = db.execute('SELECT * FROM menus_items WHERE menus_id = ? ORDER BY nombre', [menusId]);
+		$('menusAddContent').innerHTML = "";
+		while(rs.isValidRow()){
+			var d = document.createElement("INPUT");
+			d.type = "button";
+			d.value = rs.fieldByName('nombre');
+			d.title = rs.fieldByName('id');
+			d.onclick = function(){
+				var url = appPath+'order/addToList/'+this.title;
+				jx.load(url, function(account){
+					var rowCount = fetch_one('SELECT COUNT(*) FROM pedido WHERE id = ?', [account.id])
+					if(rowCount.field(0)==0){
+						db.execute('INSERT INTO pedido VALUES (?, ?, ?, ?)', [account.id, account.menus_items_id, account.cantidad, account.total]);
+					} else {
+						db.execute('UPDATE pedido SET menus_items_id = ?, cantidad =  ?, total = ? WHERE id = ?', [account.menus_items_id, account.cantidad, account.total, account.id]);
+					}
+					setModifier(document.createElement('DIV'), account.id, true);
+				}, 'json');
+			}
+			$('menusAddContent').appendChild(d);
+			rs.next();
+		}
+		rs.close();
+		takeAtTop();
+	}
+	catch(e){
+		alert(e.message)
+	}
+}
+
+function validaClave(){
+	$('clave').disabled = true;
+	jx.load(appPath+'mobile/startSession?clave='+$('clave').value, function(response){
+		if(response==1){
+			$('clave').disabled = false;
+			showAmbientes();
+		} else {
+			alert('Clave incorrecta');
+			activateEl("clave");
+			$('clave').disabled = false;
+		}
+	}, 'text', 'post');
+}
+
+function updatePosition(position){
+	alert('Current lat/lon is: ' + position.latitude + ',' + position.longitude);
+}
+
+function handleError(positionError) {
+	alert('Attempt to get location failed: ' + positionError.message);
+}
+
+function showMapCallback(position) {
+  // Show a map centered at (position.coords.latitude, position.coords.longitude).
+  alert(position.coords.latitude)
+  alert(position.coords.longitude)
+}
+
+function updateGeo(){
+	//Geo
+	var geo = google.gears.factory.create('beta.geolocation');
+	geo.getCurrentPosition(updatePosition, handleError);
+	//navigator.geolocation.getCurrentPosition(showMapCallback);
+}
+
+function backToAmbientes(){
+	initMenus = false;
+	hideEl('selectMesaDiv');
+	hideEl('pedidoDiv');
+	hideEl('pedidoAddDiv');
+	showEl('ambientesDiv');
+	takeAtTop();
+}
+
+function backToMenus(){
+	hideEl('menusAddDiv');
+	showEl('pedidoAddDiv');
+	takeAtTop();
+}
+
+function cancelItem(element, accountId){
+	element.disabled = true;
+	var url = appPath+'order/cancelItems?items='+accountId;
+	jx.load(url, function(response){
+		db.execute('DELETE FROM pedido WHERE id = ?', [accountId]);
+		reShowPedido();
+	}, 'text', 'post');
+}
+
+function valEnter(event){
+	if(event.keyCode==13){
+		validaClave();
+	}
+}
+
+function setModifier(element, accountId, reShow){
+	hideEl('pedidoDiv');
+	hideEl('menusAddDiv');
+	showEl('modifiersAddDiv');
+	var rs = db.execute('SELECT menus_items.id, menus_items.nombre FROM pedido, menus_items WHERE menus_items.id = pedido.menus_items_id AND pedido.id = '+accountId);
+	if(rs.isValidRow()){
+		var modifiers = [];
+		$('modifierRef').innerHTML = rs.fieldByName("nombre");
+		var rs2 = db.execute('SELECT modifiers.id, modifiers.nombre FROM modifiers, menus_items_modifiers WHERE modifiers.id = menus_items_modifiers.modifiers_id AND menus_items_modifiers.menus_items_id = '+rs.fieldByName("id"));
+		var numberModifiers = 0;
+		while(rs2.isValidRow()){
+			modifiers[modifiers.length] = {
+				id: rs2.fieldByName('id'),
+				nombre: rs2.fieldByName('nombre')
+			};
+			rs2.next();
+			numberModifiers++;
+		}
+		if(numberModifiers==0){
+			if(reShow==true){
+				reShowPedido();
+			} else {
+				$('modifiersAddContent').innerHTML = "No hay modificadores asignados a este item";
+			}
+		} else {
+			$('modifiersAddContent').innerHTML = "";
+			for(var j=0;j<modifiers.length;j++){
+				var d = document.createElement("INPUT");
+				d.type = "button";
+				d.value = modifiers[j].nombre;
+				d.title = modifiers[j].id+'/'+accountId;
+				d.onclick = function(){
+					var url = appPath+'order/addModifier/'+this.title;
+					modifierId = this.title;
+					jx.load(url, function(response){
+						db.execute("INSERT INTO pedido_modifiers VALUES (?, ?, ?)", [parseInt(response), accountId, parseInt(modifierId)]);
+						reShowPedido();
+					}, 'text', 'post');
+				};
+				$('modifiersAddContent').appendChild(d);
+			}
+			modifiers = [];
+		}
+	} else {
+		alert('No existe el pedido');
+		reShowPedido();
+	}
+}
+
+function addModifier(){
+
+}
+
+function showSetCantidad(element, id){
+	hideEl('pedidoDiv');
+	showEl('setCantidadDiv');
+	accountId = id;
+}
+
+function sendToKitchen(){
+	var url = appPath+'order/sendToKitchen';
+	jx.load(url, function(response){
+		backToAmbientes();
+	}, 'text', 'post');
+}
+
+</script>
+
+<div id='messages' align="center">
+<?php echo Tag::image('pos2/database.gif') ?><br>
+Se está instalando la base de datos del Punto de Venta en este dispositivo, por favor espere...
+<span id='porcentLoad'>0%</span>
+</div>
+
+<div id='claveForm' style="display:none">
+<div id="titleScreen">Digite su Clave</div>
+<table>
+	<tr>
+		<td align="right"><b>Clave:</b></td>
+		<td><input id="clave" type="password" autocomplete="off" value="2684" size="5" onkeyup="valEnter(event)"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="button" value="Entrar" onclick="validaClave()"></td>
+	</tr>
+	<tr>
+		<!-- <td><input type="button" value="UpdateGeo" onclick="updateGeo()"></td> -->
+	</tr>
+</table>
+
+</div>
+
+<div id='ambientesDiv' style="display:none">
+	<div id="titleScreen">Seleccione un Ambiente</div>
+	<div id='ambientesContent'></div>
+	<td><input type="button" value="Salir" id='salirButton' onclick="exitApp()"></td>
+</div>
+
+<div id='selectMesaDiv' style="display:none">
+<div id="titleScreen">Seleccione la Mesa en <span id='salonRef'></span></div>
+<table>
+	<tr>
+		<td align="right"><b>Número Mesa:</b></td>
+		<td><input id="numeroMesa" type="text" autocomplete="off" value="" size="5"></td>
+		<td><input id="escogerButton" type="button" value="Escoger" onclick="escogerMesa()"></td>
+	</tr>
+	<tr>
+		<td colspan="2"><input class="volverButton" type="button" value="Volver" onclick="backToAmbientes()"></td>
+	</tr>
+</table>
+</div>
+
+<div id='setCantidadDiv' style="display:none">
+<div id="titleScreen">Seleccione la Cantidad</div>
+<table>
+	<tr>
+		<td align="right"><b>Cantidad:</b></td>
+		<td><input id="cantidadItems" type="text" autocomplete="off" value="" size="5"></td>
+		<td><input id="cantidadButton" type="button" value="Establecer" onclick="establecerCantidad()"></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input class="volverButton" type="button" value="Volver" onclick="reShowPedido()">
+		</td>
+	</tr>
+</table>
+</div>
+
+<div id='pedidoDiv' style="display:none">
+	<div id="titleScreen">Items en la Mesa <span id='mesaRef'></span></div>
+	<input class="controlButton" type="button" value="Agregar Item al Pedido" onclick="showAddItem()">
+	<div id='pedidoContent'></div>
+	<input class="controlButton" type="button" value="Agregar Item al Pedido" onclick="showAddItem()">
+	<input class="controlButton" type="button" value="Seleccionar Cliente/Habitación" onclick="selectCustomer()">
+	<input class="controlButton" type="button" value="Cambiar Tipo de Pedido" onclick="selectPedidoTipo()">
+	<input class="sendToKitchen" type="button" value="Enviar a Cocina" onclick="sendToKitchen()">
+	<input class="backToAmbientes" type="button" value="Volver a Ambientes" onclick="backToAmbientes()">
+</div>
+
+<div id='pedidoAddDiv' style="display:none">
+	<div id="titleScreen">Agregar Item / Seleccione un Menu</span></div>
+	<div id='pedidoAddContent'></div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<input class="backToAmbientes" type="button" value="Volver a Ambientes" onclick="backToAmbientes()">
+</div>
+
+<div id='menusAddDiv' style="display:none">
+	<div id="titleScreen">Seleccione un Item de <span id='menuRef'></span></span></div>
+	<div id='menusAddContent'></div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<input class="backToMenus" type="button" value="Volver a Menus" onclick="backToMenus()">
+</div>
+
+<div id='modifiersAddDiv' style="display:none">
+	<div id="titleScreen">Seleccione un Modificador de <span id='modifierRef'></span></span></div>
+	<div id='modifiersAddContent'></div>
+	<input class="controlButton" type="button" value="Cambiar Modificador" onclick="changeModifier()">
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<input class="backToMenus" type="button" value="Volver a Menus" onclick="backToMenus()">
+</div>
+
+<script type="text/javascript">
+
+window.onload = function(){
+
+	if(typeof window.google == "undefined"){
+		$('messages').innerHTML = '<?php echo Tag::image('pos2/gears.gif') ?><br/>Debe instalar Google Gears para este navegador';
+	} else {
+
+		if(typeof google.gears == "undefined"){
+			alert("No se pudo cargar Google Gears");
+		}
+
+		//window.setTimeout(function(){
+
+		try {
+
+			if(typeof google.gears.factory == "undefined"){
+				alert("No se pudo cargar Google Gears");
+				return;
+			}
+
+			if(typeof google.gears.factory.create == "undefined"){
+				alert("No se pudo cargar Google Gears");
+				return;
+			}
+
+			//Db
+			window.db = google.gears.factory.create('beta.database');
+
+			//Crear BD
+			db.open('pos3');
+
+			//BD de Control
+			db.execute('DROP TABLE IF EXISTS db_list');
+			db.execute('CREATE TABLE IF NOT EXISTS db_list (id INTEGER NOT NULL PRIMARY KEY, fecha DATE)');
+			db.execute('DELETE FROM db_list');
+			var rs = db.execute('SELECT * FROM db_list WHERE fecha = ?', ["<?php echo date("Y-m-d") ?>"]);
+			var dbExists = false;
+			while(rs.isValidRow()){
+				dbExists = true;
+				rs.next();
+			}
+
+			if(dbExists==false){
+
+			//Tabla Pedido
+			db.execute('DROP TABLE IF EXISTS pedido');
+			db.execute('CREATE TABLE IF NOT EXISTS pedido (id INTEGER NOT NULL PRIMARY KEY, menus_items_id INTEGER NOT NULL, cantidad INTEGER NOT NULL, total DECIMAL(16,2) NOT NULL)');
+
+			//Instalando ambientes
+			db.execute('DROP TABLE IF EXISTS salon');
+			db.execute('CREATE TABLE IF NOT EXISTS salon (id INTEGER NOT NULL PRIMARY KEY, nombre VARCHAR(120) NOT NULL)');
+			db.execute('DELETE FROM salon');
+			<?php foreach($Salon->find() as $salon): ?>
+			db.execute('INSERT INTO salon values (?, ?)', [<?php echo $salon->id ?>, "<?php echo $salon->nombre ?>"]);
+			<?php endforeach ?>
+
+			$('porcentLoad').innerHTML = "5%";
+
+			//Instalando menus
+			db.execute('DROP TABLE IF EXISTS menus');
+			db.execute('CREATE TABLE IF NOT EXISTS menus (id INTEGER NOT NULL PRIMARY KEY, nombre VARCHAR(120) NOT NULL)');
+			db.execute('DELETE FROM menus');
+			<?php foreach($Menus->find() as $menu): ?>
+			db.execute('INSERT INTO menus VALUES (?, ?)', [<?php echo $menu->id ?>, "<?php echo $menu->nombre ?>"]);
+			<?php endforeach ?>
+
+			$('porcentLoad').innerHTML = "10%";
+
+			//Instalando salon_mesas
+			db.execute('DROP TABLE IF EXISTS salon_mesas');
+			db.execute('CREATE TABLE IF NOT EXISTS salon_mesas (id INTEGER NOT NULL PRIMARY KEY, salon_id INTEGER NOT NULL, numero VARCHAR(5) NOT NULL)');
+			db.execute('DROP INDEX IF EXISTS salon_mesas_idx1');
+			db.execute('DROP INDEX IF EXISTS salon_mesas_idx2');
+			db.execute('DELETE FROM salon_mesas');
+			<?php
+			$salonMesas = $SalonMesas->find();
+			$totalItems = count($salonMesas);
+			$i = 1;
+			foreach($salonMesas as $salonMesa): ?>
+			db.execute('INSERT INTO salon_mesas VALUES (?, ?, ?)', [<?php echo $salonMesa->id ?>, <?php echo $salonMesa->salon_id ?>, "<?php echo $salonMesa->numero ?>"]);
+			<?php $porc = (int) ($i*10/$totalItems)+10; $i++; ?>
+			$('porcentLoad').innerHTML = "<?php echo $porc ?>%";
+			<?php endforeach ?>
+			db.execute('CREATE INDEX IF NOT EXISTS salon_mesas_idx1 ON salon_mesas(salon_id, numero)');
+			db.execute('CREATE INDEX IF NOT EXISTS salon_mesas_idx2 ON salon_mesas(salon_id)');
+
+			//Instalando menus_items
+			db.execute('DROP TABLE IF EXISTS menus_items');
+			db.execute('CREATE TABLE IF NOT EXISTS menus_items (id INTEGER NOT NULL PRIMARY KEY, menus_id INTEGER NOT NULL, nombre VARCHAR(120) NOT NULL, precio_venta DECIMAL(16,2) NOT NULL)');
+			db.execute('DELETE FROM menus_items');
+
+			<?php
+
+			$menusItems = $MenusItems->find("estado='A'", 'columns: id,menus_id,nombre,valor');
+			$totalItems = count($menusItems);
+			$i = 1;
+			foreach($menusItems as $menuItem): ?>
+			db.execute('INSERT INTO menus_items VALUES (?, ?, ?, ?)', [<?php echo $menuItem->id ?>, <?php echo $menuItem->menus_id ?>, "<?php echo $menuItem->nombre ?>", <?php echo $menuItem->valor ? $menuItem->valor : 0 ?>]);
+			<?php $porc = (int) ($i*40/$totalItems)+20; $i++; ?>
+			$('porcentLoad').innerHTML = "<?php echo $porc ?>%";
+			<?php endforeach ?>
+
+			db.execute('CREATE INDEX IF NOT EXISTS menus_items_idx1 ON menus_items(menus_id)');
+
+			//Instalando items en ambientes
+			db.execute('DROP TABLE IF EXISTS salon_menus_items');
+			db.execute('CREATE TABLE IF NOT EXISTS salon_menus_items (id INTEGER NOT NULL PRIMARY KEY, salon_id INTEGER NOT NULL, menus_items_id INTEGER NOT NULL, precio_venta DECIMAL(16,2))');
+			db.execute('DELETE FROM salon_menus_items');
+			<?php
+
+			$salonMenusItems = $SalonMenusItems->find("estado='A'", 'columns: id,salon_id,menus_items_id,valor');
+			$totalItems = count($salonMenusItems);
+			$i = 1;
+			foreach($salonMenusItems as $salonMenuItem): ?>
+			db.execute('INSERT INTO salon_menus_items VALUES (?, ?, ?, ?)', [<?php echo $salonMenuItem->id ?>, <?php echo $salonMenuItem->salon_id ?>, "<?php echo $salonMenuItem->menus_items_id ?>", <?php echo $salonMenuItem->valor ? $salonMenuItem->valor : 0 ?>]);
+			<?php $porc = (int) ($i*40/$totalItems)+55; $i++; ?>
+			<?php if(($i%5)==0): ?>
+			$('porcentLoad').innerHTML = "<?php echo $porc ?>%";
+			<?php endif; ?>
+			<?php endforeach ?>
+
+			db.execute('CREATE INDEX IF NOT EXISTS salon_menus_items_idx1 ON salon_menus_items(salon_id, menus_items_id)');
+
+			//Menus Items Modifiers
+			db.execute('DROP TABLE IF EXISTS menus_items_modifiers');
+			db.execute('CREATE TABLE IF NOT EXISTS menus_items_modifiers (id INTEGER NOT NULL PRIMARY KEY, menus_items_id INTEGER NOT NULL, modifiers_id INTEGER NOT NULL)');
+			db.execute('DELETE FROM menus_items_modifiers');
+			<?php
+
+			$menusItemsModifiers = $MenusItemsModifiers->find();
+			$totalItems = count($menusItemsModifiers);
+			foreach($menusItemsModifiers as $menuModifier): ?>
+			db.execute('INSERT INTO menus_items_modifiers VALUES (?, ?, ?)', [<?php echo $menuModifier->getId() ?>, <?php echo $menuModifier->getMenusItemsId() ?>, <?php echo $menuModifier->getModifiersId() ?>]);
+			<?php endforeach ?>
+
+			db.execute('CREATE INDEX IF NOT EXISTS menus_items_modifier_idx1 ON menus_items_modifiers(menus_items_id)');
+
+			//Modifiers
+			db.execute('DROP TABLE IF EXISTS modifiers');
+			db.execute('CREATE TABLE IF NOT EXISTS modifiers (id INTEGER NOT NULL PRIMARY KEY, nombre VARCHAR(45) NOT NULL, tipo char(1) NOT NULL, valor DECIMAL(16,2) NOT NULL)');
+			db.execute('DELETE FROM modifiers');
+			<?php
+
+			$modifiers = $Modifiers->find();
+			$totalItems = count($modifiers);
+			foreach($modifiers as $modifier): ?>
+			db.execute('INSERT INTO modifiers VALUES (?, ?, ?, ?)', [<?php echo $modifier->id ?>, "<?php echo $modifier->nombre ?>", "<?php echo $modifier->tipo ?>", "<?php echo $modifier->valor ?>"]);
+			<?php endforeach ?>
+
+			//Pedido Modifiers
+			db.execute('DROP TABLE IF EXISTS pedido_modifiers');
+			db.execute('CREATE TABLE IF NOT EXISTS pedido_modifiers (id INTEGER NOT NULL PRIMARY KEY, account_id INTEGER NOT NULL, modifiers_id INTEGER NOT NULL)');
+			db.execute('DELETE FROM pedido_modifiers');
+
+			//Control
+			db.execute('DELETE FROM db_list');
+			db.execute('INSERT INTO db_list (fecha) VALUES (?)', ["<?php echo date("Y-m-d") ?>"]);
+
+			}
+
+			$('messages').innerHTML = "Se instaló correctamente la BD";
+
+			//Muestra el form de clave
+			window.setTimeout(showClaveForm, 1000);
+
+		}
+		catch(e){
+			alert(e);
+			alert(e.message);
+		}
+
+		//}, 500);
+	}
+}
+
+</script>

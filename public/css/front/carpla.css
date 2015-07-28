@@ -1,0 +1,165 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+table#tab_previ th {
+	border: 1px solid #C0C0C0;
+	background: url(../img/localnavg.gif);
+	font-size: 12px;
+}
+
+table#tab_previ {
+	border-right: 1px solid #ababab;
+}
+
+table#tab_previ td {
+	padding: 2px;
+	border-left: 1px solid #ababab;
+	border-bottom:  1px solid #ababab;
+}
+
+table#tab_previ td.nb {
+	border: none;
+}
+
+table#tab_ver td {
+	padding: 5px;
+}
+
+table#tab_ver img {
+	cursor: pointer;
+	border: none;
+}
+
+table#tab_folios th {
+	padding: 5px;
+	background: url(../img/localnavg.gif);
+}
+
+table.lista_p {
+	border: none;
+}
+
+table.lista_p td.db {
+	padding: 10px;
+	border: none;
+}
+
+table.lista_p td.nh {
+	background: #fff;
+}
+
+table#tab_tarifas {
+	border-right: 1px solid #969696;
+	border-top: 1px solid #969696;
+}
+
+table#tab_tarifas th {
+	padding: 5px;
+	background: url("../img/localnavg.gif");
+	border-left: 1px solid #C0C0C0;
+}
+
+table#tab_tarifas th.lb {
+	border-left: 1px solid #c0c0c0;
+}
+
+table#tab_tarifas td {
+	border-left: 1px solid #C0C0C0;
+	border-bottom: 1px solid #C0C0C0;
+	background: #fff;
+}
+
+div.tr_fol {
+	text-align: center;
+	padding: 10px;
+	background: url('../img/bg2.jpg');
+}
+
+div.no_tarifa {
+	border: 1px solid red;
+	background: url(../img/red_box.png) #EAB3C0;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+div.no_tarifa span {
+	color: red;
+}
+
+div.ver_tarifas {
+	border: 1px solid #969696;
+	background: url(../img/localnavg.gif);
+	margin: 10px;
+	width: 210px;
+	font-size: 12px;
+}
+
+div.ver_tarifas td {
+	border: none;
+}
+
+div.b_group td {
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+div#parent_legend {
+	padding: 5px;
+	margin: 10px;
+}
+
+div#div_legend {
+	border: 1px solid #969696;
+	background: url(../img/localnavg.gif);
+	background-repeat: repeat-x;
+	background-color: #bebebe;
+	width: 280px;
+}
+
+div#div_legend td {
+	padding-bottom: 5px;
+}
+
+div#blue_box {
+	float: left;
+	width: 18px;
+	height: 18px;
+	background: #84B6EF;
+	border: 1px solid #969696;
+}
+
+div#pink_box {
+	float: left;
+	width: 18px;
+	height: 18px;
+	background: #E0A2E6;
+	border: 1px solid #969696;
+}
+
+div#lpink_box {
+	float: left;
+	width: 18px;
+	height: 18px;
+	background: rgb(255, 166, 210);
+	border: 1px solid #969696;
+}
+
+div#green_box {
+	float: left;
+	width: 18px;
+	height: 18px;
+	background: #ABEE83;
+	border: 1px solid #969696;
+}
+

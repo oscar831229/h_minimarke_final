@@ -1,0 +1,106 @@
+@font-face {
+	font-family: 'Fortin Sans';
+		src: local('Fortin Sans'),
+		url('../font/Fonts/FortinSans.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'Fortin Sans B';
+		src: local('Fortin Sans Bold'),
+		url('../font/Fonts/FortinSansB.otf') format('opentype');
+}
+
+body {
+	background-image: url('../img/bg-leo541b.jpg');
+	background-repeat: no-repeat;
+	background-position: top center;
+	background-attachment: fixed;
+	background-color: #261237;
+}
+
+label {
+	font-family: 'Fortin Sans B';
+	font-size: 14px;
+}
+
+div#appLogo {
+	margin-bottom: 25px;
+	padding-bottom: 10px;
+	color: #969696;
+}
+
+h1 {
+	font-family: Lucida Grande, Tahoma;
+	font-size: 38px;
+}
+
+div#layout {
+	margin-top: 20px;
+	width: 700px;
+	padding-top: 35px;
+	background: #e8e8e8;
+	left: auto;
+	box-shadow: 10px 10px 5px #969696;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding-bottom: 25px;
+}
+
+div#layout-content {
+	background: #fff;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	padding: 20px;
+	margin: 20px;
+	text-align: left;
+	font-size: 14px;
+	font-family: Lucida Grande, Tahoma;
+}
+
+input[type="text"],
+input[type="password"] {
+	font-family: 'Fortin Sans';
+	border: 1px solid #969696;
+	width: 350px;
+	background: #fff;
+	font-size: 32px;
+	padding: 5px;
+}
+
+div#spinner {
+	padding: 50px;
+}
+
+div#spinner span {
+	font-family: Lucida Grande, Tahoma;
+	font-size: 16px;
+}
+
+div#spinner img {
+	margin: 20px;
+}
+
+div#content-ok p,
+div#content-fail p,
+div#content-form p {
+	font-family: Lucida Grande, Tahoma;
+	font-size: 14px;
+	margin: 20px;
+	line-height: 20px;
+}
+
+div#content-ok img,
+div#content-fail img {
+	margin: 20px;
+}
+
+div#panel-buttons {
+	padding-right: 30px;
+}
+
+#captcha {
+	border: 1px solid #969696;
+	width: 280px;
+	height: 90px;
+}

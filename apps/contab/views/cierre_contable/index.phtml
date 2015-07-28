@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Cierre Contable') ?>
+
+<?php echo Tag::form('cierre_contable/cierre', 'class: cierreForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="proximoCierre">Fecha al Cerrar</label></td>
+					<td id="proximoCierre"><?php echo $proximoCierre->getLocaleDate('long') ?></td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td id="cierreActual"><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Año Cierre</b></td>
+						<td><?php echo $anoCierre ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

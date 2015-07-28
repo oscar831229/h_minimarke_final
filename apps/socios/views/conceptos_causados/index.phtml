@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('finance-2.png', 'Resumen de Conceptos Causados') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="50%" align="center">
+
+			<?php echo Tag::form('conceptos_causados/generar', 'class: conceptosCausadosForm', 'autocomplete: off') ?>
+				<table align="center">
+					<tr>
+						<td align="right"><label for="periodo">Periodos</label></td>
+						<td> 
+							<?php
+								echo Tag::select('periodo',$periodos, 'using: periodo,periodo');
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td align="right"><label for="detallado">Ver detallado</label></td>
+						<td> 
+							<input type='checkbox' name='detallado' value='1'>
+						</td>
+					</tr>
+				</table>
+			<?php echo HfosTag::reportTypeTag(true, false) ?>
+			<?php echo Tag::endForm() ?>
+		</td>
+	</tr>
+</table>
+</div>

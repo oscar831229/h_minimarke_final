@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2011
+ * @version		$Id$
+ */
+$dataI = array();
+$i = 0.0;
+while($i <= 2.1){
+   $dataI["$i"]="$i %";
+   $i+=0.1;
+}
+
+echo '
+<div class="pagoSaldo">
+    <table cellspacing="0" cellpadding="0" align="center">
+		<tr>
+		  <td align="right"><label for="numero_cuotas">Número de Cuotas</label></td>
+		  <td>'.Tag::numericField(array('numero_cuotas','size'=>3)).'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="interes">Interes Corriente</label></td>
+		  <td>'.Tag::selectStatic(array('interes',$dataI)).'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="fecha_primera_cuota">Fecha Primera Pago</label></td>
+		  <td>'.Tag::date360Field(array('fecha_primera_cuota','useDummy'=>true)).'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="premios_id">Premio</label></td>
+		  <td>'.Tag::select('premios_id',$premios,'using: id,nombre').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="observaciones">Observaciones</label></td>
+		  <td>'.Tag::textArea(array('observaciones','cols'=>40,'rows'=>5)).'</td>
+		</tr>
+	</table>
+</div>';

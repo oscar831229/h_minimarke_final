@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('issue.png', 'Comprobante Diario') ?>
+
+<?php echo Tag::form('comprobante_diario/generar', 'class: comprobanteDiarioForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="codigoDiario">Diario</label></td>
+					<td><?php echo Tag::select('codigoDiario', $diarios, 'using: codigo,nombre') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaInicial">Fecha Inicial</label></td>
+					<td><?php echo Tag::dateField('fechaInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaFinal">Fecha Final</label></td>
+					<td><?php echo Tag::dateField('fechaFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroInicial">Número Inicial</label></td>
+					<td><?php echo Tag::numericField('numeroInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroFinal">Número Final</label></td>
+					<td><?php echo Tag::numericField('numeroFinal') ?></td>
+				</tr>
+				<!--<tr>
+					<td align="right"><label for="orden">Ordenar</label></td>
+					<td><?php echo Tag::selectStatic('orden', array(
+						'C' => 'CUENTA',
+						'N' => 'CENTRO DE COSTO'
+					)) ?></td>
+				</tr>-->
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Año Cierre</b></td>
+						<td><?php echo $anoCierre ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

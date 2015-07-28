@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+echo Tag::javascriptInclude('pos2/receta');
+
+?>
+
+<table width="100%">
+	<tr>
+		<td><h1>Receta Estándar</h1></td>
+		<!-- <td align="right">
+			<?php echo Tag::button('Expandir','id: expand','class: controlButtonCancel'); ?>
+		</td> -->
+		<td align="right" width="90px">
+			<?php echo Tag::linkTo('receta/index', 'Volver') ?>
+		</td>
+	</tr>
+</table>
+
+<?php
+
+//echo Tag::form('receta/expand','id: form');
+echo "<table class='lista_res' cellspacing='0' align='center'>";
+echo "<thead>
+	<tr>
+		<!-- <th>".Tag::checkboxField('allIn')."</th> -->
+		<th>Almacen</th>
+		<th>Número</th>
+		<th>Nombre</th>
+		<th>Número Personas</th>
+		<th>Costo</th>
+	</tr>
+</thead>";
+foreach($recetas as $receta){
+	echo '<tr id="tr'.$receta->numero_rec.'">',
+	//<td align="center">', Tag::checkboxField('check[]','class: checks','value: '.$receta->numero_rec), '</td>',
+	'<td align="right">', $receta->almacen,
+	'</td><td align="right">', $receta->numero_rec,
+	'</td><td>',
+	$receta->nombre,
+	'</td><td align="right">',
+	$receta->num_personas,
+	'</td><td align="right">',
+	Currency::number($receta->precio_costo),
+	'</td><td align="center">',
+	Tag::buttonToAction('Editar', 'receta/editar/'.$receta->almacen.'/'.$receta->numero_rec, 'class: controlButton'),
+	'</tr>';
+}
+echo "</table>";
+//echo Tag::endForm();
+/*
+echo "<br /><div align='right'>",'Visualizando: ',$inicial,' - ',$final, ' de '.$total_result;
+if($recetas->total_pages > 1) {
+   if($page != 1) {
+      echo ' | ';
+      echo Tag::linkTo('receta/buscar?pag='.$recetas->first,'Primero'),' | ';
+      echo Tag::linkTo('receta/buscar?pag='.$recetas->before,'Anterior');
+   }
+   if($page != $recetas->total_pages) {
+      echo ' | ';
+      echo Tag::linkTo('receta/buscar?pag='.$recetas->next,'Siguiente'),' | ';
+      echo Tag::linkTo('receta/buscar?pag='.$recetas->last,'último');
+   }
+}
+echo "</div>";
+
+echo "<br /><div align='right'>";
+echo Tag::buttonToAction('Volver', 'receta/index', 'class: controlButtonCancel');
+echo "</div>";
+*/

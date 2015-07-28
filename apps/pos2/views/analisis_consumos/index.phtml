@@ -1,0 +1,57 @@
+<?php
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo View::getContent() ?>
+
+<h1>Análisis Consumos</h1>
+
+<?php echo Tag::form("analisis_consumos/procesar") ?>
+<table align="center">
+	<tr>
+		<td align="right">
+			<b>Fecha Inicial</b>
+		</td>
+		<td>
+			<?php echo Tag::dateField(array('fechaInicial', 'value' => date('Y-m-d'), 'useDummy' => true)) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<b>Fecha Final</b>
+		</td>
+		<td>
+			<?php echo Tag::dateField(array('fechaFinal', 'value' => date('Y-m-d'), 'useDummy' => true)) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<b>Formato</b>
+		</td>
+		<td>
+			<?php echo Tag::selectStatic('formato', array(
+				'Html' => 'Html',
+				'Excel' => 'Excel'
+			)) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right"></td>
+		<td><?php echo Tag::submitButton(array('Consultar', 'class' => 'controlButton')) ?></td>
+	</tr>
+</table>
+<?php echo Tag::endForm();
+
+if(isset($generated) && isset($fileName)){
+	echo "<script type='text/javascript'>window.open(\$Kumbia.path+\"temp/$fileName\")</script>";
+}

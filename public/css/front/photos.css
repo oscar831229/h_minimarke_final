@@ -1,0 +1,102 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+@font-face {
+	font-family: 'Anivers';
+	src: local('Anivers'),
+		url('../font/Fonts/Anivers.otf') format('opentype');
+}
+
+#mainTd {
+	padding: 0px;
+	background: #333333;
+}
+
+tr#mTr2 {
+	background: #333333;
+}
+
+.top-nav {
+	padding: 10px;
+	background: url("../img/localnav.png");
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-bottom: 10px;
+}
+
+label {
+	color: #ffffff;
+}
+
+#filePreview {
+	margin: 5px;
+	width: 150px;
+	-webkit-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.7);
+}
+
+#uploadForm {
+	position: fixed;
+	top: -20px;
+	left: 400px;
+	-webkit-user-select: none;
+	background: url("../img/bg-modal.png") transparent;
+	border: 1px solid #444;
+	cursor: default;
+	display: block;
+	font-family: 'Lucida Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	margin: 0px;
+	margin-top: 20px;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	padding-bottom: 10px;
+	width: 470px;
+	-webkit-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.7);
+	-moz-border-radius-bottomleft: 5px;
+	-moz-border-radius-bottomright: 5px;
+}
+
+#uploadForm a {
+	margin-right: 15px;
+}
+
+#sortlist img {
+	height: 150px;
+	-webkit-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.7);
+	margin: 5px;
+}
+
+div#optionShade {
+	position: absolute;
+	background: rgba(22, 22, 22, 0.9);
+	z-index: 400;
+}
+
+div#photo-options {
+	padding: 7px;
+}
+
+div.photo-button {
+	background: #333333;
+	-moz-border-radius: 7px;
+	cursor: pointer;
+}
+
+div.photo-button td {
+	color: #ffffff;
+}

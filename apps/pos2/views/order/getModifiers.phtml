@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$nombre = ucwords(i18n::strtolower($menuItem->nombre));
+echo "<div id='ti{$menuItem->id}'>
+<button class='menuItemButton' onclick='loadItemAccount(this, ".$menuItem->id.", false)'
+title='".str_replace("<br>", "", $menuItem->nombre)."\nPrecio: $ {$menuItem->valor}'
+id='i{$menuItem->id}'
+onmouseover='$(\"ti{$menuItem->id}\").style.background=\"#CCDEFF\";$(\"codigoItem\").value = $menuItem->id;'
+onmouseout='$(\"ti{$menuItem->id}\").style.background=\"\"'>";
+echo "<span style='color:#818181'>".sprintf("%04s", $menuItem->id)."</span> ";
+echo $nombre;
+echo "</button></div>";
+
+$items = 0;
+foreach($MenusItemsModifiers->find("menus_items_id='$id'") as $itemsModifier){
+	$modifier = $Modifiers->findFirst($itemsModifier->getModifiersId());
+	if($modifier!=false){
+		echo "<div id='tm{$modifier->id}'>
+		<button class='menuItemButton modifierButton' onclick='addSingleModifier(".$modifier->id.")'>";
+		echo ucwords(i18n::strtolower($modifier->nombre))." <span style='color:#899BAA'>[".$modifier->getTipoDetalle().']</span>';
+		if($modifier->valor<>0){
+			echo " <span style='color:#899BAA'>Precio: ", $modifier->valor, "</span>";
+		}
+		echo "</button></div>";
+		$items++;
+	}
+}
+if(!$items){
+	$MenusItems->findFirst($id);
+	Flash::notice("No hay modificadores para '{$MenusItems->nombre}'");
+}

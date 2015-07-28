@@ -1,0 +1,192 @@
+<?php
+
+$controllerRequest = ControllerRequest::getInstance();
+if(!$controllerRequest->isPost()){
+	echo '<div class="notice">'.$traslate['InfoPay'].'</div>';
+}
+
+View::getContent();
+
+?>
+<div class="xxx">
+	<h3><?php echo $traslate['DatosReserva'] ?></h3>
+	<table align="center" width="90%" cellspacing="3">
+		<tr>
+			<td align="right" width="150"><b><?php echo $traslate['NumeroReserva'] ?></b></td>
+			<td align="left"><?php echo $reserva->getNumres() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['FechaLlegada'] ?></b></td>
+			<td align="left"><?php echo $reserva->getFeclle()->getLocaleDate() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['FechaSalida'] ?></b></td>
+			<td align="left"><?php echo $reserva->getFecsal()->getLocaleDate() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['Noches'] ?></b></td>
+			<td align="left"><?php echo $reserva->getFecsal()->diffDate($reserva->getFeclle()) ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['Adultos'] ?></b></td>
+			<td align="left"><?php echo $reserva->getNumadu() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['Ninos'] ?></b></td>
+			<td align="left"><?php echo $reserva->getNumnin() ?></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top"><b><?php echo $traslate['Tarifas'] ?></b></td>
+			<td align="left" valign="top"><?php
+				if(count($tarifas)){
+					$totalEstadia = 0;
+					echo '<table cellspacing="0" width="100%" class="rate-resume">';
+					echo '<tr>
+						<th>', $traslate['Nombre'], '</th>
+						<th>', $traslate['FechaInicial'], '</th>
+						<th>', $traslate['Noches'], '</th>
+						<th>', $traslate['ValorNoche'], '</th>
+						<th>', $traslate['TotalNoches'], '</th>
+					</tr>';
+					foreach($tarifas as $tarifa){
+						echo '<tr>
+							<td align="left">', $tarifa['nombre'], '</td>
+							<td align="center">', $tarifa['fechaInicial']->getLocaleDate('medium'), '</td>
+							<td align="center">', $tarifa['tarifa']['noches'], '</td>
+							<td align="right">$ ', Currency::money($tarifa['tarifa']['valorNoche']), ' COP</td>
+							<td align="right">$ ', Currency::money($tarifa['tarifa']['totalNoches']), ' COP</td>
+						</tr>';
+						$totalEstadia+=($tarifa['tarifa']['totalNoches']);
+					}
+					echo '<tr>
+						<td align="right" colspan="4"><b>', $traslate['TotalEstadia'], '</b></td>
+						<td align="right">$ ', Currency::money($totalEstadia), ' COP</td>
+					</tr>';
+					echo '</table>';
+				} else {
+					echo $traslate['NoTarifas'];
+				}
+			?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['EstadoReserva'] ?></b></td>
+			<td align="left"><?php
+				if($reserva->getEstado()=='P'){
+					echo '<div class="pendent">', $traslate['ReservaPendiente'], '</div>';
+				} else {
+					echo '<div class="guaranted">', $traslate['ReservaGarantizada'], '</div>';
+				}
+			?></td>
+		</tr>
+	</table>
+</div>
+<br/>
+
+<?php
+$totalDepositos = 0;
+if(count($garantias)){ ?>
+	<div class="section">
+		<h3><?php echo $traslate['DepositosGrabados'] ?></h3>
+		<div align="center">
+		<?php
+
+		echo '<table cellspacing="0" width="80%" class="rate-resume" align="center">';
+		echo '<tr>
+				<th>', $traslate['Fecha'], '</th>
+				<th>', $traslate['Recibo'], '</th>
+				<th>', $traslate['Nota'], '</th>
+				<th>', $traslate['Valor'], '</th>
+			</tr>';
+		foreach($garantias as $garantia){
+			echo '<tr>
+				<td align="left">', $garantia['fecha'], '</td>
+				<td align="center">', $garantia['recibo'], '</td>
+				<td align="left">', $garantia['nota'], '</td>
+				<td align="right">$ ', Currency::money($garantia['valor']), ' COP</td>
+				</tr>';
+				$totalDepositos+=$garantia['valor'];
+		}
+		echo '<tr>
+			<td align="right" colspan="3"><b>', $traslate['TotalDepositos'], '</b></td>
+			<td align="right">$ ', Currency::money($totalDepositos), ' COP</td>
+		</tr>';
+		echo '</table>';
+
+		?>
+		</div>
+	</div>
+<?php } ?>
+
+<div class="section do-payment">
+	<h3><?php echo $traslate['RealizarDeposito'] ?></h3>
+	<div align="center">
+		<div class="notice" align="left">
+		<?php
+			$saldo = 0;
+			if(!$depositosPendientes){
+				if($reserva->getCarta()=='S'){
+					echo $traslate['PuedeAbonarLibreCarta'];
+				} else {
+					$saldo = $totalEstadia-$totalDepositos;
+					if($saldo>100){
+						echo sprintf($traslate['PuedeAbonar'], Currency::money($saldo));
+					} else {
+						if($saldo==0){
+							if(count($tarifas)==0){
+								Flash::error('Aún no se han asignado las tarifas que se aplicarán en su estadía, Consulte con hotel para realizar el pago electrónico de su reserva');
+							} else {
+								echo $traslate['PuedeAbonarLibre'];
+							}
+						} else {
+							echo $traslate['PuedeAbonarLibre'];
+						}
+					}
+				}
+			} else {
+				echo $traslate['ValidandoPagos'];
+			}
+		?>
+		</div>
+
+		<?php
+		if(!$depositosPendientes){
+			echo Tag::form(array('webcheckin/savePay', 'autocomplete' => 'Off')) ?>
+				<div align="right">
+					<table class="pay-table">
+						<tr>
+							<td align="right"><b><?php echo $traslate['SaldoReserva'] ?></b></td>
+							<td align="right">$ <?php echo Tag::numericField(array('saldoReserva', 'value' => $saldo>0 ? $saldo : 0, 'class' => 'abonos', 'readonly' => 'readonly')) ?> COP</td>
+						</tr>
+						<tr>
+							<td align="right"><b><?php echo $traslate['PagoAdicional'] ?></b></td>
+							<td align="right">$ <?php echo Tag::numericField(array('pagoAdicional', 'class' => 'abonos')) ?> COP</td>
+						</tr>
+						<tr>
+							<td align="right"><b><?php echo $traslate['TotalAbono'] ?></b></td>
+							<td align="right" class="total-general">$ <span id="total-general"><?php echo Currency::money($saldo>0 ? $saldo : 0) ?></span> COP</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td align="right"><b><?php echo $traslate['EMail'] ?></b></td>
+							<td>&nbsp;&nbsp;&nbsp;<?php echo Tag::textField(array('email', 'maxlength' => 70, 'size' => 30)) ?></td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td align="right">
+								<?php echo Tag::linkTo('webcheckin/enterInformation', $traslate['Cancelar']) ?>&nbsp;&nbsp;
+								<?php echo Tag::submitButton($traslate['DoPay']) ?>
+							</td>
+						</tr>
+					</table>
+				</div>
+			<?php
+				echo Tag::endForm();
+			}
+		?>
+	</div>
+</div>

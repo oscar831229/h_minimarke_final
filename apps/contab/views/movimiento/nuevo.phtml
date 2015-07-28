@@ -1,0 +1,176 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<h2>Grabar Movimiento Contable</h2>
+
+<?php View::getContent() ?>
+
+<div class="formContent">
+
+	<div align="center">
+		<div class="formNuevo formPannel">
+
+			<?php echo Tag::form('movimiento/buscar', 'class: buscarForm', 'autocomplete: off') ?>
+				<table align="center">
+					<tr>
+						<td align="right">
+							<label for="codigoComprabante">Comprobante</b>
+						</td>
+						<td>
+							<?php echo Tag::select(array('codigoComprobante', $comprobs, 'using' => 'codigo,nom_comprob', 'useDummy' => 'yes')) ?>
+						</td>
+						<td style="width:30px"></td>
+						<td align="right">
+							<label for="numero">Número</label>
+						</td>
+						<td>
+							<?php echo Tag::numericField('numero', 'size: 3', 'readonly: readonly') ?>
+						</td>
+						<td style="width:30px"></td>
+						<td align="right">
+							<label for="numero">Fecha</label>
+						</td>
+						<td>
+							<?php echo Tag::dateField(array('fecha', 'startYear' => '2007', 'class' => 'date-field')) ?>
+						</td>
+					</tr>
+				</table>
+			<?php echo Tag::endForm() ?>
+
+		</div>
+	</div>
+
+	<div class="gridNuevo">
+<?php
+
+if($codigoComprobante){
+	echo '<table class="sortable movimiento-grid" cellspacing="0" align="center">
+		<thead>
+			<tr>
+				<th class="sortcol sortasc" colspan="2"></th>
+				<th class="sortcol">Cuenta</th>
+				<th class="sortcol">Nombre Cuenta</th>
+				<th class="sortcol">Descripción</th>
+				<th class="sortcol">Valor</th>
+				<th class="sortcol">Naturaleza</th>
+			</tr>
+		</thead>
+		<tbody>';
+	$numero = -1;
+	if(count($movimientos)>0){
+		foreach($movimientos as $movimiento){
+			echo '<tr class="movimiento', $movimiento['numero'], ' naturaleza', $movimiento['naturaleza'], '">
+			<td class="numero">', ($movimiento['numero']+1), '</td>
+			<td>',
+			Tag::checkboxField(array(
+				'cuentaCheck'
+			)),
+			'</td><td>',
+			Tag::numericField(array(
+				'cuenta'.$movimiento['numero'],
+				'value' => $movimiento['cuenta'],
+				'class' => 'cuenta',
+				'size' => 10
+			)),
+			'</td><td>',
+			Tag::textField(array(
+				'nombreCuenta'.$movimiento['numero'],
+				'value' => $movimiento['nombreCuenta'],
+				'class' => 'nombreCuenta',
+				'size' => 25
+			)),
+			'</td><td>',
+			Tag::textField(array(
+				'descripcion'.$movimiento['numero'],
+				'value' => $movimiento['descripcion'],
+				'class' => 'descripcion',
+				'size' => 25
+			)),
+			'</td><td>',
+			Tag::numericField(array(
+				'valor'.$movimiento['numero'],
+				'value' => $movimiento['valor'],
+				'class' => 'valor',
+				'size' => 13,
+				'maxlength' => 17
+			)),
+			'</td>
+			<td>',
+			Tag::selectStatic(array(
+				'naturaleza'.$movimiento['numero'],
+				array(
+					'D' => 'DEBITO',
+					'C' => 'CREDITO'
+				),
+				'value' => $movimiento['naturaleza'],
+				'class' => 'naturaleza'
+			)),
+			'</td>
+			</tr>';
+		}
+		$numero = $movimiento['numero'];
+	}
+	$numero++;
+	echo '<tr class="movimiento', $numero, ' naturalezaD">
+		<td class="numero">', ($numero+1), '</td>
+		<td>',
+		Tag::checkboxField(array(
+			'cuentaCheck'
+		)),
+		'</td><td>',
+		Tag::numericField(array(
+			'cuenta'.$numero,
+			'class' => 'cuenta',
+			'size' => 10
+		)),
+		'</td><td>',
+		Tag::textField(array(
+			'nombreCuenta'.$numero,
+			'class' => 'nombreCuenta',
+			'size' => 25
+		)),
+		'</td><td>',
+		Tag::textField(array(
+			'descripcion'.$numero,
+			'class' => 'descripcion',
+			'size' => 25
+		)),
+		'</td><td>',
+		Tag::numericField(array(
+			'valor'.$numero,
+			'class' => 'valor',
+			'size' => 13,
+			'maxlength' => 17
+		)),
+		'</td>
+		<td>',
+		Tag::selectStatic(array(
+			'naturaleza'.$numero,
+			array(
+				'D' => 'DEBITO',
+				'C' => 'CREDITO'
+			),
+			'class' => 'naturaleza'
+		)),
+		'</td>
+	</tr>';
+}
+echo '</tbody></table>';
+
+?>
+</div>
+</div>

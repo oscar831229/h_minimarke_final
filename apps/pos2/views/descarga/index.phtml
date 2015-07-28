@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Point Of Sale
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo View::getContent() ?>
+
+<h1>Descarga de Inventarios</h1>
+
+<?php echo Tag::form(array('descarga/proceso', 'target' => '_new')) ?>
+<table align="center">
+	<tr>
+		<td align="right">
+			<b>Fecha</b>
+		</td>
+		<td>
+			<?php echo Tag::dateField('fecha') ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right">
+			<b>¿Proceso Definitivo?</b>
+		</td>
+		<td>
+			<?php echo Tag::selectStatic('definitivo', array(
+				'N' => 'NO',
+				'S' => 'SI'
+			)) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right"></td>
+		<td><?php echo Tag::submitButton(array('Procesar', 'class' => 'controlButton')) ?></td>
+	</tr>
+</table>
+
+<?php
+
+if(count($movilins)){
+	echo '
+	<div align="center" id="lista_interpos">
+
+		<table class="lista_res" align="center" cellspacing="0" width="70%">
+			<td colspan="3">
+				<b>Últimas interfaces en inventarios:</b>
+			</td>
+			<tr>
+				<th>Comprobante</th>
+				<th>Número</th>
+				<th>Fecha</th>
+			</tr>
+			<tr>';
+	foreach($movilins as $movilin){
+		echo '<tr>',
+		'<td align="center">', $movilin->getComprob(), '</td>',
+		'<td align="right">', $movilin->getNumero(), '</td>',
+		'<td>', $movilin->getFecha(), '</td>',
+		'</tr>';
+	}
+			echo '</tr>
+		</table>
+	</div>';
+}
+
+?>
+
+<?php echo Tag::endForm() ?>
+

@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+?>
+<table cellspacing="0" cellpadding="0" id="upgradePages">
+	<tr>
+		<td>
+			<div class="upgradePage startPage">
+				<div id="welcomeBoxLogo">
+					<div id="welcomeBoxHeading">
+						<h1>Actualizar</h1>
+						<h2><?php echo Hfos_Application::getProductName($appCode) ?></h2>
+						<h3><?php echo Hfos_Application::getVersion($appCode) ?></h3>
+					</div>
+					<div align="right">
+						<div class="upgradeTip">
+						Una versión mejorada y más estable de
+						<?php echo Hfos_Application::getProductName($appCode) ?>
+						ha sido instalada, haga click en "Actualizar" para
+						empezar a trabajar en ella.
+						<div align="right">
+							<a class="awesome awesome-finish finishButton">Actualizar</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="upgradePage internalPage">
+				<div class="upgradePageInternal">
+					<div class="upgradePageContent">
+						<h2>Actualizando</h2>
+						<div class="upgradePageText">
+							El sistema se está actualizando por favor espere unos minutos, no apague, ni cierre el explorador
+							hasta que la actualización haya terminado.
+
+							<div class="hfosBackLoader" align="center">
+								<table cellpadding="0" cellspacing="0">
+									<tr>
+										<td width="60"><div class="part part1" style="display:none"></div></td>
+										<td width="70"><div class="part part2" style="display:none"></div></td>
+										<td width="80"><div class="part part3" style="display:none"></div></td>
+										<td width="90"><div class="part part4" style="display:none"></div></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<!--<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>-->
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>

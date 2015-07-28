@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+echo HfosTag::iconTitle('attibutes.png', 'Proyección de Contrato');
+
+echo Tag::form('proyeccion/generar', 'class: proyeccionForm', 'target: _new') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+				    <td align="right"><b>Valor Total Compra</b></td>
+					<td><?php echo Tag::numericField(array('valorTotal', 'class' => 'valorTotal numeric', 'size' => 10)); ?></td>
+				</tr>
+				<tr>
+				    <td align="right"><b>Cuota Inicial Pactada</b></td>
+					<td><?php echo Tag::numericField(array('cuotaInicial', 'class' => 'cuotaInicial numeric', 'size' => 10)); ?></td>
+				</tr>
+				<tr>
+				    <td align="right"><b>Valor Financiación</b></td>
+					<td><?php echo Tag::numericField(array('saldoPagar', 'class' => 'saldoPagar numeric', 'size' => 10, 'readonly' => 'yes')); ?></td>
+				</tr>
+				<tr>
+				    <td align="right"><b>Plazo en Meses</b></td>
+					<td><?php echo Tag::numericField(array('numCuotas', 'size' => 3, 'class' => 'numeric')); ?></td>
+				</tr>
+				<tr>
+				    <td align="right"><b>Interés Corriente</b></td>
+					<td>
+					   <?php
+					       $dataI = array();
+					       $i = 0.0;
+					       while($i <= 2.1){
+					           $dataI["$i"] = "$i %";
+					           $i+=0.1;
+					       }
+					       echo Tag::selectStatic('interesCorriente',$dataI);
+					   ?>
+					</td>
+				</tr>
+				<tr>
+				    <td align="right"><b>Fecha Primera Cuota</b></td>
+					<td><?php echo Tag::dateField('fechaPrimeraCuota'); ?></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

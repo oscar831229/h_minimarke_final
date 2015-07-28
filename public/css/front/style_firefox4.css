@@ -1,0 +1,73 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+@font-face {
+	font-family: 'Museo Sans';
+	font-style: normal;
+	font-weight: normal;
+	src: url('../font/Fonts/MuseoSans_500.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'Museo Sans';
+	font-style: italic;
+	font-weight: normal;
+	src: url('../font/Fonts/MuseoSans_500_Italic.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'Museo Sans';
+	font-style: normal;
+	font-weight: bold;
+	src: url('../font/Fonts/MuseoSans_700.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'Museo Sans';
+	font-style: italic;
+	font-weight: bold;
+	src: url('../font/Fonts/MuseoSans-700Italic.otf') format('opentype');
+}
+
+div.autocomplete {
+    position: absolute;
+    width: 250px;
+    border: 1px solid #888;
+    margin: 0px;
+    padding: 0px;
+    margin-top: 0px;
+    margin-left: 2px;
+    /*margin-left: 74px;*/
+}
+
+input, select, .iNormal, button {
+    font-family: Verdana;
+    font-size: 12px;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+}
+
+input[disabled], select[disabled], textarea[disabled] {
+	color: #222222;
+	background: #fafafa;
+}
+
+input[readonly], select[readonly], textarea[readonly] {
+	color: #222222;
+	background: #fafafa;
+}
+
+strong {
+	font-weight: bold;
+}

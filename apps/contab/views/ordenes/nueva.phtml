@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('order-2.png', 'Grabar Orden de Servicio') ?>
+
+<div class="formContent" align="center">
+
+	<?php echo Tag::form('ordenes/guardar', 'class: grabarForm', 'autocomplete: off') ?>
+
+	<div class="formNuevo">
+		<table align="center">
+			<tr>
+				<td align="right"><label for="nit">Tercero</label></td>
+				<td><?php echo HfosTag::terceroField('nit') ?></td>
+				<td>&nbsp;</td>
+				<td align="right"><label for="fechaOrden">Fecha</label></td>
+				<td><?php echo Tag::dateField('fechaOrden', 'startYear: 2007') ?></td>
+			</tr>
+		</table>
+	</div>
+
+	<table class="sortable ordenes-grid" cellspacing="0" align="center">
+		<thead>
+			<tr>
+				<th class="sortcol sortasc" colspan="2"></th>
+				<th class="sortcol">Item</th>
+				<th class="sortcol">Descripción</th>
+				<th class="sortcol">Centro Costo</th>
+				<th class="sortcol">Valor</th>
+			</tr>
+		</thead>
+		<tbody class="ordenes-body">
+		<?php
+			echo '<tr class="linea1 orden-linea">
+				<td class="numero">1</td>
+				<td>',
+				Tag::checkboxField(array(
+					'itemCheck[]',
+					'class' => 'itemCheck'
+				)),
+				'</td><td>',
+				Tag::numericField(array(
+					'item[]',
+					'class' => 'item',
+					'size' => 10
+				)),
+				'</td><td>',
+				Tag::textField(array(
+					'descripcion[]',
+					'class' => 'descripcion',
+					'size' => 27
+				)),
+				'</td><td>',
+				Tag::select(array(
+					'centroCosto[]',
+					$centros,
+					'class' => 'centroCosto',
+					'using' => 'codigo,nom_centro'
+				)),
+				'</td><td>',
+				Tag::numericField(array(
+					'valor[]',
+					'class' => 'valor numeric',
+					'size' => 15
+				)),
+				'</td>
+			</tr>';
+		?>
+		</tbody>
+	</table>
+
+	<?php echo Tag::endForm() ?>
+
+</div>

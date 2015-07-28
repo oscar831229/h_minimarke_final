@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Cambio de Acci&oacute;n') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="50%" align="center">
+
+			<?php echo Tag::form('cambio_accion/cambiar', 'class: cambioAccionForm', 'autocomplete: off') ?>
+				<table align="center">
+					<tr>
+						<td align="right"><label for="socios_id">Socio</label></td>
+						<td> 
+							<?php
+								echo HfosTag::addHyperFormSpecialField(array(
+									'type' => 'Socio',
+									'name' => 'socios_id',
+									'classForm' => 'cambioAccionForm'
+								));
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<label for="nuevoNumeroAccion">Nuevo Numero de Acci&oacute;n</label>
+						</td>
+						<td id="numeroNuevo" align="left">
+								<?php echo Tag::textField(array("nuevoNumeroAccion")); ?>
+						</td>
+					</tr>
+				</table>
+			<?php echo Tag::endForm() ?>
+
+			<div class="resultados"></div>
+		</td>
+	</tr>
+</table>
+</div>

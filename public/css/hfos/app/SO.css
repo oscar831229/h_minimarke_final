@@ -1,0 +1,372 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div.cuadro-cierre {
+	margin: 10px;
+	background: #E2E9F1;
+	-moz-border-radius: 5px;
+	-moz-user-select: none;
+}
+
+div.cuadro-cierre td {
+	font-size: 11px;
+}
+
+div.matrizProveedores div.infoBox {
+	width: 300px;
+}
+
+div.matrizProveedores div.infoBox strong {
+	font-family: Anivers;
+	font-size: 18px;
+	font-weight: normal;
+}
+
+div.addProveedorDiv,
+div.rangoPeriodos {
+	-moz-border-radius: 10px;
+	padding: 5px;
+	margin: 10px;
+	width: 600px;
+	background: rgba(11, 11, 11, 0.05);
+}
+
+div.rangoPeriodos {
+	width: 550px;
+}
+
+div.addProveedorDiv input.addButton,
+div.comportamiento input.addButton {
+	font-size: 11px;
+	padding: 2px;
+}
+
+ul.proveedorOrder {
+	margin: 0px;
+	padding: 0px;
+}
+
+ul.proveedorOrder li {
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+ul.proveedorOrder li table.zebraSt tr {
+	cursor: move;
+}
+
+ul.proveedorOrder li img.delete {
+	cursor: pointer;
+}
+
+table#pedidosTable,
+table#ordenesTable {
+	margin-bottom: 15px;
+}
+
+table#pedidosTable input.seleccionarButton,
+table#ordenesTable input.seleccionarButton {
+	font-size: 11px;
+	padding: 2px;
+}
+
+div.formExternal form.pedidoForm,
+div.formExternal form.ordenForm {
+	padding-bottom: 0px;
+}
+
+table.pedidoCompleter a.query-pedido,
+table.ordenCompleter a.query-orden,
+div.hyperForm div.hyFormDiv table.pedidoCompleter a.query-pedido,
+div.hyperForm div.hyFormDiv table.ordenCompleter a.query-orden {
+	font-size: 11px;
+	color: #717171;
+	margin-left: 3px;
+}
+
+div.criterios {
+	padding-top: 5px;
+}
+
+div.criterios div.criterios-label {
+	padding: 5px;
+}
+
+div.hyperForm div.hyFormDiv div.criterios td {
+	font-size: 11px;
+}
+
+div.stocks input[type="text"] {
+	text-align: right;
+}
+
+div.fieldsetGroup {
+	padding: 10px;
+}
+
+div.chartContainer {
+	overflow: hidden;
+	padding: 5px;
+	padding-top: 20px;
+	margin-bottom: 10px;
+}
+
+div.chart {
+	width: 750px;
+	height: 200px;
+}
+
+div.comportamiento table.itemCompleter input.itemDetalle {
+	width: 192px;
+}
+
+div.sin-referencias {
+	border: 2px dashed #d1d1d1;
+	color: #969696;
+	margin: 7px;
+	padding: 7px;
+	-moz-border-radius: 10px;
+	width: 100%;
+}
+
+table.totales span.total {
+	color: #ffffff;
+	font-weight: normal;
+	font-size: 16px;
+	margin-right: 16px;
+}
+
+table.totales b {
+	font-family: Anivers;
+	font-size: 16px;
+	color: #6BA3DC;
+}
+
+table.totales div.sin-saldo {
+	color: #F36F0D;
+	font-size: 13px;
+}
+
+table.totales div.con-saldo {
+	color: #fafafa;
+	font-size: 13px;
+}
+
+div.detailed-calculation a {
+	background: #D7DCE5;
+	color: #747D84;
+	padding: 3px;
+}
+
+table.detalleCalculo {
+	min-width: 270px;
+	margin: 10px;
+	border-top: 1px solid #dadada;
+	border-left: 1px solid #dadada;
+}
+
+table.detalleCalculo th,
+table.detalleCalculo td {
+	font-size: 13px;
+	padding: 3px;
+	border-right: 1px solid #dadada;
+	border-bottom: 1px solid #dadada;
+}
+
+table.detalleCalculo th {
+	background: #fafafa;
+}
+
+p.detalleCalculoP,
+ul.detalleCalculoUl {
+	font-size: 13px;
+	line-height: 17px;
+}
+
+p.detalleCalculoP b {
+	font-size: 14px;
+}
+
+table.movimientoStatusBar table.sumasTable {
+
+}
+
+table.movimientoStatusBar table.sumasTable td {
+	font-family: Anivers;
+	font-size: 16px;
+	color: #6BA3DC;
+}
+
+table.movimientoStatusBar table.sumasTable td b {
+	color: #ffffff;
+	font-weight: normal;
+	font-size: 16px;
+	margin-right: 16px;
+}
+
+table.movimientoStatusBar table.sumasTable td b.descuadre {
+	color: #CE5A00;
+}
+
+
+.maxHeigth {
+	max-height: 500px; 
+    overflow: auto;
+}
+
+/*
+.SO {
+        font-family: arial;
+        font-size: 15px;
+        color: black;
+}
+
+.SO .header, .SO .window-main, .SO .header-button-main, .SO .menu, .SO .window-header-se, .SO div.header div.item-menu-parent-over, .SO .item-submenu {
+        background: green;
+        font-family: arial;
+        font-size: 15px;
+        color: black;
+}
+
+.SO .mainContent, .SO .workspace {
+        backgroud: #9DE79D;
+}
+
+.SO .left-panel {
+        display: none;
+}
+
+.SO .hyToolbar {
+        background: gray;
+}
+
+.SO .newButton, .SO .window-main, .SO .hySearchDiv, .SO .hyFormDiv{
+        font-family: arial;
+        font-size: 15px;
+        color: black;
+}
+
+.SO .hyControlButton, .SO .searchButton, .SO .hyReportType, .SO .hyPage div {
+        background: silver;
+        border-radius: 0px;
+        margin: 0px;
+}
+
+.SO .messages {
+        background: #FCFCFC;
+}
+
+.SO div.submenu {
+	background: green;
+	border-radius: 0px;
+}
+
+.SO div#gardien, .SO table.noAccess, .SO div.infoBox {
+	background: #87CEB2;
+	border-radius: 0px;
+}
+
+.SO h2, .SO .hyTitle {
+        font-family: arial;
+        font-size: 23px;
+        font-weight: bold;
+        color: black;
+}
+
+.SO .messages, .SO .notice, .SO div.messages .notice, .SO div.messages .success, .SO div.successMessage, .SO div#rcs div.record_block {
+	font-family: arial;
+	background-color: silver;
+}
+
+.SO input.importButton, .SO input.saveButton, .SO input.createButton, .SO input.backButton, .SO input.newButton, .SO input.revisionButton, .SO input.printButton, .SO input.deleteButton, .SO input.editButton {
+	padding-left: 5px;
+	font-family: arial;
+	font-size: 15px;
+}
+
+.SO .hyPageSelected, .SO .hyPagePrev, .SO table.hyBrowseTab div.hyPagePrev, .SO table.hyBrowseTab div.hyPageSelected, .SO table.hyBrowseTab div.hyPage, .SO .subirArchivo, .SO input {
+        border-radius: 0px;
+}
+
+.SO table.hyBrowseTab div.hyPageSelected {
+        background: green;
+        box-shadow: green;
+}
+
+.SO form label, .SO form input, .SO form select, .SO form selected, .SO .autocomplete li, .SO .hyRecordPreview label, .SO .hyRecordPreview td {
+        font-family: arial;
+        font-size: 15px;
+        color: black;
+}
+
+.SO .tabbed_area , .SO .tabbed_area .tab {
+        font-family: arial;
+        font-size: 12px;
+        color: gray;
+}
+
+.SO .tabbed_area .content, .SO ul.tabs li a.active {
+        background: silver;
+}
+
+
+.SO .hyBrowseTab th, .SO .hyBrowseTab td, .SO div.hyperForm table.hyDetailsTab td {
+        font-size: 15px;
+}
+
+.SO .hyTitle img, .SO .window-resizer, .SO .system-tray-div, .SO .window-toolbar {
+        display: none;
+}
+
+.SO .window-thumb-active, .SO div.window-toolbar div.window-thumb-active, .SO .item-suboptions, .SO .item-submenu, .SO .item-suboptions,
+.SO div.item-submenu-over, .SO .submenu div, .SO .submenu-options, .SO .item-menu-parent-over {
+        background: green;
+        background-color: green;
+        border-bottom: 0px;
+}
+
+.SO div.submenu div.item-submenu:first-child, .SO div.submenu div.item-submenu-over:last-child {
+	border-radius: 0px;
+}
+
+.SO .system-tray-parent-div {
+        display: normal;
+}
+
+.SO .hyDetails, .SO .hyDelete {
+        border: 1px solid black;
+        border-radius: 10px;
+}
+
+.SO .hyNavBar input {
+        border-radius: 0px;
+        background: silver;
+}
+
+.SO div.submenu div.item-submenu-over, .SO div.submenu div.item-suboptions {
+	background: silver no-repeat;
+	background-repeat: no-repeat;
+	background-position: 10px 9px;
+	color: #EAEAEA;
+	padding: 10px;
+	padding-left: 32px;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.SO table.terceroCompleter input.terceroDetalle, .SO table.itemCompleter input.itemDetalle, .SO table.centroCompleter input.centroDetalle, .SO table.comprobCompleter input.comprobDetalle, .SO table.socioCompleter input.socioDetalle, .SO table.cuentaCompleter input.cuentaDetalle, .SO table.zebraSt tr:nth-child(even) {
+	background: #90DFB2;
+}
+*/

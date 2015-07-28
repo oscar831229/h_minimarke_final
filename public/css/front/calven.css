@@ -1,0 +1,115 @@
+.td0 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 18px;
+	border: 1px solid #808080;
+	background: url("../img/bg2.jpg");
+}
+.td1 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 18px;
+	border: 1px solid #808080;
+	background: #ffffff;
+}
+.td2 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 12px;
+}
+.td3 {
+	background: #97DDFF;
+	border: 1px solid #1169B5;
+	color: #1169B5;
+}
+.td3 span {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 20px;
+}
+.td4 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 24px;
+	background: #FFD5EA;
+	border: 1px solid #B9005C;
+	color: #B9005C;
+	width: 60px;
+}
+.td5 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 24px;
+	background: #DEFFD5;
+	border: 1px solid #166400;
+	color: #166400;
+	width: 60px;
+}
+.td5 span {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 24px;
+}
+.td6 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 24px;
+	background: #FFCB97;
+	border: 2px solid #DD6F00;
+	color: #DD6F00;
+}
+.td6 span,
+.td8 span {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 18px;
+}
+td.td7 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 10px;
+	color: #F4F4F4;
+	text-align: center;
+	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0,0,0, .4) 1px 1px 1px;
+	width: 50px;
+}
+td.td8 {
+	font-family: "Lucida Grande", Verdana;
+	font-size: 26px;
+	background: #97DDFF;
+	border: 1px solid #000080;
+	color: #000080;
+}
+td.td9 {
+   	background: #B7ACCA;
+   	border: 1px solid #7D569F;
+   	color: #7D569F;
+}
+td.td9 span {
+	font-family: "Lucida Grande", Verdana;
+   	font-size: 20px;
+}
+td.mon_header {
+	font-family: Verdana;
+	font-size: 26px;
+	padding: 3px;
+	background: url("../img/localnav.gif");
+	color: #FFFFFF;
+	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0,0,0, .4) 1px 1px 1px;
+}
+div.box {
+	border: 1px solid #C0C0C0;
+	background: url("../img/bg2.jpg");
+	width: 470px;
+}
+div.option_box {
+	position: absolute;
+	background: #111111;
+	opacity: 0.93;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	width: 180px;
+	z-index: 700;
+	padding: 10px;
+	color: #fff;
+}
+div.option_box td {
+	color: #f2f2f2;
+}
+span.cOcu {
+	color: #333333;
+	background: #f2f2f2;
+	border: 1px solid #969696;
+}

@@ -1,0 +1,107 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div align="center">
+	<div class="formExternal">
+		<div class="externalHeader">
+			<table width="95%" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td><h1>Crear un Tercero<h1></td>
+					<td align="right"><div class="window-close"></div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="messages"></div>
+		<?php echo Tag::form('terceros/save', 'onbeforesubmit: return false', 'autocomplete: off') ?>
+			<fieldset>
+				<legend>Datos Generales</legend>
+				<table width="100%">
+					<tr>
+						<td align="right"><label for="clase">Clase</label></td>
+						<td><?php echo Tag::selectStatic('clase', array(
+							'C' => 'CLIENTE',
+							'A' => 'EMPRESA',
+							'E' => 'EXTRANJERO'
+						)) ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="tipodoc">Tipo Documento</label></td>
+						<td><?php echo Tag::select('tipodoc', $tiposDocumentos, 'using: codigo,nombre') ?></td>
+					</tr>
+					<tr>
+						<td align="right" width="35%"><label for="nit">Número Documento</label></td>
+						<td><?php echo Tag::textField('nit', 'size: 20') ?><span class="notNullMark">!</span></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="nombre" id="nombreLabel">Apellidos y Nombres</label></td>
+						<td><?php echo Tag::textUpperField('nombre', 'size: 30', 'maxlength: 120') ?><span class="notNullMark">!</span></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="direccion">Dirección</label></td>
+						<td><?php echo Tag::textField('direccion', 'size: 30') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="ciudad">Ciudad</label></td>
+						<td><?php echo HfosTag::locationField('ciudad') ?></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset>
+				<legend>Datos Fiscales</legend>
+				<table width="100%">
+					<tr>
+						<td align="right" width="35%"><label for="estado_nit">Tipo Regimen</label></td>
+						<td><?php echo Tag::selectStatic('estado_nit', array(
+							'S' => 'SIMPLIFICADO',
+							'C' => 'COMUN',
+							'G' => 'GRAN CONTRIBUYENTE',
+							'A' => 'NO APLICA'
+						)) ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="autoret">Autoretendedor</label></td>
+						<td><?php echo Tag::selectStatic('autoret', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="resp_iva">Responsable IVA</label></td>
+						<td><?php echo Tag::selectStatic('resp_iva', array(
+							'S' => 'SI',
+							'N' => 'NO'
+						)) ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="tipo_nit">IVA Retenido</label></td>
+						<td><?php echo Tag::selectStatic('tipo_nit', array(
+							0 => 'SI',
+							1 => 'NO'
+						)) ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="ap_aereo">Porcentaje ICA</label></td>
+						<td><?php echo Tag::numericField('ap_aereo', 'size: 3', 'maxlength: 7') ?></td>
+					</tr>
+				</table>
+			</fieldset>
+			<div align="right" class="externalSubmit">
+				<?php echo Tag::submitButton('Crear') ?>
+			</div>
+			<?php echo Tag::hiddenField('hyperAction', 'value: insert') ?>
+		<?php echo Tag::endForm() ?>
+	</div>
+</div>

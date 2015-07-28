@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Facturar x Socio') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="50%" align="center">
+			<?php echo Tag::form('facturar_personal/reporteFactura', 'class: facturarPersonalForm', 'autocomplete: off') ?>
+				<table align="center">
+					<tr>
+						<td>
+							<p>
+								Formulario que administra las facturas de un Socio.
+							</p>
+							<?php
+								/*echo HfosTag::addHyperFormSpecialField(array(
+									'type' => 'Socio',
+									'name' => 'sociosId',
+									'classForm' => 'facturarPersonalForm',
+									'class' => 'sociosId'
+								));*/
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<?php 
+								echo Tag::hiddenField('periodo','value: '.$mes);
+								echo "<strong>Periodo:</strong> ".$mes;
+							?>.
+						</td>
+					</tr>
+				</table>
+			<?php echo Tag::endForm() ?>
+
+			<div class="resultados"></div>
+		</td>
+	</tr>
+</table>
+</div>

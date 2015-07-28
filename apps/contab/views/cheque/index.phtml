@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('attibutes.png', 'Consultar Cheques') ?>
+
+<div class="formContent">
+
+	<div class="formBusqueda formPannel">
+
+		<?php echo Tag::form('cheque/buscar', 'class: buscarForm', 'autocomplete: off') ?>
+			<table align="center">
+				<tr>
+					<td align="right"><label for="chequerasId">Chequera</label></td>
+					<td><?php echo Tag::selectStatic('chequerasId', $chequeras, 'useDummy: yes') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroInicial">Consecutivo Inicial</label></td>
+					<td><?php echo Tag::numericField('numeroInicial', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroFinal">Consecutivo Final</label></td>
+					<td><?php echo Tag::numericField('numeroFinal', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="estado">Estado</label></td>
+					<td><?php echo Tag::selectStatic('estado', array(
+						'E' => 'EMITIDO',
+						'A' => 'ANULADO'
+					), 'useDummy: yes') ?></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td colspan="2">
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Consultar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		<?php echo Tag::endForm() ?>
+	</div>
+
+	<div class="resultados"></div>
+
+</div>

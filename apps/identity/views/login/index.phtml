@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div id="login-view">
+
+	<div id="login-header">
+		<?php echo Hfos_Application::getProductName($appCode); ?>
+		<span><?php echo Hfos_Application::getVersion($appCode) ?></span>
+	</div>
+
+	<div align="center">
+		<div id="login-box">
+			<div id="login-box-in">
+				<?php echo Tag::form('login/startSession', 'autocomplete: off') ?>
+					<table width="100%" cellspacing="0" cellspacing="0">
+						<tr>
+							<td align="center" class="header-login">
+								Ingreso al Sistema
+							</td>
+						</tr>
+						<!--<tr>
+							<td>
+								<label for="login">Aplicación</label><br/>
+								<?php echo Tag::select(array('appCode', $aplicaciones, 'using' => 'codigo,nombre')) ?>
+							</td>
+						</tr>-->
+						<tr>
+							<td>
+								<?php echo Tag::textField(array('login', 'value' => 'Nombre de Usuario', 'class' => 'dummy')) ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input id="passwordDummy" type="text" value="Contraseña" class="dummy"/>
+								<?php echo Tag::passwordField(array('password', 'style' => 'display:none')) ?>
+							</td>
+						</tr>
+						<tr>
+							<td align="center">
+								<?php echo Tag::button('Iniciar Sesión', 'id: loginButton') ?>
+							</td>
+						</tr>
+					</table>
+				<?php echo Tag::endForm() ?>
+			</div>
+		</div>
+	</div>
+
+</div>

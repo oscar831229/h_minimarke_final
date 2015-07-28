@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('invoice.png', 'Estado de Perdidas y Ganancias') ?>
+
+<?php echo Tag::form('pyg/generar', 'class: pygForm', 'autocomplete: off') ?>
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" align="left" width="65%">
+			<table align="center">
+				<tr>
+					<td align="right"><label for="ano">Año</label></td>
+					<td><?php echo Tag::numericField(array('ano', 'size' => 4)) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="mes">Mes</label></td>
+					<td><?php echo Tag::monthField('mes') ?></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<table>
+							<tr>
+								<td><input type="checkbox" name="codigos" value="S"/></td>
+								<td>Incluir códigos de cuentas</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top" align="right">
+			<div class="cuadro-cierre">
+				<table align="center">
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Año Cierre</b></td>
+						<td><?php echo $anoCierre ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

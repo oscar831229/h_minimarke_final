@@ -1,0 +1,138 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+.container_tabs .tab_con {
+	border-left: 1px solid #B7BDC7;
+	border-right: 1px solid #B7BDC7;
+	border-bottom: 1px solid #B7BDC7;
+	background: #D1D7E2;
+	padding: 10px;
+	paddin-top: 15px;
+}
+
+.container_tabs .tab_td {
+
+}
+
+.container_tabs .tab_blank {
+	border-bottom: 1px solid #B7BDC7;
+}
+
+div#div_edit_top {
+	padding: 10px;
+}
+
+.container_tabs .tab_div {
+	cursor: pointer;
+	width: 150px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+}
+
+.container_tabs .tab_active {
+	border-bottom: none;
+	border-right: 1px solid #B7BDC7;
+	border-top: 1px solid #B7BDC7;
+	border-left: 1px solid #B7BDC7;
+	background: #D1D7E2;
+	padding: 5px;
+	padding-bottom: 6px;
+	color: #333333;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+.container_tabs .tab_inactive {
+	border-right: 1px solid #A6ABB4;
+	border-top: 1px solid #A6ABB4;
+	border-left: 1px solid #A6ABB4;
+	border-bottom: 1px solid #B7BDC7;
+	background: #B5BAC4;
+	color: #777B81;
+	padding: 5px;
+}
+
+table.calculos {
+	border-right: 1px solid #A6ABB4;
+	margin: 5px;
+}
+
+table.content_calculo th {
+	background: url('../../img/pos2/menu-item.png');
+	color: #A7BAD4;
+	font-size: 11px;
+	padding: 5px;
+}
+
+table.calculos td#content_calculo_td {
+	background: #B5BAC4;
+	border: 1px solid #A6ABB4;
+	border-left: none;
+	padding: 10px;
+}
+
+table.calculos table#content_calculo {
+	margin: 10px;
+}
+
+table.calculos .tab_td_rec {
+	cursor: pointer;
+}
+
+table.calculos .active {
+	background: #B5BAC4;
+	border: 1px solid #A6ABB4;
+	-moz-border-radius-topleft: 7px;
+	-moz-border-radius-bottomleft: 7px;
+	border-right: none;
+	text-align: center;
+}
+
+table.calculos .tab_td_rec {
+	padding-left: 10px;
+	padding: 5px;
+}
+
+table.tableDetail th {
+	padding: 3px;
+}
+
+div#changeSearch {
+	background: url('../../img/pos2/down.gif') no-repeat scroll right center transparent;
+	color: blue;
+	cursor: pointer;
+	height: 20px;
+	text-align: right;
+	text-decoration: underline;
+	padding-right: 20px;
+}
+
+div#search_con {
+	padding: 30px;
+}
+
+.content_calculo tr:nth-child(2n+1) {
+	background-color: #fafafa;
+}
+
+.content_calculo td {
+	padding: 3px;
+}
+
+input[type="text"] {
+	text-align: right;
+}
+
+#nombre {
+	text-align: left;
+}

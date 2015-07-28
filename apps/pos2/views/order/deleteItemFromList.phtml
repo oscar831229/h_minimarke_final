@@ -1,0 +1,12 @@
+<center>
+  <h1>Eliminar de la Lista</h1>
+  <div id='messages'><? View::getContent(); ?></div>
+  <div id='list_item'>
+  <? View::renderPartial('list_items'); ?>
+  </div>
+  <table>
+  	<td><button class='commandButton' onclick='downItemList(<?= $id ?>)'><img src='<?= Core::getInstancePath() ?>img/abajo.gif'/></button></td>
+ 	<td><button class='cancelButton' onclick='deleteItem(<?= $id ?>)'>Cancelar<br/>Item</button></td>
+	<td><button class='okButton' onclick='$("myWindow").close(); refresh()'>Salir</button></td>
+  </table>
+</center>

@@ -1,0 +1,82 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+@font-face {
+	font-family: 'Anivers';
+	src: local('Anivers'),
+		url('../../files/pos2/Anivers.otf') format('opentype');
+}
+
+h1, h2, h3 {
+	font-family: Anivers,sans-serif;
+}
+
+th, td, b, span, div {
+	font-family: Verdana,sans-serif;
+	font-size: 11px;
+}
+
+h1 {
+	font-size: 28px;
+}
+
+h2 {
+	font-size: 22px;
+}
+
+table.tablaLista {
+	margin: 10px;
+	border-right: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+}
+
+table.tablaLista th {
+	border-left: 1px solid #969696;
+	border-top: 1px solid #969696;
+	background: #f7f7f7;
+	font-size: 11px;
+}
+
+table.tablaLista td {
+	border-left: 1px solid #969696;
+	border-top: 1px solid #969696;
+	font-size: 11px;
+}
+
+h3 {
+	margin: 0px;
+	font-size: 18px;
+}
+
+h1, h2, h4 {
+	margin: 0px;
+}
+
+div#header {
+	margin-bottom: 5px;
+}
+
+div.errorMessage {
+	background-image: url("../../img/error.gif");
+	background-color: #FFDDDD;
+	background-repeat: no-repeat;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 2px 25px;
+	background-position: 5px top;
+  	color: #B30000;
+  	border: 1px solid #FFB7B7;
+  	margin: 2px;
+  	text-align: left;
+}

@@ -1,0 +1,26 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div.cuadro-cierre {
+	margin: 10px;
+	background: #E2E9F1;
+	-moz-border-radius: 5px;
+	-moz-user-select: none;
+}
+
+textarea#formula {
+	font-family: Consolas, "Lucida Console", "courier new";
+	font-size: 14px;
+	width: 100%;
+}

@@ -1,0 +1,98 @@
+<?php
+
+$guestInfo = SessionNamespace::get('guestInfo');
+$fecha = new Date();
+
+View::getContent()
+
+?>
+
+<table width="100%">
+	<tr>
+		<td>
+			<h1 class="no-screen"><?php echo $guestInfo->getHotel(); ?></h1>
+			<h2 class="no-screen"><?php echo $guestInfo->getCliente(), ' / ', $guestInfo->getHabitacion() ?></h1>
+			<h2><?php echo $traslate['RealizarAbono']; ?></h2>
+			<h3 class="no-screen"><?php echo $fecha->getLocaleDate().', '.date('H:i'); ?></h3>
+		</td>
+	</tr>
+</table>
+
+<div align="center" class="pay-page">
+	<table align="center" class="pay-explain">
+		<tr>
+			<td><?php
+				$controllerRequest = ControllerRequest::getInstance();
+				if($controllerRequest->isGet()==true){
+					$message = '';
+					if($total==0){
+						$message.=$traslate['NoPorPagar'];
+					} else {
+						if($total>0){
+							$message.=sprintf($traslate['PorPagar'], Currency::number($total));
+						} else {
+							if($total<0){
+								$message.=sprintf($traslate['SaldoFavor'], Currency::number(-$total));
+							}
+						}
+					}
+					$message.='. '.$traslate['PayExplain'];
+					Flash::notice($message);
+				}
+			?></td>
+		</tr>
+	</table>
+
+	<?php echo Tag::form(array('accounts/goPay', 'autocomplete' => 'off')) ?>
+
+		<div align="left">
+			<table align="center" width="60%" class="datos-abono">
+				<tr>
+					<td><i><?php echo $traslate['DatosAbono'] ?></i></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nombre"><?php echo $traslate['Nombre'] ?></label></td>
+					<td><?php echo Tag::selectStatic('cedula', $huespedes) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="email"><?php echo $traslate['Email'] ?></label></td>
+					<td><?php echo Tag::textField(array('email', 'size' => 40, 'maxlength' => 70)) ?></td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="accounts-resume" align="center">
+			<table cellspacing="0" class="table-white" width="50%">
+				<tr>
+					<th><?php echo $traslate['cuenta'] ?></th>
+					<th><?php echo $traslate['saldo'] ?></th>
+					<th><?php echo $traslate['ValorAbonar'] ?></th>
+				</tr>
+				<?php
+					foreach($cuentas as $n => $cuenta){
+						echo '<tr>
+							<td align="center">', $n, Tag::hiddenField(array('cuenta[]', 'value' => $n)), '</td>
+							<td align="right"><b>', Currency::money($cuenta['total']-$cuenta['abonos']), '</b></td>
+							<td align="right">', Tag::numericField(array('abono'.$n, 'size' => 11, 'maxlength' => 11, 'class' => 'abonos')), '</td>
+							<td align="center" class="no-print border-b border-top">', Tag::linkTo('accounts/details/'.$n , $traslate['details']), '</td>
+						</tr>';
+					}
+				?>
+				<tr>
+					<td id="total-td" align="right"><?php echo $traslate['Total'] ?></td>
+					<td id="total-sum" align="right"><b><?php echo Currency::money($total) ?></b></td>
+					<td id="total-general" align="right"><b><?php echo Currency::money($abonoTotal) ?></b></td>
+				</tr>
+				<tr>
+					<td align="left" style="border:none">
+						<?php echo Tag::linkTo(array('accounts/index', $traslate['Cancelar'], 'class' => 'cancel-link')) ?>
+					</td>
+					<td colspan="2" align="right">
+						<?php echo Tag::submitButton($traslate['Abonar']) ?>
+					</td>
+				</tr>
+			</table>
+		</div>
+	<?php echo Tag::endForm() ?>
+
+</div>

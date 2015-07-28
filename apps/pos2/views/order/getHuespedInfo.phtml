@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div style='padding:5px'>
+	<table align="center">
+		<tr>
+			<td>
+				<fieldset>
+					<legend>Acompañantes</legend>
+					<div style='font-size:13px'>
+					<?php
+						$acompanantes = $Acompanantes->find("numfol='$numfol'");
+						if(count($acompanantes)){
+							foreach($acompanantes as $acompanante){
+								$documento = $acompanante->cedula ? $acompanante->cedula : "SIN DOCUMENTO";
+								echo $acompanante->nombre." (".$documento.")<br>";
+							}
+						} else {
+							echo "NINGUNO";
+						}
+					?>
+					</div>
+				</fieldset>
+			</td>
+			<td>
+				<fieldset>
+					<legend>Planes/Tarifas</legend>
+					<div style='font-size:13px'>
+					<?php
+						foreach($Planes->find("numfol='$numfol'") as $plan){
+							echo $plan->descripcion." desde ".$plan->fecini." a ".$plan->fecfin."<br>";
+						}
+					?>
+					</div>
+				</fieldset>
+			</td>
+		</tr>
+	</table>
+</div>

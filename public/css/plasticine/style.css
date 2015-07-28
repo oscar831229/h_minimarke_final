@@ -1,0 +1,246 @@
+body {
+	margin: 0px;
+	background: url("../../img/plasticine/tile.gif");
+}
+
+body, input, td, div, p {
+	font-family: Calibri,Helvetica, arial, sans-serif;
+	font-size: 14px;
+}
+
+div.header {
+	padding: 5px;
+	padding-left: 15px;
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+
+div.header h2 {
+	font-family: 'Droid Sans', Helvetica, arial, sans-serif;
+	font-weight: normal;
+	text-shadow: -1px -1px 2px #616161;
+	color: #fafafa;
+}
+
+h3 {
+	font-family: 'Droid Sans', Helvetica, arial, sans-serif;
+}
+
+div.header img {
+	margin-right: 10px;
+}
+
+/*/hotel5/img/logo.jpg*/
+
+div.content {
+	padding: 0px;
+	padding-top: 7px;
+	/*background: url("../../img/plasticine/big-fade.png") repeat-x scroll -70% 0 transparent;*/
+}
+
+div.notice,
+div.noticeMessage {
+	padding: 10px;
+	margin: 10px;
+	margin-bottom: 30px;
+	border-radius: 5px 5px 5px 5px;
+	color: #4083A9;
+	background: #D2E7F0;
+}
+
+div.noticeMessage {
+	font-family: Helvetica, arial, sans-serif;
+	font-size: 12px;
+	border: none;
+	margin: 5px;
+	padding: 5px;
+}
+
+.form-checkin {
+	padding: 40px;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 35px;
+	opacity: 0.95;
+    border-radius: 10px 10px 10px 10px;
+    width: 500px;
+}
+
+.form-checkin input[type="text"],
+.form-checkin input[type="password"],
+.form-checkin input[type="button"] {
+	font-size: 18px;
+	width: 170px;
+}
+
+.form-checkin input[type="submit"] {
+	padding: 10px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.indications {
+	padding: 5px;
+	padding-left: 20px;
+	margin-bottom: 10px;
+}
+
+.form-data {
+	padding: 15px;
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 5px 5px 5px 5px;
+	margin: 10px;
+}
+
+.city-tip,
+div.successMessage {
+	background: #A4D59C;
+	color: green;
+	font-size: 11px;
+	padding: 5px;
+	border: 1px solid green;
+}
+
+div.successMessage {
+	margin: 5px;
+}
+
+div.header a {
+	color: #fafafa;
+}
+
+.footer {
+	height: 60px;
+	padding: 10px;
+	padding-top: 20px;
+	padding-right: 15px;
+	background: #333333;
+	color: #fafafa;
+}
+
+.footer a {
+	color: #fafafa;
+}
+
+div.errorMessage {
+	background: #D94451;
+	color: #ffffff;
+	border-left: 1px solid #F6B8C4;
+	text-shadow: -1px -1px 2px #ababab;
+	padding: 10px;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+#nota {
+	width: 500px;
+}
+
+.xxx {
+	border-radius: 10px 10px 10px 10px;
+	background: rgba(11, 11, 11, 0.05);
+	padding: 10px;
+	margin: 15px;
+}
+
+.error-field {
+	background: #F3C5C9;
+}
+
+
+div.number {
+	background: #222222;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	border-radius: 15px;
+	padding: 5px;
+	color: #fafafa;
+	margin: 5px;
+	width: 20px;
+	text-align: center;
+	font-weight: bold;
+}
+
+
+table.rate-resume {
+	background: white;
+	border-right: 1px solid #ababab;
+	border-top: 1px solid #ababab;
+	/*margin-left: 5px;
+	margin-top: 2px;
+	margin-bottom: 3px;*/
+}
+
+table.rate-resume td,
+table.rate-resume th {
+	border-bottom: 1px solid #ababab;
+	border-left: 1px solid #ababab;
+}
+
+table.rate-resume th {
+	text-align: center;
+}
+
+div.pendent {
+	background: #FFF6E5;
+	padding: 5px;
+	font-size: 13px;
+	color: #000000;
+}
+
+div.guaranted {
+	background-color: #BBCC9E;
+	padding: 5px;
+	font-size: 13px;
+	color: #000000;
+}
+
+div.section {
+	padding-left: 10px;
+	padding-right: 15px;
+}
+
+div.do-payment {
+	margin-top: 20px;
+	background-color: #Fafafa;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 10px;
+	padding-top: 5px;
+	padding-right: 30px;
+	padding-bottom: 10px;
+	margin-bottom: 25px;
+}
+
+a {
+	color: #111111;
+}
+
+td.total-general {
+	font-size: 18px;
+	font-weight: bold;
+	background: white;
+}
+
+table.pay-table input[type="text"] {
+	margin-bottom: 5px;
+	margin-top: 5px;
+	font-size: 16px;
+	text-align: right;
+}
+
+table.pay-table input[type="submit"] {
+	background: #68A108;
+	color: #ffffff;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+div.successMessage {
+	border: none;
+	font-size: 13px;
+	padding: 10px;
+}

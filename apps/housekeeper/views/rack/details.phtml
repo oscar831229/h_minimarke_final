@@ -1,0 +1,77 @@
+
+<h2>Habitación <?php echo $habitacion->getNumhab() ?></h2>
+
+<p>
+	<label for="basic">Estado:</label>
+   	<?php echo $habitacion->getEsthab()->getDetalle() ?>
+</p>
+
+<p>
+	<label for="basic">Clase:</label>
+   	<?php echo $habitacion->getClahab()->getDescripcion() ?>
+</p>
+
+<p>
+	<label for="basic">Piso:</label>
+   	<?php echo $habitacion->getPiso() ?>
+</p>
+
+<?php if($habitacion->getCodest()==3||$habitacion->getCodest()==4){ ?>
+
+<p>
+	<label for="basic">LLegada:</label>
+   	<?php
+   		echo $folio->getFeclle();
+   		if($folio->getFeclle()->isToday()){
+   			echo '(Hoy)';
+   		} else {
+   			if($folio->getFeclle()->isYesterday()){
+   				echo '(Ayer)';
+   			}
+   		}
+   	?>
+</p>
+
+<p>
+	<label for="basic">Salida:</label>
+   	<?php
+   		echo $folio->getFecSal();
+   		if($folio->getFecsal()->isToday()){
+   			echo '(Hoy)';
+   		} else {
+   			if($folio->getFecsal()->isTomorrow()){
+   				echo '(Mañana)';
+   			}
+   		}
+   	?>
+</p>
+
+
+<p>
+	<label for="basic">Adultos:</label>
+   	<?php echo $folio->getNumadu() ?>
+</p>
+
+<p>
+	<label for="basic">Niños:</label>
+   	<?php echo $folio->getNumnin() ?>
+</p>
+
+<?php } ?>
+
+<?php if($habitacion->getCodest()==3||$habitacion->getCodest()==4){ ?>
+<p>
+	<table>
+		<tr>
+			<td valign="top" width="20%"><label for="basic">Ocupantes:</label></td>
+			<td>
+				<?php echo join('<br>', $ocupantes) ?>
+			</td>
+		</tr>
+	</table>
+</p>
+<?php } ?>
+
+
+<?php echo Tag::linkTo(array('rack', 'Volver', 'data-role' => 'button', "data-icon" => "arrow-l")) ?>
+

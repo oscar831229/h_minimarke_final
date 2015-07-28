@@ -1,0 +1,105 @@
+input.detalleRecibosPagoButton {
+	background: url("../../../img/backoffice/publish.png"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, center center;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.abonoErradoButton {
+	background: url("../../../img/backoffice/delete.gif"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.abonoOtrosButton {
+	background: url("../../../img/backoffice/finance-2.png"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.abonoCapitalButton {
+	background: url("../../../img/backoffice/finance-2.png"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.abonoPosteriorButton {
+	background: url("../../../img/backoffice/arrow-return-180-left.png"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.anularButton{
+	background: url("../../../img/backoffice/delete.gif"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, center center;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.desistirButton {
+	background: url("../../../img/backoffice/delete.gif"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.retomaButton {
+	background: url("../../../img/backoffice/arrow-return-180-left.png"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+input.refinanciarButton {
+	background: url("../../../img/backoffice/arrow-retweet.png"), -moz-linear-gradient(center top , #FFFFFF 0pt, #F0F0F0 50%, #E0E0E0 50%, #D7D7D7 100%);
+	background-position: 5px 5px, top left;
+	background-repeat: no-repeat, repeat;
+	padding-left: 25px;
+}
+
+
+div.abonoContrato table.hyBrowseTab {
+	width: 80%;
+}
+
+
+div.proyeccion input.saldoPagar {
+	background: url("../../img/backoffice/bg-texture-2.png");
+	border: none;
+}
+
+table.movimientoStatusBar td {
+	color: #99C7D5;
+	font-size: 13px;
+}
+
+table.movimientoStatusBar table.sumasTable {
+
+}
+
+table.movimientoStatusBar table.sumasTable td {
+	font-family: Anivers;
+	font-size: 16px;
+	color: #6BA3DC;
+}
+
+table.movimientoStatusBar table.sumasTable td b {
+	color: #ffffff;
+	font-weight: normal;
+	font-size: 16px;
+	margin-right: 16px;
+}
+
+table.movimientoStatusBar table.sumasTable td b.descuadre {
+	color: #CE5A00;
+}
+
+td.preventBreakout
+{
+	width: 350px;
+	white-space: pre-wrap; 
+}

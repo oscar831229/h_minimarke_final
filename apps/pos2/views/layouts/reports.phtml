@@ -1,0 +1,233 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/status');
+} else {
+	Tag::stylesheetLink('pos2/production/reports', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/reports', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+$Datos->findFirst();
+
+?>
+<center>
+<table align='center' cellspacing="0" cellpadding="0">
+<td class='sh_left'></td><td>
+<table cellspacing="0" width="800">
+<tr>
+	<td class='titulo' align='left'>
+		Reportes del Sistema
+	</td>
+</tr>
+<tr>
+<td id="reports_main">
+	<?php echo View::getContent() ?>
+	<table>
+		<tr>
+			<td>
+				<?php echo Tag::image("pos2/printer2.png", "width: 48", "height: 48") ?>
+			</td>
+			<td>
+				<h1>Reportes del Sistema</h1>
+			</td>
+		</tr>
+	<td>
+</td>
+</table>
+
+<div align="center">
+	<table>
+		<tr>
+			<td>
+				<strong>Fecha Inicial</strong>
+				<?php echo Tag::dateField("fecha_inicial", "value: {$Datos->getFecha()}", "startYear: 2005") ?>
+			</td>
+			<td width="20"></td>
+			<td>
+				<strong>Fecha Final</strong>
+				<?php echo Tag::dateField("fecha_final", "value: {$Datos->getFecha()}", "startYear: 2005") ?>
+			</td>
+		</tr>
+	</table>
+	<br/>
+
+	<strong>Ambiente</strong><br/>
+	<select id='comedor'>
+		<option value='@'>CUALQUIERA...</option>
+		<?php
+			foreach($Salon->find("order: nombre") as $salon){
+				echo "<option value='{$salon->id}'>{$salon->nombre}\n";
+			}
+		?>
+	</select>
+	<br/>
+	<br/>
+
+	<strong>Tipo de Item</strong><br/>
+	<select id='tipo_item'>
+		<option value='@'>CUALQUIERA...</option>
+		<?php
+			$tipos = array(
+				'A' => 'ALIMENTOS',
+				'B' => 'BEBIDAS',
+				'C' => 'CIGARRILLOS',
+				'L' => 'LAVANDERIA',
+				'O' => 'OTROS',
+			);
+			foreach($tipos as $tipo => $detalle){
+				echo "<option value='{$tipo}'>{$detalle}\n";
+			}
+		?>
+		</select>
+		<br/>
+	</div>
+</center>
+
+<div align="center">
+<table cellspacing="0" cellpadding="5" align="center" class="lista_res">
+	<thead>
+		<th>Reporte</th>
+		<th>Printer</th>
+		<th>HTML</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Resúmen de Venta por Plato Consolidado</td>
+			<td></td>
+			<td><?php echo Tag::image(array("pos2/report.png", "style" => "border: 0; cursor:pointer", "onclick" => "window.open(Utils.getKumbiaURL()+'reports/ventaPlatoConsolidadoHtml/'+\$F('comedor')+'/'+\$F('tipo_item')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'))")) ?></td>
+		</tr>
+		<tr>
+			<td>Resúmen de Venta por Plato</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/ventaPlato/'+\$F('comedor')+'/'+\$F('tipo_item')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no, scrollbars=yes')") ?></td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/ventaPlatoHtml/'+\$F('comedor')+'/'+\$F('tipo_item')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'))") ?></td>
+		</tr>
+		<tr>
+			<td>Resúmen de Venta por Plato por Cajero</td><td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/venta_plato_cajero/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no, scrollbars=yes')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Cuadre de Caja (Cajero Actual)</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/cuadre_caja/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no, scrollbars=yes')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Cuadre de Caja (Todos)</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/cuadre_caja_todos/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no, scrollbars=yes')") ?></td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/cuadreCajaTodosHtml/'+\$F('comedor')+'/'+\$F('tipo_item')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'))") ?></td>
+		</tr>
+		<tr>
+			<td>Reporte de Huéspedes Actual</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/huespedes/', null, 'width=300, height=700, toolbar=no, statusbar=no, scrollbars=yes')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Reporte de Cortesias/Administrativos</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL('reports/cortesias/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final')), null, 'width=310, height=700, toolbar=no, statusbar=no')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Saldos de Inventario</td>
+			<td></td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL('reports/saldosInventarios/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final')))") ?></td>
+		</tr>
+		<!--<tr>
+			<td>Items Más Vendidos</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/mas_vendidos/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Items Menos Vendidos</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/menos_vendidos/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Items Mayor Utilidad</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/mayor_utilidad/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no')") ?></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>Items Menor Utilidad</td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/menor_utilidad/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'), null, 'width=310, height=700, toolbar=no, statusbar=no')") ?></td>
+			<td></td>
+		</tr>-->
+		<tr>
+			<td>Reporte de Facturas</td>
+			<td></td>
+			<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/facturasHtml/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final'))") ?></td>
+		</tr>
+	</tbody>
+</table>
+</div>
+<br><br>
+
+<div align="center" style="padding:10px">
+
+	<b>Usuario</b>
+	<select id='usuario'>
+		<option value='@'>TODOS</option>
+		<?php
+			foreach($UsuariosPos->find("order: nombre") as $usuario){
+				echo "<option value='{$usuario->id}'>{$usuario->nombre}\n";
+			}
+		?>
+	</select>
+	<br/>
+	<br/>
+
+	<b>Comanda Inicial</b>
+	<?php echo Tag::numericField("comanda_inicial") ?>
+
+	<b>Final</b>
+	<?php echo Tag::numericField("comanda_final") ?>
+</div>
+
+<div align="center">
+	<table cellspacing="0" cellpadding="5" align="center" class="lista_res">
+		<thead>
+			<th>Reporte</th>
+			<th>&nbsp;</th>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Reporte Movimiento Digitado</td>
+				<td><?php echo Tag::image("pos2/report.png", "style: border: 0; cursor:pointer", "onclick: window.open(Utils.getKumbiaURL()+'reports/recordedMovement/'+\$F('comedor')+'/'+\$F('fecha_inicial')+'/'+\$F('fecha_final')+'/'+\$F('comanda_inicial')+'/'+\$F('comanda_final')+'/'+\$F('usuario'))") ?></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<br>
+<br>
+
+<div align='center'>
+	<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+		<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+		<b>Salir</b>
+	</button>
+</div>
+<br/>
+
+</td>
+</table>
+</td>
+<td class='sh_right'></td>
+</tr>
+ <tr>
+    <td></td>
+ 	<td class='sh_down'></td>
+ 	<td></td>
+ </tr>
+</table>

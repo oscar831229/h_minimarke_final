@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+echo '
+<div class="asoclubes">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
+		<thead>
+			<tr>
+				<th class="sortcol">Club</th>
+				<th class="sortcol">&nbsp;</th>
+				<th class="sortcol">Desde el a&ntilde;o</th>
+			</tr>
+		</thead>
+		<tbody>';
+	if(isset($clubesArray) && count($clubesArray)){
+		//var_dump($clubesArray);
+		foreach ($clubesArray as $club){
+			echo '
+			<tr>
+				<td>
+					'.$club->getNombre().'
+				</td>
+				<td>
+					';
+				$value = $club->getId();
+				$desdeVal = '';
+				if(isset($asoclubesArray[$club->getId()])){
+					$asoclub = $asoclubesArray[$club->getId()];
+					echo Tag::checkboxField(array('clubId[]','checked' => 'checked','value'=>$value));
+					$desdeVal = $asoclub->getDesde();
+				} else {
+					echo Tag::checkboxField(array('clubId[]','value'=>$value));
+				}
+			echo '
+				</td>
+				<td>
+					'.Tag::numericField(array('clubDesde['.$value.']','value'=>$desdeVal,'size'=>4,'maxlength'=>4)).'
+				</td>
+			</tr>
+			';
+		}
+	}
+	echo '
+		</tbody>
+	</table>';
+
+echo '
+</div>';

@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/status');
+	Tag::stylesheetLink('pos2/audit');
+} else {
+	Tag::stylesheetLink('pos2/production/audit', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/audit', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+?>
+
+<div align="center" id="audit">
+	<table cellspacing="0" width="800" class="shadow-table">
+		<tr>
+			<td class='titulo' align='left'>Auditoría de Ordenes/Facturas</td>
+		</tr>
+		<tr>
+			<td class="main-content">
+
+				<?php echo View::getContent(); ?>
+
+				<table>
+					<tr>
+						<td>
+							<?php echo Tag::image("pos2/audit.png", 'width: 48') ?>
+						</td>
+						<td>
+							<h1>Auditoría del Sistema</h1>
+						</td>
+					</tr>
+				</table>
+
+				<?php echo Tag::form("audit/index"); ?>
+				<div align="right">
+					<table>
+						<tr>
+							<td align="right"><label for='fecha'><b>Fecha</b></label></td>
+							<td><?php echo Tag::dateField("fecha") ?></td>
+							<td><?php echo Tag::submitButton("Ver", 'class: flowButton') ?></td>
+							<!--<td><?php echo Tag::button("Imprimir", "onclick: window.open(Utils.getKumbiaURL(\"\"))") ?></td>-->
+						</tr>
+					</table>
+				</div>
+
+				<?php
+					echo Tag::endForm();
+					if(count($audits)){ ?>
+					<div align="center">
+						<table cellspacing="0" align="center" class="lista_res" width="95%">
+							<tr>
+								<thead>
+									<th>Usuario</th>
+									<th>Fecha</th>
+									<th>Transacción</th>
+								</thead>
+							</tr>
+							<?php foreach($audits as $audit){ ?>
+							<tr>
+								<td align="left"><?php echo $audit->getNombre() ?></td>
+								<td align="center"><?php echo $audit->getFechaAt() ?></td>
+								<td ><?php echo $audit->getNota() ?></td>
+							</tr>
+							<?php } ?>
+						</table>
+					</div>
+					<?php } ?>
+
+					<div align='center'>
+						<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+							<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+							<b>Salir</b>
+						</button>
+					</div>
+
+				</td>
+		 	</tr>
+	</table>
+</div>

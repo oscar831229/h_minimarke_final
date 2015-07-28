@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$Datos->findFirst();
+
+function center($text, $size){
+	if(i18n::strlen($text)>=$size){
+		return i18n::substr($text, 0, $size);
+	}
+	$spaces = str_repeat(" ", ($size-i18n::strlen($text))/2);
+	return $spaces.$text.$spaces;
+}
+
+?>
+<html>
+<head>
+<style type='text/css'>
+	td, span, div, th, pre {
+		font-family: 'Lucida Console', 'Courier New';
+		font-size: 12px;
+	}
+	body {
+		margin: 0px;
+	}
+</style>
+</head>
+<body>
+<pre>
+<?php
+	echo center($Datos->getNombreCadena(), 40), "\n";
+	echo center($Datos->getDocumento()." No. : ".$Datos->getNit(), 40), "\n";
+	echo center(i18n::strtoupper($Datos->getNombreHotel()), 40), "\n";
+	echo center("CORTESIAS Y FUNCIONARIO", 40), "\n";
+	if($fecha_inicial==$fecha_final){
+		echo center("Fecha: {$fecha_inicial}" , 40), "\n";
+	} else {
+		echo center("Fecha: {$fecha_inicial} - {$fecha_final}" , 40), "\n";
+	}
+	echo center("Cajero: ".i18n::strtoupper(Session::getData("usuarios_nombre")), 40), "\n";
+?>
+</pre>
+<table>
+<?php
+
+$total = 0;
+$total_iva = 0;
+$tipo_venta = "";
+$conditions = "fecha >= '$fecha_inicial' and fecha <= '$fecha_final' AND estado = 'A' and tipo_venta in ('C', 'U')";
+foreach($Factura->find($conditions, "order: tipo_venta") as $factura){
+	$usuarioPos = $UsuariosPos->find($factura->usuarios_id);
+	$nombre = i18n::strtoupper(substr($usuarioPos->nombre, 0, strpos($usuarioPos->nombre, ' ')));
+	if($tipo_venta!=$factura->tipo_venta){
+		$TipoVenta->findFirst("id='$factura->tipo_venta'");
+		echo "<tr><td colspan='3'>{$TipoVenta->detalle}</td></tr>";
+		echo "<tr>
+			<td align='center'>N&uacute;mero</td>
+			<td align='center'>Descripci&oacute;n</td>
+			<td align='center'>Nombre</td>
+			<td align='center'>Valor</td>
+			</tr>";
+		$tipo_venta = $factura->tipo_venta;
+	}
+	echo "<tr>";
+	echo "<td align='center'>{$factura->consecutivo_facturacion}</td>";
+	echo "<td align='left'>{$factura->nombre}</td>";
+	echo "<td align='center'>{$nombre}</td>";
+	echo "<td align='right'>{$factura->total}</td>";
+	echo "</tr>";
+	$total += $factura->total;
+	$total_iva += $factura->total_iva;
+}
+
+?>
+</table>
+<pre>
+-------------------------------------------
+</pre>
+<div style='pading: 20px; width:280px' align='right'>
+TOTAL IVA : <?php echo Locale::money($total_iva) ?><br>
+TOTAL : <?php echo Locale::money($total) ?>
+</div>
+</body>
+</html>

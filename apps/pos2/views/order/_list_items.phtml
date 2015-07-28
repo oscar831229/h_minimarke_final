@@ -1,0 +1,9 @@
+<select multiple id='list' style='font-family:Verdana;font-size:18px;width:360px;height:240px'>
+   <?php
+   	foreach($Account->find("salon_mesas_id=$id and estado in ('N', 'S')") as $AccountItem){
+   	  	$MenusItems->find($AccountItem->menus_items_id);
+   	  	print "<option value='".$AccountItem->id."'>[$AccountItem->cuenta] ".
+   	  	$MenusItems->nombre." [".($AccountItem->cantidad-$AccountItem->cantidad_atendida)."]</option>\n";
+	}
+   ?>
+</select>

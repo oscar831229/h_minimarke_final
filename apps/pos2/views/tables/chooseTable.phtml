@@ -1,0 +1,203 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/tables');
+	echo Tag::javascriptInclude('pos2/tables');
+	echo Tag::javascriptInclude('pos2/keyboard');
+} else {
+	Tag::stylesheetLink('pos2/production/tables', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/tables', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+Tag::stylesheetLink('pos2/tables');
+View::getContent();
+$Datos->findFirst();
+
+if($salon->venta_a=='H'){
+	$habitaciones = array();
+	foreach($Habitacion->find() as $habitacion){
+		$habitaciones[$habitacion->numhab] = true;
+	}
+}
+
+?>
+
+<div align="center">
+<div id='messages'></div>
+<div>
+	<table cellspacing='0' cellpadding='0' class="shadow-table">
+		<tr>
+			<td class='titulo'>
+				<?php echo Tag::form("tables/changeTable") ?>
+				<?php if($salon->venta_a!="H"): ?>
+					Seleccione la mesa a transferir<br>
+					<span class='selamesa'>Seleccione ó digite el número de mesa: <?php echo Tag::numericField("numero", "size: 4", "autocomplete: off") ?> </span>
+				<?php else: ?>
+					Seleccione la habitación a transferir<br>
+					<span class='selamesa'>Seleccione ó digite el número de habitación: <?php echo Tag::numericField("numero", "size: 4", "autocomplete: off") ?></span>
+				<?php endif ?>
+				<?php echo Tag::endForm() ?>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+	    		<table cellspacing='0' cellpadding='0' width="100%">
+	    			<tr>
+	    				<td valign="top" class="mesasPanel">
+	 						<table cellspacing='0' align="center" class="mesasTable">
+	 							<tr>
+ 		<?php
+
+ 			$libre = null;
+ 			if($salon->venta_a=='H'){
+		 		$pictureHtml = Tag::image("pos2/users-p.png");
+		 		$pictureHtmlDisabled = Tag::image("pos2/users-pb.png");
+	 		} else {
+	 			$pictureTable = Tag::image('pos2/mesa.png');
+	 		}
+ 			for($j=0;$j<$salon->alto_mesas;$j++){
+			  	echo "<tr>";
+			  	for($i=0;$i<$salon->ancho_mesas;$i++){
+			  		echo "<td class='tableCell' id='tx$i"."_"."$j'>";
+			  		$salonMesa = $SalonMesas->findFirst("salon_id='$salon->id' AND vpos='$j' AND hpos='$i'");
+					if($salonMesa){
+						if($salonMesa->estado=='N'){
+							if($action=='changeTable'){
+								if($libre===null){
+									$libre = $salonMesa->numero;
+								}
+								echo "<div onclick='new Utils.redirectToAction(\"tables/changeTable/$salonMesasId/{$salonMesa->id}\");'
+								class='mesaButton mesaLibre numero{$salonMesa->numero}' id='{$salonMesa->id}'>";
+								if($salon->venta_a=='H'){
+									if(isset($habitaciones[$salonMesa->numero])){
+										echo $pictureHtmlDisabled, "<br>";
+										echo "<span style='color:#c0c0c0'>", $salonMesa->numero, "</span>";
+									} else {
+										echo $pictureHtml, "<br>";
+										echo $salonMesa->numero;
+									}
+								} else {
+									echo $pictureTable, '<br/>';
+									echo '<span class="numeroMesa">', $salonMesa->numero, '</span>';
+								}
+							} else {
+								echo "&nbsp;";
+							}
+							echo "</div></td>";
+			 			} else {
+			 				if($action=='joinOrders'){
+				 				if($salonMesa->id!=$salonMesasId){
+					 				echo "<div onclick='new Utils.redirectToAction(\"tables/joinOrder/{$salonMesa->id}/$id\");'
+									class='mesaButton2 mesaOcupada numero{$SalonMesas->numero} mesero".Session::get("usuarios_id")."' id='{$salonMesa->id}'>";
+									$accountMaster = $AccountMaster->findFirst("salon_mesas_id='{$salonMesa->id}' and estado='N'");
+									if($accountMaster!=false){
+										$nombre = i18n::substr(i18n::substr($AccountMaster->nombre, 0, strpos($accountMaster->nombre." ", " ")), 0, 8);
+										$nombreCliente = "PARTICULAR";
+										foreach($AccountCuentas->find("account_master_id='$accountMaster->id'") as $accountCuenta){
+											if($accountCuenta->clientes_nombre!='PARTICULAR'){
+												$nombreCliente = i18n::substr(i18n::substr($accountCuenta->clientes_nombre, 0, strpos($accountCuenta->clientes_nombre." ", " ")), 0, 8);
+											}
+										}
+										echo "<span class='mesero_name'><br/>".strtoupper($nombre)."<br/></span>";
+										echo "<span style='display:none' class='cliente_name'><br/>".strtoupper($nombreCliente)."<br/></span>";
+										echo ActiveRecord::singleSelect("time_format(timediff(concat('{$Datos->getFecha()} ', current_time()), '$accountMaster->hora'), '%H:%i')");
+										echo "<br/>";
+									}
+									echo $salonMesa->numero;
+									echo "</div>";
+				 				} else {
+				 					echo "&nbsp;";
+				 				}
+			 				} else {
+			 					echo "&nbsp;";
+			 				}
+			 			}
+					} else {
+						echo "&nbsp";
+					}
+					echo "</td>";
+			  	}
+ 			}
+
+		?>
+ 	</table>
+ 	</td>
+ 	<td class='rightSide' valign="top">
+
+		<p class='subTitle'  align='center'>
+	 		<b>SELECCIONAR AMBIENTE</b>
+ 		<?php
+ 			if(!$id){
+ 				$id  = 1;
+ 			}
+
+ 			$usuarioId = Session::get("usuarios_id");
+ 			$query = new ActiveRecordJoin(array(
+ 				'fields' => array('{#Salon}.id', '{#Salon}.nombre'),
+ 				'entities' => array('Salon', 'Permisos'),
+ 				'conditions' => "salon.estado = 'A' AND usuarios_id='$usuarioId'"
+ 			));
+ 			foreach($query->getResultSet() as $usuarioSalon){
+ 			  	if($usuarioSalon->id==$salon->id){
+ 			  		echo "<input type='button' value='".$usuarioSalon->nombre."' class='salonButton salonSelected' onclick='window.location=Utils.getKumbiaURL(\"tables/chooseTable/$id/{$usuarioSalon->id}/$action\")'><br/>";
+ 			  	} else {
+			 		echo "<input type='button' value='".$usuarioSalon->nombre."' class='salonButton salonUnselected' onclick='window.location=Utils.getKumbiaURL(\"tables/chooseTable/$id/{$usuarioSalon->id}/$action\")'><br/>";
+ 			  	}
+			}
+
+		?>
+		</p>
+
+ 		<p class='subTitle'  align='center'>
+	 		<b>VISUALIZAR</b>
+	 		<button id='showTodas' class='salonOption salonOptionUnselected' onclick='showTodas(this)'>Ver To<u>d</u>as</button><br>
+	 		<button id='showAbiertas' class='salonOption salonOptionUnselected' onclick='showAbiertas(this)'>Ver Mesas <u>A</u>biertas</button><br>
+	 		<button id='showLibres' class='salonOption' onclick='showLibres(this)'>Ver Mesas <u>L</u>ibres</button><br>
+	 		<button id='showMisMesas' class='salonOption salonOptionUnselected' onclick='showMisMesas(<?php echo Session::get("usuarios_id") ?>, this)'>Ver <u>M</u>is Mesas</button><br>
+	 		<button id='showClientes' class='salonOption salonOptionUnselected' onclick='showClientes(this)'>Ver <u>C</u>liente</button><br>
+		</p>
+
+		<br>
+		<button id='cancelButton' onclick='new Utils.redirectToAction("order/add/<?php echo $id ?>")'>
+			<?php echo Tag::image("pos2/mesero.png", "width: 23") ?><br>
+			<b>Volver al Pedido</b>
+		</button>
+		<br/>
+
+ 		</td>
+ 	</tr>
+</table>
+
+
+<script type='text/javascript'>
+new Event.observe(window, "load", function(){
+	$("numero").value = "<?php echo $libre===null ? "" : $libre ?>";
+	$("numero").activate();
+	$$(".numero<?php echo $libre ?>").each(function(element){
+		element.addClassName("mesaSelected");
+	});
+	$("numero").observe("keyup", function(event){
+		var numero = this.value;
+		$$(".mesaSelected").each(function(element){
+			element.removeClassName("mesaSelected");
+		});
+		$$(".numero"+numero).each(function(element){
+			element.addClassName("mesaSelected");
+		});
+	});
+});
+</script>

@@ -1,0 +1,55 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+td.buttonPanel .flowButton,
+td.buttonPanel .controlButtonCancel,
+td.buttonPanel .controlButtonAccept {
+	width: 135px;
+	margin: 1px;
+}
+
+#lista_fi {
+	margin-top: 5px;
+}
+
+#legendBox {
+	border: 1px solid #969696;
+	background: url("../img/localnavg.gif") #a1a1a1;
+	width: 370px;
+}
+
+.le_td {
+	background-color: #CBDEFF;
+	background-repeat: repeat-x;
+	padding: 0px
+}
+
+#q {
+	background-image: url("../img/mag.gif");
+	background-repeat: no-repeat;
+	background-position: 97% 45%;
+	background-color: #fff;
+	padding: 5px;
+	font-size: 16px;
+	border: 1px solid #969696;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 15px;
+}
+
+.deta_div {
+	background: #dbdbdb;
+}

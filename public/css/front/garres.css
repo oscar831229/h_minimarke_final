@@ -1,0 +1,103 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+.garresMov {
+	width: 90%;
+	border-top: 1px solid #969696;
+}
+
+.garresMov th {
+	background: url(../img/localnavg.gif) #a1a1a1;
+	border-left: 1px solid #969696;
+	font-size: 11px;
+}
+
+.garresMov td {
+	border-left: 1px solid #ababab;
+	border-bottom: 1px solid #ababab;
+}
+
+.garresMov td.nb {
+	border: none;
+}
+
+#grabarNuevo {
+	margin: 15px;
+	margin-top: 25px;
+	margin-right: 25px;
+}
+
+#new_abono {
+	border: 1px solid #808080;
+	background: #fff;
+	padding: 10px;
+	margin-top: 25px;
+}
+
+#tabFormas th {
+	background: url(../img/localnavg.gif) #a1a1a1;
+	border-left: 1px solid #969696;
+	font-size: 11px;
+}
+
+#total {
+	text-align: right;
+	font-size: 18px;
+}
+
+#buttonPannel {
+	padding-right: 40px;
+}
+
+select.forpag-select {
+	width: 100%;
+}
+
+input.i-valor {
+	text-align: right;
+}
+
+#buttonPannel {
+	padding-right: 40px;
+}
+
+td.border_right {
+	border-right: 1px solid #ABABAB;
+	border-left: none;
+}
+
+td.total_gar {
+	background: #ffffff;
+}
+
+td.total_gar_val {
+	background: #ffffff;
+	font-weight: bold;
+	border-right: 1px solid #ABABAB;
+}
+
+#mainButtonPannel {
+	-moz-border-radius: 5px 5px 5px 5px;
+	background: url("../img/localnavg.gif") repeat-x scroll 0 0 #BEBEBE;
+	border: 1px solid #969696;
+	margin: 10px;
+	padding: 10px;
+	text-align: center;
+	width: 750px;
+}
+
+.i-valor, .i-fecven, .i-ivarep, .i-numfor, #total {
+	text-align: right;
+	width: 99%;
+}

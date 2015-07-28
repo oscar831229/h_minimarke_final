@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div class="movimiento hfosContent">
+
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="left">
+					<table>
+						<tr>
+							<?php
+								$action = Router::getAction();
+								switch($action){
+									case 'nuevo':
+									case 'editar':
+									case 'getDetallesError':
+										echo '<td align="right">
+											<input type="button" class="controlButton backButton" value="Volver" title="Volver [F10]"/>
+										</td>';
+										break;
+								}
+							?>
+						</tr>
+					</table>
+				</td>
+				<td align="right">
+					<table>
+						<tr>
+							<?php
+								$action = Router::getAction();
+								switch($action){
+									case 'index':
+										echo '<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="controlButton newButton" value="Crear un comprobante" title="Crear [Control-N]"/>
+										</td>';
+										break;
+									case 'editar':
+										echo '
+										<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton revisionButton" value="Revisiones" title="Revisiones"/>
+										</td>
+										<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton copyButton" value="Copiar" title="Copiar [F4]"/>
+										</td>
+										<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton dateButton" value="Cambiar Fecha" title="Cambiar Fecha [F2]"/>
+										</td>
+										<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton printButton" value="Imprimir" title="Imprimir [F8]"/>
+										</td>
+										<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton deleteButton" value="Eliminar"/>
+										</td>
+										<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton saveButton" value="Guardar" title="Guardar [F7]"/>
+										</td>
+										<td align="left">
+											<div class="headerSpinner" style="display:none"></div>
+										</td>';
+										break;
+									case 'nuevo':
+										echo '<td align="left" class="hyTdLeftControlButton">
+											<input type="button" class="hyControlButton saveButton" value="Guardar" title="Guardar [F7]"/>
+										</td>
+										<td align="left">
+											<div class="headerSpinner" style="display:none"></div>
+										</td>';
+										break;
+								}
+							?>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="messages">
+		<?php
+			if(isset($message)){
+				echo '<div class="notice">', $message, '</div>';
+			}
+		?>
+	</div>
+
+	<div class="formMain">
+		<?php View::getContent() ?>
+	</div>
+
+</div>

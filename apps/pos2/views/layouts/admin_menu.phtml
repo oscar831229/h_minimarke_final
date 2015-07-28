@@ -1,0 +1,141 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+Tag::stylesheetLink('pos2/admin');
+Tag::stylesheetLink('pos2/clave');
+Tag::stylesheetLink('pos2/style');
+Tag::stylesheetLink('style');
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	echo Tag::javascriptInclude('pos2/admin');
+	//echo Tag::javascriptLibrary('pos2/tablesort');
+} else {
+	Tag::addJavascript('pos2/production/admin', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+?>
+<div id='mainDiv'>
+	<table align="center" cellspacing="0" cellpadding="0" id="mainTable">
+		 <tr>
+		 	<td id="menu_bar">
+		 		<table width="100%" cellspacing="0">
+		 			<tr>
+		 				<td><?php echo Tag::linkTo('menus', Tag::image('pos2/logo.png')) ?></td>
+		 				<td align="right">
+		 					<table cellpadding="0" cellspacing="0">
+			 					<tr>
+			 						<td>
+						 				<div class='menu_item menu_item_l' id='carta_menu'>
+											<?php echo Tag::linkTo('menus_items', 'Carta') ?>
+											<div id='carta_menu_content' style="display:none">
+												<ul>
+													<li id="menus_link"><?php echo Tag::linkTo('menus', 'Mantenimiento de Menús') ?></li>
+													<li id="menus_items_link"><?php echo Tag::linkTo('menus_items', 'Items de Menús') ?></li>
+													<li id="ambientes_items_link"><?php echo Tag::linkTo('ambientes_items', "Actualizar Items en Ambientes") ?></li>
+													<li id="salon_menus_items_link"><?php echo Tag::linkTo('salon_menus_items', "Consulta de Items en Ambientes") ?></li>
+													<li id="modifiers_items_link"><?php echo Tag::linkTo('modifiers_items', "Modificadores de Items") ?></li>
+													<li id="modifiers_link"><?php echo Tag::linkTo('modifiers', "Modificadores") ?></li>
+													<li id="carta_link"><?php echo Tag::linkTo('carta', "Subir Carta") ?></li>
+												</ul>
+											</div>
+										</div>
+									</td>
+									<td align="right">
+										<div class='menu_item' id='costo_menu'>
+											<?php echo Tag::linkTo('menus_items', 'Costo') ?>
+											<div id='costo_menu_content' style="display:none">
+												<ul>
+													<li id="cutleries_link"><?php echo Tag::linkTo('menus_items/actualizaCostos', 'Actualizar costo de Items') ?></li>
+				 									<li id="analisis_consumos_link"><?php echo Tag::linkTo('analisis_consumos', 'Análisis de Consumos') ?></li>
+				 									<li id="analisis_detallado_link"><?php echo Tag::linkTo('analisis_detallado', 'Análisis de Consumos Detallado') ?></li>
+				 									<li id="exportar_consumos_link"><?php echo Tag::linkTo('exportar_consumos', 'Exportar Consumos') ?></li>
+				 									<li id="planificador_link"><?php echo Tag::linkTo('planificador', 'Planificador de Producción') ?></li>
+				 									<li id="descarga_link"><?php echo Tag::linkTo('descarga', 'Descarga de Inventarios') ?></li>
+				 									<!--<li><?php echo Tag::linkTo('descarga_ajustes', 'Reporte Costo de Ajustes') ?></li>-->
+				 									<li id="kardex_link"><?php echo Tag::linkTo('recalcula_saldos', 'Kardex Inventarios') ?></li>
+				 									<li id="saldos_link"><?php echo Tag::linkTo('saldos', 'Saldos Inventarios') ?></li>
+				 								</ul>
+				 							</div>
+										</div>
+					 				</td>
+					 				<td>
+						 				<div class='menu_item menu_item' id='receta_menu'>
+											<?php echo Tag::linkTo('receta', 'Receta') ?>
+											<div id='receta_menu_content' style="display:none">
+												<ul>
+													<li id="receta_link"><?php echo Tag::linkTo('receta', 'Mantenimiento de Receta') ?></li>
+													<li id="receta_reporte_link"><?php echo Tag::linkTo('receta/reporte', 'Reporte de Recetas') ?></li>
+													<li id="receta_analisis_link"><?php echo Tag::linkTo('receta/analisis', 'Análisis de Costos de Recetas') ?></li>
+												</ul>
+											</div>
+										</div>
+									</td>
+					 				<td align="right">
+										<div class='menu_item' id='seguridad_menu'>
+											<?php echo Tag::linkTo('permisos', 'Seguridad') ?>
+											<div id='seguridad_menu_content' style="display:none">
+												<ul>
+													<li id="usuarios_link"><?php echo Tag::linkTo('usuarios_pos', 'Usuarios del Sistema') ?></li>
+									 				<li id="permisos_link"><?php echo Tag::linkTo('permisos', 'Permisos de Usuarios en Ambientes') ?></li>
+									 				<li id="gardien_link"><?php echo Tag::linkTo('gardien', 'Permisos de Perfiles') ?></li>
+									 				<li id="regenerar_link"><?php echo Tag::linkTo('regenerar_clave', 'Regenerar Clave') ?></li>
+												</ul>
+											</div>
+										</div>
+									</td>
+									<td align="right">
+										<div class='menu_item' id='basicas_menu'>
+											<?php echo Tag::linkTo('salon', 'Básicas') ?>
+											<div id='basicas_menu_content' style="display:none">
+												<ul>
+													<li id="discount_link"><?php echo Tag::linkTo('discount', 'Descuentos') ?></li>
+									 				<li id="cancelacion_link"><?php echo Tag::linkTo('conceptos_cancelacion', 'Conceptos de Cancelación') ?></li>
+									 				<li id="cash_tray_link"><?php echo Tag::linkTo('cash_tray', 'Cajas del Sistema') ?></li>
+									 				<li id="printers_link"><?php echo Tag::linkTo('printers', 'Impresoras de Producción') ?></li>
+									 				<li id="screens_link"><?php echo Tag::linkTo('screens', 'Pantallas de Estado') ?></li>
+									 				<li id="salon_link"><?php echo Tag::linkTo('salon', 'Ambientes') ?></li>
+									 				<li id="tipo_venta_link"><?php echo Tag::linkTo('tipo_venta', 'Tipos de Pedidos en Ambientes') ?></li>
+									 				<li id="ventas_default_link"><?php echo Tag::linkTo('ventas_default', 'Opciones Tipos Pedidos Menores') ?></li>
+									 				<li id="tipo_servicio_link"><?php echo Tag::linkTo('tipo_servicio', 'Tipos de Servicios') ?></li>
+									 				<li id="datos_link"><?php echo Tag::linkTo('datos', 'Datos del Sistema') ?></li>
+									 			</ul>
+									 		</div>
+										</div>
+					 				</td>
+									<td align="right">
+										<div class='menu_item menu_item_r' id='logout_menu'>
+											<?php echo Tag::linkTo('admin/logout', 'Salir') ?>
+										</div>
+									</td>
+			 					</tr>
+			 				</table>
+		 				</td>
+		 			</tr>
+		 		</table>
+		 	</td>
+		 </tr>
+		 <tr>
+		 	<td class='mainTd' valign="top">
+		 		<div class='shadow_content'></div>
+		 		<div id='mainContent'>
+					<?php View::getContent() ?>
+				</div>
+		 	</td>
+		 </tr>
+	</table>
+</div>
+
+<script type="text/javascript">Menu.initMenu();</script>

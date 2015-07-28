@@ -1,0 +1,59 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+@font-face {
+	font-family: 'Uni Sans Book';
+	src: local('Uni Sans Book'),
+		url('../../files/pos2/UniSansBook.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'Myriad Pro';
+	src: local('Myriad Pro'),
+		url('../../files/pos2/MyriadPro.otf') format('opentype');
+}
+
+
+body {
+	background: url('../../img/pos2/background-noise.png')  repeat scroll 0 0%, -moz-radial-gradient(center 3% 45deg, circle closest-corner, #3F3F40 0%, #3F3F40 25%, #242525 100%) no-repeat scroll 0 0%, none repeat scroll 0 0 #242525;
+}
+
+div#risk {
+	background-color: #732222;
+	background-image: -moz-linear-gradient(top center, #992E2E, #732222);
+	padding: 25px;
+	color: #f2f2f2;
+	text-shadow: 0 1px 0 #4A1515;
+	line-height: 22px;
+}
+
+div#risk h1 {
+	font-family: "Uni Sans Book", sans-serif;
+	color: #fafafa;
+	font-weight: normal;
+}
+
+div#risk img {
+	margin: 20px;
+}
+
+div#risk td {
+	font-family: "Myriad Pro", sans-serif;
+	font-size: 18px;
+}
+
+div.shadow-div {
+	margin: 100px;
+	margin-bottom: 250px;
+}

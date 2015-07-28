@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/panic');
+	Tag::stylesheetLink('pos2/status');
+} else {
+	Tag::stylesheetLink('pos2/production/panic', false, 'v='.ControllerBase::APP_VERSION);
+}
+
+?>
+<div align="center">
+	<div class="shadow-div">
+		<table cellspacing="0" width="100%" style="background:#992E2E">
+			<tr>
+				<td class='titulo' align='left'>
+					Sistema en Riesgo
+				</td>
+			</tr>
+			<tr>
+				<td style="padding: 0px">
+					<div id="risk">
+						<table>
+							<tr>
+								<td><?php echo Tag::image('pos2/adver.png') ?></td>
+								<td>
+									<h1>El sistema está en riesgo</h1>
+									<p>Un tercero no identificado está tratando de violentar el sistema. Hotel Front-Office Solution
+									ha bloqueado la aplicación temporalmente para prevenir daños y perdida en la información.
+									Si el bloqueo se hace permanente solicite ayuda a soporte técnico.</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

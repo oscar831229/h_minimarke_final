@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('transfer.png', 'Traslado de Activos Fijos') ?>
+
+<div class="formContent">
+
+	<div class="formPannel" align="right">
+
+		<?php echo Tag::form('traslado_activos/trasladar', 'autocomplete: off', 'class: trasladoActivosForm') ?>
+			<fieldset class="tabbed">
+				<legend>Centro de Costo</legend>
+				<table align="center">
+					<tr>
+						<td align="right"><label for="centroInicial">Centro Inicial</label></td>
+						<td><?php echo Tag::select('centroInicial', $centros, 'using: codigo,nom_centro', 'useDummy: yes') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="centroInicial">Centro Final</label></td>
+						<td><?php echo Tag::select('centroFinal', $centros, 'using: codigo,nom_centro', 'useDummy: yes') ?></td>
+					</tr>
+				</table>
+			</fieldset>
+
+			<fieldset class="tabbed">
+				<legend>Ubicación</legend>
+				<table align="center">
+					<tr>
+						<td align="right"><label for="ubicacionInicial">Ubicación Inicial</label></td>
+						<td><?php echo Tag::select('ubicacionInicial', $ubicaciones, 'using: codigo,nom_ubica', 'useDummy: yes') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="ubicacionFinal">Ubicación Final</label></td>
+						<td><?php echo Tag::select('ubicacionFinal', $ubicaciones, 'using: codigo,nom_ubica', 'useDummy: yes') ?></td>
+					</tr>
+				</table>
+			</fieldset>
+
+			<fieldset class="tabbed">
+				<legend>Responsable</legend>
+				<table align="center">
+					<tr>
+						<td align="right"><label for="responsableInicial">Responsable Inicial</label></td>
+						<td><?php echo HfosTag::terceroField('responsableInicial') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="responsableFinal">Responsable Final</label></td>
+						<td><?php echo HfosTag::terceroField('responsableFinal') ?></td>
+					</tr>
+				</table>
+			</fieldset>
+
+		<?php echo Tag::endForm() ?>
+
+	</div>
+
+</div>

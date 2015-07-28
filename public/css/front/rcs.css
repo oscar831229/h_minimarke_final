@@ -1,0 +1,24 @@
+.revision {
+	background: #fff;
+	padding: 5px;
+	border: 1px solid #969696;
+	margin: 5px;
+}
+
+.record_block {
+	background: #dde6f2;
+	border: 1px solid #d1d5e0;
+	padding: 5px;
+}
+
+.record_block td {
+	border-bottom: 1px solid #d1d5e0;
+}
+
+.changed {
+	background: #cceecd;
+}
+
+.changed td {
+	color: green;
+}

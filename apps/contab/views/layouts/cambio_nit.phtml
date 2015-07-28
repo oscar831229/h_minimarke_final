@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div class="cambio_nit hfosContent">
+
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="left">
+					<table>
+						<tr>
+							<td align="right">
+								<input type="button" class="controlButton backButton" style="display:none" value="Volver"/>
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td align="right">
+					<table>
+						<tr>
+							<td align="left" class="hyTdLeftControlButton">
+								<input type="button" class="hyControlButton importButton" value="Cambiar"/>
+							</td>
+							<td align="left">
+								<div class="headerSpinner" style="display:none"></div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="messages">
+		<?php
+			if(isset($message)){
+				echo '<div class="notice">', $message, '</div>';
+			}
+		?>
+	</div>
+
+	<div class="formMain">
+		<?php View::getContent() ?>
+	</div>
+
+</div>

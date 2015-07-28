@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<?php View::getContent() ?>
+<?php echo Tag::form('session/login', 'id: login-form') ?>
+	<p>
+		<label for="numeroHabitacion"><?php echo $traslate['numeroHabitacion'] ?></label><br/>
+		<?php echo Tag::textField('numeroHabitacion') ?>
+	</p>
+	<p>
+		<label for="clave"><?php echo $traslate['suClave'] ?></label><br/>
+		<?php echo Tag::passwordField('clave') ?>
+	</p>
+	<p>
+		<?php echo Tag::submitButton($traslate['ingreso']) ?>
+	</p>
+<?php echo Tag::endForm() ?>

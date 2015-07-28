@@ -1,0 +1,60 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body.pos {
+	background: url("../../img/pos2/bg-dark.png") repeat scroll 0 0 transparent;
+    background-color: #373C42;
+    margin: 0;
+}
+
+body.pos div#left-panel {
+	background: url("../../img/pos2/bg-texture-11.png") repeat scroll 0 0 transparent;
+	background: #DCDDDF;
+	top: 40px;
+	border-right: 1px soldi #C1C2C4;
+}
+
+body.pos div#right-panel {
+	top: 40px;
+}
+
+body.pos div.left-panel h3 {
+	background: #E0E1E4;
+}
+
+body.pos div.header {
+	background: -moz-linear-gradient(top center, #1C222D, #12161E);
+	border-top: 1px solid #191C1F;
+	box-shadow: 0 1px 0 #191C1F inset, 0 -1px 0 #000000 inset;
+}
+
+body.pos div.header-button-main div#appName {
+	background-position: 15% 11px;
+}
+
+body.pos div#appName {
+	color: #4CAAFF;
+}
+
+body.pos div.left-panel div.left-panel-item {
+	box-shadow: 0 1px 0 #EEF6FF inset, 0 -1px 0 #BABABA inset;
+}
+
+body.pos div.submenu {
+	background: none repeat scroll 0 0 rgba(45, 50, 56, 0.9);
+}
+
+body.pos div.header div.item-menu-parent {
+	border-left: 1px solid #191C1F;
+}

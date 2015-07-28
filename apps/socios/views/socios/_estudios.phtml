@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+echo '
+<div class="estudios">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center" id="mainTableEstudios">
+		<tr>
+			<th class="sortcol">&nbsp;</th>
+			<th class="sortcol">Instituci&oacute;n</th>
+			<th class="sortcol">Ciudad</th>
+			<th class="sortcol">Fecha Grado</th>
+			<th class="sortcol">Titulo</th>
+			<th class="sortcol">Agregar</th>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td align="center">
+				'.Tag::textField(array('estudiosInstitucion1','size' => 30)).'
+			</td>
+			<td align="center">';
+				echo HfosTag::addHyperFormSpecialField(array(
+					'type' => 'Ciudad',
+					'name' => 'estudiosCiudadId1',
+					'classForm' => 'hySaveForm'
+				));
+			echo '
+			</td>
+			<td align="center">
+				'.Tag::dateField(array('estudiosFechaGrado1', 'useDummy'=> true)).'
+			</td>
+			<td align="center">
+				'.Tag::textField(array('estudiosTitulo1', 'size'=>30)).'
+			</td>
+			<td align="center">
+				'.Tag::image(array('backoffice/accept.png','class'=>'addEstudio')).'
+			</td>
+		</tr>
+	';
+	$location = EntityManager::get('Location');
+	
+	$i=1;
+	if (isset($estudiosObj) && count($estudiosObj)>0) {
+		foreach($estudiosObj as $estudio)
+		{
+			$ciudadObj = $location->findFirst($estudio->getCiudad());
+			$ciudadName = '';
+			if($ciudadObj!=false){
+				//$ciudadName = $ciudadObj->getName().'/'.$ciudadObj->getZone()->getName().'/'.$ciudadObj->getTerritory()->getName();
+				$ciudadName = $ciudadObj->getName().'/'.$ciudadObj->getTerritory()->getName();
+				$ciudadName = utf8_encode($ciudadName);
+			}
+			echo '
+				<tr>
+					<td>'.$i.' '.Tag::hiddenField(array('estudiosId[]','value'=>$estudio->getId())).'</td>
+					<td align="center">
+						'.$estudio->getInstitucion().'
+					</td>
+					<td align="center">
+						'.$ciudadName.'
+					</td>
+					<td align="center">
+						'.$estudio->getFechaGrado().'
+					</td>
+					<td align="center">
+						'.$estudio->getTitulo().'
+					</td>
+					<td align="center">
+						'.Tag::image(array('backoffice/delete-l.gif','class'=>'delRowTemp delEstudio', 'alt'=>$estudio->getId(), 'title'=>'Borrar estudio')).'
+					</td>
+				</tr>
+			';
+			$i++;
+		}
+	}
+	echo '
+	</table>
+</div>';

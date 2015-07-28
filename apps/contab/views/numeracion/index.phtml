@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('finance-2.png', 'Numeración Libros Oficiales') ?>
+
+<?php echo Tag::form('numeracion/generar', 'class: numeracionForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="prefijo">Prefijo</label></td>
+					<td><?php echo Tag::textUpperField('prefijo', 'size: 4', 'maxlength: 4') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroInicial">Número Inicial</label></td>
+					<td><?php echo Tag::numericField('numeroInicial', 'size: 4', 'maxlength: 4') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroInicial">Número Final</label></td>
+					<td><?php echo Tag::numericField('numeroFinal', 'size: 4', 'maxlength: 4') ?></td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

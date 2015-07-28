@@ -1,0 +1,81 @@
+<?php
+
+$Datos->findFirst();
+
+function center($text, $size){
+	if(strlen($text)>=$size){
+		return i18n::substr($text, 0, $size);
+	}
+	$spaces = str_repeat(" ", ($size-strlen($text))/2);
+	return $spaces.$text.$spaces;
+}
+
+?>
+<html>
+<head>
+<style type='text/css'>
+	td, span, div, th, pre {
+		font-family: 'Lucida Console', 'Courier New';
+		font-size: 12px;
+	}
+	body {
+		margin: 0px;
+	}
+</style>
+</head>
+<body>
+<pre>
+<?php echo center($Datos->getNombreCadena(), 40)."\n" ?>
+<?php echo center($Datos->getDocumento()." No. : ".$Datos->getNit(), 40)."\n" ?>
+<?php echo center(i18n::strtoupper($Datos->getNombreHotel()), 40)."\n" ?>
+<?= center("ITEMS MENOS VENDIDOS", 40)."\n" ?>
+<? if($fecha_inicial==$fecha_final): ?>
+	<?= center("Fecha: {$fecha_inicial}" , 35)."\n" ?>
+<? else: ?>
+	<?= center("Fecha: {$fecha_inicial} - {$fecha_final}" , 35)."\n" ?>
+<? endif; ?>
+<?= center("Cajero: ".strtoupper(Session::getData("usuarios_nombre")), 35)."\n" ?>
+</pre>
+<table>
+<?php
+
+if($fecha_inicial==$fecha_final){
+	$conditions = "date(account_master.hora) = '$fecha_inicial'";
+} else {
+	$conditions = "date(account_master.hora) >= '$fecha_inicial' AND date(account_master.hora) <= '$fecha_final'";
+}
+
+$total = 0;
+$total_venta = 0;
+$db = DbBase::rawConnect();
+$sql = "SELECT menus_items.nombre, SUM(account.cantidad) as cantidad,
+SUM(account.total) as valor FROM account, menus_items, account_master
+WHERE account_master.id = account.account_master_id AND
+menus_items.id = account.menus_items_id AND $conditions
+GROUP BY 1 ORDER BY 2";
+$q = $db->query($sql);
+print "<tr>
+		<td align='center'>Nombre</td>
+		<td align='center'>Cantidad</td>
+		<td align='center'>Valor</td>
+	   </tr>";
+while($row = $db->fetchArray($q)){
+	print "<tr>";
+	print "<td align='left'>{$row['nombre']}</td>";
+	print "<td align='center'>{$row['cantidad']}</td>";
+	print "<td align='center'>{$row['valor']}</td>";
+	print "</tr>";
+	$total += $row['cantidad'];
+	$total_venta += $row['valor'];
+}
+?>
+</table>
+<pre>
+-------------------------------------------
+</pre>
+<div style='pading: 20px; width:280px' align='right'>
+TOTAL ITEMS : <?= Locale::money($total) ?><br>
+TOTAL : <?= Locale::money($total_venta) ?>
+</div>
+</body>
+</html>

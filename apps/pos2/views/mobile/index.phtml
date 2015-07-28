@@ -1,0 +1,956 @@
+<style type="text/css">
+body {
+	margin: 0px;
+	background-color: rgb(87, 100, 127);
+	font-family: "Verdana";
+	color: #fff;
+}
+
+#messages {
+	margin: 10px;
+	margin-top: 70px;
+	border-radius: 5px;
+	color: #ffffff;
+	background: #333333;
+	width: 170px;
+	padding: 3px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-o-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	font-size: 11px;
+}
+
+#clave {
+	font-size: 20px;
+}
+
+#claveForm, #selectMesaDiv, #setCantidadDiv, , #setCuentaDiv {
+	padding-top: 0px;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+}
+
+#titleScreen {
+	padding: 5px;
+	background: url(<?php echo Core::getInstancePath() ?>img/pos2/localnav.gif) black;
+	color: white;
+}
+
+#ambientesContent input[type="button"] {
+	text-align: left;
+	width: 185px;
+	background: white;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	padding: 5px;
+	border: 1px solid #969696;
+}
+
+#salirButton, .backToAmbientes, .backToMenus, .volverButton {
+	text-align: center;
+	width: 185px;
+	color: white;
+	background: #CC0000;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+
+.controlButton,
+.sendToKitchen {
+	text-align: center;
+	width: 185px;
+	color: #fff;
+	background: #508BCF;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+
+.sendToKitchen {
+	color: white;
+	background: green;
+	border-radius: 5px;
+}
+
+#escogerButton,
+#cantidadButton {
+	text-align: center;
+	width: 70px;
+	color: white;
+	background: green;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+#pedidoContent div {
+	text-align: left;
+	border: 1px solid #969696;
+	background: white;
+}
+
+#pedidoContent input[type="button"],
+#pedidoAddContent input[type="button"],
+#menusAddContent input[type="button"],
+#modifiersAddContent input[type="button"],
+#customerResult input[type="button"] {
+	text-align: left;
+	width: 185px;
+	background: white;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	padding: 5px;
+	text-transform: uppercase;
+}
+.menuItemName {
+	font-size: 12px;
+	color: #000;
+}
+.menuItemQuantity, .menuItemPrice {
+	font-size: 12px;
+	color: #969696;
+}
+.menuItemQuantity {
+	padding-right: 15px;
+}
+#pedidoContent .menuItemOptions {
+	text-align: right;
+	border: none;
+}
+#pedidoContent .menuItemOptions .menuItemCancel {
+	text-align: center;
+	color: white;
+	width: 70px;
+	font-size: 9px;
+	background: #CC0000;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	margin:3px;
+}
+#pedidoContent .menuItemOptions .menuItemSetQuantity {
+	text-align: center;
+	color: white;
+	width: 70px;
+	font-size: 9px;
+	background: #B49DC7;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	margin:3px;
+	text-transform: uppercase;
+}
+#pedidoContent .menuItemOptions .menuItemSetMods {
+	text-align: center;
+	color: #fafafa;
+	width: 40px;
+	font-size: 9px;
+	background: #508BCF;
+	border-radius: 5px;
+	-webkit-appearance: none;
+	-webkit-border-radius: 5px;
+	margin:3px;
+	text-transform: uppercase;
+}
+#modifiersAddContent {
+	background: #ffffff;
+	color: #000000;
+}
+.modifierName {
+	font-size: 10px;
+	color: #222222;
+}
+#numeroCuenta,
+#clienteCuenta {
+	color: #fff;
+	font-size: 9px;
+}
+</style>
+
+<script type="text/javascript">
+
+//Variables Globales
+var accountId;
+var salonMesasId;
+var salonId;
+var modifierId;
+var salonNombre;
+var menusId;
+var menusNombre;
+var numeroMesa;
+var initAmbientes = false;
+var initMenus = false;
+var pedido = [];
+var modifiers = [];
+var appPath = "<?php echo Core::getInstancePath() ?><?php echo Router::getApplication() ?>/";
+
+var slice = Array.prototype.slice;
+
+function update(array, args){
+	var arrayLength = array.length, length = args.length;
+	while (length--) array[arrayLength + length] = args[length];
+	return array;
+};
+
+function merge(array, args){
+	array = slice.call(array, 0);
+	return update(array, args);
+};
+
+function argumentNames(){
+	var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
+	.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
+	.replace(/\s+/g, '').split(',');
+	return names.length == 1 && !names[0] ? [] : names;
+};
+
+function bind(context){
+	if(arguments.length < 2 && Object.isUndefined(arguments[0])){
+		return this;
+	};
+	var __method = this, args = slice.call(arguments, 1);
+	return function(){
+		var a = merge(args, arguments);
+		return __method.apply(context, a);
+	}
+};
+
+Function.prototype.bind = bind;
+
+//Ajax Support
+jx = {
+
+	load: function(url, callback, format, method, opt){
+
+		if(!url) return;
+
+		var http = new XMLHttpRequest();
+
+		if (http.overrideMimeType) http.overrideMimeType('text/xml');
+
+		if(!method) method = "GET";
+		if(!format) format = "text";
+		if(!opt) opt = {};
+		format = format.toLowerCase();
+		method = method.toUpperCase();
+
+		var parameters = null;
+
+		if(method=="POST") {
+			var parts = url.split("\?");
+			url = parts[0];
+			parameters = parts[1];
+		};
+		http.open(method, url, true);
+
+		if(method=="POST") {
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			//http.setRequestHeader("Content-length", parameters.length);
+			//http.setRequestHeader("Connection", "close");
+		};
+		http.onreadystatechange = function(http, callback, format){
+			try {
+				if(http.readyState==4){
+					var result = http.responseText;
+					if(http.status==200){
+						if(format.charAt(0)=="j"){
+							result = result.replace(/[\n\r]/g,"");
+							result = eval('('+result+');');
+						} else {
+							if(format.charAt(0)=="x"){
+								result = http.responseXML;
+							};
+						};
+						if(callback){
+							callback(result);
+						}
+					} else {
+						if(format.charAt(0)=="j"){
+							result = result.replace(/[\n\r]/g,"");
+							result = eval('('+result+');');
+							alert(result.type);
+							alert(http.responseText);
+						} else {
+							alert(http.responseText);
+						}
+					}
+				}
+			}
+			catch(e){
+				alert(e);
+				alert(http.responseText);
+			}
+		}.bind(this, http, callback, format);
+		http.send(parameters);
+	}
+
+};
+
+//Db
+function fetch_one(sql, params){
+	var rs = db.execute(sql, params);
+	if(rs.isValidRow()){
+		return rs;
+	} else {
+		return false;
+	}
+}
+
+//El
+function $(element){
+	return document.getElementById(element);
+}
+
+function showEl(element){
+	$(element).style.display = "";
+}
+
+function hideEl(element){
+	$(element).style.display = "none";
+}
+
+function activateEl(element){
+	$(element).select();
+	$(element).focus();
+}
+
+//Scroll
+function takeAtTop(){
+	window.scrollTo(0, 0);
+}
+
+//POS
+function showClaveForm(){
+	hideEl('messages');
+	showEl('claveForm');
+	takeAtTop();
+	activateEl("clave")
+}
+
+function exitApp(){
+	hideEl('ambientesDiv');
+	showClaveForm();
+	$('clave').value = "";
+}
+
+function showAmbientes(){
+	hideEl('claveForm');
+	showEl('ambientesDiv');
+	if(initAmbientes==false){
+		var url = appPath+'mobile/getAmbientes';
+		$('ambientesContent').innerHTML = "Espere...";
+		jx.load(url, function(salones){
+			var salon = {};
+			$('ambientesContent').innerHTML = "";
+			for(var i=0;i<salones.length;i++){
+				salon = salones[i];
+				var d = document.createElement("INPUT");
+				d.type = "button";
+				d.value = salon[1];
+				d.title = salon[0];
+				d.onclick = function(){
+					salonId = this.title;
+					salonNombre = this.value;
+					$('salonRef').innerHTML = salonNombre;
+					showSelectMesa();
+				};
+				$('ambientesContent').appendChild(d);
+			}
+	  		initAmbientes = true;
+		}, 'json');
+	}
+	initMenus = false;
+	takeAtTop();
+}
+
+function showSelectMesa(){
+	hideEl('ambientesDiv');
+	showEl('selectMesaDiv');
+	takeAtTop();
+	activateEl("numeroMesa")
+}
+
+function escogerMesa(){
+	try {
+		numeroMesa = $('numeroMesa').value;
+		if(numeroMesa!=0){
+			salonMesasId = 0;
+			var url = appPath+'mobile/existsMesa/'+salonId+'/'+numeroMesa;
+			jx.load(url, function(mesasId){
+				if(mesasId==0){
+					alert('No existe la mesa número '+numeroMesa+' en el ambiente '+salonNombre);
+					activateEl("numeroMesa");
+					return;
+				} else {
+					$('mesaRef').innerHTML = numeroMesa;
+					salonMesasId = mesasId;
+					showPedido();
+				}
+			}, 'json');
+		} else {
+			alert('Debe indicar el número de la mesa en el ambiente '+salonNombre);
+			activateEl("numeroMesa");
+			return;
+		}
+	}
+	catch(e){
+		alert(e.message)
+	}
+}
+
+function reShowPedido(){
+	try {
+		hideEl('pedidoAddDiv');
+		hideEl('menusAddDiv');
+		hideEl('modifiersAddDiv');
+		hideEl('setCantidadDiv');
+		hideEl('setCuentaDiv');
+		showEl('pedidoDiv');
+		hideEl('customerDiv');
+		renderPedido();
+		takeAtTop();
+	}
+	catch(e){
+		alert(e.messages)
+	}
+}
+
+function showPedido(){
+	try {
+		hideEl('selectMesaDiv');
+		hideEl('menusAddDiv');
+		hideEl('modifiersAddDiv');
+		hideEl('setCantidadDiv');
+		hideEl('setCuentaDiv');
+		hideEl('customerDiv');
+		showEl('messages');
+		$('messages').innerHTML = "Cargando Pedido...";
+		takeAtTop();
+		pedido = [];
+		modifiers = [];
+		var url = appPath+'order/add/'+salonMesasId;
+		jx.load(url, function(itemsPedido){
+			hideEl('messages');
+			if(itemsPedido.items.length==0){
+				showAddItem();
+			} else {
+				$("numeroCuenta").innerHTML = "Cuenta: "+itemsPedido.cuenta;
+				showEl('pedidoDiv');
+				var menusItemsId;
+				var items = itemsPedido.items;
+				var item = {};
+				for(var i=0;i<items.length;i++){
+					item = {
+						"id": items[i].id,
+						"cuenta": items[i].cuenta,
+						"menus_items_id": items[i].menus_items_id,
+						"nombre": items[i].nombre,
+						"cantidad": items[i].cantidad,
+						"total": items[i].total
+					};
+					pedido[pedido.length] = item;
+				};
+				var itemModifiers = itemsPedido.modifiers;
+				var length = 0;
+				if(itemModifiers.length>0){
+					for(var i=0;i<itemModifiers.length;i++){
+						if(typeof modifiers[itemModifiers[i].account_id] == "undefined"){
+							modifiers[itemModifiers[i].account_id] = [];
+						};
+						length = modifiers[itemModifiers[i].account_id].length;
+						modifiers[itemModifiers[i].account_id][length] = {
+							"id": itemModifiers[i].id,
+							"nombre": itemModifiers[i].nombre,
+							"modifiers_id": itemModifiers[i].modifiers_id
+						};
+					}
+				};
+				renderPedido();
+			}
+		}, 'json', 'post');
+	}
+	catch(e){
+		alert(e.message);
+	}
+}
+
+//Visualiza el contenido del pedido
+function renderPedido(){
+	$('pedidoContent').innerHTML = "";
+	var item = {};
+	var modifier = {};
+	for(var i=0;i<pedido.length;i++){
+		item = pedido[i];
+		//Mostrar Item
+		var di = '<div id="item'+item.id+'">';
+		di+= '<span class="menuItemName">['+item.cuenta+'] '+item.nombre+"</span><br>";
+		if(typeof modifiers[item.id] != "undefined"){
+			for(var j=0;j<modifiers[item.id].length;j++){
+				modifier = modifiers[item.id][j];
+				di+=" <span class='modifierName'> &gt; "+modifier.nombre+"</span><br>";
+			};
+		};
+		di+= '<span class="menuItemQuantity">Cantidad: '+item.cantidad+'</span>';
+		di+= '<span class="menuItemPrice">Precio: '+ item.total+'</span>';
+		di+= '<div align="right" class="menuItemOptions">'+
+			 '<input type="button" class="menuItemSetMods" value="Mods" title="'+item.id+'" onclick="addModifier(this)"/>'+
+			 '<input type="button" class="menuItemSetQuantity" title="'+item.id+'" value="Cantidad" onclick="showSetCantidad(this)"/>'+
+			 '<input type="button" class="menuItemCancel" title="'+item.id+'" value="Cancelar" onclick="cancelItem(this)"/>'+
+			 '</div>'
+		di+= '</div>';
+		$('pedidoContent').innerHTML+= di;
+	};
+	takeAtTop();
+}
+
+function showAddItem(){
+	hideEl('pedidoDiv');
+	showEl('pedidoAddDiv');
+	if(initMenus==false){
+		$('pedidoAddContent').innerHTML = "";
+		var url = appPath+'mobile/getActiveMenus/'+salonId;
+		jx.load(url, function(menus){
+			var menu = {};
+			for(var i=0;i<menus.length;i++){
+				menu = menus[i];
+				var d = document.createElement("INPUT");
+				d.type = "button";
+				d.value = menu[1];
+				d.title = menu[0];
+				d.onclick = function(){
+					menusId = this.title;
+					menusNombre = this.value;
+					$('menuRef').innerHTML = menusNombre;
+					showMenusItems(menusId);
+				};
+				$('pedidoAddContent').appendChild(d);
+			};
+			initMenus = true;
+		}, 'json');
+	};
+	takeAtTop();
+}
+
+function showMenusItems(menusId){
+	try {
+		hideEl('pedidoAddDiv');
+		showEl('menusAddDiv');
+		$('menusAddContent').innerHTML = "Espere ...";
+		var menuItem = {};
+		var url = appPath+'mobile/getMenusItems/'+menusId+'/'+salonId;
+		jx.load(url, function(menusItems){
+			var menuItem = {};
+			$('menusAddContent').innerHTML = "";
+			for(var i=0;i<menusItems.length;i++){
+				menuItem = menusItems[i];
+				var d = document.createElement("INPUT");
+				d.type = "button";
+				d.value = menuItem[1];
+				d.title = menuItem[0];
+				d.onclick = function(){
+					var url = appPath+'order/addToList/'+this.title;
+					jx.load(url, function(account){
+						if(account.status=='OK'){
+							var index = -1;
+							for(var j=0;j<pedido.length;j++){
+								if(pedido[j].id==account.id){
+									index = j;
+									break;
+								}
+							};
+							if(index==-1){
+								pedido[pedido.length] = account;
+							} else {
+								pedido[index].menus_items_id = account.menus_items_id;
+								pedido[index].cantidad = account.cantidad;
+								pedido[index].total = account.total;
+							};
+							if(account.modifiers.length>0){
+								setModifier(document.createElement('DIV'), account, account.modifiers, true);
+							} else {
+								showPedido();
+							};
+						} else {
+							alert(account.message);
+						}
+					}, 'json');
+				}
+				$('menusAddContent').appendChild(d);
+			};
+			takeAtTop();
+		}, 'json');
+
+	}
+	catch(e){
+		alert(e.message)
+	}
+}
+
+function validaClave(){
+	$('clave').disabled = true;
+	var url = appPath+'mobile/startSession?clave='+$('clave').value;
+	jx.load(url, function(response){
+		if(response==1){
+			$('clave').disabled = false;
+			showAmbientes();
+		} else {
+			alert('Clave incorrecta');
+			activateEl("clave");
+			$('clave').disabled = false;
+		}
+	}, 'text', 'post');
+}
+
+function backToAmbientes(){
+	initMenus = false;
+	hideEl('selectMesaDiv');
+	hideEl('pedidoDiv');
+	hideEl('pedidoAddDiv');
+	showEl('ambientesDiv');
+	takeAtTop();
+}
+
+function backToMenus(){
+	hideEl('menusAddDiv');
+	showEl('pedidoAddDiv');
+	takeAtTop();
+}
+
+function cancelItem(element){
+	element.disabled = true;
+	var url = appPath+'order/cancelItems?items='+element.title;
+	jx.load(url, function(response){
+		showPedido();
+	}, 'text', 'post');
+}
+
+function valEnter(event){
+	if(event.keyCode==13){
+		validaClave();
+	}
+}
+
+function setModifier(element, account, modifiers, reShow){
+	hideEl('pedidoDiv');
+	hideEl('menusAddDiv');
+	showEl('modifiersAddDiv');
+	$('modifierRef').innerHTML = account.nombre;
+	$('modifiersAddContent').innerHTML = "Espere...";
+	var url = appPath+'mobile/getItemModifiers/'+account.menus_items_id;
+	jx.load(url, function(menuModifiers){
+		try {
+			if(menuModifiers.length==0){
+				if(reShow==true){
+					reShowPedido();
+				} else {
+					$('modifiersAddContent').innerHTML = "No hay modificadores asignados a este item";
+				}
+			} else {
+				$('modifiersAddContent').innerHTML = "";
+				for(var j=0;j<menuModifiers.length;j++){
+					var selected = false;
+					if(typeof modifiers == "object"){
+						for(var k=0;k<modifiers.length;k++){
+							if(modifiers[k].modifiers_id==menuModifiers[j].id){
+								selected = true;
+								break;
+							}
+						};
+					};
+					var d = document.createElement("INPUT");
+					d.type = "button";
+					d.value = menuModifiers[j].nombre;
+					if(selected==true){
+						d.value+=" [X]"
+					};
+					d.title = menuModifiers[j].id+'/'+account.id;
+					d.onclick = function(){
+						var url = appPath+'order/addModifier/'+this.title;
+						jx.load(url, function(response){
+							showPedido();
+						}, 'text', 'post');
+					};
+					$('modifiersAddContent').appendChild(d);
+				}
+			}
+		}
+		catch(e){
+			alert(e.message);
+		}
+	}, 'json');
+};
+
+function addModifier(element){
+	var index = -1;
+	accountId = element.title;
+	for(var j=0;j<pedido.length;j++){
+		if(pedido[j].id==accountId){
+			index = j;
+			break;
+		}
+	};
+	if(index==-1){
+		alert("No existe el item en el pedido");
+	} else {
+		setModifier(element, pedido[index], modifiers[accountId], false);
+	}
+};
+
+function showSetCantidad(element){
+	hideEl('pedidoDiv');
+	showEl('setCantidadDiv');
+	takeAtTop();
+	accountId = element.title;
+};
+
+function showSetCuenta(element){
+	hideEl('pedidoDiv');
+	showEl('setCuentaDiv');
+	takeAtTop();
+};
+
+function sendToKitchen(){
+	var url = appPath+'order/sendToKitchen';
+	jx.load(url, function(response){
+		backToAmbientes();
+	}, 'text', 'post');
+};
+
+function establecerCantidad(){
+	var cantidad = parseInt($("cantidadItems").value);
+	if(cantidad>0){
+		var url = appPath+'order/changeCantidad/'+accountId+'/'+cantidad;
+		jx.load(url, function(response){
+			showPedido();
+		});
+	} else {
+		alert("La cantidad debe ser mayor a cero");
+	}
+};
+
+function establecerCuenta(){
+	var cuenta = parseInt($("cuentaActiva").value);
+	if(cuenta>0){
+		var url = appPath+'order/changeOrSetCuenta/'+cuenta;
+		jx.load(url, function(response){
+			$("numeroCuenta").innerHTML = "Cuenta: "+cuenta;
+			$('clienteCuenta').innerHTML = 'Cliente: '+response;
+			showPedido();
+		});
+	} else {
+		alert("La cuenta debe ser mayor a cero");
+	}
+};
+
+function selectCustomer(){
+	hideEl('pedidoDiv');
+	showEl('customerDiv');
+};
+
+function buscarCustomer(){
+	var text = $('nombreCliente').value;
+	var url = appPath+'mobile/searchCustomer/?text='+text;
+	$("customerResult").innerHTML = "Espere ...";
+	jx.load(url, function(clientes){
+		if(clientes.length==0){
+			alert("No se encontró el cliente");
+		} else {
+			$("customerResult").innerHTML = "";
+			for(var j=0;j<clientes.length;j++){
+				var d = document.createElement("INPUT");
+				d.type = "button";
+				d.value = clientes[j].nombre;
+				d.title = clientes[j].id;
+				d.onclick = function(){
+					var url = appPath+'order/setCliente/'+this.title;
+					$('clienteCuenta').innerHTML = 'Cliente: '+this.value;
+					jx.load(url, function(response){
+						//alert(response);
+						showPedido();
+					});
+				};
+				$("customerResult").appendChild(d);
+			}
+		}
+	}, 'json');
+}
+
+</script>
+
+<div id='messages' align="center">
+<?php echo Tag::image('pos2/database.gif') ?><br>
+Se está instalando la base de datos del Punto de Venta en este dispositivo, por favor espere...
+<span id='porcentLoad'>0%</span>
+</div>
+
+<div id='claveForm' style="display:none">
+<div id="titleScreen">Digite su Clave</div>
+<table>
+	<tr>
+		<td align="right"><b>Clave:</b></td>
+		<td><input id="clave" type="password" autocomplete="off" size="5" onkeyup="valEnter(event)"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input type="button" value="Entrar" onclick="validaClave()"></td>
+	</tr>
+	<tr>
+		<!-- <td><input type="button" value="UpdateGeo" onclick="updateGeo()"></td> -->
+	</tr>
+</table>
+
+</div>
+
+<div id='ambientesDiv' style="display:none">
+	<div id="titleScreen">Seleccione un Ambiente</div>
+	<div id='ambientesContent'></div>
+	<input type="button" value="Salir" id='salirButton' onclick="exitApp()">
+</div>
+
+<div id='selectMesaDiv' style="display:none">
+<div id="titleScreen">Seleccione la Mesa en <span id='salonRef'></span></div>
+<table>
+	<tr>
+		<td align="right"><b>Número Mesa:</b></td>
+		<td><input id="numeroMesa" type="text" autocomplete="off" value="" size="5"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input id="escogerButton" type="button" value="Escoger" onclick="escogerMesa()"></td>
+	</tr>
+	<tr>
+		<td colspan="2"><input class="volverButton" type="button" value="Volver" onclick="backToAmbientes()"></td>
+	</tr>
+</table>
+</div>
+
+<div id='setCantidadDiv' style="display:none">
+<div id="titleScreen">Seleccione la Cantidad</div>
+<table>
+	<tr>
+		<td align="right"><b>Cantidad:</b></td>
+		<td><input id="cantidadItems" type="text" autocomplete="off" value="" size="5"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input id="cantidadButton" type="button" value="Establecer" onclick="establecerCantidad()"></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input class="volverButton" type="button" value="Volver" onclick="reShowPedido()">
+		</td>
+	</tr>
+</table>
+</div>
+
+<div id='setCuentaDiv' style="display:none">
+<div id="titleScreen">Seleccione la cuenta</div>
+<table>
+	<tr>
+		<td align="right"><b>Cuenta Activa:</b></td>
+		<td><input id="cuentaActiva" type="text" autocomplete="off" value="" size="5"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><input id="cuentaButton" type="button" value="Establecer" onclick="establecerCuenta()"></td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<input class="volverButton" type="button" value="Volver" onclick="reShowPedido()">
+		</td>
+	</tr>
+</table>
+</div>
+
+
+<div id='pedidoDiv' style="display:none">
+	<div id="titleScreen">Items en la Mesa <span id='mesaRef'></span><br/>
+	<span id="numeroCuenta">Cuenta: 1</span><br/>
+	<span id="clienteCuenta">Cliente: PARTICULAR</span>
+	</div>
+
+	<input class="controlButton" type="button" value="Agregar Item al Pedido" onclick="showAddItem()">
+	<div id='pedidoContent'></div>
+	<input class="controlButton" type="button" value="Agregar Item al Pedido" onclick="showAddItem()">
+	<input class="controlButton" type="button" value="Seleccionar Cliente/Habitación" onclick="selectCustomer()">
+	<input class="controlButton" type="button" value="Cuenta Activa" onclick="showSetCuenta()">
+	<!-- <input class="controlButton" type="button" value="Cambiar Tipo de Pedido" onclick="selectPedidoTipo()"> -->
+	<input class="sendToKitchen" type="button" value="Enviar a Cocina" onclick="sendToKitchen()">
+	<input class="backToAmbientes" type="button" value="Volver a Ambientes" onclick="backToAmbientes()">
+</div>
+
+<div id='pedidoAddDiv' style="display:none">
+	<div id="titleScreen">Agregar Item / Seleccione un Menu</div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<div id='pedidoAddContent'></div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<input class="backToAmbientes" type="button" value="Volver a Ambientes" onclick="backToAmbientes()">
+</div>
+
+<div id='menusAddDiv' style="display:none">
+	<div id="titleScreen">Seleccione un Item de <span id='menuRef'></span></div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<div id='menusAddContent'></div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<input class="backToMenus" type="button" value="Volver a Menus" onclick="backToMenus()">
+</div>
+
+<div id='modifiersAddDiv' style="display:none">
+	<div id="titleScreen">Seleccione un Modificador de <span id='modifierRef'></span></div>
+	<div id='modifiersAddContent' align="center"></div>
+	<input class="controlButton" type="button" value="Volver al Pedido" onclick="reShowPedido()">
+	<input class="controlButton" type="button" value="Agregar Item al Pedido" onclick="showAddItem()">
+</div>
+
+<div id='customerDiv' style="display:none">
+	<div id="titleScreen">Seleccione el Cliente</div>
+	<table>
+		<tr>
+			<td align="center"><b>Nombre:</b></td>
+		</tr>
+		<tr>
+			<td align="center">
+				<input id="nombreCliente" type="text" autocomplete="off" value="" size="15">
+			</td>
+		</tr>
+		<tr>
+			<td align="center"><input id="customerButton" type="button" value="Buscar" onclick="buscarCustomer()"></td>
+		</tr>
+		<tr>
+			<td id="customerResult" align="center"></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<input class="volverButton" type="button" value="Volver" onclick="reShowPedido()"/>
+			</td>
+		</tr>
+	</table>
+</div>
+
+
+<script type="text/javascript">
+
+window.onload = function(){
+
+	try {
+		$('messages').innerHTML = "Se instaló correctamente la Aplicación";
+		//Muestra el form de clave
+		window.setTimeout(showClaveForm, 1000);
+
+	}
+	catch(e){
+		alert(e);
+		alert(e.message);
+	}
+
+}
+
+</script>

@@ -1,0 +1,153 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/numero');
+	Tag::stylesheetLink('pos2/status');
+	Tag::stylesheetLink('pos2/reimprimir');
+	echo Tag::javascriptLibrary('windows');
+	echo Tag::javascriptInclude('pos2/modal');
+	echo Tag::javascriptInclude('pos2/numero');
+	echo Tag::javascriptInclude('pos2/hash');
+	echo Tag::javascriptInclude('pos2/reimprimir');
+} else {
+	Tag::stylesheetLink('pos2/production/reimprimir', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/reimprimir', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+echo View::getContent(); ?>
+
+<div align="center">
+	<table cellspacing="0" width="800" class="shadow-table">
+		<tr>
+			<td class='titulo' align='left'>
+				Reimprimir Facturas/Ordenes de Servicio
+			</td>
+		</tr>
+		<tr>
+			<td class="main-content">
+				<br/>
+				<table width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width='60%' style='border-bottom:1px solid #dadada' valign="bottom">&nbsp;</td>
+						<td width="18%" class='tab_basic active_tab' align="center" onclick="Tabs.setActiveTab(this, 1)">Consecutivo</td>
+						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
+						<td width="18%" class='tab_basic inactive_tab' align="center" onclick="Tabs.setActiveTab(this, 2)">Hoy</td>
+						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
+					</tr>
+					<tr>
+									<td class="tab_content_p" colspan="5">
+										<div id='tab1' class='tab_content'>
+											<div align="center" style='padding: 20px;'>
+												<table id='anularTab'>
+													<tr>
+														<td align="right"><b>Ambiente</b></td>
+														<td>
+															<?php echo Tag::select('salon_id', $Salon->find('order: nombre'), 'using: id,nombre'); ?>
+														</td>
+													</tr>
+													<tr>
+														<td align="right"><b>Tipo</b></td>
+														<td>
+															<select id='tipo_venta'>
+																<option value='O'>ORDEN DE SERVICIO</option>
+																<option value='F'>FACTURA</option>
+																<option value='C'>COMANDA</option>
+															</select>
+														</td>
+													</tr>
+													<tr>
+														<td colspan="2" align="center">
+															<div id="myWindow">
+																<?php View::renderView("numero/index") ?>
+															</div>
+														</td>
+													</tr>
+												</table>
+											</div>
+										</div>
+										<div id='tab2' class='tab_content' style="display:none" align="center">
+											<?php
+
+											if(count($facturas)>0){
+												echo '<table class="lista_res" cellspacing="0" cellpadding="5" align="center">
+												<tr>
+													<th>Número</th>
+													<th>Ambiente</th>
+													<th>Cliente</th>
+													<th>Habitación</th>
+													<!-- <th></th> -->
+												</tr>';
+												foreach($facturas as $factura){
+													echo '<tr>',
+														'<td>', $factura->prefijo_facturacion.'-'.$factura->consecutivo_facturacion, '</td>',
+														'<td>', $factura->salon_nombre, '</td>',
+														'<td>', $factura->nombre, '</td>',
+														'<td align="right">', $factura->habitacion_numero, '</td>',
+														//'<td>', Tag::buttonToAction('Reimprimir', 'reimprimir/reimprimirById/'.$factura->id, 'class: reimprimeButton'), '</td>',
+													'</tr>';
+												}
+												echo '</table>';
+											} else {
+												echo '<div align="center">
+													<div id="noPedidos">
+														<table width="450">
+															<tr>
+																<td>', Tag::image("pos2/advert.png", "width: 72"), '</td>
+																<td width="350">No hay facturas/ordenes para reimprimir del día activo en el sistema</td>
+															</tr>
+														</table>
+													</div>
+												</div>';
+											}
+
+											?>
+										</div>
+									</td>
+								</tr>
+							</table>
+							<table align="center">
+								<tr>
+									<td align='center'>
+										<table align="center">
+											<tr>
+												<td>
+													<button class='commandButton' onclick='new Utils.redirectToAction("tables")'>
+														<?php echo Tag::image("pos2/arrow_left-p.png", "width: 23") ?><br>
+														<b>Ir a Mesas</b>
+													</button>
+												</td>
+												<td>
+													<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+														<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+														<b>Salir</b>
+													</button>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+					</td>
+				</tr>
+			</table>
+
+
+<script type="text/javascript">
+new Event.observe(window, "load", function(){
+	$('number').activate();
+});
+</script>

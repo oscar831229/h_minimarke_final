@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo Tag::form("ambientes_items/guardar", "name: fl");
+echo "<div align='right' style='padding:10px'>",
+Tag::button("Guardar", "onclick: AmbientesItems.saveData()", "class: controlButton"), "</div>";
+
+$printers = $Printers->find("estado='A'");
+$screens = $Screens->find("estado='A'");
+$conceptos = $Conceptos->find(array("order" => "descripcion"));
+$almacenes = $Almacenes->find(array("estado='A'", "order" => "nom_almacen"));
+
+foreach($Salon->find(array("estado='A'", "order" => "nombre")) as $salon){
+	$salonm = $SalonMenusItems->findFirst("salon_id = '{$salon->id}' AND menus_items_id = '$menuItemId'");
+	if($salonm){
+		$precio = $salonm->valor;
+		$concepto_recepcion = $salonm->conceptos_id;
+		$almacen = $salonm->almacen;
+		$descarga = $salonm->descarga;
+		$printer = $salonm->printers_id;
+		$printer2 = $salonm->printers_id2;
+		$screen = $salonm->screens_id;
+		if($salonm->estado=='A'){
+			$checked = "checked='checked'";
+			$display = "";
+		} else {
+			$checked = "";
+			$display = "style='display:none'";
+		}
+	} else {
+		$concepto_recepcion = "";
+		$descarga = "";
+		$almacen = "";
+		$precio = 0;
+		$printer = "";
+		$printer2 = "";
+		$screen = "";
+		$display = "style='display:none'";
+		$checked = "";
+	}
+	echo "<div class='items_amb_block' align='left'>";
+	echo "
+	<table>
+	<tr>
+		<td width='30' align='center'>
+			<input type='checkbox' $checked class='check_item' name='ambientes[]' id='ambientes{$salon->id}' value='{$salon->id}' title='{$salon->nombre}'
+			 onclick='AmbientesItems.toogleAmbiente(this, {$salon->id})'>
+		</td>
+		<td>&nbsp;<label for='ambientes{$salon->id}'>{$salon->nombre}</label></td>
+	</tr>
+	<tr>
+		<td colspan='2'>
+		<div id='div_amb{$salon->id}' $display>
+		<table>
+			<tr>
+				<td align='right'><b>Precio Venta</b></td>
+				<td>", Tag::numericField(array("precio".$salon->id, "value" => $precio, "size" => 10, "autocomplete" => "off")), "</td>
+			</tr>
+			<tr>
+				<td align='right'><b>Almacén</b></td>
+				<td>", Tag::select(array("almacen".$salon->id, $almacenes, "use_dummy" => "yes", "using" => "codigo,nom_almacen", "value" => $almacen)), "</td>
+			</tr>
+			<tr>
+				<td align='right'><b>Descargar?</b></td>
+				<td>", Tag::selectStatic("descarga{$salon->id}",
+						array("S" => "SI",  "N" => "NO"),
+						"value: $descarga")."</td>
+			</tr>
+			<tr>
+				<td align='right'><b>Concepto Recepción</b></td>
+				<td>", Tag::select(array("concepto_recepcion{$salon->id}", $conceptos, "use_dummy" => "yes", "using" => "id,descripcion", "value" => $concepto_recepcion)), "</td>
+			</tr>
+			<tr>
+				<td align='right'><b>Impresora Producción</b></td>
+				<td>", Tag::select(array("printers{$salon->id}", $printers, "use_dummy" => "true", "using" => "id,nombre", "value" => $printer)), "</td>
+			</tr>
+			<tr>
+				<td align='right'><b>Impresora Confirmación</b></td>
+				<td>", Tag::select(array("printers2{$salon->id}", $printers, "use_dummy" => "true", "using" => "id,nombre", "value" => $printer2)), "</td>
+			</tr>
+			<tr>
+				<td align='right'><b>Pantalla Producción</b></td>
+				<td>", Tag::select(array("screens{$salon->id}", $screens, "use_dummy" => "true", "using" => "id,nombre", "value" => $screen)), "</td>
+			</tr>
+		</table>
+		</div>
+		</td>
+	</tr>
+	</table>";
+
+	if($salonm){
+		echo '<div align="right">
+			<div class="rcs_box">
+				'.Tag::image('pos2/abook.png').' '.Tag::linkTo('rcs/revisions/salon_menus_items/'.$salonm->id, 'Consultar Revisiones').'
+			</div>
+		</div>';
+	}
+
+	echo "</div>";
+}
+echo "<div align='right' style='padding:10px'>",
+Tag::button("Guardar", "onclick: AmbientesItems.saveData()", "class: controlButton"),
+"</div>";
+echo Tag::endForm();

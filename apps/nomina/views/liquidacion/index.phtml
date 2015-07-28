@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Liquidación Quincenal de Nomina') ?>
+
+<?php echo Tag::form('liquidacion/generar', 'class: liquidarForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="contratoInicial">Contrato Inicial</label></td>
+					<td><?php echo Tag::selectStatic(array('contratoInicial', $contratos, 'useDummy' => 'yes')) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="contratoFinal">Contrato Final</label></td>
+					<td><?php echo Tag::selectStatic(array('contratoFinal', $contratos, 'useDummy' => 'yes')) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="definitiva">Definitiva?</label></td>
+					<td><?php echo Tag::selectStatic('definitiva', array(
+						'N' => 'NO',
+						'S' => 'SI',
+					)) ?></td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Pago</b></td>
+						<td id="cierreActual"><?php echo $ultimoPago->getLocaleDate('short') ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

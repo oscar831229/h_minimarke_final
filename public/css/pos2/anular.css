@@ -1,0 +1,58 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div#myWindow {
+	position: static;
+	z-index: 0;
+}
+
+.titulop {
+	font-family: Verdana,sans-serif;
+	font-size: 24px;
+	margin-left: 10px;
+}
+
+.active_tab {
+	border: 1px solid #dadada;
+	border-bottom: none;
+	font-size: 13px;
+	cursor: pointer;
+	padding: 7px;
+	background: #fafafa;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+.inactive_tab {
+	font-size: 13px;
+	border:1px solid #dadada;
+	background: #dadada;
+	cursor: pointer;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+.tab_content {
+	padding: 5px;
+	background: #fafafa;
+	border-bottom: 1px solid #dadada;
+}
+
+b {
+	font-size: 11px;
+	color: #222222;
+	text-shadow: 0 1px 0 #F3F3F3;
+}

@@ -1,0 +1,94 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$guestInfo = SessionNamespace::get('guestInfo');
+
+?>
+<table width="100%" cellspacing="0" cellpadding="0">
+	<tr>
+		<td colspan="2">
+			<div id="top-pannel">
+				<table width="100%" cellspacing="0" cellspacing="0">
+					<tr>
+						<td><h1><?php echo $guestInfo->getCliente(), ' / ', $guestInfo->getHabitacion() ?></h1></td>
+						<td align="right">
+							<table>
+								<tr>
+									<td><?php echo Tag::image('perse/exit.png', 'width: 20') ?></td>
+									<td valign="top"><?php echo Tag::linkTo('session/logout', $traslate['salir']) ?></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td valign="top" id="left-td">
+			<div id="left-pannel">
+				<div class="menu-item">
+					<table>
+						<tr>
+							<td><?php echo Tag::image('perse/new.png', 'width: 16') ?></td>
+							<td><?php echo Tag::linkTo('accounts/index', $traslate['ConsultarCuentas']) ?></td>
+						</tr>
+					</table>
+				</div>
+				<?php if(Wepax::isEnabled()){ ?>
+				<div class="menu-item">
+					<table>
+						<tr>
+							<td><?php echo Tag::image('perse/currency.png', 'width: 16') ?></td>
+							<td><?php echo Tag::linkTo('accounts/doPay', $traslate['RealizarAbono']) ?></td>
+						</tr>
+					</table>
+				</div>
+				<div class="menu-item">
+					<table>
+						<tr>
+							<td><?php echo Tag::image('perse/new.png', 'width: 16') ?></td>
+							<td><?php echo Tag::linkTo('accounts/payHistory', $traslate['HistoriaPagos']) ?></td>
+						</tr>
+					</table>
+				</div>
+				<?php } ?>
+				<table id="select-lang">
+					<tr>
+						<td><label for="locale"><?php echo $traslate['idioma'] ?></label></td>
+					</tr>
+					<tr>
+						<td>
+							<?php
+								echo Tag::selectStatic(array('locale', array(
+									'es_CO' => $traslate['espanol'],
+									'en_US' => $traslate['ingles'],
+									'fr_FR' => $traslate['frances'],
+								), 'value' => Session::get('locale')));
+							?>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</td>
+		<td align="center">
+			<div id="page" align="left">
+				<div class="page-inset">
+					<?php View::getContent(); ?>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>

@@ -1,0 +1,41 @@
+
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="console">
+	<div id="commands">
+
+	<p>
+	Welcome to HFOS Console <?php echo Hfos_Application::getVersion() ?><br/>
+	<?php echo Hfos_Application::APP_REVISION ?>
+	</p>
+
+	<p>
+	Copyright (c) 2005, <?php echo date('Y') ?>, bh-teck Inc. and/or its affiliates. All rights reserved.</b>
+	This software is subject to license that is bundled
+ 	in the file docs/LICENSE.txt and docs/EULA.txt
+ 	</p>
+
+ 	<p>Type 'help' for help. Type '\c' to clear the current input statement.</p>
+
+	</div>
+	<table cellpadding="0" cellspacing="0">
+		<tr>
+			<td width="40"><label for="command">HFOS&gt;</label></td>
+			<td><input type="text" id="command"/></td>
+		</tr>
+	</table>
+</div>

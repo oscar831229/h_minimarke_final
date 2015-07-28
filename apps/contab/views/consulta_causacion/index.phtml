@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div class="permisosPerfiles hfosContent">
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="right">
+					<table align="right" class="terceroCompleter">
+						<tr>
+							<td><label for="diferidosId">Diferidos</label></td>
+							<td>
+								<?php 
+									//echo Tag::select('diferidosId', $diferidos, 'using: id,descripcion', 'useDummy: yes')
+									echo HfosTag::diferidosField("diferidosId");
+                  //diferidosField
+								?>&nbsp;
+							</td>
+							<td align="left">
+								<div class="headerSpinner" style="display:none"></div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="messages"></div>
+	<div id="cauContent" class="CausacionContent" style="display:none;">						
+		
+	</div>
+	<div class="permsContent"></div>
+
+	<div align="right">
+		<div class="chooseDiferidos infoBox" align="center">
+			<table align="center">
+				<tr>
+					<td><strong>Seleccione un Diferido</strong></td>
+					<td><?php echo Tag::image('backoffice/arrow-alt-up.png') ?></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</div>

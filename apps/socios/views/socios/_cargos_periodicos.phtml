@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+echo '
+<div class="cargosFijosPeriodicos">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
+		<thead>
+			<tr>
+				<th class="sortcol">Cargo Fijo Periodico</th>
+				<th class="sortcol">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>';
+		if(isset($cargosFijosPeriodicosArray) && count($cargosFijosPeriodicosArray)){
+			foreach ($cargosFijosPeriodicosArray as $cargoFijo){
+				echo '
+				<tr>
+					<td>
+						'.$cargoFijo->getNombre().' ('.Currency::money($cargoFijo->getValor()).')
+					</td>
+					<td>
+						';
+						$value = $cargoFijo->getId();
+						$config = array('cargosFijosId[]','value'=>$value);
+						if(isset($asignacionCargosFijosArray[$cargoFijo->getId()])){
+							$config = array('cargosFijosId[]', 'checked' => 'checked', 'value'=>$value);
+						}
+						echo Tag::checkboxField($config).'
+					</td>
+				</tr>
+				';
+			}
+		}
+		echo '
+		</tbody>
+	</table>
+</div>';

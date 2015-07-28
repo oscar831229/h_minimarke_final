@@ -1,0 +1,106 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('special-offer.png', 'Certificados de IVA/ICA') ?>
+
+<?php echo Tag::form('certificado_ica/generar', 'class: certificadoIcaForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="ano">Año</label></td>
+					<td><?php echo Tag::numericField(array('ano', 'size' => 4)) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="bimestre">Bimestre</label></td>
+					<td><?php echo Tag::selectStatic('bimestre', array(
+						'1' => 'PRIMER',
+						'2' => 'SEGUNDO',
+						'3' => 'TERCER',
+						'4' => 'CUARTO',
+						'5' => 'QUINTO',
+						'6' => 'SEXTO',
+						'9' => 'ACUMULADO DEL AÑO'
+					)) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaInicial">Solo Cuenta IVA Inicial</label></td>
+					<td><?php echo HfosTag::cuentaField('cuentaInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaFinal">Solo Cuenta IVA Final</label></td>
+					<td><?php echo HfosTag::cuentaField('cuentaFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nitInicial">Tercero Inicial</label></td>
+					<td><?php echo HfosTag::terceroField('nitInicial', 'value: 1') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nitFinal">Tercero Final</label></td>
+					<td><?php echo HfosTag::terceroField('nitFinal', 'value: 9999') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaExpedicion">Fecha Expedición</label></td>
+					<td><?php echo Tag::dateField('fechaExpedicion') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="tipo">Tipo</label></td>
+					<td>
+						<?php echo Tag::selectStatic('tipo', array(
+							1 => 'Normal',
+							2 => 'Lista IVA',
+							3 => 'Lista ICA',
+						)); ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar" class="generarButton"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Año Cierre</b></td>
+						<td><?php echo $anoCierre ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

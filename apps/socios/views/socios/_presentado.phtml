@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+echo '
+<div class="otroSocios">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center" id="mainTableOtrosSocios">
+		<tr>
+			<th class="sortcol">&nbsp;</th>
+			<th class="sortcol">Otro Socio</th>
+			<th class="sortcol">Tipo de Asociación</th>
+			<th class="sortcol">Agregar</th>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>';
+			echo HfosTag::addHyperFormSpecialField(array(
+				'type' => 'Socio',
+				'name' => 'otrosSociosId1',
+				'classForm' => 'hySaveForm'
+			));
+			$tipoAsociacionSocio = EntityManager::get('TipoAsociacionSocio')->find(array('conditions'=>'estado="A"'));
+			echo '
+			</td>
+			<td>
+				'.Tag::select('tipoAsociacionSocioId1', $tipoAsociacionSocio,'useDummy: true', 'using: id,nombre').'
+			</td>
+			<td align="center">
+				'.Tag::image(array('backoffice/accept.png','class'=>'addOtrosSocios')).'
+			</td>
+		</tr>';
+		$i=1;
+		if(isset($asociacionSocioObj) && count($asociacionSocioObj)>0){
+			foreach($asociacionSocioObj as $asociacionSocio){
+				$otroSocioTemp			= EntityManager::get('Socios')->findFirst(array('conditions'=>'socios_id='.$asociacionSocio->getOtroSocioId()));
+				$tipoAsociacionSocio	= $asociacionSocio->getTipoAsociacionSocio();
+				echo '
+					<tr>
+						<td>'.$i.' '.Tag::hiddenField(array('asignacionSocioId[]','value'=>$asociacionSocio->getId())).'</td>
+						<td align="center">
+							'.$otroSocioTemp->getNumeroAccion().' / '.$otroSocioTemp->getNombres().' '.$otroSocioTemp->getApellidos().'
+						</td>
+						<td align="center">
+							'.$tipoAsociacionSocio->getNombre().'
+						</td>
+						<td align="center">
+							'.Tag::image(array('backoffice/delete-l.gif','class'=>'delRowTemp delOtrosSocios', 'alt'=>$asociacionSocio->getId(), 'title'=>'Borrar Socio Asociado')).'
+						</td>
+					</tr>
+				';
+				$i++;
+			}
+		}
+	echo'</table>
+</div>';

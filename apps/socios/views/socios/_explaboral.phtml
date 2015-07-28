@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+echo '
+<div class="explaborales">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center" id="mainTableExpLaboral">
+		<tr>
+			<th class="sortcol">&nbsp;</th>
+			<th class="sortcol">Empresa</th>
+			<th class="sortcol">Dirección</th>
+			<th class="sortcol">Cargo</th>
+			<th class="sortcol">Teléfono</th>
+			<th class="sortcol">Fax</th>
+			<th class="sortcol">Fecha</th>
+			<th class="sortcol">Agregar</th>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				'.Tag::textField(array('expLaboralesEmpresa1')).'
+			</td>
+			<td>
+				'.Tag::textField(array('expLaboralesDireccion1', 'size' => 30)).'
+			</td>
+			<td>
+				'.Tag::textField(array('expLaboralesCargo1')).'
+			</td>
+			<td>
+				'.Tag::numericField(array('expLaboralesTelefono1', 'size' => 10)).'
+			</td>
+			<td>
+				'.Tag::numericField(array('expLaboralesFax1', 'size' => 10)).'
+			</td>
+			<td>
+				'.Tag::dateField(array('expLaboralesFecha1', 'useDummy' => true)).'
+			</td>
+			<td align="center">
+				'.Tag::image(array('backoffice/accept.png','class'=>'addExpLaboral')).'
+			</td>
+		</tr>';
+	$i=1;
+	if(isset($expLaboralObj) && count($expLaboralObj)>0){
+		foreach($expLaboralObj as $explaboral){
+			echo '
+				<tr>
+					<td>'.$i.' '.Tag::hiddenField(array('expLaboralesId[]','value'=>$explaboral->getId())).'</td>
+					<td align="center">
+						'.$explaboral->getEmpresa().'
+					</td>
+					<td align="center">
+						'.$explaboral->getDireccion().'
+					</td>
+					<td align="center">
+						'.$explaboral->getCargo().'
+					</td>
+					<td align="center">
+						'.$explaboral->getTelefono().'
+					</td>
+					<td align="center">
+						'.$explaboral->getFax().'
+					</td>
+					<td align="center">
+						'.$explaboral->getFecha().'
+					</td>
+					<td align="center">
+						'.Tag::image(array('backoffice/delete-l.gif','class'=>'delRowTemp delExpLaboral', 'alt'=>$explaboral->getId(), 'title'=>'Borrar estudio')).'
+					</td>
+				</tr>
+			';
+			$i++;
+		}
+	}
+	echo '</table>
+</div>';

@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Estado de Cuenta x Socio') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="50%" align="center">
+			<?php echo Tag::form('estado_cuenta_consolidado/reporte', 'class: estadoCuentaConsolidadoForm', 'autocomplete: off') ?>
+				<table align="center">
+					<tr>
+						<td align="right">
+				        	<label for="periodo">Fechas de Estados de Cuenta Generados</label>
+				        </td>
+				        <td align="left">
+				        	<?php
+								echo Tag::select('fecha',$fechas,'using: fecha,fecha');
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td align="right"><label for="reportType">Formato</label></td>
+						<td align="left"><?php echo Tag::selectStatic('reportType', array(
+							'html' => 'HTML',
+							'excel' => 'EXCEL',
+							'pdf' => 'PDF',
+						)) ?></td>
+					</tr>
+				</table>
+			<?php echo Tag::endForm() ?>
+
+			<div class="resultados"></div>
+		</td>
+	</tr>
+</table>
+</div>

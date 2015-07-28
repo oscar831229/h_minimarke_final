@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('order-2.png', 'Consultar Ordenes de Servicio') ?>
+
+<div class="formContent">
+
+	<div class="formBusqueda formPannel">
+
+		<?php echo Tag::form('ordenes/buscar', 'class: buscarForm', 'autocomplete: off') ?>
+			<table align="center" cellspacing="0">
+				<tr>
+					<td align="right"><label for="fechaInicial">Fecha Inicial</label></td>
+					<td><?php echo Tag::dateField(array('fechaInicial', 'startYear' => '1995', 'class' => 'date-field')) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaFinal">Fecha Final</label></td>
+					<td><?php echo Tag::dateField(array('fechaFinal', 'startYear' => '1995', 'class' => 'date-field')) ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroInicial">Consecutivo Inicial</label></td>
+					<td><?php echo Tag::numericField('numeroInicial', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroFinal">Consecutivo Final</label></td>
+					<td><?php echo Tag::numericField('numeroFinal', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nitInicial">Tercero Inicial</label></td>
+					<td><?php echo HfosTag::terceroField('nitInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nitFinal">Tercero Final</label></td>
+					<td><?php echo HfosTag::terceroField('nitFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroFactura">Número Factura</label></td>
+					<td><?php echo Tag::numericField('numeroFactura', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="contabilizada">Contabilizada?</label></td>
+					<td><?php echo Tag::selectStatic(array('contabilizada', array(
+						'S' => 'SI',
+						'N' => 'NO'
+					), 'useDummy' => 'yes')) ?></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td colspan="2">
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Consultar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		<?php echo Tag::endForm() ?>
+	</div>
+
+	<div class="resultados"></div>
+
+</div>

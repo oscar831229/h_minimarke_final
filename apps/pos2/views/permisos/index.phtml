@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<script type='text/javascript'>
+
+function getPerms(element){
+	new Ajax.Request(Utils.getKumbiaURL("permisos/getPerms/"+$F(element)), {
+		onSuccess: function(transport){
+			$("permisos").update(transport.responseText)
+			SortableTable.init($("modifiersTable"));
+		}
+	});
+}
+
+function savePerm(id){
+	new Ajax.Request(Utils.getKumbiaURL("permisos/savePerm/"+id), {
+		onLoading: function(){
+			$('spinner').show();
+			$('success').hide();
+		},
+		onSuccess: function(){
+			$('spinner').hide();
+			$('success').show();
+		}
+	});
+}
+</script>
+
+
+<div id="spinner" class="kumbiaDisplay noticeMessage" style="display:none">
+	<table cellspacing="0">
+		<tr>
+			<td><?php echo Tag::image('pos2/spin-admin.gif') ?></td>
+			<td><b>Guardando...</b></td>
+		</tr>
+	</table>
+</div>
+<div id="success" class="kumbiaDisplay noticeMessage" style="display:none">
+	<b>Se actualizaron los permisos del usuario</b>
+</div>
+
+<h1>Permisos de Usuarios en Ambientes</h1>
+
+<form method="post" autocomplete="off">
+	<table align="center">
+		<tr>
+			<td><label for="usuarios_id">Usuario</label></td>
+			<td>
+				<select id='usuarios_id' onchange='getPerms(this)'>
+					<option value='@'>Seleccione...</option>
+					<?php
+						foreach($UsuariosPos->find("estado='A'", "order: nombre") as $usuario){
+							echo "<option value='{$usuario->id}'>{$usuario->nombre}</option>";
+						}
+					?>
+				</select>
+			</td>
+		</tr>
+	</table>
+</form>
+
+<div id='permisos'></div>

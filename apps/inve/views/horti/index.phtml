@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('archives.png', 'Retefuentes Productos Hortifrutículas') ?>
+
+<?php echo Tag::form('horti/generar', 'class: hortiForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="fechaInicial">Fecha Inicial</label></td>
+					<td><?php echo Tag::dateField('fechaInicial', 'startYear: 2000') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaFinal">Fecha Final</label></td>
+					<td><?php echo Tag::dateField('fechaFinal', 'startYear: 2000') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="almacen">Almacén</label></td>
+					<td><?php echo Tag::select('almacen', $almacenes, 'using: codigo,nom_almacen') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="lineaInicial">Línea Inicial</b></td>
+					<td><?php echo Tag::select('lineaInicial', $lineas, 'using: linea,nombre') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="lineaFinal">Línea Final</label></td>
+					<td><?php echo Tag::select('lineaFinal', $lineas, 'using: linea,nombre') ?></td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td><?php echo $fechaCierre->getLocaleDate('long') ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

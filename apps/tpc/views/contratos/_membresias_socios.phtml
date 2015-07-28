@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2011
+ * @version		$Id$
+ */
+
+$capacidadArray = array();
+for($i=1;$i<=10;$i++){
+	$capacidadArray[$i] = "$i PAX";
+}
+echo '
+<div class="Membresias">
+	<table cellspacing="0" cellpadding="0" align="center">
+		<tr>
+			<td align="right"><label for="membresias_id">Membresia</label></td>
+			<td>
+				'.Tag::select('membresias_id',$membresias,'using: id,nombre').'
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="tempradas_id">Temporada</label></td>
+			<td>
+				'.Tag::select('temporadas_id',$temporadas,'using: id,nombre').'
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="capacidad">Capacidad</label></td>
+			<td>
+				'.Tag::selectStatic('capacidad',$capacidadArray).'
+			</td>			
+		</tr>
+		<tr>
+			<td align="right"><label for="puntos_ano">Puntos por Año</label></td>
+			<td>
+				'.Tag::numericField(array('puntos_ano','size'=>5)).'
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="numero_anos">Número de Año</label></td>
+			<td>
+				'.Tag::numericField(array('numero_anos','size'=>5)).'
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="total_puntos">Total Puntos</label></td>
+			<td>
+				'.Tag::numericField(array('total_puntos','size'=>10,'disabled'=>true)).'
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="valor_total">Valor Total</label></td>
+			<td>
+				'.Tag::numericField(array('valor_total','size'=>14)).'
+				<span class="notNullMark">!</span>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="cuota_inicial">Cuota Inicial</label></td>
+			<td>
+				'.Tag::numericField(array('cuota_inicial','size'=>14)).'
+				<span class="notNullMark">!</span>
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="saldo_pagar">Saldo a Pagar</label></td>
+			<td>
+				'.Tag::numericField(array('saldo_pagar','size'=>14,'disabled'=>true)).'
+			</td>
+		</tr>
+		<tr>
+			<td align="right"><label for="derecho_afiliacion_id">Derechos de Afiliaci&oacute;n</label></td>
+			<td>
+				'.Tag::selectStatic('derecho_afiliacion_id',$derechoAfiliacion).'
+				<span class="notNullMark">!</span>
+			</td>
+		</tr>
+	</table>
+</div>';

@@ -1,0 +1,200 @@
+<html>
+	<head>
+		<title>Cheque #<?php echo $cheque->getNumeroCheque() ?></title>
+		<style type="text/css">
+			body {
+				margin: 0px;
+			}
+			.page {
+				width: 650px;
+				height: 847px;
+				border: 1px solid #969696;
+				padding: 10px;
+			}
+			table#layout {
+				height: 847px;
+			}
+			.page td,
+			.page th {
+				font-size: 13px;
+			}
+			.firma {
+				height: 50px;
+			}
+			.firmaf {
+				border-bottom: none;
+			}
+			.firmac {
+				border-top: none;
+			}
+			div.block {
+				display: inline;
+			}
+			div.blockw {
+				display: inline;
+				font-weight: bold;
+			}
+			td#formato	{
+				font-family: Lucida Console;
+			}
+		</style>
+	</head>
+	<body>
+		<div align="center">
+			<div class="page" align="left">
+
+				<table id="layout" width="100%">
+					<tr>
+						<td height="30%" valign="top" id="formato">
+
+							<?php
+
+								$formatoCheque = $cheque->getChequeras()->getFormatoCheque();
+								$formato = array();
+								$items = array('ano', 'mes', 'dia', 'valor', 'tercero', 'suma');
+								foreach($items as $item){
+									$rPos = $formatoCheque->readAttribute('r_'.$item);
+									$cPos = $formatoCheque->readAttribute('p_'.$item);
+									$formato[$rPos][$cPos] = $item;
+								}
+								//print_r($formato);
+								$fechaCheque = $cheque->getFecha();
+								for($j=1;$j<=9;$j++){
+									for($i=1;$i<=23;$i++){
+										if(isset($formato[$j][$i])){
+											switch($formato[$j][$i]){
+												case 'ano':
+													echo '<div class="blockw">&nbsp;', $fechaCheque->getYear(), '</div>';
+													$i++;
+													break;
+												case 'mes':
+													echo '<div class="blockw">&nbsp;', $fechaCheque->getMonth(), '</div>';
+													break;
+												case 'dia':
+													echo '<div class="blockw">&nbsp;', $fechaCheque->getDay(), '</div>';
+													break;
+												case 'valor':
+													echo '<div class="blockw">&nbsp;', Locale::money($cheque->getValor()), '</div>';
+													$i+=4;
+													break;
+												case 'tercero':
+													echo '<div class="blockw">&nbsp;', $cheque->getBeneficiario(), '</div>';
+													$i+=17;
+													$j++;
+													break;
+												case 'suma':
+													echo '<div class="blockw">&nbsp;', Currency::moneyToWords($cheque->getValor(), 'PESOS', 'CENTAVOS'), '</div>';
+													$i+=17;
+													$j++;
+													break;
+											}
+										} else {
+											echo '<div class="block">&nbsp;&nbsp;&nbsp;</div>';
+										}
+									}
+									echo '<br>';
+								}
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td height="30%" valign="middle">
+							<table width="100%">
+								<tr>
+									<td><b><?php echo $cheque->getTercero()->getNombre() ?></b></td>
+									<td align='left'><b>Nit <?php echo $cheque->getNit() ?></b></td>
+									<td align='right'><b>COMPRABANTE DE EGRESO: <?php echo $cheque->getComprob() ?>-<?php echo $cheque->getNumero() ?></b></td>
+								</tr>
+							</table>
+							<table width="100%">
+								<tr>
+									<td align="left" width="20%">PAGADO A:</td>
+									<td><b><?php echo $cheque->getBeneficiario() ?></b></td>
+								</tr>
+								<tr>
+									<td align="left">FECHA:</td>
+									<td><b><?php echo $cheque->getFecha() ?></b></td>
+								</tr>
+								<tr>
+									<td align="left">OBSERVACION:</td>
+									<td><b><?php echo $cheque->getObservaciones() ?></b></td>
+								</tr>
+							</table>
+							<table width="100%">
+								<tr>
+									<th>Cuenta</th>
+									<th>Descripción</th>
+									<th>C. Costo</th>
+									<th>Nit</th>
+									<th>Debito</th>
+									<th>Crédito</th>
+								</tr>
+								<?php
+									$debitos = 0;
+									$creditos = 0;
+									foreach($cheque->getMovi() as $movi){
+										echo '<tr>';
+										echo '<td>', $movi->getCuenta(), '</td>';
+										echo '<td>', $movi->getDescripcion(), '</td>';
+										echo '<td align="right">', $movi->getCentroCosto(), '</td>';
+										echo '<td align="right">', $movi->getNit(), '</td>';
+										if($movi->getDebCre()=='D'){
+											echo '<td align="right">', Locale::money($movi->getValor()), '</td>';
+											echo '<td align="right">', 0, '</td>';
+											$debitos+=$movi->getValor();
+										} else {
+											echo '<td align="right">', 0, '</td>';
+											echo '<td align="right">', Locale::money($movi->getValor()), '</td>';
+											$creditos+=$movi->getValor();
+										}
+										echo '</tr>';
+									}
+								?>
+								<tr>
+									<td colspan="4"></td>
+									<td align="right"><b><?php echo Locale::money($debitos) ?></b></td>
+									<td align="right"><b><?php echo Locale::money($creditos) ?></b></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td height="30%" valign="bottom">
+							<table border="1" cellspacing="0" width="100%" cellpadding="5">
+								<tr>
+									<td width="33%"><b>Cheque No. <?php echo $cheque->getNumeroCheque() ?></b></td>
+									<td width="66%"colspan="3">BANCO: <b><?php echo  $cheque->getChequeras()->getCuentasBancos()->getBanco()->getNombre() ?></b></td>
+								</tr>
+								<tr>
+									<td class="firma" valign="top">
+										<b>PREPARADO</b>
+									</td>
+									<td class="firma" valign="top" width="33%">
+										<b>REVISADO</b>
+									</td>
+									<td valign="top" class="firmaf" width="33%">
+										<b>FIRMA Y SELLO DEL BENEFICIARIO</b>
+									</td>
+								</tr>
+								<tr>
+									<td class="firma" valign="top">
+										<b>APROBADO</b>
+									</td>
+									<td class="firma" valign="top">
+										<b>CONTABILIZADO</b>
+									</td>
+									<td valign="bottom" align="center" class="firmac">
+										____________________________<br/>
+										CC/Nit
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+
+
+			</div>
+		</div>
+	</body>
+</html>

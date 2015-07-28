@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+Core::importFromLibrary('Hfos/Tpc', 'TpcHelper.php');
+View::getContent();
+$estadoContrato = $EstadoContrato->findFirst(array('conditions'=>'codigo="'.$socio->getEstadoContrato().'"'));
+$estadoMovimiento = $EstadoMovimiento->findFirst(array('conditions'=>'codigo="'.$socio->getEstadoMovimiento().'"'));
+echo HfosTag::iconTitle('attibutes.png', 'Estados de Cuenta de contrato '.$socio->getNumeroContrato().' ('.$estadoContrato->getNombre().'/'.$estadoMovimiento->getNombre().')');
+?>
+<div>
+	<table align="center">
+		<tr>
+			<td align="right"><label for="identificacion">Cédula: </label></td>
+			<td><?php echo $socio->getIdentificacion(); ?></td>
+
+			<td align="right"><label for="nombres">Nombres: </label></td>
+			<td><?php echo $socio->getNombres(); ?></td>
+
+			<td align="right"><label for="apellidos">Apellidos: </label></td>
+			<td><?php echo $socio->getApellidos(); ?></td>
+		</tr>
+	</table>
+	<?php echo Tag::hiddenField(array('sociosId','value'=>$socio->getId()));?>
+	<?php echo Tag::hiddenField(array('estadoContrato','value'=>$socio->getEstadoContrato()));?>
+	<?php echo Tag::hiddenField(array('estadoMovimiento','value'=>$socio->getEstadoMovimiento()));?>
+	<br/><br/>
+</div>
+
+<fieldset class="tabbed">
+	<legend>Cuota Inicial</legend>
+	<?php echo TpcHelper::generaListaCuotasIniciales(array('sociosId' => $socio->getId())); ?>
+</fieldset>
+
+<fieldset class="tabbed">
+	<legend>Recibos de pago</legend>
+	<?php echo TpcHelper::generaListaRecibosPagos(array('sociosId' => $socio->getId())); ?>
+</fieldset>
+
+<fieldset class="tabbed">
+	<legend>Saldos</legend>
+	<?php echo TpcHelper::generaListaControlPagos(array('sociosId' => $socio->getId())); ?>
+</fieldset>
+
+<fieldset class="tabbed">
+	<legend>Amortización</legend>
+	<?php echo TpcHelper::generaAmortizacion(array('sociosId' => $socio->getId(), 'printList'=>false, 'showPagado'=>true)); ?>
+</fieldset>
+
+<fieldset class="tabbed">
+	<legend>Estado Cuenta</legend>
+	<b>Fecha de Pago: </b> 
+	<?php echo Tag::dateField(array('fechaPagoSelector','value'=>date('Y-m-d'))); ?>
+	<div id="estadoCuentaDiv">
+		<?php echo TpcHelper::estadoCuenta(array('sociosId' => $socio->getId())); ?>
+	</div>
+
+</fieldset>
+
+<fieldset class="tabbed">
+	<legend>Historia de Contrato</legend>
+	<table align="center">
+	<?php echo TpcHelper::generaListaHistoria(array('sociosId' => $socio->getId())); ?>
+	</table>
+</fieldset>

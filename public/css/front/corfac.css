@@ -1,0 +1,25 @@
+.active_tab {
+	border: 1px solid #969696;
+	border-bottom: none;
+	font-size: 13px;
+	cursor: pointer;
+	padding: 7px;
+	background: #fafafa;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+.inactive_tab {
+	font-size: 13px;
+	border: 1px solid #969696;
+	background: #dadada;
+	cursor: pointer;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+.tab_content {
+	padding: 20px;
+}

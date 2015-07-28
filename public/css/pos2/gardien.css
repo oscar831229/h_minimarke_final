@@ -1,0 +1,67 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div#acl {
+	background: #ffffff;
+}
+
+div#acl input {
+	margin-right: 10px;
+	display: inline
+}
+
+div#acl ul {
+	border-left: 1px solid #eaeaea;
+}
+
+div#acl ul.action-group:hover {
+	background: #fafafa;
+}
+
+div#acl li {
+	list-style-type: none;
+	padding: 3px;
+}
+
+div#acl div.action-desc {
+	font-size: 11px;
+	display: inline;
+	color: #808080;
+	font-weight: normal;
+}
+
+div#acl div.spacer {
+	color: #808080;
+	display: inline
+}
+
+div#acl li.resource-access {
+	font-weight: bold;
+}
+
+div#acl li.action-access {
+	font-weight: normal;
+}
+
+div.perfil-top {
+	-moz-border-radius: 10px;
+	background: #c0c0c0;
+	padding-top: 10px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+div.perfil-top form {
+
+}

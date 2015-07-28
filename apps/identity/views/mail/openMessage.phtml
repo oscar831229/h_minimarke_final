@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+if(isset($messageId)){
+
+	$headers = HfosMail::getHeaders($mail, true);
+
+	//print_r($headers);
+
+	echo '<table class="mailDetails" align="center" width="100%">';
+	echo '<tr><td width="15%" align="right"><label for="from">Asunto</label></td><td align="left"><b>', $mail->getSubject(), '</b></td></tr>';
+	$fecha = Date::fromTimestamp($mail->getTimsen());
+	echo '<tr><td align="right"><label for="to">Fecha</label></td><td align="left">', $fecha->getLocaleDate('full'), ' (', date('H:i', $mail->getTimsen()), ')</td></tr>';
+	if(isset($headers['From'])){
+		echo '<tr><td align="right"><label for="from">De</label></td><td align="left">', $headers['From'], '</td></tr>';
+	}
+	if(isset($headers['To'])){
+		echo '<tr><td align="right"><label for="to">Para</label></td><td align="left">', $headers['To'], '</td></tr>';
+	}
+	if(isset($headers['Cc'])){
+		if($headers['Cc']){
+			echo '<tr><td align="right"><label for="from">Copia a</label></td><td align="left">', $headers['Cc'], '</td></tr>';
+		}
+	}
+	echo '</table>';
+
+	echo '<iframe class="iframeContent" src="', Utils::getKumbiaUrl('mail/readMessage/'.$messageId), '"></iframe>';
+}

@@ -1,0 +1,58 @@
+.tab_sel {
+	font-size: 12px;
+	color: #ffffff;
+	background: url(../img/tab.png);
+	padding-top: 7px;
+	padding-bottom: 11px;
+	font-weight: bold;
+	width: 150px;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.tab_unsel {
+	font-size: 12px;
+	color: black;
+	background: url(../img/tabi.png);
+	padding-top: 7px;
+	padding-bottom: 11px;
+	width: 150px;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0px;
+}
+
+td, a {
+	font-size: 11px;
+}
+
+table.tab_datos th {
+	border-left: 1px solid #ababab;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+	font-family: Verdana;
+	font-size: 10px;
+}
+
+table.tab_datos td {
+	border-left: 1px solid #ababab;
+}
+
+table.tab_datos td.tt {
+	font-family: Verdana;
+	font-size: 11px;
+	background: #DBDBDB;
+	border-top: 1px solid #ababab;
+	font-weight: bold;
+}
+
+table.tab_datos {
+	border-bottom: 1px solid #ababab;
+	border-right: 1px solid #ababab;
+}
+
+table.tab_datos .flowButton,
+table.tab_datos .controlButtonAccept {
+	width: 140px;
+	margin-bottom: 2px;
+}

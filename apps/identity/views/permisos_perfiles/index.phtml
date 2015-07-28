@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div class="permisosPerfiles hfosContent">
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="right">
+					<table>
+						<tr>
+							<td>
+								<table>
+									<tr>
+										<td>
+											<table align="center" class="tabAppChoose">
+												<tr>
+													<td class="separator"></td>
+													<td><label for="aplicacionId">Aplicación</label></td>
+													<td><?php echo Tag::select('aplicacionId', $aplicaciones, 'using: id,nombre', 'useDummy: yes') ?></td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<table align="center" class="tabRolesChoose" style="display:none">
+												<tr>
+													<td><label for="perfilesId">Perfil</label></td>
+													<td><?php echo Tag::select('perfilesId', $perfiles, 'using: id,nombre', 'useDummy: yes') ?></td>
+												</tr>
+											</table>
+										</td>
+										<td>
+											<input type="submit" caption="Guardar" id="submitButton" class="saveButton controlButton" value="Guardar" style="display:none;">
+										</td>
+										<td align="left">
+											<div class="headerSpinner" style="display:none"></div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="messages"></div>
+
+	<div class="permsContent"></div>
+
+	<div align="right">
+		<div class="chooseApp infoBox" align="left">
+			<table align="center">
+				<tr>
+					<td><strong>Seleccione una Aplicación</strong></td>
+					<td><?php echo Tag::image('backoffice/arrow-alt-up.png') ?></td>
+				</tr>
+			</table>
+		</div>
+		<div class="chooseRole infoBox" align="left" style="display:none">
+			<table align="center">
+				<tr>
+					<td><strong>Seleccione un Perfil</strong></td>
+					<td><?php echo Tag::image('backoffice/arrow-alt-up.png') ?></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</div>

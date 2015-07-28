@@ -1,0 +1,59 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2011
+ * @version		$Id$
+ */
+echo '
+<div class="detalleCuotas">
+    <table cellspacing="0" cellpadding="0" align="center">
+		<tr>
+		  <td align="right"><label for="conyuge_tipo_documentos_id">Tipo Documento</label></td>
+		  <td>'.Tag::select('conyuge_tipo_documentos_id',$tipoDocumentos,'using: id,nombre','useDummy: true').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_identificacion">Cédula</label></td>
+		  <td>'.Tag::numericField('conyuge_identificacion').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_nombres">Nombres</label></td>
+		  <td>'.Tag::textUpperField('conyuge_nombres').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_apellidos">Apellidos</label></td>
+		  <td>'.Tag::textUpperField('conyuge_apellidos').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_fecha_nacimiento">Fecha de Nacimiento</label></td>
+		  <td>'.Tag::dateField('conyuge_fecha_nacimiento').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_direccion">Dirección</label></td>
+		  <td>'.Tag::textField('conyuge_direccion').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_telefono">Teléfono</label></td>
+		  <td>'.Tag::numericField('conyuge_telefono').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_celular">Celular</label></td>
+		  <td>'.Tag::numericField('conyuge_celular').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_profesiones_id">Profesión</label></td>
+		  <td>'.Tag::select('conyuge_profesiones_id',$profesiones,'using: id,nombre','useDummy: true').'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="conyuge_estados_civiles_id">Estado Civil</label></td>
+		  <td>'.Tag::select('conyuge_estados_civiles_id',$estadosCiviles,'using: id,nombre','useDummy: true').'</td>
+		</tr>
+	</table>
+</div>';

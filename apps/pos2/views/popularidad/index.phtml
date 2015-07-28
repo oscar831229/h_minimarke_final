@@ -1,0 +1,41 @@
+<?php
+
+
+
+View::getContent() ?>
+
+<h1>Indice de Popularidad</h1>
+
+<?php echo form_tag("popularidad/process") ?>
+<table>
+	<tr>
+		<td align="right"><b>Ambiente:</b></td>
+		<td>
+			<select id='comedor'>
+				<option value='@'>CUALQUIERA...</option>
+				<?php
+					foreach($Salon->find("order: nombre") as $salon){
+						print "<option value='{$salon->id}'>{$salon->nombre}\n";
+					}
+				?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td align="right"><b>Fecha Inicial:</b></td>
+		<td>
+			<?= date_field_tag("fecha_inicial") ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right"><b>Fecha Final:</b></td>
+		<td>
+			<?= date_field_tag("fecha_final") ?>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><?= submit_tag("Ver", "class: controlButton") ?></td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

@@ -1,0 +1,5 @@
+apps/*/config/*.ini
+public/temp/*.pdf
+public/temp/*.html
+public/temp/*.xlsx
+public/temp/*.txt

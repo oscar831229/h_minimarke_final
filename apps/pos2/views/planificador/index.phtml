@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo View::getContent();
+
+echo '<br/><table width="100%">
+	<tr>
+		<td><h1>Planificador de Producción</h1></td>
+		<td align="right" id="toolbar">
+			', Tag::buttonToAction('Crear/Editar', 'planificador/buscar', 'class: controlButton'), '
+		</td>
+	</tr>
+</table>';
+
+echo Tag::form('planificador/consultar', 'target: _blank') ?>
+	<table align="center">
+		<tr>
+			<td align="right"><b>Fecha Inicial</b></td>
+			<td><?php echo Tag::dateField('fechaInicial', 'startYear: 2005') ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b>Fecha Final</b></td>
+			<td><?php echo Tag::dateField('fechaFinal', 'startYear: 2005') ?></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><?php echo Tag::submitButton('Consultar', 'class: controlButton') ?>
+		</tr>
+	</table>
+<?php echo Tag::endForm() ?>
+
+

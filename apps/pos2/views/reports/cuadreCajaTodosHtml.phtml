@@ -1,0 +1,205 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<html>
+<head>
+<meta http-equiv='Content-type' content='text/html; charset=UTF-8' />
+<style type='text/css'>
+
+h3 {
+	margin: 0px;
+	margin-top: 10px;
+	margin-bottom: 2px;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+td, th {
+	font-size: 11px;
+	border-left: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+	font-family: Verdana;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+th {
+	background: #eaeaea;
+	font-family: Verdana
+}
+
+table tr:nth-child(even) {
+	background: #fafafa;
+}
+
+table tr:nth-child(odd) {
+	background: #ffffff;
+}
+
+</style>
+</head>
+<body>
+
+<div style='font-size:12px;font-family:Verdana'>
+<?php
+
+$Datos->findFirst();
+echo "<b>", $Datos->getNombreCadena(), "</b><br>\n";
+echo "<b>", $Datos->getDocumento(), " No. : ", $Datos->getNit(), "</b><br>\n";
+echo i18n::strtoupper($Datos->getNombreHotel())."<br>\n";
+echo "CUADRE CAJA CONSOLIDADO TODOS<br>";
+if($fecha_inicial==$fecha_final){
+	echo "Fecha: {$fecha_inicial}"."<br>";
+} else {
+	echo "Fecha: {$fecha_inicial} - {$fecha_final}<br>\n";
+}
+
+if($salon_id!='@'){
+	if($Salon->findFirst($salon_id)){
+		echo "Ambiente: {$Salon->nombre}<br>";
+	}
+} else {
+	echo "TODOS LOS AMBIENTES<br>";
+}
+echo "Fecha Impresión: ".Date::now()."<br/><br/>";
+
+$conditions = "fecha >= '$fecha_inicial' AND fecha <= '$fecha_final' AND estado = 'A' AND tipo_venta NOT IN ('U', 'P', 'C')";
+if($salon_id!='@'){
+	$conditions .= " AND salon_id = '{$salon_id}'";
+}
+
+$movimiento = array();
+$tiposFormas = array();
+$facturas = $Factura->find(array($conditions, 'columns' => 'prefijo_facturacion,consecutivo_facturacion,tipo,usuarios_id,salon_id,total'));
+foreach($facturas as $factura){
+	if($factura->tipo=='F'){
+		foreach($factura->getPagosFactura() as $pagoFactura){
+			if(!isset($movimiento[$factura->salon_id][$factura->usuarios_id][$pagoFactura->formas_pago_id])){
+				$movimiento[$factura->salon_id][$factura->usuarios_id][$pagoFactura->formas_pago_id] = $pagoFactura->pago;
+			} else {
+				$movimiento[$factura->salon_id][$factura->usuarios_id][$pagoFactura->formas_pago_id] += $pagoFactura->pago;
+			}
+			$tiposFormas[$pagoFactura->formas_pago_id] = true;
+		}
+	} else {
+		if(!isset($movimiento[$factura->salon_id][$factura->usuarios_id][-1])){
+			$movimiento[$factura->salon_id][$factura->usuarios_id][-1] = $factura->total;
+		} else {
+			$movimiento[$factura->salon_id][$factura->usuarios_id][-1] += $factura->total;
+		}
+		$tiposFormas[-1] = true;
+	}
+}
+
+echo '<table cellspacing="0" cellpadding="0">';
+
+$usuarios = array();
+$formasPago = array();
+$tiposFormas = array_keys($tiposFormas);
+$totalesFormasTodos = array();
+foreach($movimiento as $salonId => $movimientoSalon){
+
+	$numberRows = count($tiposFormas)+2;
+
+	echo '<td style="height: 30px;border-left:none;" colspan="'.$numberRows.'" valign="bottom">';
+	$salon = $Salon->findFirst($salonId);
+	if($salon==false){
+		echo '<b>AMBIENTE BORRADO</b><br/>';
+	} else {
+		echo '<b>'.$salon->nombre.'</b><br/>';
+	}
+	echo '</td>';
+
+	$totalesFormas = array();
+	echo '<tr><th>&nbsp;</th>';
+	foreach($tiposFormas as $formaPagoId){
+		if(!isset($formasPago[$formaPagoId])){
+			if($formaPagoId!=-1){
+				$formaPago = $FormasPago->findFirst($formaPagoId);
+				if($formaPago==false){
+					$formasPago[$formaPagoId] = 'NO EXISTE';
+				} else {
+					$formasPago[$formaPagoId] = $formaPago->detalle;
+				}
+			} else {
+				$formasPago[$formaPagoId] = 'HABITACIÓN/FOLIO';
+			}
+			$totalesFormasTodos[$formaPagoId] = 0;
+		}
+		echo '<th>', $formasPago[$formaPagoId], '</th>';
+		$totalesFormas[$formaPagoId] = 0;
+	}
+	echo '<th style="border-right: 1px solid #969696;">TOTAL</th>';
+	echo '</tr>';
+	foreach($movimientoSalon as $usuarioId => $movimientoUsuario){
+
+		if(!isset($usuarios[$usuarioId])){
+			$usuario = $UsuariosPos->findFirst($usuarioId);
+			if($usuario!=false){
+				$usuarios[$usuarioId] = $usuario->nombre;
+			} else {
+				$usuarios[$usuarioId] = 'USUARIO BORRADO';
+			}
+		}
+
+		$totalCajero = 0;
+		$nombre = $usuarios[$usuarioId];
+		echo '<tr><td>', $nombre, '</td>';
+		foreach($tiposFormas as $formaPagoId){
+			if(isset($movimientoUsuario[$formaPagoId])){
+				echo '<td align="right">', Currency::money($movimientoUsuario[$formaPagoId]), '</td>';
+				$totalCajero+=$movimientoUsuario[$formaPagoId];
+				$totalesFormas[$formaPagoId] += $movimientoUsuario[$formaPagoId];
+				$totalesFormasTodos[$formaPagoId] += $movimientoUsuario[$formaPagoId];
+			} else {
+				echo '<td align="right">0.00</td>';
+			}
+		}
+		echo '<td align="right" style="border-right: 1px solid #969696;">', Currency::money($totalCajero), '</td>';
+		echo '</tr>';
+	}
+
+	$totalAmbiente = 0;
+	echo '<tr><td align="right"><b>TOTAL</b></td>';
+	foreach($tiposFormas as $formaPagoId){
+		echo '<td align="right">', Currency::money($totalesFormas[$formaPagoId]), '</td>';
+		$totalAmbiente+=$totalesFormas[$formaPagoId];
+	}
+	echo '<td align="right" style="border-right: 1px solid #969696;">', Currency::money($totalAmbiente), '</td>';
+	echo '</tr>';
+
+}
+
+if(isset($numberRows)){
+	echo '<tr><td style="height: 30px;border-left:none;border-bottom: 1px solid #969696;" colspan="'.$numberRows.'" valign="bottom"></td></tr>';
+
+	$totalGeneral = 0;
+	echo '<tr><td align="right" style="border-top: 1px solid #969696;"><b>TOTAL TODOS</b></td>';
+	foreach($tiposFormas as $formaPagoId){
+		echo '<td align="right" style="border-top: 1px solid #969696;">', Currency::money($totalesFormasTodos[$formaPagoId]), '</td>';
+		$totalGeneral+=$totalesFormasTodos[$formaPagoId];
+	}
+	echo '<td align="right" style="border-right: 1px solid #969696;border-top: 1px solid #969696;">', Currency::money($totalGeneral), '</td>';
+	echo '</tr>';
+}
+
+echo '</table><br/><br/>';
+
+?>
+<br/>
+
+</body>
+</html>

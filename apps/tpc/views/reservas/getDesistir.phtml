@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div align="center">
+	<div class="formExternal">
+		<div class="externalHeader">
+			<table width="95%" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td><h1>Desitir de Reserva<h1></td>
+					<td align="right"><div class="window-close"></div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="messages"></div>
+		<?php echo Tag::form('reservas/desistir', 'onbeforesubmit: return false', 'autocomplete: off') ?>
+			<table align="center" >
+				<tr>
+					<td align="right"><label for="estado">Tipo de Desistimiento</label></td>
+					<td align="left">
+					<?php echo Tag::select('estado', $tipoDesistimiento,'using: codigo,nombre');?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fecha">Fecha de Desistimiento</label></td>
+					<td align="left">
+					<?php echo Tag::dateField('fecha');?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="motivo_desistimiento">Motivo de Desistimiento</label></td>
+					<td align="left">
+					<?php echo Tag::select('motivo_desistimiento', $motivoDesistimiento,'using: id,nombre');?></td>
+				</tr>				
+			</table>
+			<div align="right"><?php echo Tag::submitButton('Desistir', 'class: desistirButton') ?></div>
+			<?php echo Tag::hiddenField(array('reservaId', 'value' => $reservaId)) ?>
+		<?php echo Tag::endForm() ?>
+	</div>
+</div>

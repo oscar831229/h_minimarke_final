@@ -1,0 +1,175 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div.header {
+	-webkit-box-shadow: 0 3px 0 rgba(11, 11, 11, 0.7);
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(67, 67, 67, 0.8)), to(#171717));
+}
+
+div.submenu {
+	-webkit-box-shadow: 5px 7px 10px rgba(21, 21, 21, 0.70);
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(17, 57, 72, 0.8)), to(#0E1C22));
+	-webkit-border-top-right-radius: 10px;
+	-webkit-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+}
+
+div.header-button-main {
+	-webkit-border-radius: 10px 10px 10px 10px;
+	-webkit-box-shadow:0 3px 0 rgba(21, 21, 21, 0.7);
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(67, 67, 67, 0.8)), to(#171717));
+}
+
+div.window-main {
+	-webkit-box-shadow: 5px 7px 10px rgba(21, 21, 21, 0.70);
+	webkit-transform-style: preserve-3d;
+	-webkit-transition-property: -webkit-transform;
+	-webkit-transition-duration: 0.2s;
+}
+
+div.flipped-y {
+	-webkit-transform: rotateY(180deg);
+}
+
+div.flipped-x {
+	-webkit-transform: rotateX(30deg);
+}
+
+div.window-header-se {
+	-webkit-user-select: none;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
+}
+
+div.window-content {
+	-webkit-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+}
+
+div.window-close,
+div.window-minimize {
+	-webkit-border-radius: 5px;
+	-webkit-user-select: none;
+}
+
+div.window-toolbar div.window-thumb {
+	background: -webkit-gradient(linear, left top, left bottom, from(#000000), to(#222222));
+}
+
+div.hyperForm div.hyToolbar,
+div.hfosToolbar {
+	background: -webkit-gradient(linear, left top, left bottom, from(#333333), to(#222222));
+}
+
+input[type="submit"], input[type="button"], input.hyControlButton, input.controlButton {
+	-webkit-border-radius: 7px 7px 7px 7px;
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+	background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eaeaea));
+	border-color: #969696 #969696 rgba(0, 0, 0, 0.25);
+}
+
+input.newButton {
+	background-image: url(../../img/backoffice/new-icon.png), -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eaeaea));
+	background-position: 5px 5px;
+	background-repeat: no-repeat;
+	background-color: #fafafa;
+}
+
+div.hyBrowseDiv td {
+	padding: 0px;
+}
+
+div.hyBrowseDiv div.hyPage {
+	-webkit-border-radius: 4px;
+}
+
+table.zebraSt tr.hyTrPager {
+	background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eaeaea));
+}
+
+table.zebraSt tr.hyTrPager:hover {
+	background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#eaeaea));
+}
+
+div#login-box {
+	-webkit-border-radius: 10px 10px 10px 10px;
+	-webkit-box-shadow: 4px 4px 10px rgba(11, 11, 11, 0.7);
+}
+
+div#login-box-in {
+	-webkit-border-radius: 10px 10px 10px 10px;
+	background: -webkit-gradient(linear, left top, left bottom, from(rgba(17, 57, 72, 0.8)), to(#0E1C22));
+}
+
+div#login-box input {
+	-webkit-border-radius: 5px 5px 5px 5px;
+}
+
+div.hyBrowseDiv th {
+	background: -webkit-gradient(linear, left top, left bottom, from(#454545), to(#333333));
+}
+
+div.hyBrowseDiv th.sortdesc,
+div.hyBrowseDiv th.sortasc {
+	background: -webkit-gradient(linear, left top, left bottom, from(#000000), to(#454545));
+}
+
+div#mainContent {
+	-webkit-perspective: 0;
+	-webkit-perspective-origin: 50% 50%;
+}
+
+div#userSpace {
+	/*padding: 100px;
+	-webkit-transition: -webkit-transform 1s linear;
+	-webkit-transform-style: preserve-3d;*/
+}
+
+div.appContainer {
+	/*position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 400px;
+	height: 400px;*/
+}
+
+/*div.userSpace div#app-cont-2  {
+	-webkit-transform: rotateX(90deg) translateZ(200px);
+	background: red;
+}*/
+
+/*div.userSpace div#app-cont-0 {
+	-webkit-transform: translateZ(200px);
+	background: green;
+}*/
+
+/*div.userSpace div#app-cont-1  {
+	-webkit-transform: rotateY(90deg) translateZ(200px);
+	background: blue;
+}
+
+div.userSpace div#app-cont-3  {
+	-webkit-transform: rotateY(180deg) translateZ(200px);
+	background: purple;
+}
+
+div.userSpace div#app-cont-4  {
+	-webkit-transform: rotateY(-90deg) translateZ(200px);
+	background: yellow;
+}
+
+div.userSpace div#app-cont-5  {
+	-webkit-transform: rotateX(-90deg) rotate(180deg) translateZ(200px);
+	background: orange;
+}*/

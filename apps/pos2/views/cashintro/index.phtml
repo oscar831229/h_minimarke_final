@@ -1,0 +1,30 @@
+<?= Tag::javascriptInclude('cashintro', true) ?>
+<? Tag::stylesheetLink('pos2/cashintro', true) ?>
+  <center>
+  <div style='width:600px;border:1px solid black;background:white;padding:10px'>
+  <h2>Seleccione una Caja a Abrir:</h2>
+  <table height='420' width='600'>
+  <tr>
+  <td height='380' valign="top" align="center">
+  <?php
+
+  	if ($CashTray->count("estado='N'")) {
+  		foreach($CashTray->find("estado='N'") as $cash){
+	 		print "<button class='cashButton' onclick='window.location=\"?/cashintro/make/{$cash->id}\"'
+		 	>Caja {$cash->descripcion}</button>\n";
+		 	tr_break(3);
+		}
+  	} else print "<span style='border:1px solid black'>No hay cajas para Abrir</span>";
+
+  ?>
+  </td>
+  <tr>
+	  <td align='right'>
+  		<button class='okButton'
+	   	onclick='window.location="?/appmenu/"'
+	  	><img src='img/exit_icon.gif'><br><b>Terminar</b></button>
+  	  </td>
+  </tr>
+  </table>
+  </div>
+ </center>

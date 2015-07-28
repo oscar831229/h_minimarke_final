@@ -1,0 +1,12 @@
+<?php
+
+foreach($habitaciones as $habitacion){
+	echo Tag::linkTo(array(
+		"rack/details/".$habitacion->getNumhab(),
+		$habitacion->getNumhab().' / '.$habitacion->getEsthab()->getDetalle(),
+		"data-role" => "button",
+		"data-icon" => "arrow-r",
+		"data-iconpos" => "right",
+		"class" => "hab-estado-".$habitacion->getCodest()
+	));
+}

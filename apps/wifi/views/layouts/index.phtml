@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div id="content">
+	<?php View::getContent() ?>
+
+	<div align="center">
+		<div id="input-form">
+			<table width="100%" cellspacing="10" align="center">
+				<tr>
+					<td width="50%" valign="top">
+						<h1>Acceso a Internet</h1>
+						<p>Para ingresar a Internet debe indicar un PIN de acceso. Si no dispone de
+						uno, solicítelo comunicandose
+						con la recepción del hotel.</p>
+					</td>
+					<td width="50%">
+						<?php echo Tag::form('index/registerPin', 'autocomplete: off') ?>
+							<table align="center" cellspacing="10">
+								<tr>
+									<td align="right"><label for="">PIN</label></td>
+									<td><?php echo Tag::numericField('pin', 'size: 10') ?></td>
+								</tr>
+								<tr>
+									<td align="right"></td>
+									<td><input type="submit" value="Ingresar"></td>
+								</tr>
+							</table>
+							<?php
+								if(isset($_REQUEST['url'])){
+									echo Tag::hiddenField(array('url', 'value' => $_REQUEST['url']));
+								}
+							?>
+						<?php echo Tag::endForm() ?>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">new Event.observe(document, 'dom:loaded', function(){$('pin').activate()});</script>

@@ -1,0 +1,86 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Back-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+.tab_sel {
+	font-size: 12px;
+	color: #ffffff;
+	background: url("../img/tab.png");
+	padding-top: 7px;
+	padding-bottom: 11px;
+	font-weight: bold;
+	width: 150px;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.tab_unsel {
+	font-size: 12px;
+	color: black;
+	background: url("../img/tabi.png");
+	padding-top: 7px;
+	padding-bottom: 11px;
+	width: 150px;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0px;
+}
+
+td, a {
+	font-size: 11px;
+}
+
+table.tab_datos th {
+	border-left: 1px solid #ababab;
+	background: url("../img/localnavg.gif") #bebebe;
+	background-repeat: repeat-x;
+	font-family: Verdana;
+	font-size: 10px;
+}
+
+table.tab_datos td {
+	border-left: 1px solid #ababab;
+}
+
+table.tab_datos td.tt {
+	font-family: Verdana;
+	font-size: 11px;
+	background: #DBDBDB;
+	border-top: 1px solid #ababab;
+	font-weight: bold;
+}
+
+table.tab_datos {
+	border-bottom: 1px solid #ababab;
+	border-right: 1px solid #ababab;
+}
+
+table.tab_datos .flowButton,
+table.tab_datos .controlButtonAccept {
+	width: 140px;
+	margin-bottom: 2px;
+}
+
+fieldset {
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+fieldset label {
+	font-weight: bold;
+}
+
+table#traslado-tabla {
+	margin: 10px;
+}

@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+$extraS = '';
+if(isset($tipoAbono)){
+	switch($tipoAbono){
+		case 'K'://Abono a Capital
+			$extraS = 'Capital ';
+			break;
+		case 'P'://Abono Posterior
+			$extraS = 'Posterior ';
+			break;
+		case 'N'://Abono normal
+			$extraS = '';
+			break;
+		case 'O'://Abono a Otros
+			$extraS = 'Otros ';
+			break;
+	}
+}else{
+	$tipoAbono = 'N';//Abono Normal
+}
+echo HfosTag::iconTitle('attibutes.png', 'Generar Abono '.$extraS.'a un Contrato ') ?>
+<div class="formContent">
+	<div class="formPannel" align="right">
+		<?php echo Tag::form('abono_contrato/abono'.$extraS, 'autocomplete: off', 'class: formGrabar') ?>
+			<fieldset class="tabbed">
+				<legend>Maestro de Pago</legend>
+				<?php echo Tag::hiddenField(array('sociosId','value' => $sociosId)); ?>
+				<?php echo Tag::hiddenField(array('tipoAbono','value' => $tipoAbono)); ?>
+				<table align="center">
+					<tr>
+						<td align="right"><label for="reciboProvisional">Recibo Provisional</label></td>
+						<td><?php echo Tag::numericField(array('reciboProvisional', 'size' => 10)) ?></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="fechaPago">Fecha de Pago</label></td>
+						<td><?php echo Tag::dateField(array('fechaPago', 'class' => 'date-field')) ?><span class="notNullMark">!</span></td>
+					</tr>
+					<tr>
+						<td align="right"><label for="cuentasId">Cuenta Bancaria</label></td>
+						<td><?php echo Tag::select('cuentasId', $cuentas, 'using: id,banco') ?><span class="notNullMark">!</span></td>
+					</tr>
+					<?php
+						//Si es un abono a otros abre el cmpo de observaciones para el recibo de pago
+						if($tipoAbono=='O'){//Otros
+							echo '
+							<tr>
+								<td align="right"><label for="concepto">Concepto</label></td>
+								<td>
+									'.Tag::textArea(array('concepto','cols'=>30, 'rows'=>5)).'
+									<span class="notNullMark">!</span>
+								</td>
+							</tr>';
+						}
+					?>
+					<tr>
+						<td align="right"><label for="condonacion">% Condonación</label></td>
+						<td>
+						<?php 
+							$porcent = array();
+							for($i=0;$i<=100;$i++){
+								$porcent[$i]=$i.'%';
+							}
+							echo Tag::selectStatic('condonacion', $porcent);
+						?></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset class="tabbed">
+				<legend>Detalle de Pago</legend>
+				<table class="sortable abonos-contrato-grid" cellspacing="0" align="center">
+					<thead>
+						<tr>
+							<th class="sortcol sortasc" colspan="2"></th>
+							<th class="sortcol">Forma de Pago</th>
+							<th class="sortcol">Número</th>
+							<th class="sortcol">Valor</th>
+						</tr>
+					</thead>
+					<tbody class="abonos-contrato-body">
+					<?php
+						echo '<tr class="linea1 orden-linea">
+							<td class="numero">1</td>
+							<td>',
+							Tag::checkboxField(array(
+								'itemCheck[]',
+								'class' => 'itemCheck'
+							)),
+							'</td><td>',
+							Tag::select(array(
+								'formaPago[]',
+								$formasPago,
+								'class' => 'formaPago',
+								'using' => 'id,nombre'
+							)),
+							'</td><td>',
+							Tag::numericField(array(
+								'numeroForma[]',
+								'class' => 'numeroForma numeric',
+								'size' => 5
+							)),
+							'</td><td>',
+							Tag::numericField(array(
+								'valor[]',
+								'class' => 'valor numeric',
+								'size' => 12
+							)),
+							'</td>
+						</tr>';
+					?>
+					</tbody>
+				</table>
+			</fieldset>
+		<?php echo Tag::endForm() ?>
+	</div>
+</div>

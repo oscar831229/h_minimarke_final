@@ -1,0 +1,97 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package		Front-Office
+ * @copyright	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div#volver_div {
+	padding: 10px;
+}
+
+#datos_huesped {
+	border: 1px solid #969696;
+	background: #fff;
+	width: 600px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.lista_p td {
+	padding: 5px;
+}
+
+.mainTab {
+	width: 100%;
+	border: 1px solid #ababab;
+	background-color: #fff;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.mainTabPrint {
+	width: 670px;
+}
+
+#opciones_cuenta {
+	border: 1px solid #969696;
+	background: url(../img/bg2.jpg);
+	width: 75%;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 10px;
+	margin: 10px;
+}
+
+#encabezado {
+	border-right: 1px solid #3F3D62;
+	width: 100%;
+}
+
+#encabezado td {
+	border-left: 1px solid #3F3D62;
+	border-bottom: 1px solid #3F3D62;
+	padding: 3px;
+}
+
+#criterioBox {
+	width: 400px;
+	background: url("../img/localnavg.gif");
+	border: 1px solid #969696;
+	padding: 10px
+}
+
+div.opciones {
+	padding: 20px;
+	background: #fafafa;
+	width: 470px;
+	border: 1px solid #969696;
+	border-top: none;
+}
+
+label {
+	color: #000000;
+	font-family: 'Museo Sans','Lucida Sans',Verdana;
+	font-size: 13px;
+	text-shadow: none;
+}
+
+div.clave {
+	padding: 10px;
+	border: 1px solid #969696;
+	background: #ffffff;
+	width: 270px;
+	font-size: 32px;
+}
+
+span.dclave {
+	color: #333333;
+	font-size: 11px;
+}

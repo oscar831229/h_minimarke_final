@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo '<div class="stocks">';
+if(count($almacenes)){
+	echo '<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
+		<thead>
+			<tr>
+				<th class="sortcol">Almacén</th>
+				<th class="sortcol">Mínimo</th>
+				<th class="sortcol">Máximo</th>';
+				if($state=='edit'){
+					echo '<th class="sortcol">Saldo Actual</th>
+					<th class="sortcol">Saldo Promedio</th>';
+				}
+			echo '</tr>
+		</thead>
+	<tbody>';
+	foreach($almacenes as $almacen){
+		echo '<tr><td>', $almacen->getNomAlmacen(), Tag::hiddenField(array('almacen[]', 'value' => $almacen->getCodigo())), '</td>';
+		if($state=='edit'){
+			$minimo = $stocksAlmacenes[$almacen->getCodigo()]['minimo'];
+			$maximo = $stocksAlmacenes[$almacen->getCodigo()]['maximo'];
+			$saldoActual = $stocksAlmacenes[$almacen->getCodigo()]['saldo'];
+			$promedio = $stocksAlmacenes[$almacen->getCodigo()]['promedio'];
+			echo '<td>', Tag::numericField(array('minimo[]', 'size' => 7, 'value' => $minimo)), '</td>
+			<td>', Tag::numericField(array('maximo[]', 'size' => 7, 'value' => $maximo)), '</td>
+			<td align="right">', Currency::number($saldoActual), '</td>
+			<td align="right">', Currency::number($promedio), '</td>';
+		} else {
+			echo '<td>', Tag::numericField(array('minimo[]', 'size' => 7, 'value' => 0)), '</td>
+			<td>', Tag::numericField(array('maximo[]', 'size' => 7, 'value' => 0)), '</td>';
+		}
+		echo '</tr>';
+	}
+	echo '</tbody></table>';
+}
+echo '</div>';

@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+Tag::stylesheetLink('pos2/rcs');
+
+View::getContent();
+
+echo '<h1>Revisiones de: ', $detalle, '</h1>';
+echo '<div class="revision">
+<table width="100%">';
+$number = count($revisions);
+foreach($revisions as $revision){
+	$fecha = Date::fromTimestamp($revision->fecha);
+	echo '<tr><td valign="top" width="40%">
+		<table>
+			<tr>
+				<td align="right"><b>Revisión&nbsp;#</b></td>
+				<td>', $number, '</td>
+			</tr>
+			<tr>
+				<td align="right"><b>Usuario</b></td>
+				<td>', $revision->nombre, '</td>
+			</tr>
+			<tr>
+				<td align="right"><b>Fecha</b></td>
+				<td>', $fecha->getLocaleDate(), ', ', date('H:i', $revision->fecha), '</td>
+			</tr>
+		</table>
+	</td>
+	<td width="60%" valign="top">
+		<div class="record_block"><table width="100%" cellspacing="0" cellpadding="2">';
+		--$number;
+		foreach($Records->find("revisions_id='{$revision->id}'") as $record){
+			if(!GeneratorDb::isHidden($revision->source, $record->getFieldName())){
+				$caption = GeneratorDb::getCaption($revision->source, $record->getFieldName());
+				$value = GeneratorDb::getDetail($revision->source, $record->getFieldName(), $record->getValue());
+				if($record->getChanged()=='S'){
+					echo '<tr class="changed">';
+				} else {
+					echo '<tr>';
+				}
+				echo '<td align="right" width="30%"><b>', $caption, '</b></td>
+					<td>', $value, '</td>
+				</tr>';
+			}
+		}
+	echo '</table></div></td></tr>';
+}
+echo '</tr></table></div>';
+
+echo '<div align="right">';
+echo Tag::buttonToAction('Volver', $sourceName, 'controlButton');
+echo '</div>';

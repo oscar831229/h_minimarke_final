@@ -1,0 +1,46 @@
+.tabVolver {
+	border: 1px solid #969696;
+	background: url(../img/bg2.jpg);
+	margin: 20px;
+	padding: 10px;
+}
+
+.titleCaja {
+	background: url(../img/localnavs.gif);
+	color: #ffffff;
+	padding: 5px;
+	padding-left: 10px;
+}
+
+.cajaContent {
+	height: 200px;
+	background: white;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	border: 1px solid #969696;
+	width: 99%px;
+}
+
+.cajaSelected {
+	background: #E4E2F7;
+}
+
+.cajaContent input[type="button"] {
+	width: 126px;
+	margin-bottom: 2px;
+}
+
+.cajaContent .nomUser {
+	font-family: 'myriad pro', 'lucida grande', 'segoe ui', 'trebuchet ms', verdana, sans-serif;
+	color: #000;
+	font-size: 24px;
+}
+
+.cajaTab td {
+	padding-left: 7px;
+	color: #454545;
+}
+
+#allCajasTab td {
+	width: 49%;
+}

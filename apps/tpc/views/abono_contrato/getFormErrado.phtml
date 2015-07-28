@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+View::getContent();
+?>
+<div align="center">
+	<div class="formExternal" style="width:700px;">
+		<div class="externalHeader">
+			<table width="95%" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td><h1>Abono Errado<h1></td>
+					<td align="right"><div class="window-close"></div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="messages"></div>
+		<?php echo Tag::form('abono_contrato/abonoErrado', 'onbeforesubmit: return false', 'autocomplete: off', 'class: abonoErradoForm', 'id: abonoErradoForm') ?>
+			<table align="center">
+				<tr>
+					<td align="right"><label for="reciboPagoId">Recibo de Caja a trasladar: </label></td>
+					<td align="left"><?php
+						if(isset($recibosPagos) && count($recibosPagos)>0){
+							$options = array();
+							foreach($recibosPagos as $reciboPago){
+								$options[$reciboPago->getId()]= 'Rc: '.$reciboPago->getRc().' / '.$reciboPago->getFechaPago();
+							}
+							echo Tag::selectStatic('reciboPagoId',$options);
+						}
+					?><span class="notNullMark">!</span></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="sociosId">Contrato que recibe: </label></td>
+					<td align="left"><?php
+						if(isset($recibosPagos)){
+							echo HfosTag::addHyperFormSpecialField(array(
+								'type'		=> 'SocioTc',
+								'name'		=> 'sociosIdNew',
+								'classForm'	=> 'abonoErradoForm'
+							));
+						}
+					?><span class="notNullMark">!</span></td>
+				</tr>
+				<tr>
+					<td colspan="2" align="right">
+						<?php 
+							echo Tag::submitButton('Trasladar', 'class: abonoPosteriorButton'); 
+							echo Tag::image(array('spinner.gif', 'style'=>'display:none;', 'class'=>'spinner'))
+						?>
+					</td>
+				</tr>
+			</table>
+			<?php 
+				echo Tag::hiddenField(array('sociosIdOld', 'value' => $sociosId));
+				echo Tag::endForm();
+			?>
+	</div>
+</div>

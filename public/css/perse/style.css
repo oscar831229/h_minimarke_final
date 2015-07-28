@@ -1,0 +1,490 @@
+@font-face {
+	font-family: 'Fineliner Script';
+	src: local('Fineliner Script'),
+		url('../../files/perse/Fineliner.otf') format('opentype');
+}
+
+input, p, td, div, span, label {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	background: #4E4D45;
+	margin: 0px;
+}
+
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+	border-bottom-color: rgb(232, 232, 232);
+	border-left-color: rgb(232, 232, 232);
+	border-right-color: rgb(232, 232, 232);
+	border-top-color: rgb(232, 232, 232);
+	color: rgb(232, 232, 232);
+	color-interpolation: srgb;
+	color-interpolation-filters: linearrgb;
+	font-size: 40px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	outline-color: rgb(232, 232, 232);
+	text-shadow: rgb(64, 71, 78) 0px 1px 3px;
+	margin: 0px;
+}
+
+div#login-form {
+	width: 550px;
+	margin: 100px;
+	background: #45443C;
+	padding: 10px;
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px 10px 10px 10px;
+}
+
+div#login-form img {
+	position: absolute;
+	top: 70px;
+	left: 200px;
+}
+
+div#login-form form {
+	padding: 20px;
+	background: #48473F;
+}
+
+div#login-form p {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #DAD4BA;
+	font-size: 15px;
+	outline-color: rgb(232, 232, 232);
+	text-shadow: rgb(64, 71, 78) 0px 1px 3px;
+	line-height: 20px;
+}
+
+div#login-form input:focus {
+	border: 1px solid #C29B1B;
+	color: #EB8A00;
+}
+
+div#login-form input {
+	color: #C29B1B;
+	background: #373630;
+	border-radius: 5px 5px 5px 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 5px;
+	border: none;
+	font-size: 32px;
+	padding: 5px;
+	margin: 5px;
+	width: 95%;
+}
+
+div#login-form input[type="submit"] {
+	margin-top: 15px;
+	background-color: #3E6BB8;
+	background-image: -moz-linear-gradient(top center, #3E6BB8, #383695);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#3E6BB8), to(#383695));
+	font-size: 16px;
+	padding: 10px;
+	color: #fafafa;
+}
+
+div#login-form label {
+	color: #ffffff;
+	text-shadow: rgb(64, 71, 78) 0px 1px 3px;
+	font-size: 14px;
+}
+
+div#perse-logo {
+	font-family: 'Fineliner Script';
+	padding: 20px;
+	color: #DAD4BA;
+	outline-color: rgb(232, 232, 232);
+	text-shadow: rgb(64, 71, 78) 0px 1px 3px;
+	font-size: 28px;
+}
+
+table#select-lang {
+	background: #48473F;
+}
+
+div.errorMessage {
+	background: #682518;
+	color: #fff;
+	padding: 10px;
+	border: none;
+	font-size: 12px;
+}
+
+div#top-pannel {
+	background: #1B1B19;
+	padding: 10px;
+	font-size: 16px;
+	border: none;
+}
+
+div#top-pannel h1 {
+	font-size: 16px;
+}
+
+div#top-pannel a {
+	font-size: 13px;
+	color: #DAD4BA;
+}
+
+div#page {
+	background: #ffffff;
+	background-image: url("../../img/perse/tile.gif");
+	margin-top: 20px;
+	margin-left: 15px;
+	margin-right: 15px;
+	margin-bottom: 25px;
+	-webkit-box-shadow: 5px 5px 5px rgba(33, 33, 33, 0.7);
+	-moz-box-shadow: 5px 5px 5px rgba(21, 21, 21, 0.7);
+	border-radius: 3px;
+	min-height: 500px;
+}
+
+div#page h2 {
+	font-family: 'Fineliner Script';
+	color: #171717;
+	font-size: 32px;
+	margin: 0px;
+}
+
+div#page td {
+	font-size: 13px;
+}
+
+div.page-inset {
+	background-image: url("../../img/perse/big-fade.png");
+	background-repeat: x-repeat;
+	padding: 20px;
+}
+
+div#accounts-resume {
+	margin-top: 20px;
+}
+
+div#accounts-resume table {
+	width: 80%;
+	border-left: 1px solid #e8e8e8;
+}
+
+div#accounts-resume th {
+	border-top: 1px solid #e8e8e8;
+	border-right: 1px solid #e8e8e8;
+	color: #00ADE6;
+	background: #DCEAF5;
+	padding: 5px;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+div#accounts-resume td {
+	padding: 7px;
+	border-right: 1px solid #e8e8e8;
+}
+
+div#accounts-resume a {
+	color: #00ADE6;
+}
+
+td#total-td {
+	color: #F38605;
+	font-weight: bold;
+	background: #ededed;
+	border: none;
+}
+
+td#total-sum {
+	background: #f3f3f3;
+	color: #F38605;
+	font-weight: bold;
+}
+
+div#page td#total-general {
+	background: #f3f3f3;
+	color: green;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+div#left-pannel table#select-lang {
+	position: absolute;
+	bottom: 20px;
+	left: 30px;
+}
+
+div#left-pannel table#select-lang label {
+	color: #fafafa;
+}
+
+div#accounts-details {
+	margin-top: 20px;
+}
+
+div#accounts-details table {
+	border-right: 1px solid #ededed;
+}
+
+div#accounts-details td.date-cell {
+	background: #ededed;
+	font-size: 11px;
+	padding: 5px;
+	color: #5E5E5E;
+	font-weight: bold;
+	text-shadow: -1px 1px 2px #dadada;
+}
+
+div#accounts-details td.spacer-cell {
+	height: 15px;
+}
+
+div#accounts-details td {
+	padding-left: 15px;
+	font-size: 12px;
+	padding: 7px;
+	border-left: 1px solid #ededed;
+}
+
+td.th-cell {
+	color: #00ADE6;
+	padding: 5px;
+	font-weight: bold;
+	text-align: center;
+}
+
+tr.payment {
+	background: #FFF9ED;
+}
+
+div.menu-item {
+	padding: 5px;
+	width: 95%;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	background: #48473F;
+}
+
+div.menu-item a {
+	color: #DAD4BA;
+	font-size: 13px;
+	text-decoration: none;
+}
+
+div#page h3 {
+	font-family: 'Fineliner Script';
+	color: #171717;
+	font-size: 24px;
+	margin: 0px;
+	margin-top: 40px;
+}
+
+td.no-has {
+	background: #EFDEED;
+	color: #45253E;
+	font-weight: bold;
+}
+
+td#left-td {
+	padding-top: 20px;
+	background-image: -moz-linear-gradient(top center, #23231F, #31312C);
+	background-color: #23231F;
+	min-height: 600px;
+	width: 170px;
+}
+
+div#print-button {
+	margin-top: 20px;
+	border: 1px solid #ababab;
+	width: 100px;
+	border-radius: 5x;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px 5px 5px 5px;
+	background: #eaeaea;
+}
+
+div#print-button a {
+	color: #414141;
+}
+
+div#pay-button,
+div#money-button {
+	margin-top: 20px;
+	border: 1px solid #ababab;
+	border-radius: 5x;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px 5px 5px 5px;
+	background: #eaeaea;
+	margin-right: 10px;
+}
+
+div#money-button {
+	padding: 2px;
+	margin-left: 10px;
+	background: #eaeaea;
+	color: #414141;
+}
+
+div#pay-button a {
+	color: #414141;
+}
+
+.border-b {
+	border-bottom: 1px solid #F3F3F3;
+}
+
+div.back {
+	padding: 10px;
+}
+
+div.back a {
+	color: #000;
+}
+
+div.noticeMessage {
+    background: none repeat scroll 0 0 #D2E7F0;
+    border-radius: 2px 2px 2px 2px;
+    color: #4083A9;
+    border: none;
+    padding: 4px;
+    padding-top: 7px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+td.border-top {
+	border-top: 1px solid #E8E8E8;
+}
+
+.table-white {
+
+}
+
+.table-white tr:nth-child(2n-1) {
+
+}
+
+@media screen {
+	.no-screen {
+		display: none;
+	}
+}
+
+@media print {
+	body {
+		margin: 0px;
+		background: transparent;
+	}
+	.no-print {
+		display: none;
+	}
+	div#top-pannel,
+	div#left-pannel {
+		display: none;
+	}
+	div#page {
+		width: 100%;
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		min-height: auto;
+		border: none;
+		margin: 0px;
+		padding: 0px;
+	}
+	div#page h1,
+	div#page h2,
+	div#page h3 {
+		font-family: Arial, Helvetica, sans-serif;
+		color: #000;
+	}
+	div#page h1 {
+		font-size: 20px;
+		outline-color: none;
+		text-shadow: none;
+		margin: 0px;
+	}
+	div#page h2 {
+		font-size: 18px;
+		margin: 0px;
+	}
+	div#page h3 {
+		font-size: 14px;
+		margin: 0px;
+	}
+	div#accounts-resume th {
+		background: #efefef;
+		color: #000;
+	}
+	div#accounts-resume table {
+		border-bottom: 1px solid #F3F3F3;
+		width: 100%;
+	}
+	td.th-cell {
+		color: #000;
+	}
+	tr.payment {
+		background: #fafafa;
+	}
+	td#total-sum {
+		color: #000;
+	}
+	td#total-td {
+		color: #000;
+	}
+	div#accounts-details table {
+		width: 100%;
+		border-bottom: 1px solid #F3F3F3;
+	}
+	div#accounts-details td.date-cell {
+		border-top: 1px solid #F3F3F3;
+	}
+	td#left-td {
+		display: none;
+	}
+}
+
+
+div#accounts-resume input[type="text"] {
+	font-size: 16px;
+	text-align: right;
+	width: 100%;
+}
+
+div#accounts-resume input[type="submit"] {
+	border: none;
+	width: 109px;
+	height: 40px;
+	font-size: 14px;
+	color: green;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+div.pay-page div#accounts-resume table {
+    width: 60%;
+}
+
+div#accounts-resume a.cancel-link {
+	color: #333333;
+}
+
+div.page-inset div.errorMessage {
+	background: #EFDEED;
+	color: #45253E;
+	font-weight: bold;
+}
+
+table.datos-abono {
+	background: #fafafa;
+}
+
+table.datos-abono label {
+	font-weight: bold;
+}

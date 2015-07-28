@@ -1,0 +1,97 @@
+.box {
+	background: url(../img/bg-box.png) #bebebe;
+	width: 90px;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	padding-bottom: 15px;
+	height: 55px;
+	padding-top: 20px;
+	color: #004E85;
+	-webkit-box-shadow:  10px inset 1px 1px #888;
+	-moz-box-shadow:  10px inset 1px 1px #888;
+}
+
+.box a {
+	font-size: 26px;
+}
+
+.box a,
+.box td {
+	color: #fff;
+}
+
+#disp_filter {
+	font-size: 11px;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+	width: 185px;
+	padding: 10px;
+	text-align: center;
+}
+
+#disp_imp {
+	background: url(../img/f-bg.png) #bebebe;
+	width: 150px;
+	height: 20px;
+	border: 1px solid #A3A3A3;
+}
+
+.bloque {
+	border: 1px solid #eaeaea;
+	color: #333333;
+	width: 95%px;
+	padding: 10px;
+	background: #F5F5F5;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-webkit-box-shadow:  2px 1px 1px #888;
+	-moz-box-shadow:  2px 1px 1px #888;
+}
+
+#checkOtherRoom {
+	background: url(../img/localnavg.gif);
+	width: 350px;
+	border: 1px solid #969696;
+	padding: 5px;
+	margin: 10px;
+	margin-top: 15px;
+}
+
+.add_info {
+	background: url(../img/note-bg.png);
+	font-family: Verdana;
+	font-size: 11px;
+	width: 260px;
+	height: 90px;
+	padding: 10px;
+	padding-left: 15px;
+	padding-top: 20px;
+}
+
+.add_info {
+	color: #DC8036;
+}
+
+/*.titulop {
+	margin-top: 5px;
+	color: #fff;
+	font-size: 22px;
+}
+
+.titulos {
+	color: #969696;
+}*/
+
+/*#mTd {
+	background: none;
+}*/
+
+#mainTd {
+	padding-right: 30px;
+	padding-left: 30px;
+}
+
+/*#mTr,
+#mTr2 {
+	background: rgba(21, 21, 21, 0.79);
+}*/

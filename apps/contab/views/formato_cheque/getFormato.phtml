@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<div class="formatoItems">
+
+	<p>
+		<table cellpadding="0" cellspacing="0" align="center">
+			<tbody>
+				<tr>
+					<td><label for="medida">Medida</label></td>
+					<td><?php echo Tag::selectStatic('medida', array(
+						'PS' => 'PUNTOS POR PIXEL',
+						'CM' => 'CENTIMETROS',
+						'PO' => 'POSICION EN TXT'
+					)) ?></td>
+				</tr>
+			</tbody>
+		</table>
+	</p>
+
+	<table cellpadding="0" cellspacing="0" class="hyBrowseTab zebraSt sortable" align="center" width="80%">
+		<thead>
+			<tr>
+				<th width="60">Columnas</th>
+				<th width="60">Filas</th>
+				<th>Item</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><?php echo Tag::numericField(array('anoX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('anoY', 'size' => 5)) ?></td>
+				<td>Año</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('mesX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('mesY', 'size' => 5)) ?></td>
+				<td>Mes</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('diaX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('diaY', 'size' => 5)) ?></td>
+				<td>Día</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('valorX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('valorY', 'size' => 5)) ?></td>
+				<td>Valor Números</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('terceroX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('terceroY', 'size' => 5)) ?></td>
+				<td>Beneficiario</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('sumaX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('sumaY', 'size' => 5)) ?></td>
+				<td>Valor Letras</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('numeroX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('numeroY', 'size' => 5)) ?></td>
+				<td>Número Egreso</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('notaX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('notaY', 'size' => 5)) ?></td>
+				<td>Nota</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('cuentaX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('cuentaY', 'size' => 5)) ?></td>
+				<td>Cuenta Contable</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('detalleX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('detalleY', 'size' => 5)) ?></td>
+				<td>Detalle Cuenta Contable</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('debitoX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('debitoY', 'size' => 5)) ?></td>
+				<td>Débitos</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('creditoX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('creditoY', 'size' => 5)) ?></td>
+				<td>Créditos</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('valor_moviX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('valor_moviY', 'size' => 5)) ?></td>
+				<td>Valor Movimiento</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('empresaX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('empresaY', 'size' => 5)) ?></td>
+				<td>Nombre Empresa</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('num_chequeX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('num_chequeY', 'size' => 5)) ?></td>
+				<td>Número Cheque</td>
+			</tr>
+			<tr>
+				<td><?php echo Tag::numericField(array('cuenta_bancariaX', 'size' => 5)) ?></td>
+				<td><?php echo Tag::numericField(array('cuenta_bancariaY', 'size' => 5)) ?></td>
+				<td>Cuenta Bancaria</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

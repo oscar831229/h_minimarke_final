@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('limited-edition.png', 'Generar Cargos a socios para Facturar') ?>
+
+<div class="formContent">
+
+<table align="center" width="100%">
+	<tr>
+		<td valign="top" width="50%" align="center">
+
+			<?php 
+				if (isset($mes)) {
+					echo Tag::form('cargos_socios/generar', 'class: cargosSociosForm', 'autocomplete: off') 
+			?>
+				<table align="center">
+					<tr>
+						<td>
+							Este proceso previsualiza todos los cargos del periodo  
+							<?php 
+								echo Tag::hiddenField('periodo','value: '.$mes);
+								echo $mes;
+							?>
+							agrupados por socios que 
+							seran generados en las facturas del mes actual.
+							<br><br>
+							<b>Nota:</b> Este proceso no causa ni genera facturas.
+						</td>
+					</tr>
+				</table>
+			<?php 
+					echo Tag::endForm(); 
+				} else {
+					echo Flash::error('Por favor ingrese un periodo');
+				}
+			?>
+			<div class="resultados"></div>
+		</td>
+	</tr>
+</table>
+</div>

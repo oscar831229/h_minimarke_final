@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('issue.png', 'Validar Integridad del Movimiento') ?>
+
+<?php echo Tag::form(array('consecutivos/generar', 'class' => 'consecutivosForm')) ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="codigoComprobante">Tipo Comprobante</label></td>
+					<td><?php echo Tag::select('codigoComprobante', $comprobs, 'using: codigo,nom_comprob', 'useDummy: yes') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroInicial">Número Inicial</label></td>
+					<td><?php echo Tag::numericField('numeroInicial', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="numeroFinal">Número Final</label></td>
+					<td><?php echo Tag::numericField('numeroFinal', 'size: 7') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaInicial">Fecha Inicial</label></td>
+					<td><?php echo Tag::dateField('fechaInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="fechaFinal">Fecha Final</label></td>
+					<td><?php echo Tag::dateField('fechaFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="soloDescuadrados">Visualizar solo descuadrados?</label></td>
+					<td><?php echo Tag::selectStatic('soloDescuadrados', array(
+						'N' => 'NO',
+						'S' => 'SI'
+					)) ?></td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

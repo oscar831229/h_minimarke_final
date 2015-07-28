@@ -1,0 +1,140 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent() ?>
+
+<div id="aclAll" width="100%">
+	<?php echo Tag::form('gardien', 'autocomplete: off') ?>
+	<div class="perfil-top">
+		<table width="85%">
+			<!--<tr>
+				<td align="center">
+					<b>
+						Permisos de Perfil <?php echo ucfirst(strtolower($perfilName))." en aplicativo ".ucfirst(strtolower($appsName)); ?>
+					</b>
+				</td>
+			</tr>-->
+			<tr>
+				<td align="left" id="listRights">
+					<ul>
+						<li class="resource-access">
+							<input type="checkbox" name="selectAll" id="selectAll" value=""/>
+							<span>(Des)Seleccionar Todos</span>
+						</li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div id='acl'>
+	<?php
+
+	function renderDependend($accessList, $menu=array(), $pPermisosSaved=array()){
+		if(!is_array($menu) || !is_array($accessList)){
+			echo "var menu empty";
+			return false;
+		}
+
+		//Verificamos si los controladores de la opcion de menu tienen un controlador activo
+		$checked = "";
+		foreach($menu["options"] as $controller){
+			if(isset($pPermisosSaved[$controller])){
+				$checked = 'checked="true"';
+			}
+		}
+
+		echo '<ul>';
+		if(isset($menu['description'])){
+			echo '<li class="resource-access"><input type="checkbox" name="menuOption" value="" '.$checked.' />', $menu['title'], '<div class="spacer"> / </div>',
+			'<div class="action-desc">', $menu['description'], '</div>', '<br>';
+
+			// Si existe optiones dentro del menu actual
+			if(is_array($menu["options"])){
+				echo '<ul>';
+
+				//Recorremos los controladores que tiene esa opcion ene le menu
+				foreach($menu["options"] as $controller){
+					if(!isset($accessList[$controller])){
+						echo 'No existe '.$controller.' en accesslist';
+						continue;
+					}
+
+					//Validamos si esta activo desde la BD
+					$checked = "";
+					if(isset($pPermisosSaved[$controller]) && isset($pPermisosSaved[$controller]["index"])){
+						$checked = "checked";
+					}
+
+					echo '<li class="resource-access">
+					<input type="checkbox" name="access[]" value="', $controller, '/index" '.$checked.'="true" />', $accessList[$controller]["description"];
+
+					if(is_array($accessList[$controller]['actions'])){
+						echo '<ul class="action-group">';
+						foreach($accessList[$controller]['actions'] as $action => $name){
+							if($action!='index'){
+								//Validamos si esta activo desde la BD
+								$checked = "";
+								if(isset($pPermisosSaved[$controller]) && isset($pPermisosSaved[$controller][$action])){
+									$checked = "checked";
+								}
+								if(!isset($name["sameAs"])){
+									echo '<li class="action-access resource-access">
+										<input type="checkbox" name="access[]" value="', $controller, '/', $action, '"  '.$checked.'="true" />',
+										$name["description"], ' ', $accessList[$controller]["description"], '<br/>
+									</li>';
+								}
+							}
+						}
+						echo '</ul>';
+					}
+					echo '</li>';
+				}
+				echo '</ul>';
+			}
+			echo '</li>';
+		}
+		echo '</ul>';
+	}
+
+	/**
+	 * Si se obtuvo los array de ACL segun identity/security/rules
+	 */
+	if(isset($menuDisposition) && isset($accessList)){
+		$dependend = array();
+		echo '<ul>';
+		echo '<li class="resource-access"><input type="checkbox" id="apps" name="access[]" value="" checked />'.
+		$appsName.'<div class="spacer"> / </div>',
+				'<div class="action-desc">Ingresar a la aplicación </div>',
+				'<br>';
+
+		foreach($menuDisposition as $k => $menu){
+			renderDependend($accessList, $menu, $pPermisosSaved);
+		}
+
+	}
+
+	/*
+	 * if(isset($menuDisposition) && isset($accessList)){
+		echo HfosTag::makeAclThree(Array(
+			"appsName" => $appsName,
+			"menuDisposition" => $menuDisposition,
+			"accessList" => $accessList
+		));
+	}
+	 */
+	?>
+	</div>
+	<?php echo Tag::endForm() ?>
+</div>

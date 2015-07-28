@@ -1,0 +1,14 @@
+
+<?php echo Tag::form('reimprimir/generar', 'class: reimprimirForm', 'autocomplete: off', 
+	'onbeforesubmit: return false', 'onSubmit: return false') ?>
+	<table align="center">
+		<tr>
+			<td align="right"><label for="consecutivoId">Consecutivo</label></td>
+			<td><?php echo Tag::select(array('consecutivoId', $consecutivos, 'using' => 'id,detalle')) ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="numero">Número</label></td>
+			<td><?php echo Tag::numericField(array('numero', 'size' => 7)) ?></td>
+		</tr>
+	</table>
+<?php echo Tag::endForm() ?>

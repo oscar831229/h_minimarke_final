@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+Tag::stylesheetLink('pos2/receta');
+echo View::getContent();
+
+?>
+
+<h1>Analisis de Costos de Recetas Estándar</h1>
+
+<div id="search_con">
+	<?php echo Tag::form('receta/analisisCostos','autocomplete: off', 'target: _new') ?>
+	<table align="center">
+		<tbody id="normalSearch">
+			<tr>
+				<td align="right"><label for="recetaInicial">Receta Inicial</label></td>
+				<td><?php echo Tag::select('recetaInicial', $recetas, 'using: numero_rec,nombre') ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="recetaFinal">Receta Final</label></td>
+				<td><?php echo Tag::select('recetaFinal', $recetas, 'using: numero_rec,nombre') ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="salonInicial">Ambiente Inicial</label></td>
+				<td><?php echo Tag::select('salonInicial', $salones, 'using: id,nombre') ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="salonFinal">Ambiente Final</label></td>
+				<td><?php echo Tag::select('salonFinal', $salones, 'using: id,nombre') ?></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><?php echo Tag::submitButton('Generar', 'class: controlButton') ?></td>
+			</tr>
+		</tbody>
+	</table>
+	<?php echo Tag::endForm() ?>
+</div>

@@ -1,0 +1,19 @@
+<?php echo Tag::javascriptInclude('pos2/gears_init') ?>
+
+<script type="text/javascript">
+
+window.onload = function(){
+	if(typeof window.google == "undefined"){
+		$('messages').innerHTML = '<?php echo Tag::image('pos2/gears.gif') ?><br/>Debe instalar Google Gears para este navegador';
+	} else {
+		if(typeof google.gears == "undefined"){
+			alert("No se pudo cargar Google Gears");
+		} else {
+			alert("yes!");
+		}
+	}
+}
+</script>
+
+
+<div id="messages"></div>

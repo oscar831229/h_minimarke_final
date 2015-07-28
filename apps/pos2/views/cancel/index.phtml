@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2014
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if ($config->application->mode == 'development') {
+	Tag::stylesheetLink('pos2/status');
+} else {
+	Tag::stylesheetLink('pos2/production/cancel', false, 'v=' . ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/cancel', true, 'v=' . ControllerBase::APP_VERSION);
+}
+
+?>
+
+<table cellspacing="0" width='800' align="center" class="shadow-table">
+	<tr>
+		<td class='titulo' align='left'>Cancelar Pedido</td>
+	</tr>
+	<tr>
+		<td id="cancelarMain">
+			<table>
+				<tr>
+					<td><?php echo Tag::image('pos2/cancelar.png', 'width: 72') ?></td>
+					<td><h1>Cancelar Pedido</h1></td>
+				</tr>
+			</table>
+			<div align="center">
+				<?php
+
+				View::getContent();
+
+				if($SalonMesas->count("estado='A'")):
+					$conceptosCancelacion = $ConceptosCancelacion->find("order: nombre");
+				?>
+
+				<table class='lista_res' cellspacing="0" cellpadding="5">
+					<thead>
+						<th>Número Mesa</th>
+						<th>Ambiente</th>
+						<th>Estado</th>
+						<th>Mesero</th>
+						<th>Causa</th>
+						<th></th>
+					</thead>
+					<tbody>
+					<?php
+
+					foreach ($SalonMesas->find("estado='A'") as $salonMesa) {
+						$accountMaster = $AccountMaster->findFirst("salon_mesas_id=" . $salonMesa->id . " AND estado='N'");
+						if ($accountMaster == false) {
+							$salonMesa->estado = 'N';
+							$salonMesa->save();
+						} else {
+							echo Tag::form('cancel/docancel');
+							$salon = $salonMesa->getSalon();
+							echo '<tr>';
+							echo Tag::hiddenField(array('accountMasterId', 'value' => $accountMaster->id));
+							echo "<td align='center'>{$salonMesa->numero}</td>";
+							echo "<td>{$salon->nombre}</td>";
+							echo "<td>PENDIENTE</td>";
+							echo "<td>{$accountMaster->nombre}</td>";
+							echo "<td>";
+							echo Tag::select('conceptos_cancelacion_id', $conceptosCancelacion, 'using: id,nombre', 'useDummy: yes');
+							echo "</td>";
+							echo "<td>".Tag::submitButton('Cancelar', 'class: cancelaButton')."</td>";
+							echo "</td>";
+							echo "</tr>";
+							echo Tag::endForm();
+						}
+					}
+
+					?>
+					</tbody>
+				</table>
+				<br/>
+			<?php else: ?>
+				<div align="center">
+					<div id="noPedidos">
+						<table width='450'>
+							<tr>
+								<td><?php echo Tag::image("pos2/advert.png", "width: 72") ?></td>
+								<td width='350'>No hay pedidos activos para cancelar</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			<br>
+			<?php endif ?>
+				<table align="center">
+					<tr>
+						<td>
+							<button class='commandButton' onclick='new Utils.redirectToAction("tables")'>
+								<?php echo Tag::image("pos2/arrow_left-p.png", "width: 23") ?><br>
+								<b>Ir a Mesas</b>
+							</button>
+						</td>
+						<td>
+							<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+								<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+								<b>Salir</b>
+							</button>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>

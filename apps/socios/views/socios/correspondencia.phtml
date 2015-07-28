@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<!-- The standard Google Loader script; use your own key. -->
+<script src="http://www.google.com/jsapi?key=yFuI-ZIq5WSn02zRiOst-st2"></script>
+<script type="text/javascript">
+  // Use the Google Loader script to load the google.picker script.
+  google.setOnLoadCallback(createPicker);
+  google.load('picker', '1', {'language':'es'});
+  var picker;
+  // Create and render a Picker object for searching images.
+  function createPicker() {
+      picker = new google.picker.PickerBuilder().
+	  addViewGroup(
+		new google.picker.ViewGroup(google.picker.ViewId.DOCS).
+		  addView(
+			new google.picker.DocsUploadView()
+			  .setIncludeFolders(true)
+		  )
+	  )
+      .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+	  .setCallback(pickerCallback).
+	  build(); 
+	picker.setVisible(false);
+  }
+
+  function showPicker(){
+	picker.setVisible(true);
+  }
+
+  // A simple callback implementation.
+  function pickerCallback(data) {
+	if (data.action == google.picker.Action.PICKED) {
+	  var fileId = data.docs[0].id;
+	  window.open(data.docs[0].url);
+	}
+  }
+
+  /**
+ * Download a file's content.
+ *
+ * @param {File} file Drive File instance.
+ * @param {Function} callback Function to call when the request is complete.
+ */
+  function downloadFile(file, callback) {
+	if (file.downloadUrl) {
+	  var accessToken = gapi.auth.getToken().access_token;
+	  var xhr = new XMLHttpRequest();
+	  xhr.open('GET', file.downloadUrl);
+	  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+	  xhr.onload = function() {
+		callback(xhr.responseText);
+	  };
+	  xhr.onerror = function() {
+		callback(null);
+	  };
+	  xhr.send();
+	} else {
+	  callback(null);
+	}
+  }
+</script>
+
+<div id="result"></div>
+<div class='text-center pull-center' align="center">
+	<!--<button onclick='showPicker()' class='btn btn-success btn-large' >Google Drive</button>-->
+	<p>De click en el Boton para acceder a su Google Drive.</p>
+	<button><?php echo Tag::image("gdrive.png", "onclick: showPicker()"); ?></button>
+</div>

@@ -1,0 +1,127 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent() ?>
+
+<table cellspacing="0" width="830" align='center' summary="" cellpadding="0" class="shadow-table">
+<tr>
+	<td class='titulo' align="center">
+		Liquidación de Cuentas/Facturas
+	</td>
+</tr>
+<tr class="pay_tr">
+	<td width="800" class="main-content">
+		<table width="800" cellspacing="0" summary="">
+			<tr>
+				<td width="25" id='hnav' align='center' valign='top'>
+					<span class='arrow' onclick='$("bcuentas").toggle();'>
+					<?php echo Tag::image('pos2/left_account.png') ?>
+				</td>
+				<td id='bcuentas' valign='top'>
+					<div style='background:white'>
+					<table cellspacing="0" cellpadding="0" style="border:1px solid #969696" width='160'>
+						<?php
+						echo "<script type='text/javascript'>
+									var Nodes = [];
+									var NodesIds = [];
+							   </script>\n";
+						$j = 0;
+						foreach ($AccountMaster->find("estado='N'") as $acc_mast) {
+							if ($acc_mast->salon_mesas_id) {
+								$SalonMesas->find($acc_mast->salon_mesas_id);
+								$Salon->find($SalonMesas->salon_id);
+							} else {
+								$Salon->findFirst(Session::get("salon_id"));
+								$SalonMesas->findFirst("salon_id='{$Salon->id}'");
+							}
+							echo "<tr>";
+							$num = $AccountCuentas->count("account_master_id='{$acc_mast->id}'");
+							echo "<td colspan='3' style='padding:0px' class='tsmall'>
+								 	<input type='radio' name='mesa_name' id='check$j' lang='$j' onclick='collapseTree(this, \"$acc_mast->id\", \"$num\")'/>&nbsp;".$Salon->nombre."&nbsp;#".$SalonMesas->numero."</td></tr>";
+							$j++;
+							$i = 0;
+							foreach ($AccountCuentas->find("account_master_id={$acc_mast->id} and estado in ('A', 'B')") as $cuenta) {
+								echo "<tr id='node", $acc_mast->id, "_", $i, "'>";
+								if ($i < $AccountCuentas->getCount()-1){
+									echo "<td style='width:20px;height:25px'><img src='".Core::getInstancePath()."img/pos2/join.gif'/></td>";
+								} else {
+									echo "<td style='width:20px;height:25px'><img src='".Core::getInstancePath()."img/pos2/joinbottom.gif'/></td>";
+								}
+								echo "<td id='td{$acc_mast->id}_$i' class='dtsmall' style='width:50px;padding:0px'>
+								<input disabled id='check{$acc_mast->id}_$i' type='radio' name='cuenta_name' lang='{$acc_mast->id}:{$cuenta->cuenta}' onclick='getAccountData()'>&nbsp;";
+								echo $cuenta->cuenta."</td>";
+								echo "<td width='120'></td></tr>";
+								if ($pay) {
+									if ($acc_mast->id == $pay[0] && $cuenta->cuenta == $pay[1]) {
+										$dataScript = "
+										<script type='text/javascript'>
+											$('check".($j-1)."').checked = true;
+											$('check{$acc_mast->id}_$i').checked = true;
+											$('check{$acc_mast->id}_$i').disabled = false;
+											getAccountData()
+										</script>";
+									}
+								}
+								$i++;
+							}
+							echo "<script type='text/javascript'> Nodes[$j] = $num;\n";
+							echo "NodesIds[$j] = {$acc_mast->id} </script>\n";
+						}
+						echo "<script type='text/javascript'> var numNodes = $j </script>";
+
+						?>
+					</table>
+					</div>
+				</td>
+				<td id='account' valign='top'>
+					<?php echo Flash::notice("Por favor, seleccione una mesa en la parte izquierda") ?>
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td align="center">
+					<table>
+						<tr>
+							<td>
+								<button class='commandButton' onclick='new Utils.redirectToAction("order/add/<?php echo $SalonMesas->id ?>")'>
+									<?php echo Tag::image("pos2/mesero.png", "width: 23") ?><br>
+									<b>Volver Al Pedido</b>
+								</button>
+							</td>
+							<td>
+								<button class='commandButton' onclick='new Utils.redirectToAction("tables")'>
+									<?php echo Tag::image("pos2/arrow_left-p.png", "width: 23") ?><br>
+									<b>Ir a Mesas</b>
+								</button>
+							</td>
+							<td>
+								<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+									<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+									<b>Salir</b>
+								</button>
+							</td>
+
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+
+	</td>
+</tr>
+</table>
+
+<?php echo isset($dataScript) ?  $dataScript : "<script type='text/javascript'>$(\"bcuentas\").toggle()</script>" ?>

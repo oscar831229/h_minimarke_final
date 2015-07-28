@@ -1,0 +1,23 @@
+#Index para agilizar consultas
+alter table movi drop index contab_1_index;
+create index contab_1_index USING BTREE ON movi(comprob,numero,nit,fecha,deb_cre,cuenta,tipo_doc,numero_doc);
+alter table saldosn drop index contab_2_index;
+create index contab_2_index USING BTREE ON saldosn(nit,cuenta,ano_mes);
+alter table nits drop index contab_3_index;
+create index contab_3_index USING BTREE ON nits(nit,nombre);
+alter table saldosc drop index contab_4_index;
+create index contab_4_index USING BTREE ON saldosc(cuenta,ano_mes);
+alter table saldosp drop index contab_5_index;
+create index contab_5_index USING BTREE ON saldosp(cuenta,centro_costo,ano_mes);
+alter table cartera drop index contab_6_index;
+create index contab_6_index USING BTREE ON cartera(cuenta,nit,tipo_doc,numero_doc,f_emision);
+alter table reccaj drop index contab_7_index;
+create index contab_7_index USING BTREE ON reccaj(nit,comprob,numero,fecha,rc);
+alter table saldosca drop index contab_8_index;
+create index contab_8_index USING BTREE ON saldosca(cuenta,ano_mes);
+alter table movilin drop index contab_9_index;
+create index contab_9_index USING BTREE ON movilin(comprob,numero,num_linea,item,almacen_destino,fecha,prioridad);
+alter table movihead drop index contab_10_index;
+create index contab_10_index USING BTREE ON movihead(nit,comprob,numero,almacen,fecha,estado);
+alter table cuentas drop index contab_10_index;
+create index contab_11_index USING BTREE ON cuentas(cuenta,nombre,es_auxiliar,pide_fact);

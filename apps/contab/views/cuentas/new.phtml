@@ -1,0 +1,180 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<h2>Crear Cuenta</h2>
+
+<div class="formContent">
+
+	<?php echo Tag::form('cuentas/save', 'autocomplete: off', 'class: hySaveForm') ?>
+
+		<p>
+			<table cellspacing="0" class="tablaEditarCuentas" width="75%" align="center">
+				<tr>
+					<td align="right" width="30%"><label for="cuenta">Cuenta</label></td>
+					<td>
+						<table>
+							<tr>
+								<td><?php
+									echo Tag::selectStatic('tipo', array(
+										'1' => '1',
+										'2' => '2',
+										'3' => '3',
+										'4' => '4',
+										'5' => '5',
+										'6' => '6',
+										'7' => '7'
+									));
+								?></td>
+								<td><?php echo Tag::numericField('mayor', 'size: 1', 'maxlength: 1') ?></td>
+								<td><?php echo Tag::numericField('clase', 'size: 2', 'maxlength: 2') ?></td>
+								<td><?php echo Tag::numericField('subclase', 'size: 2', 'maxlength: 2') ?></td>
+								<td><?php echo Tag::numericField('auxiliar', 'size: 3', 'maxlength: 3') ?></td>
+								<td><?php echo Tag::numericField('subaux', 'size: 3', 'maxlength: 3') ?></td>
+							</tr>
+						</table>
+					</td>
+					<td align="right"><label for="nombre">Nombre</label></td>
+					<td><?php echo Tag::textUpperField('nombre', 'size: 40') ?></td>
+				</tr>
+			</table>
+		</p>
+
+		<p>
+			<table class="tablaEditarCuentas" width="70%" align="center">
+				<tr>
+					<td align="right" width="30%"><label for="es_auxiliar">Es Auxiliar?</label></td>
+					<td width="25%">
+						<?php echo Tag::selectStatic('es_auxiliar', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+					<td align="right" width="30%"><label for="pide_nit">Pide Tercero?</label></td>
+					<td width="25%">
+						<?php echo Tag::selectStatic('pide_nit', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="pide_ban">Para Bancos?</label></td>
+					<td>
+						<?php echo Tag::selectStatic('pide_ban', array(
+							'N' => 'NO',
+							'S' => 'SI',
+							'P' => 'P'
+						)) ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="pide_base">Pide Base Grabable?</label></td>
+					<td>
+						<?php echo Tag::selectStatic('pide_base', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+					<td align="right"><label for="porc_iva">Porcentaje IVA</label></td>
+					<td>
+						<?php echo Tag::numericField('porc_iva', 'size: 4') ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="pide_fact">Pide Documento?</label></td>
+					<td>
+						<?php echo Tag::selectStatic('pide_fact', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="pide_centro">Pide Centro Costo?</label></td>
+					<td>
+						<?php echo Tag::selectStatic('pide_centro', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+					<td align="right"><label for="es_mayor">Es Cuenta Mayor?</label></td>
+					<td>
+						<?php echo Tag::selectStatic('es_mayor', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="porc_retenc">Porcentaje de Retención</label></td>
+					<td><?php echo Tag::numericField(array('porc_retenc', 'size' => 7, 'maxlength' => 7)) ?>%</td>
+				</tr>
+			</table>
+			<table width="75%" align="center">
+				<tr>
+					<td align="right"><label for="cuenta_niif">Cuenta de NIIF</label></td>
+					<td colspan="3">
+						<table class="cuentaCompleter" cellspacing="0">
+							<tr>
+								<td><?php echo Tag::textField(array('cuenta_niif', 'size' => 12)) ?></td>
+								<td><?php echo Tag::textField(array('cuenta_niif_det', 'size' => 35, 'class' => 'cuentaDetalle')) ?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<!--<tr>
+					<td align="right"><label for="cuentaContrapartida">Cuenta Contrapartida</label></td>
+					<td colspan="3">
+						<table class="cuentaCompleter" cellspacing="0">
+							<tr>
+								<td><?php echo Tag::textField(array('contrapartida', 'size' => 12)) ?></td>
+								<td><?php echo Tag::textField(array('contrapartida_det', 'size' => 35, 'class' => 'cuentaDetalle')) ?></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaRetencion">Cuenta de Retención</label></td>
+					<td colspan="3">
+						<table class="cuentaCompleter" cellspacing="0">
+							<tr>
+								<td><?php echo Tag::textField(array('cta_retencion', 'size' => 12)) ?></td>
+								<td><?php echo Tag::textField(array('cta_retencion_det', 'size' => 35, 'class' => 'cuentaDetalle')) ?></td>
+							</tr>
+						</table>
+					</td>
+					<td><?php echo Tag::numericField(array('porc_retenc', 'size' => 3, 'maxlength' => 3)) ?>%</td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaIva">Cuenta de IVA</label></td>
+					<td colspan="3">
+						<table class="cuentaCompleter" cellspacing="0">
+							<tr>
+								<td><?php echo Tag::textField(array('cta_iva', 'size' => 12)) ?></td>
+								<td><?php echo Tag::textField(array('cta_iva_det', 'size' => 35, 'class' => 'cuentaDetalle')) ?></td>
+							</tr>
+						</table>
+					</td>
+					<td><?php echo Tag::numericField(array('porcen_iva', 'size' => 3, 'maxlength' => 3)) ?>%</td>
+				</tr>-->
+			</table>
+		</p>
+
+		<?php echo Tag::hiddenField(array('hyperAction', 'value' => 'insert')); ?>
+
+	<?php echo Tag::endForm() ?>
+
+</div>

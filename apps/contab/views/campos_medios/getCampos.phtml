@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo '<p><fieldset class="tabbed">
+	<legend>Campos Formato</legend>
+	<table width="100%" class="tablaCampos">
+		<tr>
+			<td width="50%"><b>Seleccione los campos del Formato</b></td>
+			<td width="50%"><b>Indique el orden de los campos arrastrándolos</b></td>
+		</tr>
+		<tr>
+			<td width="50%" valign="top">
+				<div class="camposContainer">
+					<ul class="camposDisponibles">';
+					foreach($campos as $campo => $nombre){
+						if(isset($camposFormato[$campo])){
+							echo '<li class="selected"><input type="checkbox" name="camposFormato[]" value="', $campo, '" id="campo_', $campo, '" checked="checked"/><span>', $nombre, '</span> <span>(', $campo, ')</span></li>';
+						} else {
+							echo '<li><input type="checkbox" name="camposFormato[]" value="', $campo, '" id="campo_', $campo, '"/><span>', $nombre, '</span> <span>(', $campo, ')</span></li>';
+						}
+					}
+					echo '</ul>
+				</div>
+			</td>
+			<td width="50%" valign="top">
+				<div class="camposContainer">
+					<ul class="camposSeleccionados">';
+					foreach($camposFormato as $campo => $one){
+						echo '<li id="campo_', $campo, '" class="', $campo, '">', $campos[$campo], '</li>';
+					}
+					echo '</ul>
+				</div>
+			</td>
+		</tr>
+	</table>
+</fieldset>
+<fieldset class="tabbed">
+	<br/>
+	<legend>Cuentas de Códigos</legend>';
+	echo '<table class="hyBrowseTab zebraSt sortable camposCuentasTable" cellspacing="0" align="center">
+	<thead>
+		<th>Código Concepto</th>
+		<th>Campo</th>
+		<th>Cuenta Inicial</th>
+		<th>Cuenta Final</th>
+		<th></th>
+		<th></th>
+	</thead>
+	<tbody>';
+	if(count($cuentasFormato)){
+		foreach($cuentasFormato as $magcue){
+			echo '<tr class="camposRow">
+				<td>', Tag::selectStatic(array('codigos[]', $codigosFormato, 'value' => $magcue->getCodigo())), '</td>
+				<td>', Tag::selectStatic(array('campos[]', $camposCalculos, 'value' => $magcue->getCampo())), '</td>
+				<td>', Tag::numericField(array('cueini[]', 'size' => 12, 'maxlength' => 12, 'value' => $magcue->getCueini())), '</td>
+				<td>', Tag::numericField(array('cuefin[]', 'size' => 12, 'maxlength' => 12, 'value' => $magcue->getCuefin())), '</td>
+				<td><div class="hyAccept"></div></td>
+				<td><div class="hyDelete"></div></td>
+			</tr>';
+		}
+	}
+	echo '<tr class="camposRows">
+		<td>', Tag::selectStatic('codigos[]', $codigosFormato), '</td>
+		<td>', Tag::selectStatic('campos[]', $camposCalculos), '</td>
+		<td>', Tag::numericField('cueini[]', 'size: 12', 'maxlength: 12'), '</td>
+		<td>', Tag::numericField('cuefin[]', 'size: 12', 'maxlength: 12'), '</td>
+		<td><div class="hyAccept"></div></td>
+	</tr>';
+	echo '</tbody></table>';
+echo '</fieldset>
+</p>';

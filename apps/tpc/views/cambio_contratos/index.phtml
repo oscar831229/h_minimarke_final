@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+echo HfosTag::iconTitle('attibutes.png', 'Cambio de Número de Contrato');
+
+echo Tag::form('cambio_contratos/generar', 'class: cambioContratosForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+				    <td align="right"><label for="sociosId"><b>Contrato a Cambiar</b></label></td>
+					<td>
+						<?php
+							echo HfosTag::addHyperFormSpecialField(array(
+								'type' => 'SocioTc',
+								'name' => 'sociosId',
+								'classForm' => 'cambioContratosForm'
+							));
+						?>
+					</td>
+				</tr>
+				<tr>
+				   <td align="right"><label for="numeroContrato"><b>Nuevo Número de Contrato</b></label></td>
+					<td><?php echo Tag::textField(array('numeroContrato', 'class' => 'cuotaInicial', 'size' => 14)); ?></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

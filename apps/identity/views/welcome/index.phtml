@@ -1,0 +1,332 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$total = 10;
+
+/*echo Tag::stylesheetLink('style');
+echo Tag::stylesheetLink('backoffice/general');
+echo Tag::stylesheetLink('backoffice/style');
+echo '<div id="welcomeBox">';*/
+
+?>
+<table cellspacing="0" cellpadding="0" id="welcomePages">
+	<tr>
+		<td>
+			<div class="welcomePage startPage">
+				<div id="welcomeBoxLogo">
+					<div id="welcomeBoxHeading">
+						<h1>Bienvenido</h1>
+						<h2><?php echo Hfos_Application::getProductName() ?></h2>
+						<h3><?php echo Hfos_Application::getVersion() ?></h3>
+					</div>
+					<div align="right">
+						<div class="tourTip">
+						Utilice este tour para conocer las principales
+						características del ambiente de trabajo de
+						Hotel Front-Office Solution : Back-Office
+						<div align="right">
+							<a class="awesome startTour nextButton">Empezar</a> ó <a class="awesome awesome-finish finishButton">Saltar Tour</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Escritorio <?php echo 1, '/', $total ?></h2>
+						<div class="welcomePageText">
+							El back-office dispone un escritorio virtual donde podrá tener ventanas
+							con diferentes modulos abiertos al tiempo aumentando su productividad.
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-1.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Menús <?php echo 2, '/', $total ?></h2>
+						<div class="welcomePageText">
+							En la parte superior encontrará las diferentes opciones del sistema. Haciendo click en cualquiera de ellas
+							se abrirá su ventana asociada.
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-2.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Minimizar y Cerrar Ventanas <?php echo 3, '/', $total ?></h2>
+						<div class="welcomePageText">
+							En cada ventana también encontrará los habituales botones de minimizar [_] y cerrar [x].
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-3.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Maximizar Ventanas <?php echo 4, '/', $total ?></h2>
+						<div class="welcomePageText">
+							Al hacer doble-click sobre la barra de titulo de cualquier ventana podrá maximizarla aprovechando
+							por completo el espacio de trabajo.
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-4.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Restaurar Ventanas <?php echo 5, '/', $total ?></h2>
+						<div class="welcomePageText">
+							En la parte inferior puede cambiar de una tarea a otra ó recuperar una ventana minimizada
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-5.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Cambiar de Aplicación <?php echo 6, '/', $total ?></h2>
+						<div class="welcomePageText">
+							En la parte superior derecha podrá cambiar de una aplicación a otra. Las ventanas que tengan
+							abiertas se mantienen en su estado original cuando vuelva a ellas.
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-6.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Formato de Reportes <?php echo 7, '/', $total ?></h2>
+						<div class="welcomePageText">
+							La mayor parte de los reportes pueden ser generados a varios formatos (HTML, Excel, PDF, etc).
+							La imagen a continuación le muestra como cambiar el formato:
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-7.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Correo Interno <?php echo 8, '/', $total ?></h2>
+						<div class="welcomePageText">
+							Un sistema de correo electrónico interno esta disponible para enviar y recibir mensajes de sus
+							compañeros del hotel. También podrá recibir notificaciones automáticas sobre tareas que realice el
+							sistema.
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-8.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Auto-Guardado <?php echo 9, '/', $total ?></h2>
+						<div class="welcomePageText">
+							Si su equipo se apaga inesperadamente ó cierra la aplicación sin intención, todas las ventanas y
+							cambios sin guardar permanecerán tal como los había dejado.
+							<br/><br/>
+							<div align="center">
+								<!--<video width="320" height="210" controls id="tour-video">
+  									<source src="<?php echo Core::getInstancePath() ?>img/backoffice/tour/screen9.webm" type='video/webm; codecs="vp8, vorbis"'>
+  									<source src="<?php echo Core::getInstancePath() ?>img/backoffice/tour/screen9.ogv" type='video/ogg; codecs="theora, vorbis"'>
+								</video>-->
+								<br/>
+								<a href="#" onclick="HfosVideo.toFullScreen('tour-video'); return false">Pantalla Completa</a>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome nextButton">Siguiente</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+		<td>
+			<div class="welcomePage internalPage">
+				<div class="welcomePageInternal">
+					<div class="welcomePageContent">
+						<h2>Finalizar</h2>
+						<div class="welcomePageText">
+							Si tiene dudas sobre el manejo del sistema no dude en consultar con el servicio de soporte técnico.
+							Puede enviar dudas ó consultas a soporte técnico usando la opción "Ayuda" en la esquina
+							superior derecha.
+							<div align="center">
+								<?php echo Tag::image('backoffice/tour/screen-9.png') ?>
+							</div>
+						</div>
+					</div>
+					<div class="">
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<a class="awesome prevButton">Anterior</a>
+								</td>
+								<td align="right">
+									<a class="awesome awesome-finish finishButton">Finalizar</a>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>

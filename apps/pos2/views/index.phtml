@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <title>Punto de Venta</title>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <?php
+
+	$mode = CoreConfig::getAppSetting('mode');
+	if ($mode == 'development') {
+
+		//CSS
+		Tag::stylesheetLink('pos2/style');
+		Tag::stylesheetLink('style');
+		echo Tag::stylesheetLinkTags();
+
+		//Javascript
+		echo Tag::javascriptLibrary('framework/scriptaculous/protoculous');
+		echo Tag::javascriptLibrary('base-source');
+		echo Tag::javascriptLibrary('validations');
+
+	} else {
+		echo Tag::stylesheetLinkTags();
+	}
+	echo Tag::javascriptSources();
+	echo Tag::getJavascriptLocation()
+
+  ?>
+ </head>
+ <body>
+  <?php View::getContent(); ?>
+ </body>
+</html>

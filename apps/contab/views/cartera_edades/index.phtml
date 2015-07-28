@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('cartera.png', 'Cartera por Edades') ?>
+
+<?php echo Tag::form('cartera_edades/generar', 'class: carteraEdadesForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="fechaLimite">Fecha Límite</label></td>
+					<td><?php echo Tag::dateField('fechaLimite') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaInicial">Cuenta Inicial</label></td>
+					<td><?php echo HfosTag::cuentaField('cuentaInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="cuentaFinal">Cuenta Final</label></td>
+					<td><?php echo HfosTag::cuentaField('cuentaFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nitInicial">Tercero Inicial</label></td>
+					<td><?php echo HfosTag::terceroField('nitInicial') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="nitFinal">Tercero Final</label></td>
+					<td><?php echo HfosTag::terceroField('nitFinal') ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="orden">Orden</label></td>
+					<td><?php echo Tag::selectStatic('orden', array(
+						'N' => 'TERCERO',
+						'O' => 'CUENTA'
+					)) ?></td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Año Cierre</b></td>
+						<td><?php echo $anoCierre ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

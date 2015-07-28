@@ -1,0 +1,276 @@
+<?php
+
+View::getContent();
+
+$controllerRequest = ControllerRequest::getInstance();
+if(!$controllerRequest->isPost()){
+	echo '<div class="notice">'.sprintf($traslate['WelcomeLogin'], $nombreReserva).'</div>';
+}
+
+echo Tag::hiddenField('errorField');
+Tag::initDatePicker();
+
+?>
+
+<div class="xxx">
+	<h3><?php echo $traslate['DatosReserva'] ?></h3>
+	<table align="center" width="90%" cellspacing="3">
+		<tr>
+			<td align="right" width="150"><b><?php echo $traslate['NumeroReserva'] ?></b></td>
+			<td align="left"><?php echo $reserva->getNumres() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['FechaLlegada'] ?></b></td>
+			<td align="left"><?php echo $reserva->getFeclle()->getLocaleDate() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['FechaSalida'] ?></b></td>
+			<td align="left"><?php echo $reserva->getFecsal()->getLocaleDate() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['Noches'] ?></b></td>
+			<td align="left"><?php echo $reserva->getFecsal()->diffDate($reserva->getFeclle()) ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['Adultos'] ?></b></td>
+			<td align="left"><?php echo $reserva->getNumadu() ?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['Ninos'] ?></b></td>
+			<td align="left"><?php echo $reserva->getNumnin() ?></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top"><b><?php echo $traslate['Tarifas'] ?></b></td>
+			<td align="left" valign="top"><?php
+				$totalEstadia = 0;
+				if(count($tarifas)){
+					echo '<table cellspacing="0" width="100%" class="rate-resume">';
+					echo '<tr>
+						<th>', $traslate['Nombre'], '</th>
+						<th>', $traslate['FechaInicial'], '</th>
+						<th>', $traslate['Noches'], '</th>
+						<th>', $traslate['ValorNoche'], '</th>
+						<th>', $traslate['TotalNoches'], '</th>
+					</tr>';
+					foreach($tarifas as $tarifa){
+						echo '<tr>
+							<td align="left">', $tarifa['nombre'], '</td>
+							<td align="center">', $tarifa['fechaInicial']->getLocaleDate('medium'), '</td>
+							<td align="center">', $tarifa['tarifa']['noches'], '</td>
+							<td align="right">$ ', Currency::money($tarifa['tarifa']['valorNoche']), ' COP</td>
+							<td align="right">$ ', Currency::money($tarifa['tarifa']['totalNoches']), ' COP</td>
+						</tr>';
+						$totalEstadia+=($tarifa['tarifa']['totalNoches']);
+					}
+					echo '<tr>
+						<td align="right" colspan="4"><b>', $traslate['TotalEstadia'], '</b></td>
+						<td align="right">$ ', Currency::money($totalEstadia), ' COP</td>
+					</tr>';
+					echo '</table>';
+				} else {
+					echo $traslate['NoTarifas'];
+				}
+			?></td>
+		</tr>
+		<tr>
+			<td align="right"><b><?php echo $traslate['EstadoReserva'] ?></b></td>
+			<td align="left"><?php
+				if($reserva->getEstado()=='P'){
+					echo '<div class="pendent">', $traslate['ReservaPendiente'], '</div>';
+				} else {
+					echo '<div class="guaranted">', $traslate['ReservaGarantizada'], '</div>';
+				}
+			?></td>
+		</tr>
+	</table>
+</div>
+<br/>
+
+<h3><?php echo $traslate['UpdateCheckin'] ?></h3>
+
+<?php echo Tag::form('webcheckin/saveInformation') ?>
+<div class="indications">
+1. <?php echo $traslate['IdentificationWhy'] ?>
+</div>
+
+<div class="form-data" align="center">
+	<table align="center" width="80%" cellpadding="4" cellspacing="0">
+		<tr id="tipoDocumentoTr">
+			<td align="right" width="230"><label for="tipoDocumento"><?php echo $traslate['TipoDocumento'] ?></label></td>
+			<td align="left"><?php echo Tag::selectStatic('tipoDocumento', array(
+				'C' => $traslate['Cedula'],
+				'E' => $traslate['CedulaExtranjeria'],
+				'P' => $traslate['Pasaporte'],
+				'O' => $traslate['Otro']
+			)) ?></td>
+		</tr>
+		<tr id="numeroDocumentoTr">
+			<td align="right"><label for="numeroDocumento"><?php echo $traslate['NumeroDocumento'] ?></label></td>
+			<td align="left"><?php echo Tag::textField('numeroDocumento', 'size: 12') ?></td>
+		</tr>
+		<tr id="lugarExpedicionTr">
+			<td align="right"><label for="lugarExpedicion"><?php echo $traslate['LugarExpedicion'] ?></label></td>
+			<td align="left"><?php echo Tag::textField('lugarExpedicion', 'size: 15') ?></td>
+		</tr>
+		<tr id="primerApellidoTr">
+			<td align="right"><label for="primerApellido"><?php echo $traslate['PrimerApellido'] ?></label></td>
+			<td align="left"><?php echo Tag::textField('primerApellido', 'size: 20') ?></td>
+		</tr>
+		<tr id="segundoApellidoTr">
+			<td align="right"><label for="segundoApellido"><?php echo $traslate['SegundoApellido'] ?></label></td>
+			<td align="left"><?php echo Tag::textField('segundoApellido', 'size: 20') ?></td>
+		</tr>
+		<tr id="nombreTr">
+			<td align="right"><label for="nombre"><?php echo $traslate['Nombre'] ?></label></td>
+			<td align="left"><?php echo Tag::textField('nombre', 'size: 25') ?></td>
+		</tr>
+		<tr id="nacionalidadTr">
+			<td align="right"><label for="nacionalidad"><?php echo $traslate['Nacionalidad'] ?></label></td>
+			<td align="left"><?php echo Tag::select(array('nacionalidad', $nacionalidades, 'using' => 'id,name')) ?></td>
+		</tr>
+		<tr id="fechaNacimientoTr">
+			<td align="right"><label for="fechaNacimiento"><?php echo $traslate['FechaNacimiento'] ?></label></td>
+			<td align="left"><?php echo Tag::datePickerField('fechaNacimiento', 'finalYear: '.date('Y')) ?></td>
+		</tr>
+	</table>
+</div>
+
+<div class="indications">
+2. <?php echo $traslate['ContactWhy'] ?>
+</div>
+
+<div class="form-data">
+	<table align="center" width="80%" cellpadding="4" cellspacing="0">
+		<tr id="direccionTr">
+			<td align="right" width="230"><?php echo $traslate['Address'] ?></td>
+			<td><?php echo Tag::textField('direccion', 'size: 35') ?></td>
+		</tr>
+		<tr id="locDireccionCodigoTr">
+			<td align="right" width="230"><?php echo $traslate['CityAddress'] ?></td>
+			<td width="260">
+				<?php echo Tag::hiddenField('locDireccionCodigo') ?>
+				<?php echo Tag::textField('locDireccion', 'size: 40') ?>
+				<div class="autocomplete" id="locDireccionChoices"></div>
+			</td>
+			<td><div style="display:none" id="locDireccionTip" class="city-tip"><?php echo $traslate['CityTip'] ?></div></td>
+		</tr>
+		<tr id="telefonoTr">
+			<td align="right"><?php echo $traslate['Telefono'] ?></td>
+			<td><?php echo Tag::textField('telefono', 'size: 12') ?></td>
+		</tr>
+		<tr id="emailTr">
+			<td align="right"><?php echo $traslate['EMail'] ?></td>
+			<td><?php echo Tag::textField('email', 'size: 30') ?></td>
+		</tr>
+	</table>
+</div>
+
+
+<div class="indications">
+3. <?php echo $traslate['CompanyWhy'] ?>
+</div>
+
+<div class="form-data">
+	<table align="center" width="90%" cellpadding="4" cellspacing="0">
+		<tr>
+			<td width="20"><input type="checkbox" name="conEmpresa" id="conEmpresa" value="S" <?php echo $conEmpresa ?  'checked': '' ?>/></td>
+			<td><label for="conEmpresa"><?php echo $traslate['FacturationCompany'] ?></label></td>
+		</tr>
+		<tr id="companyData">
+			<td></td>
+			<td>
+				<br/>
+				<table align="center" width="90%">
+					<tr>
+						<td align="right"><?php echo $traslate['nitEmpresa'] ?></td>
+						<td><?php echo Tag::numericField('nitEmpresa', 'size: 15') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><?php echo $traslate['nombreEmpresa'] ?></td>
+						<td><?php echo Tag::textField('nombreEmpresa', 'size: 50') ?></td>
+					</tr>
+					<tr>
+						<td align="right" width="230"><?php echo $traslate['Address'] ?></td>
+						<td><?php echo Tag::textField('direccionEmpresa', 'size: 35') ?></td>
+					</tr>
+					<tr>
+						<td align="right" width="230"><?php echo $traslate['CityAddress'] ?></td>
+						<td>
+							<?php echo Tag::hiddenField('locDireccionEmpresaCodigo') ?>
+							<?php echo Tag::textField('locDireccionEmpresa', 'size: 40') ?>
+							<div class="autocomplete" id="locDireccionEmpresaChoices"></div>
+						</td>
+						<td><div style="display:none" id="locDireccionEmpresaTip" class="city-tip"><?php echo $traslate['CityTip'] ?></div></td>
+					</tr>
+					<tr>
+						<td align="right"><?php echo $traslate['Telefono'] ?></td>
+						<td><?php echo Tag::textField('telefonoEmpresa', 'size: 12') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><?php echo $traslate['EMail'] ?></td>
+						<td><?php echo Tag::textField('emailEmpresa', 'size: 30') ?></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	<br/>
+</div>
+
+<div class="indications">
+3. <?php echo $traslate['TrayectoriaWhy'] ?>
+</div>
+
+<div class="form-data">
+	<table align="center" width="80%" cellpadding="4" cellspacing="0">
+		<tr>
+			<td align="right" width="230"><label for="locProcedencia"><?php echo $traslate['CityProcedencia'] ?></label></td>
+			<td width="260">
+				<?php echo Tag::hiddenField('locProcedenciaCodigo') ?>
+				<?php echo Tag::hiddenField('locProcedenciaDireccion') ?>
+				<?php echo Tag::textField('locProcedencia', 'size: 40') ?>
+				<div class="autocomplete" id="locProcedenciaChoices"></div>
+			</td>
+			<td><div style="display:none" id="locProcedenciaTip" class="city-tip"><?php echo $traslate['CityTip'] ?></div></td>
+		</tr>
+		<tr>
+			<td align="right" width="230"><label for="transporteLLegada"><?php echo $traslate['TransporteLlegada'] ?></label></td>
+			<td><?php echo Tag::selectStatic(array('transporteLLegada', $transportes)) ?></td>
+		</tr>
+		<tr>
+			<td align="right" width="230"><label for="motivoViaje"><?php echo $traslate['MotivoViaje'] ?></label></td>
+			<td><?php echo Tag::selectStatic(array('motivoViaje', $motivosViaje)) ?></td>
+		</tr>
+	</table>
+</div>
+
+<div class="indications">
+4. <?php echo $traslate['CheckInWhy'] ?>
+</div>
+
+<div class="form-data">
+	<table align="center" width="80%" cellspacing="5">
+		<tr>
+			<td align="right" width="230"><label for="hora"><?php echo $traslate['HoraCheckIn'] ?></label></td>
+			<td width="260"><?php echo Tag::timeField('hora') ?></td>
+			<td><div style="display:none" id="locProcedenciaTip" class="city-tip"><?php echo $traslate['CityTip'] ?></div></td>
+		</tr>
+		<tr>
+			<td valign="top" align="right" width="230"><label for="nota"><?php echo $traslate['NotaRecepcion'] ?></label></td>
+			<td><?php echo Tag::textArea(array('nota', 'cols' => 70, 'rows' => 2)) ?></td>
+		</tr>
+	</table>
+</div>
+
+<div align="center">
+	<table>
+		<tr>
+			<td><?php echo Tag::linkTo('webcheckin/enterInformation', $traslate['Cancelar']) ?></td>
+			<td width="20"></td>
+			<td><?php echo Tag::submitButton($traslate['Save']) ?></td>
+		</tr>
+	</table>
+</div>
+<br/>
+
+<?php echo Tag::endForm() ?>

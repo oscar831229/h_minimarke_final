@@ -1,0 +1,79 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body, input {
+	font-family: "Lucida Console";
+	margin: 0px;
+}
+
+input[type="text"]{
+	border: 1px solid #969696;
+}
+
+.bt {
+	border: 1px solid #969696;
+	background: #ffffff;
+	height: 28px;
+	width: 50px;
+	font-size: 11px;
+	padding: 0px;
+}
+
+.but {
+	border: 1px solid #969696;
+	width: 50px;
+	height: 50px;
+	background: #ffffff;
+	color: black;
+	font-size: 28px;
+}
+
+.bok {
+	width: 50px;
+	height: 50px;
+	background: #519F15;
+	color: #fff;
+	font-size: 24px;
+}
+
+.bca {
+	width: 50px;
+	height: 50px;
+	background: red;
+	color: #fff;
+	font-size: 24px;
+}
+
+#clave {
+	width: 110px;
+	height: 28px;
+}
+
+#viewport {
+	width:100%;
+	height:500px;
+	background:#f2f2f2;
+}
+
+#moduleTitle {
+	background: black;
+	color: #fff;
+}
+
+#itemsList input[type="button"] {
+	text-align: left;
+	width: 200px;
+	border: 1px solid #969696;
+	background: #ffffff;
+}

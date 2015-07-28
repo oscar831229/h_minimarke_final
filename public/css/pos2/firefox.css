@@ -1,0 +1,120 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body {
+	background-image: url("../../img/pos2/firefox-logo.png");
+	background-position: 100px 100px;
+	background-repeat: no-repeat;
+	background-color: #2A343B;
+}
+
+#bg-fire {
+	margin: 50px;
+	background: #333333;
+	background-color: rgb(33, 33, 33);
+	background-color: rgba(33, 33, 33, 0.93);
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	border-radius: 20px;
+	padding: 30px;
+	padding-bottom: 15px;
+	-webkit-box-shadow: 5px 7px 10px rgba(33, 33, 33, 0.8);
+	-moz-box-shadow: 5px 7px 10px rgba(21, 21, 21, 0.8);
+	box-shadow: 5px 7px 10px rgba(21, 21, 21, 0.8);
+}
+
+#bg-fire h1 {
+	font-family: georgia,serif;
+	font-size: 32px;
+    font-style: italic;
+	color: #51BCEF;
+	padding: 0px;
+	text-shadow: 0 1px 0px rgba(255, 255, 255, 0.25);
+	font-weight: normal;
+}
+
+#bg-fire p,
+#bg-fire li,
+#bg-fire a {
+	color: #f2f2f2;
+	font-size: 16px;
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.7);
+	font-family: Lucida Sans, Tahoma;
+}
+
+.awesome {
+	background-color: green;
+	background-image: -moz-linear-gradient(top center, transparent, #004422);
+	display: inline-block;
+	padding: 5px 10px 6px;
+	color: #fff;
+	text-decoration: none;
+	line-height: 1;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	border-bottom: 1px solid rgba(0,0,0,0.25);
+	position: relative;
+	cursor: pointer;
+	padding: 20px;
+	width: 150px;
+	text-align: center;
+}
+
+.awesome a {
+	text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	font-family: georgia, serif;
+	font-size: 24px;
+	color: #fff;
+}
+
+.small_text {
+	margin-top: 20px;
+	color: #eaeaea;
+}
+
+#mh_div,
+#m_table,
+#m_table_con,
+#mainTd {
+	height: 570px;
+}
+
+#mTr2 {
+	display: none;
+}
+
+#opt_bar_con {
+	width: 180px;
+}
+
+#tleftPannel,
+#left_dock,
+#yellow_sh,
+#red_sh {
+	display: none;
+}
+
+#learn_more {
+	padding-top: 20px;
+	padding-left: 10px;
+}
+
+#learn_more a {
+	text-decoration: underline;
+	color: #51BCEF;
+}

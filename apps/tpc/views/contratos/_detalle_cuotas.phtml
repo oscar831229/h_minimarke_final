@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2011
+ * @version		$Id$
+ */
+$estadosCuota = array('D'=>'Debe','P'=>'Pagado');
+echo '
+<div class="detalleCuotas">
+    <table cellspacing="0" cellpadding="0" align="center">
+		<tr>
+		  <td align="right"><label for="hoy">Primera Cuota</label></td>
+		  <td>'.Tag::numericField(array('hoy','size'=>10)).'<span class="notNullMark">!</span></td>
+		  <td><label for="fecha1">Fecha</label></td>
+		  <td>'.Tag::date360Field(array('fecha1','useDummy'=>true)).'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="cuota2">Segunda Cuota</label></td>
+		  <td>'.Tag::numericField(array('cuota2','size'=>10)).'</td>
+		  <td><label for="fecha2">Fecha</label></td>
+		  <td>'.Tag::date360Field(array('fecha2','useDummy'=>true)).'</td>
+		</tr>
+		<tr>
+		  <td align="right"><label for="cuota3">Tercera Cuota</label></td>
+		  <td>'.Tag::numericField(array('cuota3','size'=>10)).'</td>
+		  <td><label for="fecha3">Fecha</label></td>
+		  <td>'.Tag::date360Field(array('fecha3','useDummy'=>true)).'</td>
+		</tr>
+	</table>
+</div>';

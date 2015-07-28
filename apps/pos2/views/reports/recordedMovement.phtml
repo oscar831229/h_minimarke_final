@@ -1,0 +1,242 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$Datos->findFirst(); ?>
+<html>
+<head>
+<meta http-equiv='Content-type' content='text/html; charset=UTF-8' />
+<style type='text/css'>
+h1 {
+	margin: 0px;
+	font-weight: normal;
+	font-size: 18px;
+}
+
+table {
+	border-right: 1px solid #969696;
+	border-top: 1px solid #969696;
+}
+
+td, th {
+	font-size: 12px;
+	border-left: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+	font-family:Verdana
+}
+th {
+	border-left: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+	background: #eaeaea;
+	font-family: Verdana
+}
+</style>
+</head>
+<body>
+
+<div style='font-size:12px;font-family:Verdana'>
+<?php
+
+echo '<h1>'.$Datos->getNombreCadena()."</h1>\n";
+echo $Datos->getDocumento()." No. : ".$Datos->getNit()."<br/>\n";
+echo i18n::strtoupper($Datos->getNombreHotel())."<br/>\n";
+echo "REPORTE DE MOVIMIENTO DIGITADO", "<br>";
+if($fecha_inicial==$fecha_final){
+	echo "Fecha: {$fecha_inicial}", "<br>";
+} else {
+	echo "Fecha: {$fecha_inicial} - {$fecha_final}<br>\n";
+}
+echo "Fecha Impresión: ".Date::now(), "<br>";
+echo "Cajero: ".i18n::strtoupper(Session::getData("usuarios_nombre"))."<br>";
+
+if($salon_id!='@'){
+	$salon = $Salon->findFirst($salon_id);
+	if($salon){
+		echo "Ambiente: {$salon->nombre}<br>";
+	}
+} else {
+	echo "TODOS LOS AMBIENTES";
+}
+
+if($usuarioId>0){
+	$usuario = $UsuariosPos->findFirst($usuarioId);
+	if($usuario){
+		echo "Ambiente: {$usuario->nombre}<br>";
+	}
+} else {
+	echo "TODOS LOS USUARIOS";
+}
+
+$tipoVentas = array(
+	'F' => 'FACTURA',
+	'H' => 'CARGO HABITACIÓN/F. DIRECTA',
+	'C' => 'CORTESIA',
+	'U' => 'FUNCIONARIO',
+	'P' => 'PLAN'
+);
+
+foreach($tipoVentas as $tipo => $nombreTipo){
+
+?>
+<br/><br/>
+<b><?php echo $nombreTipo ?></b><br/>
+<table cellspacing="0">
+<tr>
+	<th>Comanda</th>
+	<th>Orden/Factura</th>
+	<th>Fecha</th>
+	<th>Ambiente</th>
+	<th>Habitación</th>
+	<th>Documento</th>
+	<th>Nombre Cliente</th>
+	<th>Item</th>
+	<th>Cantidad</th>
+	<th>Descuento</th>
+	<th>Valor Uni.</th>
+	<th>Alimentos</th>
+	<th>Bebidas</th>
+	<th>IVA Uni.</th>
+	<th>Valor Total</th>
+	<th>Usuario</th>
+</tr>
+<?php
+
+	if($salon_id=='@'){
+		$conditions = "date({#AccountMaster}.hora) >= '$fecha_inicial' AND
+		date({#AccountMaster}.hora) <= '$fecha_final' AND
+		{#AccountMaster}.estado = 'L' AND
+		{#AccountCuentas}.estado <> 'C' AND
+		{#Account}.estado <> 'C'";
+	} else {
+		$conditions = "date({#AccountMaster}.hora) >= '$fecha_inicial' AND
+		date({#AccountMaster}.hora) <= '$fecha_final' AND
+		{#AccountMaster}.estado = 'L' AND
+		{#AccountMaster}.salon_id = '$salon_id' AND
+		{#AccountCuentas}.estado <> 'C' AND
+		{#Account}.estado <> 'C'";
+	}
+	$conditions.= " AND {#AccountCuentas}.tipo_venta = '$tipo'";
+	if($comandaInicial>0){
+		$conditions.= " AND {#Account}.comanda >= '$comandaInicial' AND
+		{#Account}.comanda <= '$comandaFinal'";
+	}
+	if($usuarioId>0){
+		$conditions.= " AND {#AccountMaster}.usuarios_id = $usuarioId";
+	}
+
+	$query = new ActiveRecordJoin(array(
+		'entities' => array('AccountMaster', 'Account', 'MenusItems', 'AccountCuentas', 'Salon', 'UsuariosPos'),
+		'conditions' => $conditions,
+		'fields' => array(
+							'{#Account}.comanda',
+							'{#AccountCuentas}.prefijo',
+							'{#AccountCuentas}.numero',
+							'{#AccountCuentas}.habitacion_id',
+							'{#AccountCuentas}.clientes_cedula',
+							'{#AccountCuentas}.clientes_nombre',
+			'fecha' => 		'date({#AccountMaster}.hora)',
+			'ambiente' => 	'{#Salon}.nombre',
+							'{#MenusItems}.nombre',
+							'{#MenusItems}.tipo',
+							'{#Account}.cantidad',
+							'{#Account}.descuento',
+							'{#Account}.iva',
+							'{#Account}.valor',
+							'{#Account}.total',
+			'usuario' => 	'{#UsuariosPos}.nombre'
+		),
+		'order' => array('{#Account}.comanda')
+	));
+
+	$totalIva = 0;
+	$totalValor = 0;
+	$totalTotal = 0;
+	$totalAlimentos = 0;
+	$totalBebidas = 0;
+	$cantidad = 0;
+	foreach($query->getResultSet() as $item){
+		echo "<tr>";
+		echo "<td align='left'>", $item->comanda, "</td>";
+		echo "<td align='left'>", $item->prefijo, '-', $item->numero, "</td>";
+		echo "<td align='left'>", $item->fecha, "</td>";
+		echo "<td align='left'>", $item->ambiente, "</td>";
+		if($item->habitacion_id!=-1){
+			$habitacion = $HabitacionHistorico->findFirst($item->habitacion_id);
+			if($habitacion!=false){
+				echo "<td align='right'>", $item->habitacion_id, '/', $habitacion->numhab, "</td>";
+			} else {
+				echo "<td>&nbsp;</td>";
+			}
+		} else {
+			echo "<td>&nbsp;</td>";
+		}
+		echo "<td align='right'>", $item->clientes_cedula, "</td>";
+		echo "<td align='left'>", $item->clientes_nombre, "</td>";
+		echo "<td align='left'>", $item->nombre, "</td>";
+		echo "<td align='right'>", $item->cantidad, "</td>";
+		echo "<td align='right'>", $item->descuento, "</td>";
+		if($item->descuento>0){
+			$valor = ($item->valor-$item->valor*$item->descuento/100)*$item->cantidad;
+		} else {
+			$valor = $item->valor*$item->cantidad;
+		}
+		if($item->descuento>0){
+			$iva = ($item->iva-$item->iva*$item->descuento/100)*$item->cantidad;
+		} else {
+			$iva = $item->iva*$item->cantidad;
+		}
+		if($item->descuento>0){
+			$total = ($item->total-$item->total*$item->descuento/100)*$item->cantidad;
+		} else {
+			$total = $item->total*$item->cantidad;
+		}
+		echo "<td align='right'>", Currency::number($valor, 2), "</td>";
+		if($item->tipo=='A'){
+			echo "<td align='right'>", Currency::number($valor, 2), "</td>";
+			$totalAlimentos += $valor;
+		} else {
+			echo "<td align='right'>0.00</td>";
+		}
+		if($item->tipo=='B'){
+			echo "<td align='right'>", Currency::number($valor, 2), "</td>";
+			$totalBebidas += $valor;
+		} else {
+			echo "<td align='right'>0.00</td>";
+		}
+		echo "<td align='right'>", Currency::number($iva, 2), "</td>";
+		echo "<td align='right'>", Currency::number($total, 2), "</td>";
+		echo "<td align='left'>", $item->usuario, "</td>";
+		echo "</tr>";
+		$totalIva += $iva;
+		$totalValor += $valor;
+		$totalTotal += $total;
+		$cantidad += $item->cantidad;
+	}
+
+?>
+<tr>
+	<td colspan="8">&nbsp;</td>
+	<td align="right"><b><?php echo $cantidad ?></b></td>
+	<td>&nbsp;</td>
+	<td align="right"><b><?php echo Currency::number($totalValor, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($totalAlimentos, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($totalBebidas, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($totalIva, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($totalTotal, 2) ?></b></td>
+	<td colspan="1">&nbsp;</td>
+</tr>
+</table>
+<?php } ?>
+</body>
+</html>

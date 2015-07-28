@@ -1,0 +1,64 @@
+#mainTd,
+#mTd {
+	padding: 0px;
+}
+
+#IFrame1 {
+	background-color: #202128;
+	border: 1px solid #969696;
+	width: 100%;
+	height: 720px;
+}
+.titulop {
+	font-size: 26px;
+}
+.titulos {
+	font-size: 12px;
+}
+table#fore_legend {
+	border: 1px solid #969696;
+	background: #dadada;
+	margin: 10px;
+}
+table#fore_legend td {
+	font-size: 10px;
+}
+td.fore_color {
+	width: 12px;
+	height: 12px;
+}
+td#fore_ocu {
+	background: #99ccff;
+	border: 1px solid #83AFDD;
+}
+td#fore_blo {
+	background: #FF8080;
+	border: 1px solid #D86E6E;
+}
+td#fore_grup {
+	background: #C6ECFF;
+	border: 1px solid #A3C3D3;
+}
+td#fore_int {
+	background: #A4C688;
+}
+td#fore_pen {
+	background: #FFCC99;
+	border: 1px solid #E0B488;
+}
+td#fore_gar {
+	border: 1px solid #CBCBAB;
+	background: #FFFFD4;
+}
+td#fore_grug {
+	background: #FFBBDD;
+	border: 1px solid #E0B488;
+}
+
+#other_options {
+	border: 1px solid #969696;
+	width: 300px;
+	background: url(../img/bg2.jpg);
+	margin: 10px;
+	padding: 5px;
+}

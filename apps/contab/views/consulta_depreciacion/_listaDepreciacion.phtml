@@ -1,0 +1,49 @@
+	<?php 
+		if(is_array($depreciacion) && count($depreciacion)>0){
+	?>
+		<div>
+			<table width="50%" align="center" cellpadding="0" cellspacing="0" class="hyBrowseTab zebraSt sortable tabAppChoose">
+				<tr>
+					<td>
+						<b>Valor Compra </b>
+						<br>
+						<?php echo $valorCompra ?>
+					</td>
+					<td>
+						<b>Valor Iva</b> 
+						<br>
+						<?php echo $valorIvaCompra ?>
+					</td>				
+				</tr>
+			</table>
+		</div>
+		<table  width="50%" align="center" class="hyBrowseTab zebraSt sortable tabAppChoose" cellspacing="0" cellpadding="0">
+			<tr>
+				<th class="sortcol">N&uacute;mero</th>
+				<th class="sortcol">Periodo</th>
+				<th class="sortcol">Valor</th>
+				<th class="sortcol">Depreciada</th>
+			</tr>
+	<?php 			
+			foreach($depreciacion as $depre){
+				
+				echo "<tr>";
+				echo "<td align='center'>".$depre["ciclo"]."</td>";
+				echo "<td align='center'>".$depre["fecha"]."</td>";
+				echo "<td align='right'>".$depre["valorDep"]."</td>";
+				echo "<td align='center'>";
+				if(isset($depre["saved"]) && $depre["saved"]){
+					echo Tag::image("backoffice/accept.png");
+				}else{
+					echo Tag::image("backoffice/alert.png");
+				}
+				echo "</td>";
+				echo "</tr>";
+			}
+			echo "</table>";	
+		}else{			
+			if(!$mesesDepreciar){
+				echo Flash::notice("No hay meses de depreciación ingresados a activo");	
+			}
+		}
+	?>

@@ -1,0 +1,42 @@
+div.autocomplete {
+    position: absolute;
+    margin-top: 0px;
+    margin-left: 0px;
+    /*margin-left: 74px;*/
+}
+
+input, select, .iNormal, button {
+    font-family: Verdana;
+    font-size: 12px;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+}
+
+input[disabled], select[disabled], textarea[disabled] {
+	color: #222222;
+	background: #fafafa;
+}
+
+input[readonly], select[readonly], textarea[readonly] {
+	color: #222222;
+	background: #fafafa;
+}
+
+strong {
+	font-weight: bold;
+}
+
+legend, fieldset {
+	text-align: left;
+}
+
+.amenu {
+	font-family: "Verdana";
+}
+
+.active_amenu {
+	font-family: "Verdana";
+	font-weight: bold;
+	text-shadow: none;
+	text-shadow: rgba(71, 71, 71, 0.796875) 0px 1px 0px;
+}

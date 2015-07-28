@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<h2>Campos y Rangos de Cuentas</h2>
+
+<?php echo Tag::form('campos_medios/guardar', 'class: camposCuentasForm', 'onbeforesubmit: return false') ?>
+
+	<div class="formatosDiv">
+		<table align="center">
+			<tr>
+				<td align="right"><label for="magfor">Formato</label></td>
+				<td><?php echo Tag::selectStatic('magfor', $formatos, 'useDummy: yes') ?></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="campos"></div>
+
+<?php echo Tag::endForm() ?>

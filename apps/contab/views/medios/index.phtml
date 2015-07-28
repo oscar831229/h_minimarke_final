@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @author 		BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('report-excel.png', 'Generar Medios Magnéticos') ?>
+
+<?php echo Tag::form('medios/generar', 'class: mediosForm') ?>
+<table align="center">
+	<tr>
+		<td align="right"><label for="magfor">Formato</label></td>
+		<td><?php echo Tag::selectStatic('magfor', $formatos, 'useDummy: yes') ?></td>
+	</tr>
+	<tr>
+		<td align="right"><label for="concepto">Concepto</label></td>
+		<td><?php echo Tag::selectStatic('concepto', array(
+			'1' => 'INSERCIÓN/NUEVO',
+			'2' => 'REEMPLAZO'
+		)) ?></td>
+	</tr>
+	<tr>
+		<td align="right"><label for="fechaInicial">Fecha Inicial</label></td>
+		<td><?php echo Tag::dateField('fechaInicial') ?></td>
+	</tr>
+	<tr>
+		<td align="right"><label for="fechaFinal">Fecha Final</label></td>
+		<td><?php echo Tag::dateField('fechaFinal') ?></td>
+	</tr>
+	<tr>
+		<td align="right"><label for="tipo">Tipo Salida</label></td>
+		<td><?php echo Tag::selectStatic('tipo', array(
+			'excel' => 'EXCEL',
+			'xml' => 'XML'
+		)) ?></td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>
+
+<div class="campos"></div>

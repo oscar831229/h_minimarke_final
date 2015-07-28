@@ -1,0 +1,165 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+/**
+ * Facturas_GeneradasController
+ *
+ * Controlador de las facturas generadas
+ *
+ */
+class Conceptos_CausadosController extends ApplicationController {
+
+	public function initialize(){
+		$controllerRequest = ControllerRequest::getInstance();
+		if($controllerRequest->isAjax()){
+			View::setRenderLevel(View::LEVEL_LAYOUT);
+		}
+	}
+	
+	/**
+	 * Vista principal
+	 *
+	 */
+	public function indexAction(){
+		$this->setParamToView('message', 'Seleccione los criterios de busqueda');
+		$periodos = EntityManager::get('Periodo')->find(array('order'=>'periodo DESC')); 
+		$this->setParamToView('periodos', $periodos);
+	}
+
+	/**
+	 * Cambia el numero de accion de un socio
+	 *
+	 * 
+	 */
+	public function generarAction(){
+	    $this->setResponse('json');
+
+	    try {
+
+	    	$transaction		= TransactionManager::getUserTransaction();
+
+	    	//Parametros de busqueda
+		    $periodoStr= $this->getPostParam('periodo', 'int');
+
+			$reportType	= $this->getPostParam('reportType', 'alpha');
+			//$reportType	= 'html';
+			
+			//TITULO PRINCIPAL
+			$headers[]= new ReportText('INFORME DE FACTURAS GENERADAS', array(
+				'fontSize' => 16,
+				'fontWeight' => 'bold',
+				'textAlign' => 'center'
+			));
+
+			$headers[]= new ReportText('Fecha de emisión: '.date('Y-m-d'), array(
+				'fontSize' => 13,
+				'fontWeight' => 'bold',
+				'textAlign' => 'center'
+			));
+
+			$i = 1;
+
+			$report		= ReportBase::factory($reportType);
+			$report->setHeader($headers);
+			$report->setDocumentTitle('Informe de Facturas Generadas');
+			$report->setColumnHeaders(array(
+				'NUM.',
+				'NÚMERO DE ACCIÓN',
+				'NOMBRE',
+				'CÉDULA',
+				'COMPROBANTE',
+				'VALOR TOTAL CAUSADO'
+			));
+			$report->setCellHeaderStyle(new ReportStyle(array(
+				'textAlign' => 'center',
+				'backgroundColor' => '#eaeaea'
+			)));
+			$report->setColumnStyle(array(0,1,2,3,4,6), new ReportStyle(array(
+				'textAlign' => 'center',
+				'fontSize' => 11
+			)));
+			$report->setColumnStyle(array(5), new ReportStyle(array(
+				'textAlign' => 'rigth',
+				'fontSize' => 11
+			)));
+			$report->start(true);
+
+			$total=0;
+
+			//Buscamos segun periodo
+			$facturaObj = EntityManager::get('Factura')->find(array("periodo='$periodoStr'"));
+			foreach($facturaObj as $factura){
+
+				$sociosId = $factura->getSociosId();
+
+				//Get info de socio
+				$socio = BackCacher::getSocios($sociosId);
+
+				if($socio==false){
+					continue;
+				}
+
+				//SUM MOVIMIENTO
+				$valorTotal = EntityManager::get('DetalleMovimiento')->sum("cargo_fijo_id>0 and movimiento_id={$factura->getMovimientoId()}");
+
+
+				//Add new row
+				$report->addRow(array(
+					$i,
+					$socio->getNumeroAccion(),
+					$socio->getNombres().' '.$socio->getApellidos(),
+					$socio->getIdentificacion(),
+					$factura->getComprobContab().'-'.$factura->getNumeroContab(),
+					$valorTotal
+				));
+				$i++;
+
+				$total+= $valorTotal;
+
+				unset($factura, $valorTotal, $socios, $sociosId);
+			}
+
+			unset($facturaObj);
+
+			//Total
+			$report->addRow(array(
+				'',
+				'',
+				'TOTAL CONCEPTOS CAUSADOS',
+				'',
+				'',
+				$total
+			));
+
+			$report->finish();
+			$config['file']= $report->outputToFile('public/temp/conceptos_causados');
+
+			return array(
+				'status' 	=> 'OK',
+				'message' 	=> 'Se genero el informe exitosamente',
+				'file'		=> 'temp/'.$config['file']
+			);				
+
+		}
+		catch(Exception $e){
+			return array(
+			    'status' 	=> 'FAILED',
+			    'message' 	=> $e->getMessage()
+			);
+		}
+		
+	}
+
+}

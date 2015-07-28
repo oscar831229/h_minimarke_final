@@ -1,0 +1,37 @@
+<div data-role="page">
+
+	<div data-role="header" data-theme="g">
+		<h1>Hotel Front-Office Solution: Housekeeper</h1>
+	</div>
+
+	<div data-role="content">
+
+		<?php
+
+		View::getContent();
+
+		if(isset($message)){
+			echo '<p><ul data-role="listview" data-dividertheme="h">
+				<li data-role="list-divider">', $message, '</li>
+			</ul><br/></p>';
+		}
+
+		?>
+
+		<?php echo Tag::form(array('session/start', "data-ajax" => "false")) ?>
+
+		<p>
+			<label for="codusu">Usuario:</label>
+			<?php echo Tag::selectStatic('login', $usuarios); ?>
+
+			<label for="basic">Contraseña:</label>
+	    	<?php echo Tag::passwordField('password') ?>
+	    </p>
+
+	    <p>
+	    	<?php echo Tag::submitButton(array('Ingresar', "data-theme" => "f")); ?>
+	    </p>
+
+		<?php echo Tag::endForm() ?>
+	</div>
+</div>

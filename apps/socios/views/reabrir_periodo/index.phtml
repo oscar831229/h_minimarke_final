@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('refresh.png', 'Reabrir Cierre de periodo') ?>
+
+<?php echo Tag::form('reabrir_periodo/reabrir', 'class: reabrirForm') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table align="left">
+				<tr>
+					<td align="right">
+						<label for="periodoActual">Periodo Actual</label>
+					</td>
+					<td id="periodoActual"><?php if (isset($periodoActual)) { echo $periodoActual;} ?></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<label for="periodoAbrir">Periodo Al Abrir</label>
+					</td>
+					<td id="periodoAbrir"><?php if (isset($periodoAbrir)) { echo $periodoAbrir;} ?></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

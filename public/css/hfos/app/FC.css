@@ -1,0 +1,48 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div.facturas div.formNuevo {
+	margin-bottom: 20px;
+}
+
+div.facturas input.crearNit {
+	font-size: 11px;
+}
+
+table.movimientoStatusBar td {
+	color: #99C7D5;
+	font-size: 13px;
+}
+
+table.movimientoStatusBar table.sumasTable {
+
+}
+
+table.movimientoStatusBar table.sumasTable td {
+	font-family: Anivers;
+	font-size: 14px;
+	color: #6BA3DC;
+}
+
+table.movimientoStatusBar table.sumasTable td b {
+	color: #ffffff;
+	font-weight: normal;
+	font-size: 16px;
+	margin-right: 16px;
+}
+
+table.movimientoStatusBar table.sumasTable td b.descuadre {
+	color: #CE5A00;
+}
+

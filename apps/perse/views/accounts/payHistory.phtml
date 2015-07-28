@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$guestInfo = SessionNamespace::get('guestInfo');
+$fecha = new Date();
+
+Flash::notice($traslate['PayHistoryInfo']);
+
+?>
+<table width="100%">
+	<tr>
+		<td>
+			<h1 class="no-screen"><?php echo $guestInfo->getHotel(); ?></h1>
+			<h2 class="no-screen"><?php echo $guestInfo->getCliente(), ' / ', $guestInfo->getHabitacion() ?></h1>
+			<h2><?php echo $traslate['payHistory']; ?></h2>
+			<h3 class="no-screen"><?php echo $fecha->getLocaleDate().', '.date('H:i'); ?></h3>
+		</td>
+		<td align="right" width="100" valign="top">
+			<div id="print-button" class="no-print">
+				<table align="center">
+					<tr>
+						<td width="27"><?php echo Tag::image('perse/print.png', 'height: 20') ?></td>
+						<td align="left"><a href="#" onclick="window.print(); return false"><?php echo $traslate['Imprimir'] ?></a></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+
+<div id="accounts-details" align="center">
+	<table cellspacing="0" class="table-white">
+		<?php
+			if(count($abonos)){
+				echo '<tr>
+					<td class="th-cell">', $traslate['fecha'], '</td>
+					<td class="th-cell">', $traslate['cuenta'], '</td>
+					<td class="th-cell">', $traslate['recibo'], '</td>
+					<td class="th-cell">', $traslate['ultimaFecha'], '</td>
+					<td class="th-cell">', $traslate['valor'], '</td>
+					<td class="th-cell">', $traslate['estado'], '</td>
+				</tr>';
+				foreach($abonos as $abono){
+
+					echo '<tr>
+						<td align="center">', $abono['fecha'], '</td>
+						<td align="right">', $abono['cuenta'], '</td>
+						<td align="right">', $abono['recibo'], '</td>
+						<td align="center">', $abono['ultimaFecha'], '</td>
+						<td align="right">', Currency::money($abono['valor']), '</td>
+						<td align="right">', $abono['estado'], '</td>
+					</tr>';
+
+				}
+			} else {
+				echo '<tr><td colspan="7" align="center" class="no-has">', $traslate['NoPays'], '</td></tr>';
+			}
+		?>
+		<tr>
+			<td colspan="6"  id="total-td" align="right"><?php
+			//echo $traslate['PagosAFavor'] ?></td>
+			<td align="right" id="total-sum"><?php
+			//echo Currency::money($abonos/$currencyFactor) ?></td>
+		</tr>
+		<tr>
+			<td colspan="6"  id="total-td" align="right"><?php
+			//echo $traslate['TotalConsumos'] ?></td>
+			<td align="right" id="total-sum"><?php
+			//echo Currency::money($consumos/$currencyFactor) ?></td>
+		</tr>
+		<tr>
+			<td colspan="6"  id="total-td" align="right" style="color:#000"><?php
+			//echo $traslate['SaldoFinal'] ?></td>
+			<td align="right" id="total-sum" style="color:#000"><?php
+			//echo Currency::money(($consumos-$abonos)/$currencyFactor) ?></td>
+		</tr>
+	</table>
+</div>

@@ -1,0 +1,96 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo View::getContent();
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/status');
+} else {
+	Tag::stylesheetLink('pos2/production/upgrade', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/upgrade', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+?>
+
+<script type="text/javascript">
+function upgradeTo(version){
+	$('upgrading').show();
+	$('noPedidos').hide();
+	new Ajax.Request(Utils.getKumbiaURL('upgrade/to'+version), {
+		method: 'GET',
+		onLoading: function(){
+			$('loading').show();
+		},
+		onFailure: function(transport){
+			$('loading').hide();
+			$('upgrading').update('Ocurrió un error al realizar la actualización. Se han generado los siguientes mensajes<br/><div id="messages">'+transport.responseText+'</div>');
+		},
+		onSuccess: function(transport){
+			$('loading').hide();
+			$('upgrading').update('Todo quedó bien<br/><div id="messages">'+transport.responseText+'</div>');
+			window.location = Utils.getKumbiaURL()+'?nocache';
+		}
+	})
+}
+</script>
+
+<div align='center'>
+	<table align='center' cellspacing="0" cellpadding="0">
+		<tr>
+			<td class='sh_left'></td>
+			<td>
+				<table cellspacing="0" width="800">
+					<tr>
+						<td class='titulo' align='left'>
+							Actualizar Versión
+						</td>
+					</tr>
+					<tr>
+						<td id="upgradeMain" align="center">
+							<div id="upgrading" style="display:none">
+								Se está actualizando la versión, al terminar el proceso será redirigido al menú principal,
+								no cierre esta ventana ni apague el computador, este proceso puede durar varios minutos,
+								por favor espere...
+								<div align="center" id="loading" style="display:none">
+									<?php echo Tag::image('pos2/loading.gif') ?>
+								</div>
+							</div>
+							<div id="noPedidos">
+								<table width="450">
+									<tr>
+										<td valign="top"><?php echo Tag::image("pos2/adverp.png", "width: 72") ?></td>
+										<td width="350">
+											La base de datos de Hotel Front-Office Solution POS está desactualizada. Haga click en continuar
+											para efectuar los procesos de actualización necesarios para migrar a la versión <?php echo $id ?>
+											<div align="right" style="padding:10px">
+												<input type="button" value="Actualizar" onclick="upgradeTo(<?php echo str_replace('.', '', $id) ?>);" class="controlButton"/>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td class='sh_right'></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td class='sh_down'></td>
+			<td></td>
+		</tr>
+</table>

@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2014
+ * @version		$Id$
+ */
+
+View::getContent();
+Tag::addJavascript('pos2/ambientes');
+
+?>
+
+
+<h1>Items en Ambientes</h1>
+
+<table align="center">
+	<tr>
+		<td align="right" style='font-size:11px'>
+			<b>Seleccione un Item</b>
+		</td>
+		<td>
+			<select autocomplete='off' name='menus_items_id' id='menus_items_id' onchange='new AmbientesItems.cargarAmbientesItems(this)'>
+				<option value='@'>Seleccione...</option>
+				<?php
+					foreach ($MenusItems->find(array("estado='A'", "order" => "nombre")) as $menuItem) {
+						echo "<option value='{$menuItem->id}'>{$menuItem->nombre}</option>\n";
+					}
+				?>
+			</select>
+		</td>
+		<td><?php echo Tag::image(array('pos2/loading.gif', 'width' => 15, 'id' => 'loader', 'style' => 'display:none')) ?></td>
+	</tr>
+</table>
+
+<div id='lista_items'></div>
+
+<?php if ($id) { ?>
+<script type='text/javascript'>
+$("menus_items_id").value = "<?= $id ?>";
+new AmbientesItems.cargarAmbientesItems($("menus_items_id"));
+</script>
+<?php } ?>

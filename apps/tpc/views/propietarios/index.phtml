@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+echo HfosTag::iconTitle('attibutes.png', 'Proyección de Contrato');
+
+echo Tag::form('propietarios/buscar', 'class: propietariosForm', 'target: _new') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<fieldset>
+				<legend><b><i>Fecha de Compra</i></b></legend>
+				<table>
+				<tr>
+					<td align="left"><b>Fechas Inicial</b></td>
+					<td>
+						<?php echo Tag::dateField(array('fechaCompraIni','useDummy'=>true)); ?>
+					</td>
+					<td>&nbsp;a&nbsp;</td>
+					<td align="left"><b>Fechas Final</b></td>
+					<td>
+						<?php echo Tag::dateField(array('fechaCompraFin','useDummy'=>true)); ?>
+					</td>
+				</tr>
+			</table>
+			</fieldset>
+			<hr/>
+			<fieldset>
+				<legend><b><i>Estados</i></b></legend>
+				<table>
+				<tr>
+					<td align="left"><b>Estado de Contrato</b></td>
+					<td>
+						<?php 
+							$estadoContratoObj = EntityManager::get('EstadoContrato')->find(array('order'=>'nombre ASC'));
+							echo Tag::select('estadoContrato',$estadoContratoObj,'using: codigo,nombre', 'useDummy: true'); 
+						?>
+					</td>
+					<td align="left"><b>Estado de Movimiento</b></td>
+					<td>
+						<?php 
+							$estadoMovimientoObj = EntityManager::get('EstadoMovimiento')->find(array('order'=>'nombre ASC'));
+							echo Tag::select('estadoMovimiento',$estadoMovimientoObj,'using: codigo,nombre', 'useDummy: true'); 
+						?>
+					</td>
+				</tr>
+			</table>
+			</fieldset>
+			<hr/>
+			<fieldset>
+				<legend><b><i>Porcentajes de Saldo</i></b></legend>
+				<table>
+				<tr>
+					<td align="left"><b>Signo</b></td>
+					<td>
+						<?php 
+							echo Tag::selectStatic(array('porcentajeSigno', $signos,'useDummy'=>true)); 
+						?>
+					</td>
+					<td>&nbsp;a&nbsp;</td>
+					<td align="left"><b>Porcentaje</b></td>
+					<td>
+						<?php
+							echo Tag::selectStatic(array('porcentajeValor', $porc,'useDummy'=>true)); 
+						?>
+					</td>
+				</tr>
+			</table>
+			</fieldset>
+			<hr/>
+			<fieldset>
+				<legend><b><i>Ordenamiento</i></b></legend>
+				<table>
+				<tr>
+					<td align="left"><b>Campo</b></td>
+					<td>
+						<?php 
+							echo Tag::selectStatic(array('ordenField', $ordenField,'useDummy'=>true)); 
+						?>
+					</td>
+					<td align="left"><b>Orden</b></td>
+					<td>
+						<?php 
+							$sortField = array(
+								'ASC'	=>	'Ascendente',
+								'DESC'	=>	'Descendente'
+							);
+							echo Tag::selectStatic(array('sortField', $sortField)); 
+						?>
+					</td>
+				</tr>
+			</table>
+			</fieldset>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

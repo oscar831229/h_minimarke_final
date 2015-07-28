@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div class="permisosPerfiles hfosContent">
+	<div class="hfosToolbar">
+		<table width="99%">
+			<tr>
+				<td align="right">
+					<table align="right">
+						<tr>
+							<td><label for="usuariosId">Usuarios</label></td>
+							<td>
+								<?php echo Tag::select('usuariosId', $usuarios, 'using: id,nombre_completo', 'useDummy: yes') ?>&nbsp;
+							</td>
+							<td>
+								<input type="submit" id="submitButton" class="saveButton" value="Guardar" style="display:none;">
+							</td>
+							<td align="left">
+								<div class="headerSpinner" style="display:none"></div>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="messages"></div>
+	<br><br>
+	<div class="PerfilesContent" style="display:none">
+		<table width="40%" align="center" class="hyBrowseTab zebraSt sortable tabAppChoose" cellspacing="0" cellpadding="0">
+			<tr>
+				<th class="sortcol sortasc"></th>
+				<th class="sortcol">Perfil</th>
+				<th class="sortcol">Aplicación</th>
+			</tr>
+			<?php
+				foreach($perfiles as $perfil){
+					echo '<tr>
+						<td><input type="checkbox" name="perfiles[]" value="'.$perfil->getId().'" /></td>
+						<td>', $perfil->getNombre(), '</td>
+						<td>', $perfil->getAplicaciones()->getNombre(), '</td>
+					</tr>';
+				}
+			?>
+		</table>
+	</div>
+	<div class="permsContent"></div>
+
+	<div align="right">
+		<div class="chooseRole infoBox" align="center">
+			<table align="center">
+				<tr>
+					<td><strong>Seleccione un Usuario</strong></td>
+					<td><?php echo Tag::image('backoffice/arrow-alt-up.png') ?></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</div>

@@ -1,0 +1,326 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+$data = json_decode($RecibosPagos->getCalculos());
+//print_r($data);
+?>
+<div align="center">
+	<div class="formExternal" style="width: 900px">
+		<div class="externalHeader">
+			<table width="95%" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td><h1>Detalle de recibo de caja<h1></td>
+					<td align="right"><div class="window-close"></div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="messages"></div>
+			<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="3" align="center">
+				<tr>
+					<td align="left">
+						<label for="rc">Recibo de caja</label>
+					</td>
+					<td align="left">
+						<?php echo $data->rcReciboPago;?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Fecha de pago</label>
+					</td>
+					<td align="left">
+						<?php echo $data->fechaPago;?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Fecha de recibo</label>
+					</td>
+					<td align="left">
+						<?php echo $data->fechaRecibo;?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Reserva</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->valorReserva)==true){
+								echo Currency::number($data->valorReserva);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Derecho de Afiliación</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->valorCuoafi)==true){
+								echo Currency::number($data->valorCuoafi);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Cuota Inicial</label>
+					</td>
+					<td align="left">
+						<?php
+							if(isset($data->valorInicial)==true){
+								echo Currency::number($data->valorInicial);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Otros</label>
+					</td>
+					<td align="left">
+						<?php
+							if(isset($data->valorOtros)==true){
+								echo Currency::number($data->valorOtros);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Capital</label>
+					</td>
+					<td align="left">
+						<?php
+							if(isset($data->capital)==true){
+								echo Currency::number($data->capital);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Total días</label>
+					</td>
+					<td align="left">
+						<?php
+							if(isset($data->totalDias)==true){
+								echo '
+								<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="3" align="center">
+									<tr>
+										<th>Fecha Inicio</th>
+										<th>Fecha Fin</th>
+										<th>Total Días</th>
+									</tr>
+									<tr>
+										<td align="center">';
+										if(isset($data->fechaUltimoPago)==true){
+											echo $data->fechaUltimoPago;
+										}
+										echo '</td>
+										<td align="center">';
+										if(isset($data->fechaPago)==true){
+											echo $data->fechaPago;
+										}
+										echo '</td>
+										<td align="center">';
+										if(isset($data->totalDias)==true){
+											echo $data->totalDias;
+										}
+										echo '</td>
+									</tr>
+								</table>';
+							}else{
+								echo '0';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Intereses corrientes aplicados</label>
+					</td>
+					<td align="left">
+						<?php
+							if(isset($data->interecesCorrientesAplicados)==true){
+								echo Currency::number($data->interecesCorrientesAplicados);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Saldo Actual</label>
+					</td>
+					<td align="left">
+						<?php
+							if(isset($data->saldoActual)==true){
+								echo Currency::number($data->saldoActual);
+							}else{
+								echo '0.00';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Estado capital</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->estadoCapital)){
+								echo '
+								<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="3" align="center">
+									<tr>
+										<th>Cuota</th>
+										<th>Fecha</th>
+										<th>Saldo</th>
+									</tr>
+									<tr>
+										<td align="center">'.$data->estadoCapital->cuota.'</td>
+										<td align="center">'.$data->estadoCapital->fecha.'</td>
+										<td align="center">'.Currency::number($data->estadoCapital->saldo).'</td>
+									</tr>
+								</table>';
+							}else{
+								echo 'No esta en financiación';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Decisión de fecha de mora</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->estadoCapital)){
+								echo '
+								<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="3" align="center">
+									<tr>
+										<th>Saldo Cuota Anterior</th>
+										<th>SaldoActual</th>
+										<th>Saldo Capital</th>
+										<th>Inicio conteo mora</th>
+									</tr>
+									<tr>
+										<td align="center">'.Currency::number($data->estadoCapital->saldoAnterior).'['.$data->estadoCapital->fechaAnterior.']</td>
+										<td align="center">'.Currency::number($data->saldoActual).'</td>
+										<td align="center">'.Currency::number($data->estadoCapital->saldo).'['.$data->estadoCapital->fecha.']</td>
+										<td align="center">'.Currency::number($data->estadoCapital->saldo).'['.$data->estadoCapital->fecha.']</td>
+									</tr>
+								</table>';
+							}else{
+								echo 'No esta en financiación';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Días Mora</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->diasMora) && isset($data->estadoCapital)){
+								echo '
+								<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="3" align="center">
+									<tr>
+										<th>Fecha Capital</th>
+										<th>Fecha Pago</th>
+										<th>Días Mora</th>
+									</tr>
+									<tr>
+										<td align="center">'.$data->estadoCapital->fecha.'</td>
+										<td align="center">'.$data->fechaPago.'</td>
+										<td align="center">'.$data->diasMora.'</td>
+									</tr>
+									<tr>
+										<td colspan="3">';
+											if(TPC::dateGreaterThan($data->estadoCapital->fecha,$data->fechaPago)==true && $data->diasMora<=0){
+												echo '<i>Como esta al día en capital no se cobra mora</i>';
+											}else{
+												echo '<i>Como no esta al día en capital se cobra mora</i>';
+											}
+										echo '
+										</td>
+									</tr>
+								</table>';
+							}else{
+								echo 'No esta en financiación';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="porcCondonacion">Porcentaje de Condonación</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->porcentCondonacion)==true){
+								echo LocaleMath::round($data->porcentCondonacion,0)."%";
+							}else{
+								echo '0%';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Intereses mora</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->interesesMora)==true){
+								echo Currency::number($data->interesesMora);
+							}else{
+								echo 'No esta en financiación';
+							}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<label for="rc">Nuevo Saldo</label>
+					</td>
+					<td align="left">
+						<?php 
+							if(isset($data->saldo)){
+								echo Currency::number($data->saldo);
+							}else{
+								echo 'No esta en financiación';
+							}
+						?>
+					</td>
+				</tr>
+			</table>
+	</div>
+</div>

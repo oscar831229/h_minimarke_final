@@ -1,0 +1,138 @@
+#abonosMov {
+	border-top: 1px solid #969696;
+	border-bottom: 1px solid #d1d1d1;
+	width: 95%;
+}
+
+#abonosMov th {
+	font-family: Verdana;
+	background: url(../img/localnavg.gif) #a1a1a1;
+	border-left: 1px solid #969696;
+	font-size: 11px;
+}
+
+#abonosMov .row-recibo td {
+	border-left: 1px solid #d1d1d1;
+}
+
+#abonosMov .row-recibo-del td {
+	color: #717171;
+}
+
+#abonosMov .row-recibo-re td {
+	background: #F4E5D4;
+}
+
+#buttonPanel {
+	border: 1px solid #969696;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+	padding: 10px;
+	width: 750px;
+	margin: 10px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	text-align: center;
+}
+
+#tabFormas th {
+	background: url(../img/localnavg.gif) #a1a1a1;
+	border-left: 1px solid #969696;
+	font-size: 11px;
+}
+
+#tabFormas .row-forpag td {
+	border-left: 1px solid #d1d1d1;
+}
+
+#new_abono {
+	border: 1px solid #808080;
+	background: #fff;
+	padding: 10px;
+	margin-top: 25px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+#rightPannel {
+	padding-right: 40px;
+}
+
+#total {
+	text-align:right;
+	font-size:18px;
+}
+
+#otherOptions {
+	background: #E0E0E0;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 5px;
+	margin: 5px;
+	width: 300px;
+}
+
+.total_lab {
+	border-left: 1px solid #d1d1d1;
+	background: #F2F2F2;
+	font-weight: bold;
+}
+
+#datos_box {
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border: 1px solid #d1d1d1;
+	background: #FFFFFF;
+	width: 95%;
+}
+
+.total_val {
+	border-left: 1px solid #D1D1D1;
+	border-right: 1px solid #D1D1D1;
+	border-top: 1px solid #D1D1D1;
+	background: #FFFFFF;
+}
+
+.total_val_first {
+	border-top: none;
+}
+
+#nota {
+	width: 95%;
+}
+
+.printControl {
+	font-family: 'Museo Sans';
+	font-size: 13px;
+	background: url(../img/localnav.gif);
+	border: none;
+	color: #fff;
+	padding: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	text-shadow: rgba(33, 33, 33, 0.796875) 0px 1px 0px;
+	-webkit-box-shadow: 4px 4px 5px rgba(255, 255, 255, 0.7);
+	-moz-box-shadow: 1px 1px 0px rgba(45, 45, 45, 0.7);
+	cursor: pointer;
+}
+
+.printControl img {
+	margin-top: 2px;
+}
+
+.c-valor {
+	width: 100px;
+}
+
+.i-valor,
+.i-fecven,
+.i-ivarep,
+.i-numfor,
+#total {
+	text-align: right;
+	width: 99%;
+}
+
+.forpag-select {
+	width: 99%;
+}

@@ -1,0 +1,174 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<html>
+<head>
+<meta http-equiv='Content-type' content='text/html; charset=UTF-8' />
+<style type='text/css'>
+
+h3 {
+	margin: 0px;
+	margin-top: 10px;
+	margin-bottom: 2px;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+table {
+	border-right: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+}
+
+td, th {
+	font-size: 11px;
+	border-left: 1px solid #969696;
+	border-top: 1px solid #969696;
+	font-family: Arial;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+th {
+	background: #eaeaea;
+	font-family: Arial;
+}
+
+table tr:nth-child(even) {
+	background: #fafafa;
+}
+
+table tr:nth-child(odd) {
+	background: #ffffff;
+}
+
+</style>
+</head>
+<body>
+
+<div style='font-size:12px;font-family:Verdana'>
+<?php
+
+$Datos->findFirst();
+echo "<b>".$Datos->getNombreCadena()."</b><br>\n";
+echo "<b>".$Datos->getDocumento()." No. : ".$Datos->getNit()."</b><br>\n";
+echo i18n::strtoupper($Datos->getNombreHotel())."<br>\n";
+echo "REPORTE DE FACTURAS<br>";
+if($fecha_inicial==$fecha_final){
+	echo "Fecha: {$fecha_inicial}"."<br>";
+} else {
+	echo "Fecha: {$fecha_inicial} - {$fecha_final}<br>\n";
+}
+echo "Cajero: ".i18n::strtoupper(Session::getData("usuarios_nombre"))."<br>";
+
+if($salon_id!='@'){
+	if($Salon->findFirst($salon_id)){
+		echo "Ambiente: {$Salon->nombre}<br>";
+	}
+} else {
+	echo "TODOS LOS AMBIENTES<br>";
+}
+
+?>
+<br>
+<table width="670" cellspacing="0">
+	<tr>
+		<th>Número</th>
+		<th>Ambiente</th>
+		<th>Fecha</th>
+		<th>Documento</th>
+		<th>Nombre</th>
+		<th>Valor</th>
+		<th>IVA</th>
+		<th>Impoconsumo</th>
+		<th>Servicio</th>
+		<th>Total</th>
+		<th>Estado</th>
+	</tr>
+<?php
+
+$conditions = "{#Factura}.tipo = 'F' AND {#Factura}.fecha>='$fecha_inicial' AND {#Factura}.fecha<='$fecha_final'";
+if($salon_id!='@'){
+	$conditions.= " AND {#Factura}.salon_id = '$salon_id'";
+}
+
+$cantidad = 0;
+$propina = 0;
+$iva = 0;
+$impo = 0;
+$total = 0;
+$valor = 0;
+
+$query = new ActiveRecordJoin(array(
+	'entities' => array('Factura', 'Salon'),
+	'conditions' => $conditions,
+	'fields' => array(
+		'{#Factura}.prefijo_facturacion',
+		'{#Factura}.consecutivo_facturacion',
+		'{#Factura}.fecha',
+		'{#Factura}.cedula',
+		'{#Factura}.nombre',
+		'{#Factura}.subtotal',
+		'{#Factura}.propina',
+		'{#Factura}.total_iva',
+		'{#Factura}.total_impoconsumo',
+		'{#Factura}.total',
+		'{#Factura}.estado',
+		'salon' => '{#Salon}.nombre',
+	),
+	'order' => array('{#Factura}.consecutivo_facturacion')
+));
+
+foreach($query->getResultSet() as $factura){
+	echo "<tr>";
+	echo "<td align='right'>", $factura->prefijo_facturacion, '-', $factura->consecutivo_facturacion, "</td>";
+	echo "<td align='left'>", $factura->salon, "</td>";
+	echo "<td align='left'>", $factura->fecha, "</td>";
+	echo "<td align='left'>", $factura->cedula, "</td>";
+	echo "<td align='left'>", $factura->nombre, "</td>";
+	echo "<td align='right'>", Currency::number($factura->subtotal, 2), "</td>";
+	echo "<td align='right'>", Currency::number($factura->total_iva, 2), "</td>";
+	echo "<td align='right'>", Currency::number($factura->total_impoconsumo, 2), "</td>";
+	echo "<td align='right'>", Currency::number($factura->propina, 2), "</td>";
+	echo "<td align='right'>", Currency::number($factura->total, 2), "</td>";
+	if($factura->estado=='A'){
+		$valor += $factura->subtotal;
+		$propina += $factura->propina;
+		$iva   += $factura->total_iva;
+		$impo  += $factura->total_impoconsumo;
+		$total += $factura->total;
+		echo "<td align='left'>ACTIVA</td>";
+	} else {
+		echo "<td align='left'>INACTIVA</td>";
+	}
+	echo "</tr>";
+	$cantidad++;
+}
+
+?>
+<tr>
+	<td align="right"><b><?php echo $cantidad ?></b></td>
+	<td colspan="4">&nbsp;</td>
+	<td align="right"><b><?php echo Currency::number($valor, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($iva, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($impo, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($propina, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($total, 2) ?></b></td>
+	<td>&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>

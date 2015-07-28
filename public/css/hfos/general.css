@@ -1,0 +1,146 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2012
+ * @version		$Id$
+ */
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-Regular.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: normal;
+	font-weight: bold;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-Bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: italic;
+	font-weight: normal;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-Oblique.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: italic;
+	font-weight: bold;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-BoldOblique.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Anivers';
+	font-style: italic;
+	font-weight: bold;
+	src: local('Anivers'), url('../../files/backoffice/Anivers.otf') format('opentype');
+}
+
+@font-face {
+	font-family: 'Coolvetica';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Coolvetica'), url('../../files/backoffice/Coolvetica.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Fineliner';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Fineliner'), url('../../files/perse/Fineliner.ttf') format('truetype');
+}
+
+body, div, span, td, p, b {
+	font-family: Helvetica,Arial,sans-serif;
+}
+
+div.messages {
+	font-family: Helvetica,arial,sans-serif;
+	font-size: 12px;
+}
+
+div.messages .error {
+	background-color: #B53E27;
+	background-image: url("../../img/backoffice/error.gif");
+	background-repeat: no-repeat;
+	background-position: 5px 10px;
+	padding: 10px;
+	padding-left: 25px;
+	color: #ffffff;
+	font-weight: bold;
+	text-align: left;
+}
+
+div.messages .error a.error-code {
+	color: #fafafa;
+	font-size: 0.9em;
+	float: right;
+}
+
+div.messages .success {
+	background-color: #CFE3ED;
+	background-image: url("../../img/backoffice/accept.png");
+	background-repeat: no-repeat;
+	background-position: 5px 7px;
+	padding: 9px 15px 7px 27px;
+	color: #111111;
+	font-weight: normal;
+	text-align: left;
+}
+
+div.messages .notice {
+	background-color: #E2E9F1;
+	background-image: url("../../img/backoffice/info.gif");
+	background-repeat: no-repeat;
+	background-position: 5px 7px;
+	padding: 9px 15px 7px 27px;
+	color: #000000;
+	font-weight: normal;
+	text-align: left;
+}
+
+div.successMessage {
+	background-color: #CFE3ED;
+	background-image: url("../../img/backoffice/accept.png");
+	background-repeat: no-repeat;
+	background-position: 5px 7px;
+	padding: 10px;
+	padding-left: 25px;
+	color: #111111;
+	font-weight: bold;
+	border: none;
+}
+
+div.errorMessage {
+	background-color: #B53E27;
+	background-image: url("../../img/backoffice/error.gif");
+	background-repeat: no-repeat;
+	background-position: 5px 10px;
+	padding: 10px;
+	padding-left: 25px;
+	color: #fff;
+	border: none;
+}
+
+div.noticeMessage {
+	background-color: #E2E9F1;
+	background-image: url("../../img/backoffice/info.gif");
+	background-repeat: no-repeat;
+	background-position: 5px 7px;
+	padding: 9px 15px 7px 27px;
+	color: #000000;
+	font-weight: normal;
+	border: none;
+}
+

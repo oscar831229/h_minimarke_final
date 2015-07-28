@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$guestInfo = SessionNamespace::get('guestInfo');
+
+?>
+<div id="top-pannel">
+	<h1><?php echo $traslate['detalleCuenta'].' / '.Router::getId(); ?></h1>
+</div>
+
+<div id="page">
+	<div id="accounts-details" align="center">
+		<table cellspacing="0" width="100%">
+			<?php
+				$balance = 0;
+				if(count($movimientos)){
+					echo '<tr>
+						<td class="th-cell">', $traslate['concepto'], '</td>
+						<td class="th-cell">', $traslate['subtotal'], '</td>
+					</tr>';
+					foreach($movimientos as $fecha => $movimientosFecha){
+						$date = new Date($fecha);
+						echo '<tr>
+							<td colspan="2" align="left" class="date-cell">', $date->getLocaleDate('long'), '</th>
+						</tr>';
+						foreach($movimientosFecha as $movimiento){
+							if(isset($movimiento['iva'])){
+								echo '<tr>
+									<td>', $movimiento['concepto'], '</td>
+									<td align="right">', Currency::money($movimiento['total']), '</td>
+								</tr>';
+								$balance+=$movimiento['total'];
+							} else {
+								echo '<tr>
+									<td>', $movimiento['concepto'], '</td>
+									<td align="right">', Currency::money($movimiento['total']), '</td>
+								</tr>';
+								$balance-=$movimiento['total'];
+							}
+						}
+					}
+				} else {
+					echo '<tr><td colspan="2" align="center" class="no-has">', $traslate['NoMovimiento'], '</td></tr>';
+				}
+			?>
+			<tr>
+				<td class="total-td" align="right"><?php echo $traslate['PagosAFavor'] ?></td>
+				<td align="right" class="total-sum"><?php echo Currency::money($abonos) ?></td>
+			</tr>
+			<tr>
+				<td class="total-td" align="right"><?php echo $traslate['TotalConsumos'] ?></td>
+				<td align="right" class="total-sum"><?php echo Currency::money($consumos) ?></td>
+			</tr>
+			<tr>
+				<td class="total-td" align="right" style="color:#000"><?php echo $traslate['SaldoFinal'] ?></td>
+				<td align="right" class="total-sum" style="color:#000"><?php echo Currency::money($abonos+$consumos) ?></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<?php echo Tag::buttonToAction($traslate['volver'], 'mobile/accounts') ?>

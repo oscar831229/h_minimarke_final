@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent() ?>
+
+<div id="accounts-details" align="center">
+	<table cellspacing="0" width="80%">
+		<?php echo '<tr><td align="center" class="no-has">', $traslate['NoEarlyCheckout'], '</td></tr>'; ?>
+	</table>
+</div>
+
+<div align="center" class="back">
+	<?php echo Tag::linkTo('accounts/details/'.$id, $traslate['Volver']) ?>
+</div>

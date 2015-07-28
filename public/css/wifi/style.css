@@ -1,0 +1,166 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body {
+	margin: 0px;
+	background: #232E32;
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-Regular.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: normal;
+	font-weight: bold;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-Bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: italic;
+	font-weight: normal;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-Oblique.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Cantarell';
+	font-style: italic;
+	font-weight: bold;
+	src: local('Cantarell'), url('../../files/backoffice/Cantarell-BoldOblique.ttf') format('truetype');
+}
+
+td, p, div {
+	font-family: Cantarell,Lucida Grande,Helvetica,Arial,sans-serif;
+}
+
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+	border-bottom-color: #A9C1CC;
+	border-left-color: #A9C1CC;
+	border-right-color: #A9C1CC;
+	border-top-color: #A9C1CC;
+	color: #A9C1CC;
+	color-interpolation: srgb;
+	color-interpolation-filters: linearrgb;
+	font-size: 40px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	outline-color: rgb(232, 232, 232);
+	text-shadow: rgb(64, 71, 78) 0px 1px 3px;
+	margin: 0px;
+}
+
+div#input-form p {
+	color: #CFF0FF;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 15px;
+	line-height: 20px;
+	outline-color: #E8E8E8;
+	text-shadow: 0 1px 3px #40474E;
+}
+
+div#header {
+	padding: 10px;
+	padding-top: 20px;
+	padding-left: 30px;
+	background-color: #1D2D32;
+	border-bottom: 10px solid #223B40;
+}
+
+div#header a.help {
+	color: #45A4FF;
+	background: #192026;
+	padding: 10px;
+	-moz-border-radius: 5px;
+}
+
+div#content {
+	background-image: url("../../img/wifi/content.png");
+	background-repeat: repeat-x;
+	padding: 10px;
+	min-height: 500px;
+	scroll-y: hidden;
+}
+
+div#input-form {
+	background-color: #243F47;
+	background-image: -moz-linear-gradient(top center, #243F47, #1A2F36);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#243F47), to(#1A2F36));
+	width: 520px;
+	padding: 30px;
+	color: #A9C1CC;
+	margin: 50px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-box-shadow: 0px 3px 3px rgba(21, 21, 21, 0.70);
+	-webkit-box-shadow: 0px 3px 3px rgba(21, 21, 21, 0.70);
+	box-shadow: 0px 3px 3px rgba(21, 21, 21, 0.70);
+}
+
+div#input-form img {
+	margin-right: 30px;
+}
+
+div#input-form input:focus {
+	border: 1px solid #BFF740;
+	color: #BFF740;
+}
+
+div#input-form input,
+div#input-form select  {
+	color: #C8F39D;
+	background: #1C3138;
+	border-radius: 10px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 5px;
+	border: none;
+	font-size: 32px;
+	padding: 5px;
+	margin: 5px;
+	width: 95%;
+}
+
+div#input-form select {
+	color: #CFF0FF;
+	font-size: 18px;
+}
+
+div#input-form td {
+	color: #CFF0FF;
+	font-size: 18px;
+}
+
+div#input-form input[type="submit"] {
+	margin-top: 15px;
+	background-color: #67A544;
+	background-image: -moz-linear-gradient(top center, #D4F5B0, #67A544);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#D4F5B0), to(#67A544));
+	font-size: 16px;
+	padding: 10px;
+	color: #223B40;
+}
+
+div.errorMessage {
+	background-color: #B73000;
+	color: #ffffff;
+	margin: 5px;
+	padding: 3px;
+}

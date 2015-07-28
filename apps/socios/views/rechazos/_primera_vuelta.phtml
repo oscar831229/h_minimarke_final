@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$fecha = '';
+$acta = '';
+$obs = '';
+$estado = '';
+if(isset($rechazo)){
+    $fecha = $rechazo->getSegundaFecha();
+    $acta = $rechazo->getSegundaActa();
+    $obs = $rechazo->getSegundaObservacion();
+    $estado = $rechazo->getSegundaEstado();
+}
+
+echo '
+<div class="ambientacion">
+	<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
+		<tbody>
+            <tr>
+				<td valign="top" align="right">
+					<label for="segunda_fecha">
+						<strong>Fecha:</strong>
+					</label>
+				</td>
+				<td valign="top" align="left">
+					'.Tag::dateField('segunda_fecha','value: '.$fecha ).'
+				</td>				
+			</tr>
+			<tr>
+			    <td valign="top" align="right">
+					<label for="segunda_acta">
+						<strong>No. Acta:</strong>
+					</label>
+				</td>
+				<td valign="top" align="left">
+					'.Tag::textField('segunda_acta','value: '.$acta ).'
+				</td> 
+			</tr>
+			<tr>
+				<td valign="top" align="right">
+					<label for="segunda_observacion">
+						<strong>Observaciones : </strong>
+					</label>
+				</td>
+				<td valign="top" colspan="3" aling="center">
+					'.Tag::textArea(array(
+					   'segunda_observacion',
+					   'cols' => 30,
+					   'rows' => 5,
+					   'value' => $obs
+					)).'
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" align="right">
+					<label for="segunda_estado">
+						<strong>Estado : </strong>
+					</label>
+				</td>
+				<td valign="top" align="left">
+				    '.Tag::selectStatic('segunda_estado',array(
+				        'A' => 'Aprobado',
+				        'R' => 'Rechazado',
+				        'D' => 'Desistio'
+				    ),'use_dummy: true','value: '.$estado).'
+				</td>
+			</tr>
+		</tbody>
+	</table>';
+
+echo '
+</div>';

@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta http-equiv='Content-type' content='text/html; charset=UTF-8' />
+<?php
+	echo '<link rel="icon" href="/hotel5/img/logo.jpg" type="image/x-icon">';
+    echo '<link rel="shortcut icon" href="/hotel5/img/logo.jpg" type="image/x-icon">';
+    if(Browser::isInternetExplorer()){
+    	Tag::stylesheetLink('perse/ie');
+    }
+	Tag::stylesheetLink('perse/style');
+	Tag::stylesheetLink('style');
+	echo Tag::getDocumentTitle();
+	echo Tag::stylesheetLinkTags();
+	echo Tag::javascriptLibrary('framework/scriptaculous/protoculous');
+	echo Tag::javascriptInclude('perse/perse');
+	echo Tag::javascriptInclude('core/base-source');
+	echo Tag::getJavascriptLocation();
+?>
+ </head>
+ <body>
+    <?php View::getContent(); ?>
+ </body>
+</html>

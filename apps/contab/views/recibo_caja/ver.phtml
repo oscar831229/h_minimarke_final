@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<?php 
+	$estadoDesc = 'Contabilizado';
+	if($reccaj->getEstado()=='A'){
+		$estadoDesc = 'Anulado';
+	}
+	echo HfosTag::iconTitle('attibutes.png', $comprob->getNomComprob().'/'.$reccaj->getRc().' ('.$estadoDesc.')'); 
+?>
+
+<fieldset class="tabbed">
+	<legend>Datos Cheque</legend>
+	<table align="center">
+		<tr>
+			<td align="right"><label for="nit">Tercero</label></td>
+			<td>
+				<?php echo $reccaj->getNit().'/'.$reccaj->getNombre(); ?>
+			</td>
+		</tr>
+		<?php if($reccaj->getEstado()!='A'){ ?>
+		<tr>
+			<td align="right"><label for="fechaMovi">Comprobante</label></td>
+			<td><?php echo $reccaj->getComprob().'/'.$reccaj->getNumero(); ?>&nbsp;<input type="button" class="verComprob" value="Ver" title="codigoComprobante=<?php echo $reccaj->getComprob().'&numero='.$reccaj->getNumero(); ?>"/></td>
+		</tr>
+		<?php } ?>
+		<tr>
+			<td align="right"><label for="fechaMovi">Fecha Comprobante</label></td>
+			<td><?php echo $reccaj->getFecha()->getLocaleDate(); ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="rc">Rc</label></td>
+			<td><?php echo $reccaj->getRc(); ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="valor">Valor</label></td>
+			<td><?php echo Currency::money($reccaj->getValor()) ?></td>
+		</tr>
+		<tr>
+			<td align="right"><label for="observaciones">Observaciones</label></td>
+			<td><?php echo $reccaj->getObservaciones(); ?></td>
+		</tr>
+	</table>
+</fieldset>

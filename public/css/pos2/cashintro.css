@@ -1,0 +1,140 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body {
+	background-attachment: fixed;
+	background-color: #408BCC;
+	background-image: url("../../img/pos2/food4.png");
+}
+
+h1 {
+  	font-family: 'Anivers',Verdana,sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+.cashButton {
+  	font-family: Verdana,sans-serif;
+	font-size: 22px;
+	width: 150px;
+	height: 58px;
+	background: url("../../img/pos2/normal_button_big.gif");
+	border: none;
+	font-weight: bold;
+}
+
+.cancelButton {
+  	font-family: Verdana,sans-serif;
+	font-size: 10px;
+	width: 72px;
+	height: 63px;
+	background: url("../../img/pos2/cancel-button.png");
+	border: none;
+	color: #000000;
+}
+
+.okButton {
+  	font-family: Helvetica;
+  	text-transform: uppercase;
+	font-size: 13px;
+	width: 73px;
+	height: 58px;
+	color: #ffffff;
+	background: -moz-linear-gradient(top center, #8CB62C, #4B6C15);
+	border: 1px solid #010101;
+	-moz-border-radius: 7px;
+	text-shadow: #333333 0px 1px 1px;
+	border: none;
+}
+
+.commandButton {
+  	font-family: 'Verdana';
+	background: -moz-linear-gradient(top center, #EDEEEF, #D3D4D9);
+	-moz-border-radius: 5px;
+	border: 1px solid #cacaca;
+	color: #1B1B1B;
+	font-size: 10px;
+	width: 72px;
+	height: 62px;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+span {
+  	font-family: Verdana,sans-serif;
+}
+
+.box {
+  	font-family: Verdana,sans-serif;
+  	font-size: 22px;
+  	border: 1px solid black;
+  	background: #FFE8B0;
+}
+
+.box2 {
+  	font-family: Verdana,sans-serif;
+  	font-size: 20px;
+  	border: 1px solid black;
+  	background: #BFBFDF;
+}
+
+.titulo {
+	font-family: 'Anivers',Verdana,sans-serif;
+  	color: #f2f2f2;
+	font-size: 18px;
+	opacity: 0.85;
+	background-image: -moz-linear-gradient(top center, rgba(22, 22, 22, 0.9), rgba(33, 33, 33, 0.7));
+	height: 35px;
+	padding: 7px;
+	padding-right: 5px;
+	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0, 0, 0, .4) 1px 1px 1px;
+	text-align: left;
+}
+
+td#cashMain {
+	background: url('../../img/pos2/bg-texture-2.png');
+	padding: 10px;
+}
+
+.titulo_p {
+	font-size: 28px;
+	font-family: Anivers,Verdana,sans-serif;
+	margin-left: 10px;
+}
+
+table.cash-box  {
+	width: 350px;
+	border: 1px solid #dadada;
+	background: rgba(255, 255, 255, 0.9);
+	-moz-border-radius: 5px;
+}
+
+table.cash-box img {
+	margin: 10px;
+	margin-right: 25px;
+}
+
+span.cash-status {
+	float: right;
+}
+
+td.cash-box-header {
+	background-image: -moz-linear-gradient(top center, rgba(22, 22, 22, 0.9), rgba(33, 33, 33, 0.7));
+	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0, 0, 0, .4) 1px 1px 1px;
+	padding: 5px;
+	color: #f2f2f2;
+}
+

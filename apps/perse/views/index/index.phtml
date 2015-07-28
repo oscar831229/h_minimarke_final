@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div align="center">
+	<div id="login-form">
+		<table width="100%" cellspacing="10">
+			<tr>
+				<td width="50%" align="left">
+					<h1><?php echo $traslate['consulte'] ?></h1>
+					<p><?php echo $traslate['instruccion'] ?></p>
+					<div align="right">
+						<table id="select-lang">
+							<tr>
+								<td align="right"><label for="locale"><?php echo $traslate['idioma'] ?></label></td>
+								<td>
+									<?php
+										echo Tag::selectStatic(array('locale', array(
+											'es_CO' => $traslate['espanol'],
+											'en_US' => $traslate['ingles'],
+											'fr_FR' => $traslate['frances'],
+										), 'value' => Session::get('locale')));
+									?>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+				<td width="50%">
+					<?php echo Tag::form('session/login', 'autocomplete: off') ?>
+						<table width="100%">
+							<tr>
+								<td align="left">
+									<label for="numeroHabitacion"><?php echo $traslate['suHabitacion'] ?></label><br/>
+									<?php echo Tag::textField('numeroHabitacion', 'size: 7') ?>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td align="left">
+									<label for="clave"><?php echo $traslate['suClave'] ?></label><br/>
+									<?php echo Tag::passwordField('clave', 'size: 7') ?>
+								</td>
+							</tr>
+							<tr>
+								<td align="center">
+									<?php echo Tag::submitButton($traslate['ingreso']) ?>
+								</td>
+							</tr>
+						</table>
+					<?php echo Tag::endForm() ?>
+					<div align="right">
+						<div id="perse-logo">
+							Persé
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

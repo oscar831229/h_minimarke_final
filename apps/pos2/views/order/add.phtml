@@ -1,0 +1,275 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$mode = CoreConfig::getAppSetting('mode');
+if ($mode == 'development') {
+
+	Tag::stylesheetLink('pos2/numero');
+	Tag::stylesheetLink('pos2/order');
+
+	echo Tag::javascriptInclude('pos2/windows');
+	echo Tag::javascriptInclude('pos2/modal');
+	echo Tag::javascriptInclude('pos2/order');
+	echo Tag::javascriptInclude('pos2/numero');
+	echo Tag::javascriptInclude('pos2/keyboard');
+
+} else {
+	Tag::stylesheetLink('pos2/production/order', false, 'v=' . ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/order', true, 'v=' . ControllerBase::APP_VERSION);
+}
+
+if ($salon->venta_a == 'H') {
+	$text_venta = "Habitación";
+} else {
+	$text_venta = "Mesa";
+}
+
+?>
+
+<div id='messages'><?php
+
+if (Flash::hasMessages()) {
+	foreach (Flash::getMessages() as $message) {
+		Flash::show($message);
+	}
+}
+
+View::getContent()
+
+?></div>
+<table align='center' cellspacing="0" cellpadding="0" id="mainTable" class="mainTable shadow-table">
+<tr>
+<td class='titulo' align='left'>
+<?php
+
+$salonNombre = $salon->nombre;
+if ($salon->venta_a != 'A') {
+	echo "Tomar Pedido - $text_venta #$numero_mesa en $salonNombre";
+	if ($salon->venta_a == 'H') {
+		echo "<span id='who_user'>Está haciendo este pedido: " . Session::get("usuarios_nombre")."</span>";
+	} else {
+		echo "<span id='who_user'>Está atendiendo esta mesa: " . Session::get("usuarios_nombre")."</span>";
+	}
+} else {
+	echo "Tomar Pedido - $salonNombre";
+	echo "<span id='who_user'>Está haciendo el pedido: " . Session::get("usuarios_nombre")."</span>";
+}
+
+?>
+</td>
+<tr><td>
+ <table cellspacing='0' class='table_bg2'><tr>
+ <td height='200' valign='top' class='table_bg22' width='180'>
+ <table cellspacing='0'>
+ <tr>
+ <?php
+
+ 	$hotkeys = array();
+ 	$menu_hotkeys = array();
+ 	$query = new ActiveRecordJoin(array(
+ 		'groupFields' => array('{#Menus}.id', '{#Menus}.nombre_pedido'),
+ 		'entities' => array('Menus', 'MenusItems', 'SalonMenusItems'),
+ 		'conditions' => "{#SalonMenusItems}.salon_id='{$salon->id}' AND {#Menus}.estado='A' AND {#SalonMenusItems}.estado='A' AND {#MenusItems}.estado='A'",
+ 	));
+
+ 	$number = 2;
+ 	$menus = $query->getResultSet();
+
+ 	foreach ($menus as $menu) {
+ 		$m = i18n::strtolower($menu->nombre_pedido);
+ 		$length = i18n::strlen($m);
+ 		for ($i = 0; $i < $length; $i++){
+ 			$ch = i18n::substr($m, $i, 1);
+ 			if (!in_array($ch, $hotkeys)) {
+ 				$menu->nombre = i18n::substr($menu->nombre_pedido, 0, $i).
+ 				'<u>'.i18n::substr($menu->nombre_pedido, $i, 1).'</u>'.
+ 				i18n::substr($menu->nombre_pedido, $i + 1);
+ 				$hotkeys[] = $ch;
+ 				break;
+ 			}
+ 		}
+ 		echo "<td><button class='menuButton' lang='{$menu->id}'>", $menu->nombre_pedido, "</button></td>";
+ 		Tag::trBreak($number);
+ 		$menu_hotkeys[] = $menu->id;
+ 	}
+ ?>
+ </tr>
+ </table>
+ <div align='center' id='spinner'>
+ <table>
+ 	<tr>
+ 		<td><?php echo Tag::image("pos2/spinner.gif") ?></td>
+ 		<td style='font-size:11px'>Cargando...</td>
+ 	</tr>
+ </table>
+ </div>
+ </td>
+ <td valign='top' width='260' align='center' class='tdMiddle'>
+	 <table align='center'>
+		 <tr>
+			 <td width="350" align='center'>
+			 	<table align="center">
+			 	 	<tr>
+			 	 		<td>
+							<button class='commandButton' id="showInvoice">
+								<i class="fa fa-print"></i><br>
+					 			<b><span id="gendoc">Imprimir<br>Orden</span></b><br>
+					 		</button>
+			 	 		</td>
+					 	<td>
+					 		<button class='commandButton' id="goToNotes">
+					 			<i class="fa fa-pencil"></i><br>
+					 			<b>Agregar<br/><span class="itemsButton">Notas</span></b><br>
+					 		</button>
+					 	</td>
+					 	<td>
+					 		<button class='commandButton' id="customerName">
+					 			<i class="fa fa-user"></i><br>
+					 			<b>Nombre<br>Cliente</b><br>
+					 		</button>
+					 	</td>
+					 	<td>
+					 		<button class='commandButton' id="payAccount">
+					 			<span class="fa fa-usd fa-4"></span><br>
+					 			<b>Liquidar<br>Cuenta</b><br>
+					 		</button>
+					 	</td>
+				 	</tr>
+				</table>
+			 </td>
+		 </tr>
+		 <tr>
+		 	<td valign='top' align='center' width='450' id='tmenuDetails'>
+				<div id='menuDetails'>
+					<span id='menu_up'></span>&nbsp;<span id='menu_down'></span>
+				 </div>
+				 <div id='porCodigo'>
+				 	<?php echo Tag::textField(array("buscarItem", "placeholder" => "Buscar por nombre")) ?>
+				</div>
+			</td>
+		 </tr>
+		 <tr>
+			 <td align='center'>
+				 <table align='center'>
+				 	<tr>
+				 		<td align="center">
+				 			<button class='commandButton' id="discounts">
+				 				<?php echo Tag::image("pos2/arrow_down-p.png", "width: 23") ?><br>
+				 				<b>Descuentos</b>
+				 			</button>
+				 		</td>
+						<td align="center">
+							<button class='okButton' id="sendToKitchen">
+								<?php echo Tag::image("pos2/chef.png", "height: 23") ?><br>
+								<b>Enviar a Cocina</b>
+							</button>
+						</td>
+						<td align="center">
+							<button class='cancelButton' id="cancelOrder">
+								<?php echo Tag::image("pos2/delete-pr.png", "width: 23") ?><br>
+								<b>Cancelar Pedido</b>
+							</button>
+						</td>
+						<td align="center">
+							<button class='commandButton' id="backToTables">
+								<i class="fa fa-reply"></i><br>
+								<b>Volver a Mesas</b>
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td align="center">
+				 			<button class='commandButton' id="deleteItems">
+				 				<?php echo Tag::image("pos2/trash-p.png", "width: 23") ?><br>
+				 				<b>Eliminar Items</b>
+				 			</button>
+				 		</td>
+				 		<td align="center">
+				 			<button class='commandButton' id="changeTable">
+				 				<i class="fa fa-undo"></i><br>
+				 				<b>Cambiar de Mesa</b>
+				 			</button>
+				 		</td>
+				 		<td align="center">
+				 			<button class='commandButton' id="showStatement">
+				 				<i class="fa fa-file-text"></i><br>
+								<b>Estado Cuenta</b>
+							</button>
+				 		</td>
+				 		<td align="center">
+				 			<button class='commandButton' id="joinOrders">
+				 				<?php echo Tag::image("pos2/wired.png", "width: 23") ?><br>
+				 				<b>Unir Pedido</b>
+				 			</button>
+				 		</td>
+				 	</tr>
+				 	<tr>
+				 		<td></td>
+				 		<td align="center">
+				 			<button class='commandButton' xid="deleteItems" onclick="window.open('/hotel5/index.php?action=regfac&option=5')">
+				 				<i class="fa fa-file"></i><br>
+				 				<b>Crear F. Directa</b>
+				 			</button>
+				 		</td>
+						<td align="center">
+				 			<button class='commandButton' xid="deleteItems" onclick="window.open('/hotel5/index.php?action=cargohab&option=5')">
+				 				<i class="fa fa-credit-card"></i><br>
+				 				<b>Facturar Front</b>
+				 			</button>
+				 		</td>
+				 	</tr>
+				 </table>
+			 </td>
+		 </tr>
+	 </table>
+ </td>
+ <td id='preOrder' align='center' valign='top' width='490'>
+ 	<?php View::renderPartial('preOrder', $numero) ?>
+ </td>
+ </tr>
+ </table>
+ </td>
+
+ <!--<div id="virtualkb-button" onclick="new VirtualKeyBoard(this); return false">
+ 	<?php //echo Tag::image('pos2/keyboard.png')
+ 	?>
+ </div>-->
+
+<?php
+
+echo '
+<script type="text/javascript">
+// <![CDATA[
+new Event.observe(document, "dom:loaded", function(){
+	var HotKeys = [' . join(", ", array_map(array("Helpers", "comillas"), $hotkeys)) . '];
+	var MenuHotKeys = [' . join(", ", $menu_hotkeys) . '];
+	var iHotKeys = [];
+	var MenuItemsHotKeys = [];
+	window.pedido = new Pedido({
+		"title": "'.$text_venta.' #'.$numero_mesa.' en '.$salonNombre.'",
+		"tipoComanda": "'.$salon->tipo_comanda.'",
+		"ventaA": "'.$salon->venta_a . '",
+		"pedirPersonas": "' . $salon->pide_personas . '",
+		"pedirAsientos": "' . $salon->pide_asientos . '",
+		"numeroAsientos": "' . $numero_asientos . '",
+		"id": "'.$id.'",
+		"salonId": "'.$salon_id.'",
+		"accountMasterId": "'.$current_master.'",
+		"numeroCuenta": "'.$numero_cuenta.'"
+	});
+});
+// ]]>
+</script>';
+

@@ -1,0 +1,107 @@
+<?php View::getContent() ?>
+
+<?php Tag::stylesheetLink('pos2/gardien'); ?>
+
+<h1>Permisos de Perfiles</h1>
+
+<div class="perfil-top">
+	<?php echo Tag::form(array('gardien', 'autocomplete' => 'off')) ?>
+		<table align="center">
+			<tr>
+				<td><label for="usuarios_id">Perfil:</label></td>
+				<td>
+					<?php
+						echo Tag::selectStatic('role', array(
+							'Administradores' => 'Administradores',
+							'JefeDeAyB' => 'Jefe de A&B',
+							'CapitanDeMeseros' => 'Capitan de Meseros',
+							'Meseros' => 'Meseros',
+							'Cajeros' => 'Cajeros',
+						));
+					?>
+				</td>
+				<td><?php
+					if(isset($acl)){
+						echo Tag::submitButton(array('Guardar', 'class' => 'controlButton', 'id' => 'submitButton'));
+					} else {
+						echo Tag::submitButton(array('Ver', 'class' => 'controlButton', 'id' => 'submitButton'));
+					}
+				?></td>
+			</tr>
+		</table>
+
+	<div id='acl'>
+	<?php
+
+	function renderDependend($accessList, $acl, $dependend) {
+		echo '<ul>';
+		foreach ($dependend as $access => $description) {
+			if (is_array($description)){
+				$checked = '';
+				if(isset($acl[$access]['index'])&&$acl[$access]['index']){
+					$checked = 'checked="checked"';
+				}
+				echo '<li class="resource-access"><input type="checkbox" name="access[]" value="', $access, '/index" ', $checked, '/>',
+				$accessList[$access]['description'], '<div class="spacer"> / </div>',
+				'<div class="action-desc">', $accessList[$access]['actions']['index'], '</div>',
+				'<br>';
+				renderDependend($accessList, $acl, $description);
+				'</li>';
+			} else {
+				$checked = '';
+				if(isset($acl[$access]['index'])&&$acl[$access]['index']){
+					$checked = 'checked="checked"';
+				}
+				echo '<li class="resource-access"><input type="checkbox" name="access[]" value="', $access, '/index" ', $checked, '/>',
+				$accessList[$access]['description'], '<div class="spacer"> / </div>',
+				'<div class="action-desc">', $accessList[$access]['actions']['index'], '</div>';
+				if (count($accessList[$access]['actions'])){
+					echo '<ul class="action-group">';
+					foreach ($accessList[$access]['actions'] as $action => $name){
+						if ($action!='index'){
+							$checked = '';
+							if (isset($acl[$access][$action])&&$acl[$access][$action]){
+								$checked = 'checked="checked"';
+							}
+							echo '<li class="action-access"><input type="checkbox" name="access[]" value="', $access, '/', $action, '" ', $checked, '/>', $name, '<br/>';
+						}
+					}
+					echo '</ul>';
+				}
+				echo '</li>';
+			}
+		}
+		echo '</ul>';
+	}
+
+	if (isset($acl)) {
+		$accessList = POSGardien::getAccessList();
+		$dependend = array();
+		foreach ($accessList as $controllerName => $access) {
+			if (isset($access['require'])) {
+				$require = $access['require'];
+				if (!isset($dependend[$require])) {
+					$dependend[$require] = array();
+				}
+				$dependend[$require][$controllerName] = 1;
+			}
+		}
+		foreach ($dependend as $require => $list) {
+			if (isset($dependend[$require])) {
+				foreach ($list as $requireAccess => $one) {
+					if (isset($dependend[$requireAccess])) {
+						$dependend[$require][$requireAccess] = $dependend[$requireAccess];
+						unset($dependend[$requireAccess]);
+					}
+				}
+			}
+		}
+		renderDependend($accessList, $acl, $dependend);
+	}
+
+	?>
+	</div>
+	<?php echo Tag::endForm() ?>
+</div>
+
+<?php echo Tag::javascriptInclude('pos2/gardien'); ?>

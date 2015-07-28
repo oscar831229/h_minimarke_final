@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+Tag::stylesheetLink('pos2/receta');
+echo View::getContent();
+
+?>
+
+<h1>Reporte de Recetas Estándar</h1>
+
+<div id="search_con">
+	<?php echo Tag::form('receta/reporteRecetas','autocomplete: off', 'target: _new') ?>
+	<table align="center">
+		<tbody id="normalSearch">
+			<tr>
+				<td align="right"><label for="numero_rec">Número</label></td>
+				<td><?php echo Tag::numericField('numero_rec', 'size: 7') ?></td>
+			</tr>
+			<tr>
+				<td align="right"><label for="nombre">Nombre</label></td>
+				<td><?php echo Tag::textUpperField('nombre','size: 50') ?></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><?php echo Tag::submitButton('Generar', 'class: controlButton') ?></td>
+			</tr>
+		</tbody>
+	</table>
+	<?php echo Tag::endForm() ?>
+</div>

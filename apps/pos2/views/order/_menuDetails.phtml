@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo "<span id='menu_up'></span>";
+$items = 0;
+$id = (int) $id;
+
+$query = new ActiveRecordJoin(array(
+	'entities' => array('MenusItems', 'SalonMenusItems', 'Menus'),
+	'fields' => array('{#MenusItems}.id', '{#MenusItems}.nombre', '{#MenusItems}.valor'),
+	'conditions' =>
+		"{#MenusItems}.menus_id=$id AND
+		 {#SalonMenusItems}.salon_id = '".$salon_id."' AND
+		 {#SalonMenusItems}.estado = 'A' AND
+		 {#MenusItems}.estado = 'A'",
+	'order' => array('{#Menus}.nombre', '{#MenusItems}.nombre')
+));
+
+foreach($query->getResultSet() as $menuItem){
+	if($MenusItemsModifiers->count("menus_items_id='{$menuItem->getId()}'")>0){
+		$customModifiers = "1";
+	} else {
+		$customModifiers = "0";
+	}
+	echo "<div id='ti{$menuItem->getId()}'>
+		<button class='menuItemButton' onclick='loadItemAccount(this, ".$menuItem->getId().", $customModifiers)'
+		title='".str_replace("<br>", "", $menuItem->nombre)."\nPrecio: $ {$menuItem->valor}'
+		id='i{$menuItem->getId()}' onmouseover='$(\"codigoItem\").value = {$menuItem->getId()};'>";
+	echo '<span class="mcode">', sprintf('%04s', $menuItem->getId()), '</span> ', $menuItem->nombre, '</button></div>';
+	$items++;
+}
+echo "<span id='menu_down'></span>";
+if(!$MenusItems->count("menus_id=$id")||!$items){
+	Flash::warning("No hay items activados de esta categoría en este ambiente");
+}

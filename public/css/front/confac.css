@@ -1,0 +1,7 @@
+#criterio_box {
+	border: 1px solid #969696;
+	background: url(../img/localnavg.gif) #bebebe;
+	background-repeat: repeat-x;
+	width: 520px;
+	padding: 10px;
+}

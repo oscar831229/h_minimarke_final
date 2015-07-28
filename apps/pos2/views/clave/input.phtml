@@ -1,0 +1,38 @@
+<?php
+echo Tag::javascriptLibrary('windows');
+echo Tag::javascriptInclude('clave');
+echo Tag::javascriptInclude('hash');
+?>
+<table cellspacing='0' align='center'>
+	<tr>
+	 	<td>
+		    <input type='password' value='' autocomplete='off' readonly="readonly" class='mediumBox' id='view_pass'>
+		</td>
+	<tr>
+		<td>
+		 	<table cellspacing='0'><table cellspacing='0'>
+				<tr>
+					<td><input type='button' value='7' id='b7' class='bigButton'/></td>
+					<td><input type='button' value='8' id='b8' class='bigButton'/></td>
+					<td><input type='button' value='9' id='b9' class='bigButton'/></td>
+				</tr>
+				<tr>
+					<td><input type='button' value='4' id='b4' class='bigButton'/></td>
+					<td><input type='button' value='5' id='b5' class='bigButton'/></td>
+					<td><input type='button' value='6' id='b6' class='bigButton'/></td>
+				</tr>
+				<tr>
+					<td><input type='button' value='1' id='b1' class='bigButton'></td>
+					<td><input type='button' value='2' id='b2' class='bigButton'/></td>
+					<td><input type='button' value='3' id='b3' class='bigButton'/></td>
+				</tr>
+				<tr>
+					<td><input type='button' value='No' class='bigButtonCancel' onclick='cancelPassword()'></td>
+					<td><input type='button' value='0' id='b0' class='bigButton'/></td>
+					<td><input type='button' value='OK' class='bigButtonOK' id='okButton' disabled="disabled" onclick='acceptPassword("<?= $id ?>")'></td>
+				</tr>
+			</table>
+	  	</td>
+	</tr>
+</table>
+<input type='hidden' id='clave' name='clave' value=''>

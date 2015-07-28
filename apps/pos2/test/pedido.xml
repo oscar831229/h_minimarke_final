@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name='Pedido'>
+	<start-state>
+		<transition to="irAlMenu"/>
+	</start-state>
+	<state name="irAlMenu">
+		<transition to="ingresarClave"/>
+	</state>
+	<state name="ingresarClave">
+		<decision handler="autenticar">
+			<transition condition="{#autorizado}==false" to="fin"/>
+			<transition condition="{#autorizado}==true" to="tomarPedido"/>
+		</decision>
+	</state>
+	<state name='tomarPedido'>
+		<task-node name='Mesa y Comanda'>
+			<task name='Ir a Mesas' handler='irAMesas'/>
+			<task name='Escoger Mesa' handler='escogerMesa'/>
+			<decision name='Consultar Tipo de Comanda' handler='consultarTipoComanda'>
+				<transition condition="{#tipoComanda}=='A'" to="ingresarNumeroPersonas"/>
+				<transition condition="{#tipoComanda}=='M'" to="ingresarComandaManual"/>
+			</decision>
+		</task-node>
+	</state>
+	<state name='ingresarComandaManual'>
+		<decision name='Comanda Existe' handler='comandaExiste'>
+			<transition condition="{#comandaExiste}==true" to="fin"/>
+			<transition condition="{#comandaExiste}==false" to="estableceNumeroComanda"/>
+		</decision>
+	</state>
+	<state name='estableceNumeroComanda'>
+		<task name='Establece la comanda' handler='establecerComanda'/>
+		<transition to='ingresarNumeroPersonas'/>
+	</state>
+	<state name='ingresarNumeroPersonas'>
+		<decision name='Requiere Numero Personas' handler='requiereNumeroPersonas'>
+			<transition condition="{#requierePersonas}==true" to="ingresarPersonas"/>
+			<transition condition="{#requierePersonas}==false" to="seleccionarMenu"/>
+		</decision>
+	</state>
+	<state name='ingresarPersonas'>
+		<task name='Establece las Personas en la Mesa' handler='ingresarPersonas'/>
+		<transition to='seleccionarMenu'/>
+	</state>
+	<state name='seleccionarMenu'>
+		<task-node name='Seleccionar Menu'>
+			<task name='Seleccionar un Menu' handler='escogerMenu'/>
+		</task-node>
+	</state>
+	<state name="fin">
+	</state>
+</process-definition>

@@ -1,0 +1,51 @@
+p, span, div, td, a {
+	font-family: Verdana;
+	font-size: 12px;
+}
+
+input[type="text"] {
+	background: #fff;
+}
+
+#tleftPannel {
+	/*background: red;*/
+}
+
+#leftPannel {
+	margin: 0px;
+	padding: 0px;
+	/*background: red;*/
+}
+
+.category {
+	margin: 0px;
+}
+
+a:hover {
+	font-family: Verdana;
+}
+
+table#linkTable {
+	margin-left: 15px;
+}
+
+div#left_dock img {
+	margin-left: 20px;
+}
+
+input, select, .iNormal, button {
+    font-family: Verdana;
+    font-size: 12px;
+    color: #000000;
+    border: 1px solid #D8D8D8;
+}
+
+input[disabled], select[disabled], textarea[disabled] {
+	color: #222222;
+	background: #fafafa;
+}
+
+input[readonly], select[readonly], textarea[readonly] {
+	color: #222222;
+	background: #fafafa;
+}

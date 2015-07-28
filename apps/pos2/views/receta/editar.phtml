@@ -1,0 +1,175 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo Tag::javascriptInclude('pos2/windows');
+echo Tag::javascriptInclude('pos2/validator');
+echo Tag::javascriptInclude('pos2/utility');
+echo Tag::javascriptInclude('pos2/receta');
+echo Tag::javascriptInclude('ckeditor/ckeditor');
+
+Tag::stylesheetLink('pos2/receta');
+echo View::getContent();
+
+?>
+
+<?php echo Tag::form(array('receta/guardar', 'id' => 'recetaForm', 'autocomplete' => 'off', 'enctype' => 'multipart/form-data')) ?>
+
+<table width="100%">
+	<tr>
+		<td><h1>Editar Receta Estándar</h1></td>
+		<td align="right" id="toolbar">
+			<?php echo Tag::linkTo('receta/index', 'Cancelar') ?>
+			<?php echo Tag::submitButton('Guardar', 'class: controlButton') ?>
+		</td>
+	</tr>
+</table>
+
+<div id="div_edit_top" align="center">
+	<table>
+		<tr>
+			<td align="right"><label for='numero_rec'>Número</label></td>
+			<td><?php echo Tag::numericField(array('numero_rec', 'readonly' => 'true', 'size' => '7')) ?></td>
+			<td>&nbsp;</td>
+			<td align="right"><label for='numero_rec'>Nombre</label></td>
+			<td><?php echo Tag::textUpperField('nombre', 'size: 50') ?></td>
+		</tr>
+	</table>
+</div>
+
+<table align="center" width="100%" class="container_tabs" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="tab_td" align="center">
+			<div id="tabdiv_1" class="tab_div tab_active">Componentes</div>
+		</td>
+		<td class="tab_td" align="center">&nbsp;</td>
+		<td class="tab_td" align="center">
+			<div id="tabdiv_2" class="tab_div tab_inactive">Preparación</div>
+		</td>
+		<td class="tab_td" align="center">&nbsp;</td>
+		<td class="tab_td" align="center">
+			<div id="tabdiv_3" class="tab_div tab_inactive">Foto</div>
+		</td>
+		<td class="tab_blank" width="80%"></td>
+	</tr>
+	<tr>
+		<td colspan="7" class="tab_con">
+			<div id="tab_1">
+				<table width="100%">
+					<tr>
+			            <td align="right" width="50%"><label for='num_personas'>Número Personas</label></td>
+			            <td><?php echo Tag::numericField(array('num_personas', 'size' => 5, 'class' => 'field')) ?></td>
+	            	</tr>
+	            	<tr>
+			            <td align="right" width="50%"><label for='menu'>Tipo de Receta</label></td>
+			            <td><?php echo Tag::select(array('tipo', $Menus->find("estado='A'"), 'using' => 'id,nombre', 'use_dummy' => 'yes')) ?></td>
+		    		</tr>
+		            <tr>
+			            <td align="right" width="50%"><label for='porc_varios'>% Ing. Varios</label></td>
+			            <td><?php echo Tag::numericField(array('porc_varios', 'size' => '5')) ?></td>
+		            <tr>
+	            	<tr>
+						<td align="center" colspan="2">
+							<div>
+								<table class="calculos" cellspacing="0">
+									<tr>
+										<td id="co" class="tab_td_rec active">% Costo</td>
+										<td rowspan="2" id="content_calculo_td">
+											<div style="padding:2px" id="porc_costo_lab">
+						    					<i>Calcular Utilidad a partir del Costo</i>
+						    				</div>
+						    				<div style="padding:2px;display:none" id="precio_venta_lab">
+						    					<i>Calcular Utilidad a partir del Precio de Venta</i>
+						    				</div>
+											<div>
+												<span id="label_calculo">% Costo</span>
+												<?php echo Tag::numericField('porc_costo', 'size: 9'), '&nbsp;', Tag::numericField('precio_venta', 'size: 9', 'style: display:none;'); ?>
+						    				</div>
+						    				<div style="padding:10px">
+						    					<div style="padding:2px">
+						    						<i>Utilidad/Costo por Ambiente</i>
+						    					</div>
+							    				<table cellspacing="0" class="content_calculo">
+							       					<thead>
+								  						<tr>
+														     <th>Ambiente</th>
+														     <th>% Costo</th>
+														     <th>Precio Venta</th>
+														     <th>% Utilidad</th>
+														     <th>Utilidad</th>
+								  						</tr>
+													</thead>
+							       					<tbody id="container_salon">
+								  						<tr id="simulador">
+														    <td id="salon_lab"></td>
+														    <td id="p_costo" align="right"></td>
+														    <td id="p_venta" align="right"></td>
+														    <td id="p_utilidad" align="right"></td>
+															<td id="pesos_utilidad" align="right"></td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td id="pr" class="tab_td_rec">Precio Venta</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+	            	<tr>
+		            	<td align="right"><b>Costo Total Receta</b></td>
+		            	<td><?php echo Tag::numericField(array('precio_costo', 'readonly' => 'true', 'size' => '10')) ?></td>
+	            	</tr>
+	            	<tr>
+		            	<td colspan="2">
+		            		<div style="padding:10px">
+		            			<div id="divDetail"></div>
+		            		</div>
+		            	</td>
+	            	</tr>
+            	</table>
+         	</div>
+         	<div id="tab_2" style="display: none" align="center">
+				<?php echo Tag::textArea(array('preparacion', 'cols' => '100', 'rows' => '9', 'class' => 'field')) ?>
+         	</div>
+         	<div id="tab_3" style="display: none" align="center">
+         		<table cellpadding="10">
+         			<tr>
+         				<td><?php
+         					if($foto){
+								echo Tag::image(array('pos2/recetas/'.$foto, 'width' => 255));
+								echo Tag::hiddenField(array('foto', 'value' => $foto));
+         					} else {
+         						echo Tag::image('pos2/sin-foto.png');
+         					}
+         				?></td>
+						<td><b>Archivo Foto:</b> <?php echo Tag::fileField('archivo') ?></td>
+         			</tr>
+         		</table>
+         	</div>
+      	</td>
+   	</tr>
+</table>
+
+<br />
+
+<div id="dataDetail" style="display: none"></div>
+
+<?php echo Tag::endForm() ?>
+
+</div>
+

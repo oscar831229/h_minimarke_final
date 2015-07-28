@@ -1,0 +1,65 @@
+@media screen {
+	body {
+		background: url(../img/bg-leo541lo.jpg);
+		background-repeat: no-repeat;
+		background-position: top center;
+		background-attachment: fixed;
+		background-color: #261237;
+	}
+}
+
+#left_dock {
+	background: #0C0611;
+	border: 1px solid #423A47;
+	width: 70px;
+	padding-left: 10px;
+	text-align: left;
+	height: 530px;
+	left: 20px;
+}
+
+#mh_div {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	background: #c0c0c0;
+}
+
+.titulo, h1, .titulop, .titulos {
+	text-shadow: none;
+}
+
+div.modalLayout {
+	background: #eaeaea;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	-moz-border-radius-bottomleft: 0px;
+	-moz-border-radius-bottomright: 0px;
+}
+
+.controlButton,
+.controlButtonAccept,
+.controlButtonCancel,
+.controlButtonBack,
+.flowButton,
+.legend_box {
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+}
+
+.controlButton {
+	background: #75889d;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+}
+
+#div_inicio {
+	background-color: rgb(42, 52, 59);
+}

@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Persé
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<div id="top-pannel">
+<h1><?php
+	$guestInfo = SessionNamespace::get('guestInfo');
+	echo $guestInfo->getCliente(), ' / ', $guestInfo->getHabitacion();
+?></h1>
+</div>
+
+<div id="page">
+	<div id="accounts-resume" align="center">
+		<table cellspacing="0" width="100%">
+			<?php
+				foreach($cuentas as $n => $cuenta){
+
+					echo '<tr class="numero">
+						<td align="right" width="60%">', $traslate['cuenta'], '</td>
+						<td align="right">', Tag::linkTo('mobile/details/'.$n, $n), '</td>
+					</tr>
+					<tr>
+						<td align="right" width="60%">', $traslate['cons/desc'], '</td>
+						<td align="right">', Currency::money($cuenta['total']), '</td>
+					</tr>
+					<tr>
+						<td align="right">', $traslate['abon/dev'], '</td>
+						<td align="right">', Currency::money($cuenta['abonos']), '</td>
+					</tr>
+					<tr>
+						<td align="right" class="total-td">', $traslate['subtotal'], '</td>
+						<td align="right" class="total-sum">',
+							Tag::linkTo('mobile/details/'.$n , Currency::money($cuenta['abonos']-$cuenta['total'])),
+						'</td>
+					</tr>';
+
+					/*echo '<tr>
+						<td align="center">', $n, '</td>
+						<td align="right">', Currency::money($cuenta['total']), '</td>
+						<td align="right">', Currency::money($cuenta['abonos']), '</td>
+						<td align="right"><b>', Currency::money($cuenta['abonos']-$cuenta['total']), '</b></td>
+						<td align="center" class="no-print border-b">', Tag::linkTo('accounts/details/'.$n , $traslate['details']), '</td>
+					</tr>';*/
+				}
+			?>
+			<tr>
+				<td id="total-td" align="right">TOTAL</td>
+				<td id="total-sum" align="right"><b><?php echo Currency::money($total) ?></b></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<?php echo Tag::buttonToAction($traslate['salir'], 'session/logout') ?>

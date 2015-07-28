@@ -1,0 +1,138 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<?php echo HfosTag::iconTitle('monitor.png', 'Exportar Movimiento') ?>
+
+<div class="formContent">
+	<div class="formPannel" align="right">
+			
+			<fieldset class="tabbed">
+				<legend>Manual</legend>
+				<?php echo Tag::form(array('excluir/exportarCsv', 'class' => 'excluirForm', 'autocomplete' => 'off')) ?>
+			
+				<table align="center" width="100%">
+					<tr>
+						<td valign="top" align="left" width="65%">
+							<table align="center">
+								<tr>
+									<td align="right"><label for="fechaIni">Fecha Inicial</label></td>
+									<td><?php echo Tag::dateField(array('fechaIni')) ?></td>
+								</tr>
+								<tr>
+									<td align="right"><label for="fechaFin">Fecha Final</label></td>
+									<td><?php echo Tag::dateField(array('fechaFin')) ?></td>
+								</tr>
+								<tr>
+									<td align="right"><label for="comprob">Comprobante</label></td>
+									<td><?php echo Tag::select('comprob',EntityManager::get('Comprob')->find("order: codigo ASC"), "using: codigo,nom_comprob", "use_dummy: true") ?></td>
+								</tr>
+								<tr>
+									<td align="right"></td>
+									<td>
+										<table cellspacing="0">
+											<tr>
+												<td>
+													<input type="submit" value="Exportar"/>
+												</td>
+												<td>
+													<div class="formSpinner" style="display:none"></div>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td valign="top" align="right">
+							<div class="cuadro-cierre">
+								<table align="center">
+									<tr>
+										<td align="right"><b>Último Cierre</b></td>
+										<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+									</tr>
+									<tr>
+										<td align="right"><b>Año Cierre</b></td>
+										<td><?php echo $anoCierre ?></td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<?php echo Tag::endForm() ?>
+			</fieldset>
+				
+			
+			<fieldset class="tabbed">
+				<legend>Automatico</legend>
+				<?php echo Tag::form(array('excluir/exportar', 'class' => 'excluirForm2', 'autocomplete' => 'off')) ?>
+					
+				<table align="center" width="100%">
+					<tr>
+						<td valign="top" align="left" width="65%">
+							<table align="center">
+								<tr>
+									<td align="right"><label for="servidor">Servidor</label></td>
+									<td><?php echo Tag::select(array('servidorId', $consolidados, 'using' => 'id,server')) ?></td>
+								</tr>
+								<tr>
+									<td align="right"><label for="ano">Año</label></td>
+									<td><?php echo Tag::numericField(array('ano', 'size' => 4)) ?></td>
+								</tr>
+								<tr>
+									<td align="right"><label for="mes">Mes</label></td>
+									<td><?php echo Tag::monthField('mes') ?></td>
+								</tr>
+								<tr>
+									<td align="right"></td>
+									<td>
+										<table cellspacing="0">
+											<tr>
+												<td>
+													<input type="submit" value="Exportar"/>
+												</td>
+												<td>
+													<div class="formSpinner" style="display:none"></div>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+						<td valign="top" align="right">
+							<div class="cuadro-cierre">
+								<table align="center">
+									<tr>
+										<td align="right"><b>Último Cierre</b></td>
+										<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+									</tr>
+									<tr>
+										<td align="right"><b>Año Cierre</b></td>
+										<td><?php echo $anoCierre ?></td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<?php echo HfosTag::reportTypeTag(true, false) ?>
+				<?php echo Tag::endForm() ?>
+			</fieldset>
+			
+	</div>
+</div>

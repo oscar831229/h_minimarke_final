@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo '<table align="center">
+	<tr>
+		<td align="right"><label>Cuenta</label></td>
+		<td>', $cuenta->getCuenta(), '</td>
+		<td align="right"><label>Nombre</label></td>
+		<td>', $cuenta->getNombre(), '</td>
+	</tr>
+</table>
+<br/>';
+
+echo '<table class="hyBrowseTab zebraSt sortable" cellspacing="0" align="center" width="85%">
+<thead>
+	<th>Comprobante</th>';
+switch($tipo){
+	case 'F':
+		echo '<th>Fecha</th>';
+		break;
+	case 'N':
+		echo '<th>Tercero</th>';
+		break;
+	case 'D':
+		echo '<th>Documento</th>';
+		break;
+}
+
+$debitos = 0;
+$creditos = 0;
+echo '<th>Descripción</th>
+	<th>Débitos</th>
+	<th>Créditos</th>
+</thead><tbody>';
+foreach($movis as $movi){
+	echo '<tr><td>', $movi->getComprob().'-'.$movi->getNumero(), '</td>';
+	switch($tipo){
+		case 'F':
+			echo '<td>', $movi->getFecha(), '</td>';
+			break;
+		case 'N':
+			echo '<td>', $movi->getNit(), '</td>';
+			break;
+		case 'D':
+			echo '<td>', $movi->getTipoDoc(), '-', $movi->getNumeroDoc(), '</td>';
+			break;
+	}
+	echo '<td>', $movi->getDescripcion(), '</td>';
+	if($movi->getDebCre()=='D'){
+		echo '<td align="right">', Currency::number($movi->getValor()), '</td>';
+		echo '<td></td>';
+		$debitos+=$movi->getValor();
+	} else {
+		echo '<td></td>';
+		echo '<td align="right">', Currency::number($movi->getValor()), '</td>';
+		$creditos+=$movi->getValor();
+	}
+	echo '</tr>';
+}
+echo '</table>';

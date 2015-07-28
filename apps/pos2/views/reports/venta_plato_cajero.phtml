@@ -1,0 +1,131 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$Datos->findFirst();
+function center($text, $size){
+	if(i18n::strlen($text)>=$size){
+		return i18n::substr($text, 0, $size);
+	}
+	$spaces = str_repeat(" ", ($size-i18n::strlen($text))/2);
+	return $spaces.$text.$spaces;
+}
+
+?>
+<html>
+<head>
+<style type='text/css'>
+	td, span, div, th, pre {
+		font-family: 'Lucida Console', 'Courier New';
+		font-size: 12px;
+	}
+	body {
+		margin: 0px;
+	}
+</style>
+</head>
+<body>
+<pre>
+<?php
+
+echo center($Datos->getNombreCadena(), 40)."\n";
+echo center($Datos->getDocumento()." No. : ".$Datos->getNit(), 40)."\n";
+echo center(i18n::strtoupper($Datos->getNombreHotel()), 40)."\n";
+echo center("RESUMEN DE VENTA POR PLATO", 40)."\n";
+if($fecha_inicial==$fecha_final){
+	echo center("Fecha: {$fecha_inicial}" , 40)."\n";
+} else {
+	echo center("Fecha: {$fecha_inicial} - {$fecha_final}" , 40)."\n";
+}
+echo center("Fecha Impresión: ".Date::now(), 40)."\n";
+
+?>
+</pre>
+<div>
+<?php
+
+	$total = 0;
+	$total_iva = 0;
+	$items = array();
+	$conditions = "date(hora) >= '$fecha_inicial' AND date(hora) <= '$fecha_final' AND estado='L'";
+	foreach($AccountMaster->find($conditions) as $account_master){
+		$conditions = "account_master_id='$account_master->id' and estado = 'L'";
+		foreach($Account->find($conditions) as $account){
+			if(!isset($items[$account_master->usuarios_id])){
+				$items[$account_master->usuarios_id] = array();
+			}
+			if(!isset($items[$account_master->usuarios_id][$account->menus_items_id])){
+				$items[$account_master->usuarios_id][$account->menus_items_id] = array(
+					'cantidad' => 0,
+					'valor' => 0
+				);
+			}
+			$items[$account_master->usuarios_id][$account->menus_items_id]['cantidad']+=$account->cantidad;
+
+			if($account->descuento>0){
+				$items[$account_master->usuarios_id][$account->menus_items_id]['valor']+=($account->total-$account->total*($account->descuento/100))*$account->cantidad;
+			} else {
+				$items[$account_master->usuarios_id][$account->menus_items_id]['valor']+=$account->total*$account->cantidad;
+			}
+		}
+	}
+	foreach($items as $cajero => $itemv){
+		$usuario = $UsuariosPos->findFirst($cajero);
+		if($usuario==false){
+			$usuario = new UsuariosPos();
+			$usuario->nombre = 'NO EXISTE USUARIO';
+		}
+		echo i18n::strtoupper($usuario->nombre).":
+		<table style='pading: 20px; width:250px'>
+			<tr>
+				<td align='center'>Descripción</td>
+				<td align='center'>Cantidad</td>
+				<td align='center'>Valor</td>
+			</tr>";
+		$totalc = 0;
+		$tipos_venta = array();
+		foreach($itemv as $item_id => $item){
+			$MenusItems->find($item_id);
+			echo "<tr>";
+			echo "<td align='left'>{$MenusItems->nombre}</td>";
+			echo "<td align='center'>{$item['cantidad']}</td>";
+			echo "<td align='right'>{$item['valor']}</td>";
+			echo "</tr>";
+			if(!isset($tipos_venta[$MenusItems->tipo])){
+				$tipos_venta[$MenusItems->tipo] = 0;
+			}
+			$tipos_venta[$MenusItems->tipo]+=$item['valor'];
+			$total += $item['valor'];
+			$totalc += $item['valor'];
+		}
+		echo "</table>";
+		echo "<div>--------------------------------------</div>";
+		echo "<div style='pading: 20px; width:247px' align='right'>
+		TOTAL CAJERO: $totalc<br><br>
+		ALIMENTOS CAJERO: ".(isset($tipos_venta['A']) ? Locale::round($tipos_venta['A']) : 0), "<br/>
+		BEBIDAS CAJERO: ".(isset($tipos_venta['B']) ? Locale::round($tipos_venta['B']) : 0), "<br/>
+		CIGARRILLOS CAJERO: ".(isset($tipos_venta['C']) ? Locale::round($tipos_venta['C']) : 0), "<br/>
+		<br/>
+		</div>";
+	}
+?>
+<div>
+--------------------------------------
+</div>
+<div style='pading: 20px; width:245px' align='right'>
+TOTAL GENERAL: <?= $total ?>
+</div>
+</div>
+</body>
+</html>

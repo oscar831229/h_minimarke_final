@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div class="criterios">
+	<div class="criterios-label">
+		<i>Utilice los siguientes criterios para calificar el proveedor:</i>
+	</div>
+
+<?php
+
+$criterioPuntos = Settings::get('criterio_puntos');
+if($criterioPuntos=='N'){
+	echo '<table width="90%" cellspacing="0" cellpadding="0" align="center" class="hyBrowseTab zebraSt sortable">
+		<tr>
+			<th width="50" class="sortcol">&nbsp;</th>
+			<th class="sortcol">Criterio</th>
+			<th>&nbsp;</th>
+			<th width="50" class="sortcol">&nbsp;</th>
+			<th class="sortcol">Criterio</th>
+			<th>&nbsp;</th>
+			<th width="50" class="sortcol">&nbsp;</th>
+			<th class="sortcol">Criterio</th>
+		</tr><tr>';
+} else {
+	echo '<table width="90%" cellspacing="0" cellpadding="0" align="center" class="hyBrowseTab zebraSt sortable">
+		<tr>
+			<th width="50" class="sortcol">Puntos</th>
+			<th class="sortcol">Criterio</th>
+			<th>&nbsp;</th>
+			<th width="50" class="sortcol">Puntos</th>
+			<th class="sortcol">Criterio</th>
+			<th>&nbsp;</th>
+			<th width="50" class="sortcol">Puntos</th>
+			<th class="sortcol">Criterio</th>
+		</tr><tr>';
+}
+$numero = 1;
+foreach($criteriosActivos as $criterio){
+	echo '<td align="center">', Tag::selectStatic('criterio'.$criterio->getId(), $valores[$criterio->getId()]), '</td>';
+	echo '<td title="', utf8_encode($criterio->getDescripcion()), '">', utf8_encode($criterio->getNombre()), '</td>';
+	if(($numero%3)==0){
+		echo '</tr><tr>';
+	} else {
+		echo '<td></td>';
+	}
+	$numero++;
+}
+echo '</tr></table>';
+
+?>
+
+</div>

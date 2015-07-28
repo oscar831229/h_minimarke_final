@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+echo Tag::javascriptLibrary('windows');
+echo Tag::javascriptInclude('pos2/tables');
+Tag::stylesheetLink('pos2/tables');
+View::getContent();
+
+?>
+
+<div align="center">
+	<div id='messages'></div>
+	<table cellspacing='0' cellpadding='0'>
+		<tr>
+			<td></td>
+			<td class='titulo'>Crear mesas</td>
+		</tr>
+		<tr>
+		<td class='sh_left'></td>
+		<td valign="top"></td>
+		<td class='sh_right'></td>
+	 </tr>
+	 <tr>
+	 	<td></td>
+	 	<td class='sh_down'></td>
+	 	<td></td>
+	 </tr>
+	</table>
+</div>

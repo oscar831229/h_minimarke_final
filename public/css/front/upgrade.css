@@ -1,0 +1,101 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div#appLogo {
+	margin-bottom: 25px;
+	padding-bottom: 10px;
+	color: #969696;
+}
+
+h1 {
+	font-family: Lucida Grande, Tahoma;
+	font-size: 38px;
+}
+
+div#layout {
+	margin-top: 100px;
+	width: 700px;
+	padding-top: 35px;
+	background: #e8e8e8;
+	left: auto;
+	-moz-border-radius:7px 7px 7px 7px;
+	-moz-box-shadow: 5px 7px 10px rgba(21, 21, 21, 0.7);
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding-bottom: 25px;
+}
+
+div#layout-content {
+	background: #fff;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	padding: 20px;
+	margin: 20px;
+	text-align: left;
+	font-size: 14px;
+	font-family: Lucida Grande, Tahoma;
+}
+
+table#nit-box {
+	border: 1px solid #969696;
+}
+
+input#nit {
+	width: 350px;
+	background: white;
+	border: none;
+	font-family: Lucida Grande, Tahoma;
+	font-size: 32px;
+	padding: 5px;
+}
+
+div#spinner {
+	padding: 50px;
+}
+
+div#spinner span {
+	font-family: Lucida Grande, Tahoma;
+	font-size: 16px;
+}
+
+div#spinner img {
+	margin: 20px;
+}
+
+div#content-ok p,
+div#content-fail p,
+div#content-form p {
+	font-family: Lucida Grande, Tahoma;
+	font-size: 14px;
+	margin: 20px;
+	line-height: 20px;
+}
+
+div#content-ok img,
+div#content-fail img {
+	margin: 20px;
+}
+
+
+div#panel-buttons {
+	padding-right: 30px;
+	display: inline-cell;
+}
+
+div#panel-links {
+	padding-left: 30px;
+	display: inline-cell;
+}
+
+

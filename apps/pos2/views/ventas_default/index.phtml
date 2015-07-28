@@ -1,0 +1,97 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<script type='text/javascript'>
+
+function getOpciones(element){
+	new Ajax.Request(Utils.getKumbiaURL("ventas_default/getOpciones/"+$F(element)), {
+		onSuccess: function(transport){
+			$("opciones").update(transport.responseText);
+
+			$('cedula').observe('blur', function(){
+				if(this.getValue()!=''){
+					new Ajax.Request(Utils.getKumbiaURL('order/queryByCedula'), {
+						parameters: 'item='+this.getValue(),
+						onSuccess: function(transport){
+							$('nombre').setValue(transport.responseText.evalJSON());
+						}
+					});
+				}
+			});
+
+			//SortableTable.init($("modifiersTable"));
+		}
+	});
+}
+
+function savePerm(id){
+	new Ajax.Request(Utils.getKumbiaURL("tipo_venta/saveServicio/"+id+"/"+$F('salon_id')), {
+		onLoading: function(){
+			$('spinner').show();
+			$('success').hide();
+		},
+		onSuccess: function(){
+			$('spinner').hide();
+			$('success').show();
+		}
+	});
+}
+
+function getCustomerId(x, li){
+	$('cedula').setValue(li.id);
+}
+
+</script>
+
+<div id="spinner" class="kumbiaDisplay noticeMessage" style="display:none">
+	<table cellspacing="0">
+		<tr>
+			<td><?php echo Tag::image('pos2/spin-admin.gif') ?></td>
+			<td><b>Guardando...</b></td>
+		</tr>
+	</table>
+</div>
+<div id="success" class="kumbiaDisplay noticeMessage" style="display:none">
+	<b>Se actualizaró la configuración del tipo de pedido</b>
+</div>
+
+<?php View::getContent() ?>
+
+<h1>Opciones de Pedidos Menores</h1>
+
+<br/>
+<form method="post" autocomplete="off">
+	<table align="center">
+		<tr>
+			<td><label for="tipoVentaId">Tipo de Pedido</label></td>
+			<td>
+				<select id='tipoVentaId' onchange='getOpciones(this)'>
+					<option value='@'>Seleccione...</option>
+					<?php
+						foreach($TipoVenta->find("id NOT IN ('H', 'P')", 'order: detalle') as $tipoVenta){
+							echo "<option value='{$tipoVenta->id}'>{$tipoVenta->detalle}</option>";
+						}
+					?>
+				</select>
+			</td>
+		</tr>
+	</table>
+</form>
+
+<div id='opciones'></div>
+
+<br/>

@@ -1,0 +1,309 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body {
+	background-position: top center;
+	background-attachment: fixed;
+	background-color: #408BCC;
+	background-image: url("../../img/pos2/food4.png");
+}
+
+h1 {
+  	font-family: 'Anivers',Verdana;
+	font-weight: normal;
+	font-size: 22px;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+.titulo {
+	font-family: 'Anivers',Verdana;
+  	color: #f2f2f2;
+	font-size: 18px;
+	opacity: 0.85;
+	background-image: -moz-linear-gradient(top center, rgba(22, 22, 22, 0.9), rgba(33, 33, 33, 0.7));
+	height: 35px;
+	padding: 7px;
+	padding-right: 5px;
+	text-shadow: #000 1px 1px 1px;
+	text-shadow: rgba(0, 0, 0, .4) 1px 1px 1px;
+	text-align: left;
+}
+
+.main-content {
+	background-image: url("../../img/pos2/bg-texture-2.png");
+}
+
+.cancelButton {
+  	font-family: Helvetica;
+	font-size: 10px;
+	font-size: 13px;
+	width: 73px;
+	height: 58px;
+	background: -moz-linear-gradient(center top , #6BBBEF, #599BC7) repeat scroll 0 0 transparent;
+	border: 1px solid #010101;
+	-moz-border-radius: 7px;
+	text-shadow: #333333 0px 1px 1px;
+	border: none;
+	color: #ffffff;
+}
+
+.cancelaButton {
+  	font-family: "Lucida Grande", Verdana;
+  	width: 140px;
+  	height: 30px;
+	background: -moz-linear-gradient(center top , #C90000, #9B0000) repeat scroll 0 0 transparent;
+	font-weight: bold;
+	-moz-border-radius: 7px;
+	color: #fafafa;
+	border: none;
+	font-size: 12px;
+}
+
+.okButton {
+  	font-family: Helvetica;
+  	text-transform: uppercase;
+	font-size: 13px;
+	width: 73px;
+	height: 58px;
+	color: #ffffff;
+	background: -moz-linear-gradient(top center, #8CB62C, #4B6C15);
+	border: 1px solid #010101;
+	-moz-border-radius: 7px;
+	text-shadow: #333333 0px 1px 1px;
+	border: none;
+}
+
+.commandButton {
+  	font-family: 'Verdana';
+	background: -moz-linear-gradient(top center, #EDEEEF, #D3D4D9);
+	-moz-border-radius: 5px;
+	border: 1px solid #cacaca;
+	color: #1B1B1B;
+	font-size: 10px;
+	width: 72px;
+	height: 62px;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+td, th {
+	font-family: Verdana;
+	font-size: 14px;
+}
+
+.smallButton {
+	font-size: 14px;
+  	font-family: 'Helvetica';
+	width: 50px;
+	height: 50px;
+	background: -moz-linear-gradient(center top , #5EA1CD, #3772A5) repeat scroll 0 0 transparent;
+	border: none;
+	color: #ffffff;
+	-moz-border-radius: 7px;
+	text-shadow: #333333 0px 1px 1px;
+	margin: 10px;
+}
+
+.active_item {
+	background: url("../../img/pos2/bluelight_box.png");
+	background-color: #A4CDF7;
+	background-repeat: repeat-x;
+	padding: 2px;
+}
+
+.inactive_item {
+	background: url("../../img/pos2/pink_box.png");
+}
+
+#status .titulo_p {
+	font-size: 28px;
+	font-family: "Lucida Grande", Verdana;
+}
+
+table.lista_res {
+	margin: 10px;
+	border-top: 1px solid #cacaca;
+}
+
+table.lista_res th {
+	background: url("../../img/pos2/localnavg.gif") #cacaca;
+	color: #333333;
+	padding: 5px;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+table.lista_res tr:nth-child(odd) {
+	background: #ffffff;
+}
+
+table.lista_res tr:nth-child(even) {
+	background: #E5EEFF;
+}
+
+#status #main_div {
+	background: url("../../img/pos2/tile.gif") #cacaca;
+	padding: 10px;
+}
+
+#status .stitulo {
+	font-size: 20px;
+	font-family: "Lucida Grande", Verdana;
+}
+
+#status .items_lista {
+	border-top: 1px solid #cacaca;
+	border-right: 1px solid #cacaca;
+	border-bottom: 1px solid #cacaca;
+}
+
+#status .items_lista th {
+	background: url("../../img/pos2/localnavg.gif") #cacaca;
+	color: #111111;
+	padding: 5px;
+	font-weight: bold;
+	border-left: 1px solid #cacaca;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+#status .items_lista td {
+
+}
+
+#status .tab_td {
+	padding-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-bottom: -5px;
+}
+
+#status .tab_div {
+	font-size: 12px;
+	border-top: 1px solid #dadada;
+	border-left: 1px solid #dadada;
+	border-right: 1px solid #dadada;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	padding: 2px;
+	color: #111111;
+	cursor: pointer;
+}
+
+#status .tab_active {
+	background: #eaeaea;
+}
+
+#status .tab_inactive {
+	background: #cacaca;
+}
+
+#status .tab_con {
+	border: 1px solid #dadada;
+	border-top: 0px;
+	background: #eaeaea;
+	padding: 10px;
+}
+
+#status .no_hay {
+	background: #fff;
+	border: 1px solid #cacaca;
+	padding: 5px;
+}
+
+.controlButton {
+	font-family: "Tahoma";
+	background: url('../../img/pos2/but7.png');
+	height: 25px;
+	width: 90px;
+	border: none;
+	color: white;
+	font-weight: bold;
+	font-size: 11px;
+	text-align: center;
+}
+
+td#reports_main {
+	background: url(../../img/pos2/tile.gif);
+	padding: 5px;
+}
+
+span.subtitle {
+	font-size: 24px;
+	font-family: "Lucida Grande", Verdana;
+}
+
+table#anularTab {
+	background: url('../../img/pos2/tile.gif');
+	padding: 20px;
+	border: 1px solid #cacaca;
+}
+
+div#noPedidos {
+	width: 450px;
+	border: 1px solid #cacaca;
+	background: rgba(11, 11, 11, 0.05);
+	margin-top: 10px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+td#cancelarMain,
+td#statusMain,
+td#upgradeMain {
+	background: url('../../img/pos2/tile.gif');
+	padding: 10px;
+}
+
+div#upgrading {
+	width: 450px;
+	border: 1px solid #cacaca;
+	margin-top: 10px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 10px;
+	background: url('../../img/pos2/tile.gif');
+}
+
+div#loading {
+	padding: 10px;
+}
+
+div#button-bottom-bar {
+	padding: 15px;
+}
+
+div.shadow-div {
+	width: 100%;
+}
+
+#main_div select {
+	font-size: 18px;
+	width: 100%;
+	padding: 5px;
+}
+
+div#content {
+	padding: 10px;
+}
+
+div#content td {
+	padding: 15px;
+}
+
+div#content input.ready {
+	padding: 0px;
+	font-size: 18px;
+}
+
+audio#whistle {
+	visibility: hidden;
+}

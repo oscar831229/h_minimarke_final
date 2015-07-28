@@ -1,0 +1,162 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+body {
+  	font-family: Lucida Grande, Verdana;
+	background-color: #888;
+	margin: 25px;
+	font-size: 12px;
+	margin-left: 0px;
+	margin-top: 0px;
+}
+
+input, div, td, span, b, select, textarea {
+     font-family: Lucida Grande, Verdana, Tahoma, Arial;
+}
+
+a {
+	  font-family: Lucida Grande, Verdana, Tahoma, Arial;
+	  color: red;
+}
+
+a.awhite {
+	  color: white;
+}
+
+a:hover {
+	  text-decoration: none;
+}
+
+a.redl {
+	  font-family: Lucida Grande, Verdana;
+	  font-size:11px;
+	  color: #D50000;
+}
+
+.but {
+	  background: #D0D0C0 url("@path/img/pos2/b.gif");
+}
+
+.box {
+	  background: #D0D0C0 url("@path/img/pos2/c.gif");
+	  border: 1px solid black;
+}
+
+.titulo {
+	  font-family: Lucida Grande, Verdana, Tahoma, Arial;
+	  font-size: 32px;
+}
+
+.iError {
+	  color: white;
+	  background: red;
+}
+
+.abigstyle {
+  color: white;
+  font-size:12px;
+  text-decoration:none;
+}
+
+.asmallwhite {
+  color: white;
+  font-size:9px;
+  text-decoration:none;
+}
+
+.abigstyle:hover {
+  text-decoration:underline;
+}
+
+.menuItem {
+  font-size: 13px;
+  color: #333333;
+}
+
+a.ultcla {
+  font-size: 15px;
+  color: #000000;
+}
+
+a.ultcla:hover {
+  background: #66CCFF;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+.loginBox {
+	font-size: 12px;
+	background: #F2F2F2;
+	border: 1px solid #808080
+}
+
+#photos img {
+  	border: 1px solid #000;
+  	width: 75px;
+  	height: 75px;
+  	margin: 5px;
+}
+
+label {
+  	font-weight: bold;
+}
+
+
+#loadStatus {
+	width: 200px;
+	padding: 20px;
+	background: #EEEEEE;
+	border: 1px solid #808080;
+	visibility: hidden;
+	position: absolute;
+	top:350px;
+	left:400px;
+}
+
+#welcomeMessage {
+  visibility: hidden;
+  position: absolute;
+  top: 60px;
+  left: 110px;
+  font-size: 13px;
+  color: white;
+}
+
+#q {
+  font-size: 12px;
+  background: #F2F2F2;
+  border: 1px solid #808080;
+}
+
+
+#leftcontent {
+	position: absolute;
+	top: 300px;
+	left: 110px;
+}
+
+#startSession {
+ 	position: absolute;
+	top: 345px;
+	left: 580px;
+}
+
+
+#iBody {
+
+}
+
