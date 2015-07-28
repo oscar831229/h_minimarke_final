@@ -433,8 +433,10 @@ class OrdenesController extends ApplicationController {
 				$linea = 1;
 
 				$movis = array();
+				$movis = array();//debitos
+				$movis = array();//creditos
 
-				foreach ($ordenes as $orden) {
+				foreach($ordenes as $orden){
 
 					$item = $orden->getItem();
 
@@ -460,21 +462,25 @@ class OrdenesController extends ApplicationController {
 					if(!isset($movis[$item][$cuentaGasto->getCuenta()])){
 
 						$movis[$item][$cuentaGasto->getCuenta()] = array(
-							'Fecha' 	  => $fechaMovi,
-							'Cuenta' 	  => $cuentaGasto->getCuenta(),
-							'Nit' 		  => $orden->getNit(),
+							'Fecha' => $fechaMovi,
+							'Cuenta' => $cuentaGasto->getCuenta(),
+							'Nit' => $orden->getNit(),
 							'Descripcion' => $orden->getDescripcion(),
 							'CentroCosto' => $orden->getCentroCosto(),
-							'Valor' 	  => LocaleMath::round($orden->getValor(),2),
-							'BaseGrab' 	  => 0,
-							'DebCre' 	  => 'D'
+							'Valor' => LocaleMath::round($orden->getValor(),2),
+							'BaseGrab' => 0,
+							'DebCre' => 'D'
 						);
+						//echo "<br>1:";print_r($movis[$item][$cuentaGasto->getCuenta()]);
 						$valorMonto+=$orden->getValor();
+						//echo "<br>valorMonto: ",$valorMonto;
 						$valorMontoDebitos[$item]+=$orden->getValor();
 					} else {
 						if($movis[$item][$cuentaGasto->getCuenta()]['DebCre']=='D'){
 							$movis[$item][$cuentaGasto->getCuenta()]['Valor']+=LocaleMath::round($orden->getValor(),2);
+							//echo "<br>1(SUMA):";print_r($movis[$item][$cuentaGasto->getCuenta()]);
 							$valorMonto+=$orden->getValor();
+							//echo "<br>valorMonto: ",$valorMonto;
 							$valorMontoDebitos[$item]+=$orden->getValor();
 						}
 					}
@@ -491,7 +497,6 @@ class OrdenesController extends ApplicationController {
 					));*/
 
 					if($lineaser->getPorcIva()>0){
-						$valorMontoCredito[$item] = 0;
 
 						if($tercero->getEstadoNit()=='S'){
 							$cuenta = BackCacher::getCuenta($lineaser->getCtaEx1());
@@ -505,33 +510,35 @@ class OrdenesController extends ApplicationController {
 							}
 						}
 
-						if ($cuenta->getPorcIva() > 0) {
+						if($cuenta->getPorcIva()>0){
+							$valorIva = $orden->getValor()*$cuenta->getPorcIva();
+							if($tercero->getEstadoNit()=='S'){
+								$valorIva*=0.5;
+							}
 
-							$valorIva = $orden->getValor() * $cuenta->getPorcIva() / 100;
 							$valorIva = LocaleMath::round($valorIva, 2);
 
-							if ($valorIva > 0 ) {
-								$cta = $cuenta->getCuenta();
-								if(!isset($movis[$item][$cta])){
-									$movis[$item][$cta] = array(
-										'Fecha' 	  => $fechaMovi,
-										'Cuenta' 	  => $cta,
-										'Descripcion' => 'IVA FAC. '.$consecutivo,
-										'Nit' 		  => $orden->getNit(),
-										'CentroCosto' => $orden->getCentroCosto(),
-										'Valor' 	  => $valorIva,
-										'BaseGrab' 	  => $orden->getValor(),
-										'DebCre' 	  => 'D'
-									);
-									$valorMonto += $valorIva;
-									$valorMontoCredito[$item] -= $valorIva;
-								} else {
-									if ($movis[$item][$cta]['DebCre'] == 'D') {
-										$movis[$item][$cta]['Valor'] += $valorIva;
-										$movis[$item][$cta]['Descripcion'] .= '+ IVA FAC. ' . $consecutivo;
-										$valorMonto += $valorIva;
-										$valorMontoCredito[$item] -= $valorIva;
-									}
+							if(!isset($movis[$item][$cuenta->getCuenta()])){
+								$movis[$item][$cuenta->getCuenta()] = array(
+									'Fecha' => $fechaMovi,
+									'Cuenta' => $cuenta->getCuenta(),
+									'Descripcion' => 'IVA FAC. '.$consecutivo,
+									'Nit' => $orden->getNit(),
+									'CentroCosto' => $orden->getCentroCosto(),
+									'Valor' => $valorIva,
+									'BaseGrab' => $orden->getValor(),
+									'DebCre' => 'D'
+								);
+								//echo "<br>2:";print_r($movis[$item][$cuenta->getCuenta()]);
+								$valorMonto+=$valorIva;
+								//echo "<br>valorMonto: ",$valorMonto;
+							} else {
+								if($movis[$item][$cuenta->getCuenta()]['DebCre']=='D'){
+									$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorIva;
+									$movis[$item][$cuenta->getCuenta()]['Descripcion'].='+ IVA FAC. '.$consecutivo;
+									//echo "<br>2(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
+									$valorMonto+=$valorIva;
+									//echo "<br>valorMonto: ",$valorMonto;
 								}
 							}
 
@@ -546,44 +553,87 @@ class OrdenesController extends ApplicationController {
 								'DebCre' => 'D'
 							));*/
 
+						} else {
+							if($lineaser->getPorcIva()>0){
+								$valorIva = $orden->getValor()*$lineaser->getPorcIva();
+								if($tercero->getEstadoNit()=='S'){
+									$valorIva*=0.5;
+								}
+
+								$valorIva = LocaleMath::round($valorIva, 2);
+
+								if(!isset($movis[$item][$cuenta->getCuenta()])){
+
+									$movis[$item][$cuenta->getCuenta()] = array(
+										'Fecha' => $fechaMovi,
+										'Cuenta' => $cuenta->getCuenta(),
+										'Descripcion' => $cuenta->getNombre(),
+										'Nit' => $orden->getNit(),
+										'CentroCosto' => $orden->getCentroCosto(),
+										'Valor' => $valorIva,
+										'BaseGrab' => $orden->getValor(),
+										'DebCre' => 'D'
+									);
+									//echo "<br>3:";print_r($movis[$item][$cuenta->getCuenta()]);
+									$valorMonto+=$valorIva;
+									$valorMontoDebitos[$item]+=$valorIva;
+								} else {
+									if($movis[$item][$cuenta->getCuenta()]['DebCre']=='D'){
+										$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorIva;
+										//echo "<br>3(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
+										$valorMonto+=$valorIva;
+										$valorMontoDebitos[$item]+=$valorIva;
+									}
+								}
+
+								/*
+								$aura->addMovement(array(
+									'Fecha' => $fechaMovi,
+									'Cuenta' => $cuenta->getCuenta(),
+									'Descripcion' => $cuenta->getNombre(),
+									'Nit' => $orden->getNit(),
+									'CentroCosto' => $orden->getCentroCosto(),
+									'Valor' => $valorIva,
+									'BaseGrab' => $orden->getValor(),
+									'DebCre' => 'D'
+								));*/
+
+
+							}
 						}
 
 						//////CREDITOS/////
 						$useDebcreT = false;
-						if ($valorIva > 0) {
-							if (
-								!(
-									$tercero->getTipoNit() == 1
-									||
-									$regimenHotel == $tercero->getEstadoNit()
-									||
-									(
-										$regimenHotel == 'C' && $tercero->getEstadoNit()!='S'
-									)
-								)
-							){
-								$cta = $cuenta->getCuenta();
-								if(!isset($movis[$item][$cta])){
+						$valorMontoCredito[$item] = 0;
+						if($valorIva>0){
+							if(!($tercero->getTipoNit()==1 || ($regimenHotel==$tercero->getEstadoNit()) || ($regimenHotel=='C' && $tercero->getEstadoNit()!='S'))){
 
-									$movis[$item][$cta] = array(
-										'Fecha' 	  => $fechaMovi,
-										'Cuenta' 	  => $cta,
+								if(!isset($movis[$item][$cuenta->getCuenta()])){
+
+									$movis[$item][$cuenta->getCuenta()] = array(
+										'Fecha' => $fechaMovi,
+										'Cuenta' => $cuenta->getCuenta(),
 										'Descripcion' => 'RETENCION POR IVA FAC. '.$consecutivo,
-										'Nit' 	  	  => $orden->getNit(),
+										'Nit' => $orden->getNit(),
 										'CentroCosto' => $orden->getCentroCosto(),
-										'Valor' 	  => $valorIva,
-										'BaseGrab' 	  => $orden->getValor(),
-										'DebCre' 	  => 'C'
+										'Valor' => $valorIva,
+										'BaseGrab' => $orden->getValor(),
+										'DebCre' => 'C'
 									);
 
-									$valorMonto -= $valorIva;
-									$valorMontoCredito[$item] += $valorIva;
+									//echo "<br>4:";print_r($movis[$item][$cuenta->getCuenta()]);
+									//echo "<br>valorMonto: ",$valorMonto;
+									$valorMonto-=$valorIva;
+									$valorMontoCredito[$item]+=$valorIva;
+									//echo "<br>valorMontoCredito: ",$valorMontoCredito[$item];
 									$useDebcreT = true;
 								} else {
-									if($movis[$item][$cta]['DebCre']=='C'){
-										$movis[$item][$cta]['Valor'] += $valorIva;
-										$valorMonto -= $valorIva;
-										$valorMontoCredito[$item] += $valorIva;
+									if($movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
+										$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorIva;
+										//echo "<br>4(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
+										$valorMonto-=$valorIva;
+										$valorMontoCredito[$item]+=$valorIva;
+										//echo "<br>valorMontoCredito: ",$valorMontoCredito[$item];
 									}
 								}
 
@@ -601,6 +651,8 @@ class OrdenesController extends ApplicationController {
 						}
 					}
 
+					//echo "<br>useDebcreT: ",$useDebcreT;
+
 					if($tercero->getAutoret()!='S'){
 
 						$cuenta = BackCacher::getCuenta($lineaser->getCtaRetencion());
@@ -609,44 +661,50 @@ class OrdenesController extends ApplicationController {
 								$valorRetencion = $orden->getValor()*$cuenta->getPorcIva();
 
 								$valorRetencion = LocaleMath::round($valorRetencion, 2);
-								if ($valorRetencion > 0) {
 
-									if(!isset($movis[$item][$cuenta->getCuenta()])){
+								if(!isset($movis[$item][$cuenta->getCuenta()])){
 
-										$movis[$item][$cuenta->getCuenta()] = array(
-											'Fecha' 	  => $fechaMovi,
-											'Cuenta' 	  => $cuenta->getCuenta(),
-											'Descripcion' => $cuenta->getNombre(),
-											'Nit' 	      => $orden->getNit(),
-											'CentroCosto' => $orden->getCentroCosto(),
-											'Valor' 	  => $valorRetencion,
-											'BaseGrab' 	  => $orden->getValor(),
-											'FechaVence'  => $fechaMovi,
-											'DebCre' 	  => 'C'
-										);
+									$movis[$item][$cuenta->getCuenta()] = array(
+										'Fecha' => $fechaMovi,
+										'Cuenta' => $cuenta->getCuenta(),
+										'Descripcion' => $cuenta->getNombre(),
+										'Nit' => $orden->getNit(),
+										'CentroCosto' => $orden->getCentroCosto(),
+										'Valor' => $valorRetencion,
+										'BaseGrab' => $orden->getValor(),
+										'FechaVence' => $fechaMovi,
+										'DebCre' => 'C'
+									);
+									//echo "<br>5:";print_r($movis[$item][$cuenta->getCuenta()]);
+									$valorMonto-=$valorRetencion;
+									//echo "<br>valorMonto: ",$valorMonto;
+									if(!isset($valorMontoCredito[$item])){
+										$valorMontoCredito[$item] = 0;
+									}
+									$valorMontoCredito[$item]+=$valorRetencion;
+									//echo "<br>valorMontoCredito: ",$valorMontoCredito[$item];
+									$useDebcreT = false;
+								} else {
+
+									//echo "<br>$item!=$oldItem";
+									if(!isset($valorMontoCredito[$item])){
+										$valorMontoCredito[$item] = 0;
+									}
+									if(isset($movis[$item][$cuenta->getCuenta()]) && $movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
+										//echo "<br>5(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
 										$valorMonto-=$valorRetencion;
-										if(!isset($valorMontoCredito[$item])){
-											$valorMontoCredito[$item] = 0;
+										if($item!=$oldItem){
+											$valorMontoCredito[$item]=$valorRetencion;
+											$movis[$item][$cuenta->getCuenta()]['Valor']=$valorRetencion;
+										} else {
+											$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorRetencion;
+											$valorMontoCredito[$item]+=$valorRetencion;
 										}
-										$valorMontoCredito[$item]+=$valorRetencion;
-										$useDebcreT = false;
-									} else {
-
-										if(!isset($valorMontoCredito[$item])){
-											$valorMontoCredito[$item] = 0;
-										}
-										if(isset($movis[$item][$cuenta->getCuenta()]) && $movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
-											$valorMonto-=$valorRetencion;
-											if($item!=$oldItem){
-												$valorMontoCredito[$item]=$valorRetencion;
-												$movis[$item][$cuenta->getCuenta()]['Valor']=$valorRetencion;
-											} else {
-												$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorRetencion;
-												$valorMontoCredito[$item]+=$valorRetencion;
-											}
-										}
+										//echo "<br>valorMontoCredito: ",$valorMontoCredito[$item];
 									}
 								}
+
+
 
 								/*$aura->addMovement(array(
 									'Fecha' => $fechaMovi,
@@ -663,6 +721,7 @@ class OrdenesController extends ApplicationController {
 							}
 						}
 
+						//echo "<br>useDebcreT: ",$useDebcreT;
 						if(!isset($valorMontoCredito[$item])){
 							$valorMontoCredito[$item] = 0;
 						}
@@ -674,27 +733,30 @@ class OrdenesController extends ApplicationController {
 
 							$valorIca = LocaleMath::round($valorIca, 2);
 
-							if ($valorIca > 0) {
+							if(!isset($movis[$item][$cuenta->getCuenta()])){
 
-								if(!isset($movis[$item][$cuenta->getCuenta()])){
-
-									$movis[$item][$cuenta->getCuenta()] = array(
-										'Fecha' 	  => $fechaMovi,
-										'Cuenta' 	  => $cuenta->getCuenta(),
-										'Descripcion' => $cuenta->getNombre(),
-										'Nit' 		  => $orden->getNit(),
-										'CentroCosto' => $orden->getCentroCosto(),
-										'Valor' 	  => $valorIca,
-										'BaseGrab' 	  => $orden->getValor(),
-										'DebCre' 	  => 'C'
-									);
+								$movis[$item][$cuenta->getCuenta()] = array(
+									'Fecha' => $fechaMovi,
+									'Cuenta' => $cuenta->getCuenta(),
+									'Descripcion' => $cuenta->getNombre(),
+									'Nit' => $orden->getNit(),
+									'CentroCosto' => $orden->getCentroCosto(),
+									'Valor' => $valorIca,
+									'BaseGrab' => $orden->getValor(),
+									'DebCre' => 'C'
+								);
+								//echo "<br>6:";print_r($movis[$item][$cuenta->getCuenta()]);
+								$valorMonto-=$valorIca;
+								//echo "<br>valorMonto 6: ",$valorMonto;
+								$valorMontoCredito[$item]+=$valorIca;
+								//echo "<br>valorMontoCredito: ",$valorMontoCredito[$item];
+								$useDebcreT = false;
+							} else {
+								if($movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
+									//$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorIca;
+									//echo "<br>6(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
 									$valorMonto-=$valorIca;
-									$valorMontoCredito[$item]+=$valorIca;
-									$useDebcreT = false;
-								} else {
-									if($movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
-										$valorMonto-=$valorIca;
-									}
+
 								}
 							}
 
@@ -730,39 +792,44 @@ class OrdenesController extends ApplicationController {
 
 						//echo "<br>", $cuenta->getPorcIva();
 
-						if ($valorIva>0) {
-							if(!isset($movis[$item][$cuenta->getCuenta()])){
+						if(!isset($movis[$item][$cuenta->getCuenta()])){
 
-								$movis[$item][$cuenta->getCuenta()] = array(
-									'Fecha' 		=> $fechaMovi,
-									'Cuenta' 		=> $cuenta->getCuenta(),
-									'Descripcion' 	=> $cuenta->getNombre(),
-									'Nit' 			=> $orden->getNit(),
-									'CentroCosto' 	=> $orden->getCentroCosto(),
-									'Valor' 		=> $valorIva,
-									'BaseGrab' 		=> $orden->getValor(),
-									'DebCre' 		=> 'C'
-								);
+							$movis[$item][$cuenta->getCuenta()] = array(
+								'Fecha' => $fechaMovi,
+								'Cuenta' => $cuenta->getCuenta(),
+								'Descripcion' => $cuenta->getNombre(),
+								'Nit' => $orden->getNit(),
+								'CentroCosto' => $orden->getCentroCosto(),
+								'Valor' => $valorIva,
+								'BaseGrab' => $orden->getValor(),
+								'DebCre' => 'C'
+							);
+							//echo "<br>8:";print_r($movis[$item][$cuenta->getCuenta()]);
+							$valorMonto-=$valorIva;
+							//echo "<br>valorMonto 8: ",$valorMonto;
+							//$valorMontoCredito[$item]+=$valorIva;
+							//echo "<br>valorMontoCredito: ",$valorMontoCredito[$item];
+							$useDebcreT = false;
+						} else {
+							if($movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
+								//$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorIca;
+								//echo "<br>8(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
 								$valorMonto-=$valorIva;
-								//echo "<br>valorMonto 8: ",$valorMonto;
-								//$valorMontoCredito[$item]+=$valorIva;
-								//echo "<br>8valorMontoCredito: ",$valorMontoCredito[$item];
-								$useDebcreT = false;
-							} else {
-								if($movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
-									//$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorIca;
-									$valorMonto-=$valorIva;
-								}
+
 							}
 						}
 					}
 
 
+					//echo "<br>useDebcreT: ",$useDebcreT;
+					//echo "<br>$valorMonto -= \$valorMontoCredito;";
 					if(isset($valorMontoCredito[$item])){
+						//echo "<br>1";
 						$valorMonto -= $valorMontoCredito[$item];
 						$valorT = ($valorMontoDebitos[$item]-$valorMontoCredito[$item]);
 					} else {
 						if(isset($valorMontoDebitos[$item])){
+							//echo "<br>2";
 							$valorT = $valorMontoDebitos[$item];
 						}else{
 							$valorT = $valorMonto;
@@ -777,23 +844,27 @@ class OrdenesController extends ApplicationController {
 					if(!isset($movis[$item][$cuenta->getCuenta()])){
 
 						$movis[$item][$cuenta->getCuenta()] = array(
-							'Fecha' 	  	  => $fechaMovi,
-							'Cuenta' 	  	  => $cuenta->getCuenta(),
-							'Descripcion' 	  => 'FACTURA No. '.$consecutivo,
-							'Nit' 		  	  => $orden->getNit(),
-							'CentroCosto' 	  => $orden->getCentroCosto(),
+							'Fecha' => $fechaMovi,
+							'Cuenta' => $cuenta->getCuenta(),
+							'Descripcion' => 'FACTURA No. '.$consecutivo,
+							'Nit' => $orden->getNit(),
+							'CentroCosto' => $orden->getCentroCosto(),
 							//'Valor' => $valorMonto,
-							'Valor' 	  	  => $valorT,
-							'TipoDocumento'   => 'FAC',
+							'Valor' => $valorT,
+							'TipoDocumento' => 'FAC',
 							'NumeroDocumento' => $consecutivo,
-							'BaseGrab' 		  => 0,
-							'FechaVence' 	  => $fechaMovi,
-							'DebCre' 		  => 'C'
+							'BaseGrab' => 0,
+							'FechaVence' => $fechaMovi,
+							'DebCre' => 'C'
 						);
+						//echo "<br>7:";print_r($movis[$item][$cuenta->getCuenta()]);
+						//echo "<br>valorMonto: ",$valorMonto;
+						//echo "<br>valorMontoCredito: ",$valorMontoCredito;
 					} else {
 						if($movis[$item][$cuenta->getCuenta()]['DebCre']=='C'){
 							//$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorMonto;
 							$movis[$item][$cuenta->getCuenta()]['Valor']+=$valorT;
+							//echo "<br>7(SUMA):";print_r($movis[$item][$cuenta->getCuenta()]);
 						}
 					}
 

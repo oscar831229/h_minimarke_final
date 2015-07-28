@@ -41,7 +41,7 @@ class AdminController extends ApplicationController
 		$pass = $this->getPostParam('pass', 'alpha');
 		$usuario = $this->UsuariosPos->findFirst("clave='$pass' AND estado='A'");
 		if ($usuario) {
-			if ($usuario->perfil == 'Administradores' || $usuario->perfil == 'JefeDeAyB') {
+			if ($usuario->perfil == 'Administradores') {
 				Flash::success('Bienvenido ' . $usuario->nombre);
 				Session::set('auth', 'admin');
 				Session::set('usuarioId', $usuario->id);

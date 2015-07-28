@@ -360,7 +360,7 @@ class Movilin extends ActiveRecord {
 	public function getDescuento(){
 		return $this->descuento;
 	}
-
+	
 	public function initialize(){
 		$this->belongsTo('item', 'Inve', 'item');
 		$this->hasOne(
@@ -368,7 +368,7 @@ class Movilin extends ActiveRecord {
 			"movihead",
 			array("comprob","almacen","numero")
 		);
-
+		
 	}
 
 }

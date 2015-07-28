@@ -24,23 +24,23 @@
 
 	$s = "";
 	$exists_cuentas = false;
-	foreach ($AccountCuentas->find("account_master_id=".$current_master." AND estado IN ('A', 'B')") as $cuenta) {
-		if ($cuenta->estado == 'B') {
+	foreach($AccountCuentas->find("account_master_id=".$current_master." AND estado IN ('A', 'B')") as $cuenta){
+		if($cuenta->estado=='B'){
 			$b = "(LIQU)";
 			$s = "style='background: #FFCCE6'";
 		} else {
 			$b = "";
 			$s = "";
 		}
-		if ($cuenta->cuenta == $numero_cuenta) {
+		if($cuenta->cuenta==$numero_cuenta){
 			echo "<option $s value='$cuenta->cuenta' selected='selected'>$cuenta->cuenta $b</option>\n";
 		} else {
 			echo "<option $s value='$cuenta->cuenta'>$cuenta->cuenta $b</option>\n";
 		}
 		$exists_cuentas = true;
 	}
-	if (!$exists_cuentas) {
-		if ($numero_cuenta) {
+	if(!$exists_cuentas){
+		if($numero_cuenta){
 			echo "<option style='$s' value='$numero_cuenta' selected='selected'>$numero_cuenta</option>\n";
 		}
 	}
@@ -48,10 +48,10 @@
 </select>
 </td>
 <td width="25">
-<button class="addButton" id="plusCuenta"><i class="fa fa-plus"></i></button>
+<input type="button" class="addButton" id="plusCuenta" value="+"/>
 </td>
 <td width="25">
-<button class="deleteButton" id="minusCuenta"><i class="fa fa-minus"></i></button>
+<input type="button" class="deleteButton" id="minusCuenta" value="--"/>
 </td>
 <td width='20'></td>
 <td align='right'>Comanda</td>
@@ -59,21 +59,18 @@
 <select id='comandas'>
 <?php
 	$exists_comandas = false;
-	$comandas = $Account->distinct(array(
-		"comanda",
-		"conditions" => "salon_mesas_id=".$account_id." and estado  in ('S', 'A')"
-	));
-	foreach ($comandas as $comanda) {
+	$comandas = $Account->distinct(array("comanda", "conditions" => "salon_mesas_id=".$account_id." and estado  in ('S', 'A')"));
+	foreach($comandas as $comanda){
 		$exists_comandas = true;
-		if ($comanda == $numero_comanda) {
+		if($comanda==$numero_comanda){
 			echo "<option value='$comanda' selected='selected'>$comanda</option>\n";
 		} else {
 			echo "<option value='$comanda'>$comanda</option>\n";
 		}
 	}
 
-	if (!$exists_comandas) {
-		if ($numero_comanda) {
+	if(!$exists_comandas){
+		if($numero_comanda){
 			echo "<option value='$numero_comanda' selected='selected'>$numero_comanda</option>\n";
 		}
 	}
@@ -81,10 +78,10 @@
 </select>
 </td>
 <td width="25">
-<button class="addButton" id="plusComanda"><i class="fa fa-plus"></i></button>
+<input type="button" class="addButton" id="plusComanda" value="+"/>
 </td>
 <td width="25">
-<button class="deleteButton" id="minusComanda"><i class="fa fa-minus"></i></button>
+<input type="button" class="deleteButton" id="minusComanda" value="--"/>
 </td>
 </tr>
 </table>
@@ -97,22 +94,21 @@
 			<tr>
 				<?php
 				   $ds = "";
-				   for ($r = 1; $r < 15; $r++) {
+				   for($r=1;$r<15;$r++){
 						echo "<td align='center'>";
-						if ($r > ($numero_asientos + 1)) {
+						if($r>($numero_asientos+1)){
 							$ds = "style='display:none'";
 						}
-						if ($silla != $r) {
+						if($silla!=$r){
 							echo "<input id='s$r' type='button' class='inactiveAsiento' $ds value='$r'/>";
 						} else {
 							echo "<input id='s$r' type='button' class='activeAsiento' $ds value='$r'/>";
 						}
+						if($r%8==0){
+							echo "</tr><tr>\n";
+						}
 						echo "</td>\n";
-						//if ($r % 8 == 0) {
-						//	echo "</tr><tr>\n";
-						//}
 					}
-					echo '<td align="center"><button class="addButton" id="changeSillas"><i class="fa fa-users"></i></button></td>';
 				?>
 			</tr>
 			</table>
@@ -164,13 +160,13 @@
 		$delete = Core::getInstancePath()."img/pos2/delete-l.gif";
 		$accountCuenta = $AccountCuentas->findFirst("account_master_id = '".$current_master."' AND cuenta = '{$numero_cuenta}' AND estado IN ('A', 'N', 'B')");
 
-		$conditions = "salon_mesas_id='" . $account_id."' AND estado in ('S', 'A', 'B')";
-		if ($order != 'comanda') {
+		$conditions = "salon_mesas_id='".$account_id."' AND estado in ('S', 'A', 'B')";
+		if($order!='comanda'){
 			$accounts = $Account->find(array($conditions, 'order' => 'cuenta'));
 		} else {
 			$accounts = $Account->find(array($conditions, 'order' => 'comanda desc'));
 		}
-		foreach ($accounts as $account) {
+		foreach($accounts as $account){
 
 			$menuItem = $account->getMenusItems();
 			$total = $account->total * $account->cantidad;
@@ -346,7 +342,7 @@
 <div align='right' id='tipoPedidoDiv'>
 <?php
 
-if (!$accountCuenta || $accountCuenta->propina_fija == 'N') {
+if(!$accountCuenta||$accountCuenta->propina_fija=='N'){
 	if(!isset($resumen['A'])){
 		$resumen['A'] = 0;
 	}
@@ -364,20 +360,9 @@ if (!$accountCuenta || $accountCuenta->propina_fija == 'N') {
 	$propina = $accountCuenta->propina;
 }
 
-if (!$tipo_venta) {
-	if (isset($salon)) {
-		$tipo_venta = $salon->tipo_venta_default;
-		if (!$tipo_venta) {
-			$tipo_venta = 'H';
-		}
-	} else {
-		$tipo_venta = 'H';
-	}
-}
-
 echo "<b>Tipo de Pedido &nbsp;</b><select name='tipo_venta' id='tipo_venta'>";
-foreach ($SalonTipoVenta->find("salon_id='{$salon_id}'") as $salonTipo) {
-	if ($tipo_venta == $salonTipo->getTipoVentaId()){
+foreach($SalonTipoVenta->find("salon_id='{$salon_id}'") as $salonTipo){
+	if($tipo_venta==$salonTipo->getTipoVentaId()){
 		echo "<option value='", $salonTipo->getTipoVentaId(), "' selected='selected'>", $salonTipo->getTipoVenta()->detalle, "\n";
 	} else {
 		echo "<option value='", $salonTipo->getTipoVentaId(), "'>", $salonTipo->getTipoVenta()->detalle, "\n";
@@ -393,7 +378,7 @@ echo "</select>";
 		<td width="85%">
 			<table align='right' cellspacing="0" id='totalTable'>
 				<tr>
-					<td rowspan="5" class='clienteTd' valign="top" width="45%">
+					<td rowspan="4" class='clienteTd' valign="top" width="45%">
 					<b>Cliente</b><br>
 					<?php
 						try {
@@ -402,7 +387,7 @@ echo "</select>";
 						 	$habitacion_id = "";
 						 	$nota = "";
 						 	$accountCuenta = $AccountCuentas->findFirst("account_master_id='".$current_master."' and cuenta='".$numero_cuenta."' and estado in ('A', 'B')");
-							if ($accountCuenta != false) {
+							if($accountCuenta!=false){
 								$cedula = $accountCuenta->clientes_cedula;
 								$nombre_cliente = $accountCuenta->clientes_nombre;
 								$habitacion = $Habitacion->findFirst($accountCuenta->habitacion_id);
@@ -420,7 +405,8 @@ echo "</select>";
 							echo "<input id='habitacion_id' type='hidden' value='{$habitacion_id}'><span id='habitacion_id_span'>{$habitacion_id}</span>";
 							echo "<input id='nota' type='hidden' value='{$nota}'><span id='nota_span'>{$nota}</span>";
 							echo "<br/>";
-						} catch (DbLockAdquisitionException $e) {
+						}
+						catch(DbLockAdquisitionException $e){
 							Flash::error('No se pudo actualizar la base de datos porque está bloqueada, intente nuevamente en un segundo');
 						}
 					?>

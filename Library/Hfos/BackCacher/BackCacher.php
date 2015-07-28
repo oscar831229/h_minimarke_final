@@ -36,13 +36,6 @@ class BackCacher extends UserComponent {
 	private static $_cuentas = array();
 
 	/**
-	 * Cuentas contables cacheadas niif
-	 *
-	 * @var array
-	 */
-	private static $_cuentasNiif = array();
-
-	/**
 	 * Terceros cacheados
 	 *
 	 * @var array
@@ -223,13 +216,6 @@ class BackCacher extends UserComponent {
 	private static $_cargosFijos = array();
 
 	/**
-	 * Niif
-	 *
-	 * @var array
-	 */
-	private static $_niif = array();
-
-	/**
 	 * Obtiene una referencia al modelo Empresa
 	 *
 	 * @return Empresa
@@ -256,20 +242,6 @@ class BackCacher extends UserComponent {
 	}
 
 	/**
-	 * Obtiene una cuenta contable niif del BackCacher
-	 *
-	 * @param	string $codigoCuenta
-	 * @return	Cuentas
-	 */
-	public static function getCuentaNiif($codigoCuenta){
-		//$codigoCuenta = preg_replace('/[^0-9]/', '', $codigoCuenta);
-		if(!isset(self::$_cuentasNiif[$codigoCuenta])){
-			self::$_cuentasNiif[$codigoCuenta] = self::getModel('Niif')->findFirst("cuenta='$codigoCuenta'");
-		}
-		return self::$_cuentasNiif[$codigoCuenta];
-	}
-
-	/**
 	 * Establece una cuenta contable en el BackCacher
 	 *
 	 * @param string $codigoCuenta
@@ -277,30 +249,6 @@ class BackCacher extends UserComponent {
 	 */
 	public static function setCuenta($codigoCuenta, $cuenta){
 		self::$_cuentas[$codigoCuenta] = $cuenta;
-	}
-
-	/**
-	 * Obtiene una niif contable del BackCacher
-	 *
-	 * @param	string $codigoNiif
-	 * @return	Cuentas
-	 */
-	public static function getNiif($codigoNiif){
-		//$codigoCuenta = preg_replace('/[^0-9]/', '', $codigoCuenta);
-		if(!isset(self::$_niif[$codigoNiif])){
-			self::$_niif[$codigoNiif] = self::getModel('Niif')->findFirst("cuenta='$codigoNiif'");
-		}
-		return self::$_niif[$codigoNiif];
-	}
-
-	/**
-	 * Establece una cuenta contable en el BackCacher
-	 *
-	 * @param string $codigoCuenta
-	 * @param Niif $niif
-	 */
-	public static function setNiif($codigoNiif, $niif) {
-		self::$_niif[$codigoNiif] = $niif;
 	}
 
 	/**

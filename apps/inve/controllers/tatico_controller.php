@@ -201,74 +201,76 @@ class TaticoController extends WebServiceController
 	}
 
 	/**
-	 * Metodo que calcula las transformaciones por action
 	 *
-	 * @return array
+	 * Metodo que calcula las transformaciones por action
 	 */
-	public function getCalcularTransformacionAction()
-	{
-	    $items 				= json_decode(str_replace("\\", "", $this->getPostParam('items')));
-	  	$cantidades 		= json_decode(str_replace("\\", "", $this->getPostParam('cantidades')));
-	  	$valorTotal	 		= $this->getPostParam('valorBase', 'float');
-		$itemBase 			= $this->getPostParam('itemBase', 'alpha');
-		$cantidad_objetivo 	= $this->getPostParam('cantidad_objetivo', 'double');
-		$nota 				= $this->getPostParam('nota');
+	public function getCalcularTransformacionAction(){
 
-		if (empty($itemBase)) {
+	    $items = json_decode(str_replace("\\", "", $this->getPostParam('items')));
+	  	$cantidades = json_decode(str_replace("\\", "", $this->getPostParam('cantidades')));
+	  	$valorTotal = $this->getPostParam('valorBase', 'float');
+		$itemBase = $this->getPostParam('itemBase', 'int');
+		$cantidad_objetivo = $this->getPostParam('cantidad_objetivo', 'double');
+		$nota = $this->getPostParam('nota');
+
+		if(empty($itemBase)){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => 'Debe ingresar items base'
 			);
 		}
 
-		if (!is_array($items)) {
+		if(!is_array($items)){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => 'Debe ingresar items en el detalle'
 			);
 		}
 
-		if (!$cantidad_objetivo) {
+		if(!$cantidad_objetivo){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => 'Debe ingresar una cantidad al item base'
 			);
 		}
 
-		if (!is_array($cantidades)) {
+
+		if(!is_array($cantidades)){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => 'Debe ingresar cantidades al item en el detalle'
 			);
 		}
 
-		if (!$valorTotal) {
+		if(!$valorTotal){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => 'La referencia base no tiene existencias suficientes en almacén'
 			);
 		}
 
 		try {
 			$calculos = Tatico::getCalcularTransformacion(array(
-				'itemBase' 			=> $itemBase,
+				'itemBase' => $itemBase,
 				'cantidad_objetivo' => $cantidad_objetivo,
-				'items' 			=> $items,
-				'cantidades' 		=> $cantidades,
-				'valorTotal' 		=> $valorTotal,
-				'nota' 				=> $nota
+				'items' => $items,
+				'cantidades' => $cantidades,
+				'valorTotal' => $valorTotal,
+				'nota' => $nota
 			));
-		} catch(TaticoException $e) {
+		}
+		catch(TaticoException $e){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
 		return array(
-			'status'  => 'OK',
+			'status' => 'OK',
 			'message' => 'Se calculó los nuevos datos de transformación',
-			'datos'   => $calculos
+			'datos' => $calculos
 		);
+
 	}
 
 	/**

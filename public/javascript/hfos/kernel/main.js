@@ -328,7 +328,7 @@ var Hfos = {
 	 */
 	checkForAuthToken: function(bootAppCode, onSuccess){
 		Hfos.initialize();
-		//if (Hfos.isSupportedNavigator()) {
+		if (Hfos.isSupportedNavigator()) {
 			if ($('mainContent').innerHTML == '') {
 				new HfosAjax.JsonRequest('session/exists', {
 					onSuccess: function(bootAppCode, onSuccess, authenticated){
@@ -345,7 +345,7 @@ var Hfos = {
 					eval('new ' + className + '($("mainContent"))');
 				}
 			}
-		/*} else {
+		} else {
 			Hfos._loadBaseComponents();
 			new HfosModal.customDialog({
 				icon: 'firefox48',
@@ -359,7 +359,7 @@ var Hfos = {
 					}
 				}
 			});
-		}*/
+		}
 	},
 
 	/**

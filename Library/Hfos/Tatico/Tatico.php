@@ -501,14 +501,6 @@ class Tatico extends UserComponent
 
 		$identity = IdentityManager::getActive();
 
-		//Valida que no exista movimiento mayor ya que puede descuadrar costos
-		$movihead = self::getModel('Movihead')->findFirst("almacen='{$movement['Almacen']}' AND fecha > '{$movement['Fecha']}'");
-		if ($movihead) {
-			$this->_throwException("Ya existe movimiento en el almacen '" .
-				$almacen->getNomAlmacen() . "' con una fecha mayor a '" . $movement['Fecha'] . "'"
-			);
-		}
-
 		//Crear Movihead
 		$movihead = new Movihead();
 		$movihead->setTransaction($this->_transaction);
@@ -697,9 +689,6 @@ class Tatico extends UserComponent
 				$movilin->setAlmacen($movement['Almacen']);
 				$movilin->setNumero($movement['Numero']);
 				$movilin->setItem($detail['Item']);
-				if (isset($detail['Descripcion'])) {
-					$movilin->setDescripcion($detail['Descripcion']);
-				}
 				$movilin->setFecha($movement['Fecha']);
 				$movilin->setNumLinea($i++);
 			}
@@ -2608,9 +2597,7 @@ class Tatico extends UserComponent
 		$recetal = self::getModel('Recetal')->find('almacen="1" AND numero_rec = "'.$recetap->getNumeroRec().'"');
 		foreach ($recetal as $recetal) {
 			if ($recetal->getTipol() == 'I') {
-				//$cantidad = $recetal->getCantidad()/($recetap->getNumPersonas()*$recetal->getDivisor());
-				//$cantidad = ($recetal->getCantidad()/$recetal->getDivisor()) * $recetap->getNumPersonas();
-				$cantidad = $recetal->getCantidad()/$recetal->getDivisor();
+				$cantidad = $recetal->getCantidad()/($recetap->getNumPersonas()*$recetal->getDivisor());
 				if (isset($data[$recetal->getItem()])) {
 					$data[$recetal->getItem()]['costo'] = LocaleMath::round($recetal->getValor()+$data[$recetal->getItem()]['costo'], 2);
 					$data[$recetal->getItem()]['cantidad'] = LocaleMath::round($cantidad+$data[$recetal->getItem()]['cantidad'],4);
@@ -3023,7 +3010,6 @@ class Tatico extends UserComponent
 					'id' => $movilin->getId(),
 					'item' => $movilin->getItem(),
 					'descripcion' => $inve->getDescripcion(),
-					'descripcion2' => $movilin->getDescripcion(),
 					'unidad' => $inve->getUnidad(),
 					'costo' => LocaleMath::round($movilin->getValor(), 2),
 					'cantidad' => LocaleMath::round($movilin->getCantidad(), 3),
@@ -3142,7 +3128,6 @@ class Tatico extends UserComponent
 					'id' => $movilin->getId(),
 					'item' => $movilin->getItem(),
 					'descripcion' => $inve->getDescripcion(),
-					'descripcion2' => $movilin->getDescripcion(),
 					'unidad' => $inve->getUnidad(),
 					'costo' => LocaleMath::round($movilin->getValor(), 2),
 					'cantidad' => LocaleMath::round($movilin->getCantidad(), 3),
@@ -4160,16 +4145,10 @@ class Tatico extends UserComponent
 				sprintf('%14s', Currency::number($movilin->getValor(), 2))."   ".
 				sprintf('%02s', (float)$movilin->getIva())."\r\n";
 			} else {
-				$descripcion2 = $movilin->getDescripcion();
-				if (!empty($descripcion2)) {
-					$descripcion = $inve->getDescripcion() . ' (' . $movilin->getDescripcion() . ')';
-				} else {
-					$descripcion = $inve->getDescripcion();
-				}
 				$content.= '<tr>
 					<td align="right">'.($i++).'</td>
 					<td width="40" align="right">'.$movilin->getItem().'</td>
-					<td>' . $descripcion . '</td>
+					<td>'.$inve->getDescripcion().'</td>
 					<td>'.$unidad.'</td>
 					<td align="right">'.Currency::number($saldoActual, 2).'</td>
 					<td align="right">'.Currency::number($movilin->getCantidad(), 3).'</td>

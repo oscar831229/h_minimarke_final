@@ -232,16 +232,6 @@ class Socios extends RcsRecord {
 	 */
 	protected $ajuste_sostenimiento;
 
-	/**
-	 * @var string
-	 */
-	protected $genera_estcue;
-
-	/**
-	 * @var string
-	 */
-	protected $estado_front;
-
 
 	/**
 	 * Metodo para establecer el valor del campo socios_id
@@ -611,21 +601,6 @@ class Socios extends RcsRecord {
 		$this->ajuste_sostenimiento = $ajuste_sostenimiento;
 	}
 
-	/**
-	 * Metodo para establecer el valor del campo genera_estcue
-	 * @param string $genera_estcue
-	 */
-	public function setGeneraEstcue($genera_estcue){
-		$this->genera_estcue = $genera_estcue;
-	}
-
-	/**
-	 * Metodo para establecer el valor del campo estado_front
-	 * @param string $estado_front
-	 */
-	public function setEstadoFront($estado_front){
-		$this->estado_front = $estado_front;
-	}	
 
 	/**
 	 * Devuelve el valor del campo socios_id
@@ -1001,23 +976,6 @@ class Socios extends RcsRecord {
 	 */
 	public function getAjusteSostenimiento(){
 		return $this->ajuste_sostenimiento;
-	}
-
-	/**
-	 * Metodo para establecer el valor del campo genera_estcue
-	 * @param string $genera_estcue
-	 */
-	public function getGeneraEstcue(){
-		return $this->genera_estcue;
-	}
-
-	
-	/**
-	 * Metodo para establecer el valor del campo estado_front
-	 * @param string $estado_front
-	 */
-	public function getEstadoFront(){
-		return $this->estado_front;
 	}
 
 	public function beforeDelete(){

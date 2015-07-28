@@ -339,54 +339,41 @@ class RecetaController extends ApplicationController {
 		return $result;
 	}
 
-	public function getReferenciasAction()
-	{
+	public function getReferenciasAction(){
 		$this->setResponse('json');
 		$result = array('type' => 'success');
 		try {
-			$unidad = 'UNID';
 			$tipo = $this->getPostParam('tipol','alpha');
-			if ($tipo == 'R') {
+			if($tipo=='R'){
 				$refs = $this->Recetap->find('order: nombre');
 				$unidad = 'UNID';
 			} else {
 				$refs = $this->Inve->find('estado = "A"','order: descripcion');
 			}
-			if (count($refs) == 0) {
+			if(count($refs)==0){
 				$result['type'] = 'error';
 				$result['msg'] = 'No hay datos';
 			} else {
 				$result['data'] = array();
 			}
-			if ($tipo == 'R') {
+			if($tipo=='R'){
 				$id = 'numero_rec';
 				$detalle = 'nombre';
 			} else {
 				$id = 'item';
 				$detalle = 'descripcion';
 			}
-			foreach ($refs as $ref) {
+			foreach($refs as $ref){
 				$costo = 0;
-				$divisor = 1;
-				if ($tipo == 'I' && $ref->getUnidad() != '') {
-					$unidadModel = $this->Unidad->findFirst('codigo="'.$ref->getUnidad().'"');
-					if ($unidadModel) {
-						$unidad = utf8_encode(utf8_decode($unidadModel->nom_unidad));
-						$magnitudId = (int) $unidadModel->magnitud;
-						if ($magnitudId) {
-							$magnitudes = $this->Magnitudes->findFirst($magnitudId);
-							if ($magnitudes) {
-								$divisor = $magnitudes->getDivisor();
-							}
-						}
-					} else {
-						$unidad = 'UNID';
-					}
+				if($tipo=='I'&&$ref->getUnidad() != ''){
+					$unidad = $this->Unidad->findFirst('codigo="'.$ref->getUnidad().'"');
+					$unidad = $unidad === false ? 'UNID' : $unidad->nom_unidad;
 				}
-				$reg = array('id' => $ref->$id, 'detalle' => utf8_encode($ref->$detalle), 'unidad' => $unidad, 'costo' => $costo, "divisor" => $divisor);
+				$reg = array('id' => $ref->$id, 'detalle' => utf8_encode($ref->$detalle), 'unidad' => $unidad, 'costo' => $costo);
 				$result['data'][] = $reg;
 			}
-		} catch (Exception $e) {
+		}
+		catch(Exception $e){
 			$result['type'] = 'exception';
 			$result['msg'] = $e->getMessage();
 			$result['msg'] = $e.'';
@@ -394,8 +381,7 @@ class RecetaController extends ApplicationController {
 		return $result;
 	}
 
-	public function getCostoAction()
-	{
+	public function getCostoAction(){
 		$this->setResponse('json');
 		$result = array('type' => 'success');
 		try{

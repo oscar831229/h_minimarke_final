@@ -51,14 +51,14 @@ class SociosReports extends UserComponent
      */
     public static function getPrestamoData(&$config, $transaction)
     {
-        if (isset($config['SociosId']) == false || $config['SociosId']<=0) {
+        if (isset($config['SociosId'])==false || $config['SociosId']<=0) {
             throw new SociosException('El id el socio es requerido');
         }
 
         $config['valorFinanciacion'] = 0.00;
         $config['valorCuota'] = 0.00;
         $prestamosSocios = EntityManager::get('PrestamosSocios')->setTransaction($transaction)->findFirst(array('conditions'=>'socios_id='.$config['SociosId'].' AND estado="D"'));
-        if ($prestamosSocios != false) {
+        if ($prestamosSocios!=false) {
             $config['valorFinanciacion'] = $prestamosSocios->getValorFinanciacion();
             //Buscamos estado de capital
             $amortizacion = EntityManager::get('Amortizacion')->setTransaction($transaction)->findFirst(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId().' AND estado="D"', 'order'=>'fecha_cuota ASC'));
@@ -92,33 +92,34 @@ class SociosReports extends UserComponent
             if (isset($config['SociosId'])) {
                 //facturas en el periodo de un socio
                 $factura = EntityManager::get('factura')->findFirst(array('conditions'=> 'socios_id='.$config['SociosId']." AND fecha_factura='{$config['fechaFactura']}' AND estado<>'I'"));
-                if ($factura == false) {
+                if ($factura==false) {
                     throw new SociosException('No existe una factura generada a el socio en la fecha "'.$config['fechaFactura'].'".');
                 }
-                $options['facturas']     = array($factura->getNumero());
+                $options['facturas'] = array($factura->getNumero());
                 $options['fechaFactura'] = $factura->getFechaFactura();
             } else {
                 //all in periodo
                 $options['facturas'] = array();
-                $conditions          = array("columns"=>"numero, fecha_factura", 'conditions'=> "fecha_factura='{$config['fechaFactura']}' AND estado='D'");
-                $facturaObj          = EntityManager::get('factura')->find($conditions);
-
+                $conditions = array("columns"=>"numero, fecha_factura", 'conditions'=> "fecha_factura='{$config['fechaFactura']}' AND estado='D'");
+                $facturaObj = EntityManager::get('factura')->find($conditions);
                 foreach ($facturaObj as $factura) {
-                    $options['facturas'][]= $factura->getNumero();
+                    $options['facturas'][] = $factura->getNumero();
                     $options['fechaFactura'] = $factura->getFechaFactura();
                     unset($factura);
                 }
                 unset($facturaObj);
+                //throw new Exception(count($options['facturas']));
             }
             if (isset($config['SociosId'])) {
-                $socios         = BackCacher::getSocios($config['SociosId']);
+                $socios = BackCacher::getSocios($config['SociosId']);
                 $options['nit'] = $socios->getIdentificacion();
             }
 
-            $sociosReports  = new SociosReports();
-            $fileName       = $sociosReports->getInvoicerPrint($options);
+            $sociosReports = new SociosReports();
+            $fileName = $sociosReports->getInvoicerPrint($options);
 
-            $config['file'] = 'public/temp/' . $fileName;
+            $config['file'] = 'public/temp/'.$fileName;
+            //echo file_get_contents($config['file']);
             return $fileName;
         } catch (Exception $e) {
             throw new SociosException($e->getMessage());
@@ -127,23 +128,23 @@ class SociosReports extends UserComponent
 
     /**
      * Genera el reporte de socios suspendidos en el period actual
-     *
-     * @return mixed
-     * @throws Exception
+     * @return string $fileName
      */
     public function getReportSuspendidos()
     {
         try {
             $this->_transaction = TransactionManager::getUserTransaction();
-            $periodo            = SociosCore::getCurrentPeriodo();
-            $controllerRequest  = ControllerRequest::getInstance();
-            $reportType         = $controllerRequest->getParamPost('reportType', 'alpha');
-            $report             = ReportBase::factory($reportType);
+
+            $periodo = SociosCore::getCurrentPeriodo();
+
+            $controllerRequest = ControllerRequest::getInstance();
+            $reportType = $controllerRequest->getParamPost('reportType', 'alpha');
+            $report = ReportBase::factory($reportType);
 
             $titulo = new ReportText('REPORTE DE SOCIOS SUSPENDIDOS', array(
-                'fontSize'   => 16,
+                'fontSize' => 16,
                 'fontWeight' => 'bold',
-                'textAlign'  => 'center'
+                'textAlign' => 'center'
             ));
 
             $report->setHeader(array($titulo));
@@ -159,13 +160,13 @@ class SociosReports extends UserComponent
             ));
 
             $report->setCellHeaderStyle(new ReportStyle(array(
-                'textAlign'       => 'center',
+                'textAlign' => 'center',
                 'backgroundColor' => '#eaeaea'
             )));
 
-            $report->setColumnStyle(array(0, 1, 2, 3, 4, 5), new ReportStyle(array(
+            $report->setColumnStyle(array(0, 1,2,3,4,5), new ReportStyle(array(
                 'textAlign' => 'center',
-                'fontSize'  => 11
+                'fontSize' => 11
             )));
 
             $report->start(true);
@@ -173,7 +174,7 @@ class SociosReports extends UserComponent
             $suspendidosObj = EntityManager::get('Suspendidos')->setTransaction($this->_transaction)->find(array("periodo='$periodo'"));
             foreach ($suspendidosObj as $suspendidos) {
                 $socios = BackCacher::getSocios($suspendidos->getSociosId());
-                if ($socios != false) {
+                if ($socios!=false) {
                     $report->addRow(array(
                         $socios->getSociosId(),
                         $socios->getNumeroAccion(),
@@ -197,167 +198,113 @@ class SociosReports extends UserComponent
     }
 
     /**
-     * Genera el reporte de socios suspendidos en el period actual
-     *
-     * @param array $config
-     * @return mixed
-     * @throws Exception
+     * Genera un formato en Excel con los pagos a realizar segun saldos actuale sde cartera
+     * @return string $fileName
      */
-    public function validarCategorias(array $config)
+    public function formatoAjustePagos()
     {
         try {
+            $this->_transaction = TransactionManager::getUserTransaction();
 
-            $reportType = $config['reportType'];
-            $report     = ReportBase::factory($reportType);
-            $titulo     = new ReportText('REPORTE DE VALIDACIÓN DE CATEGORÍAS', array(
-                'fontSize'   => 16,
-                'fontWeight' => 'bold',
-                'textAlign'  => 'center'
-            ));
+            Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
 
-            $report->setHeader(array($titulo));
+            $periodo = SociosCore::getCurrentPeriodo();
 
-            $report->setDocumentTitle('REPORTE DE VALIDACIÓN DE CATEGORÍAS');
+            $controllerRequest = ControllerRequest::getInstance();
+
+            //$reportType = $controllerRequest->getParamPost('reportType', 'alpha');
+            //$report = ReportBase::factory($reportType);
+
+            $report = ReportBase::factory('excel');
+
+            $report->setDocumentTitle('FORMATO DE AJUSTE PAGOS '.$periodo);
             $report->setColumnHeaders(array(
-                'DERECHO',
-                'NOMBRE',
-                'FECHA NACIMIENTO',
-                'EDAD',
-                'CATEGORIA ACTUAL',
-                'CATEGORIA SUGERIDA'
+                'NUMERO DE ACCION',
+                'IDENTIFICACION',
+                'COMPROBANTE',
+                'CUENTA',
+                'FECHA',
+                'VALOR',
+                'NUMERO FACTURA'
             ));
 
             $report->setCellHeaderStyle(new ReportStyle(array(
-                'textAlign'       => 'center',
+                'textAlign' => 'center',
                 'backgroundColor' => '#eaeaea'
             )));
 
-            $report->setColumnStyle(array(0, 1, 2, 3, 4, 5), new ReportStyle(array(
-                'textAlign' => 'center',
-                'fontSize'  => 11
+            $report->setColumnStyle(array(0,2,4,5), new ReportStyle(array(
+                'textAlign' => 'left',
+                'fontSize' => 11
+            )));
+
+            $report->setColumnStyle(array(1,3,5,6), new ReportStyle(array(
+                'textAlign' => 'right',
+                'fontSize' => 11
             )));
 
             $report->start(true);
 
-            //BUSCAMOS TIPOS DE SOCIOS CON EDADES PARAMETRIZADAS
-            $tipoSociosObj = EntityManager::get("TipoSocios")->find(array(
-                "conditions" => "edad_ini > 0 and edad_fin > 0 AND estado = 'A'",
-                "order"      => "edad_ini ASC"
-            ));
-            if (!count($tipoSociosObj)) {
-                throw new SociosException("No se ha configurado los rangos de edades de tipos de socios");
+            $db = DbBase::rawConnect();
+
+            $schema = '';
+            $config = CoreConfig::readFromActiveApplication('config.ini', 'ini');
+            if (isset($config->hfos->back_db)) {
+                $schema = $config->hfos->back_db;
+            } else {
+                $schema ='ramocol';
             }
-            foreach ($tipoSociosObj as $tipoSocios) {
-                $tipoSociosId = $tipoSocios->getId();
-                $edadIni      = $tipoSocios->getEdadIni();
-                $edadFin      = $tipoSocios->getEdadFin();
-                //BUSCAMOS SOCIOS DE LA CATEGORIA INDICADA
-                $sociosObj    = EntityManager::get("Socios")->find(array(
-                    "conditions" => "tipo_socios_id != '$tipoSociosId' AND fecha_nacimiento != ''",
-                    "order"      => 'CAST(numero_accion AS SIGNED) ASC'
-                ));
-                foreach ($sociosObj as $socios) {
-                    $fechaNacimiento = $socios->getFechaNacimiento();
-                    if (empty($fechaNacimiento)) {
-                        continue;
-                    }
-                    $edad = SociosCore::getEdadSocio($fechaNacimiento);
-                    if ($edad >= $edadIni && $edad <= $edadFin) {
-                        $report->addRow(array(
-                            $socios->getNumeroAccion(),
-                            $socios->getNombres() . " " . $socios->getApellidos(),
-                            $fechaNacimiento,
-                            $edad,
-                            $socios->getTipoSocios()->getNombre(),
-                            $tipoSocios->getNombre()
-                        ));
-                    } 
-                    
-                    unset($socios, $edad, $fechaNacimiento);
-                }  
-                unset($tipoSocios, $sociosObj);
+
+            $schemaSocios = '';
+            if (isset($config->hfos->socios)) {
+                $schemaSocios = $config->hfos->socios;
+            } else {
+                $schemaSocios = 'hfos_socios';
             }
-            unset($suspendidosObj);
 
-            $report->finish();
-            $fileName = $report->outputToFile('public/temp/validacionCategorias');
+            $query = "
+                select
+                    s.numero_accion,s.identificacion, 'AJU',c.cuenta,
+                    date_format(c.f_emision, '%m/%d/%Y') as fecha,c.saldo,
+                    c.numero_doc
+                from
+                    $schemaSocios.socios as s
+                    LEFT JOIN $schema.cartera as c
+                        ON c.tipo_doc = 'CXS'
+                        AND c.nit = s.identificacion
+                        AND c.saldo > 0
+                        AND c.cuenta IN (
+                            select cuenta_consolidar from $schemaSocios.cargos_fijos
+                            group by cuenta_consolidar
+                        )
+                    LEFT JOIN $schemaSocios.factura as f
+                        ON YEAR(c.f_emision) = YEAR(f.fecha_factura)
+                        AND MONTH(c.f_emision) = MONTH(f.fecha_factura)
+                        AND f.socios_id = s.socios_id
+                where
+                    s.estados_socios_id = 1 AND c.saldo > 0
+                order by
+                    s.numero_accion,c.numero_doc,c.cuenta
+            ";
 
-            return $fileName;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
-    /**
-     * Genera el reporte de cumpleaños de los socios
-     *
-     * @param $config
-     * @return mixed
-     * @throws Exception
-     */
-    public function cumpleanos($config)
-    {
-        try {
-
-            $mes = $config['mes'];
-            $reportType = $config['reportType'];
-
-            $report = ReportBase::factory($reportType);
-
-            $titulo = new ReportText('REPORTE DE CUMPLEAÑOS', array(
-                'fontSize'   => 16,
-                'fontWeight' => 'bold',
-                'textAlign'  => 'center'
-            ));
-
-            $report->setHeader(array($titulo));
-
-            $report->setDocumentTitle('REPORTE DE CUMPLEAÑOS');
-            $report->setColumnHeaders(array(
-                'DERECHO',
-                'NOMBRE',
-                'FECHA NACIMIENTO',
-                'EDAD',
-                'CATEGORIA ACTUAL'
-            ));
-
-            $report->setCellHeaderStyle(new ReportStyle(array(
-                'textAlign'       => 'center',
-                'backgroundColor' => '#eaeaea'
-            )));
-
-            $report->setColumnStyle(array(0, 1, 2, 3, 4), new ReportStyle(array(
-                'textAlign' => 'center',
-                'fontSize'  => 11
-            )));
-
-            $report->start(true);
-
-            //BUSCAMOS SOCIOS DE LA CATEGORIA INDICADA
-            $sociosObj = EntityManager::get("Socios")->find(array(
-                "conditions" => "fecha_nacimiento != '' AND MONTH(fecha_nacimiento) = '$mes' ",
-                "order"      => 'CAST(numero_accion AS SIGNED) ASC'
-            ));
-            foreach ($sociosObj as $socios) {
-                $fechaNacimiento = $socios->getFechaNacimiento();
-                if (empty($fechaNacimiento)) {
-                    continue;
+            $listQuery = $db->query($query);
+            while ($listQueryRow = $db->fetchArray($listQuery)) {
+                if ($listQueryRow[0]) {
+                    $report->addRow(array(
+                        $listQueryRow[0],
+                        $listQueryRow[1],
+                        $listQueryRow[2],
+                        $listQueryRow[3],
+                        $listQueryRow[4],
+                        $listQueryRow[5],
+                        $listQueryRow[6]
+                    ));
                 }
-                $edad = SociosCore::getEdadSocio($fechaNacimiento);
-                $report->addRow(array(
-                    $socios->getNumeroAccion(),
-                    $socios->getNombres() . " " . $socios->getApellidos(),
-                    $fechaNacimiento,
-                    $edad,
-                    $socios->getTipoSocios()->getNombre()
-                ));
-                
-                unset($socios, $edad, $fechaNacimiento);
-            }  
-            unset($sociosObj);
+            }
 
             $report->finish();
-            $fileName = $report->outputToFile('public/temp/cumpleanos');
+            $rand = rand();
+            $fileName = $report->outputToFile('public/temp/formato_ajuste_pagos');
 
             return $fileName;
         } catch (Exception $e) {
@@ -367,19 +314,20 @@ class SociosReports extends UserComponent
 
     /**
      * Verifica si las facturas del periodo actual estan en la tabla delivery para enviar a correos
-     *
-     * @throws Exception
+     * @return void
      */
     public function checkDelivery()
     {
         try {
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
 
-            $periodo     = SociosCore::getCurrentPeriodo();
-            $transaction = TransactionManager::getUserTransaction();
-            $deleteAll   = EntityManager::get('Delivery')->setTransaction($transaction)->deleteAll("periodo='$periodo'");
-            $sociosObj   = EntityManager::get('Socios')->find('envia_correo="S"');
+            $periodo = SociosCore::getCurrentPeriodo();
 
+            $transaction = TransactionManager::getUserTransaction();
+
+            $deleteAll = EntityManager::get('Delivery')->setTransaction($transaction)->deleteAll("periodo='$periodo'");
+
+            $sociosObj = EntityManager::get('Socios')->find('envia_correo="S"');
             foreach ($sociosObj as $socios) {
                 $facturaObj = EntityManager::get('Factura')->find("socios_id='{$socios->getSociosId()}' AND periodo='$periodo'");
                 foreach ($facturaObj as $factura) {
@@ -396,9 +344,10 @@ class SociosReports extends UserComponent
                     $delivery->setEstado('P');//Pendiente por enviar
                     if ($delivery->save() == false) {
                         foreach ($delivery->getMessages() as $message) {
-                            throw new Exception("Delivery: " . $message->getMessage());
+                            throw new Exception("Delivery: ".$message->getMessage());
                         }
                     }
+
                     unset($factura);
                 }
                 unset($socios, $facturaObj);
@@ -407,7 +356,7 @@ class SociosReports extends UserComponent
 
             $transaction->commit();
         } catch (Exception $e) {
-            throw new Exception("checkDelivery: " . $e->getMessage());
+            throw new Exception("checkDelivery: ".$e->getMessage());
         }
     }
 
@@ -415,18 +364,19 @@ class SociosReports extends UserComponent
     /////                                           FACTURA
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * Metodo que genera el encabezado del invocier
-     *
-     * @param $options
-     * @throws SociosException
-     */
+    * Metodo que genera el encabezado del invocier
+    *
+    * @param array $options
+    * @return string $html
+    */
     private function _addHeader(&$options)
     {
+
         //variables
         $terceroFactura = $options['terceroFactura'];
         $terceroEmpresa = $options['terceroEmpresa'];
-        $empresa        = $options['empresa'];
-        $factura        = $options['factura'];
+        $empresa = $options['empresa'];
+        $factura = $options['factura'];
 
         //Coge fecha
         $factura2Socios = EntityManager::get('Factura')->findFirst("numero='{$factura->getNumero()}'");
@@ -439,54 +389,56 @@ class SociosReports extends UserComponent
         if (!isset($this->_listaBloques['[__logo__]'])) {
             //Logo
             $srcLogo = 'http://'.$_SERVER['SERVER_NAME'].''.Core::getInstancePath().'img/backoffice/logo.png';
-            $logo    = '<img src="'.$srcLogo.'" alt="BackOffice Logo" width="100" />';
-            if (isset($options['showLogo']) && $options['showLogo'] == false) {
+            $logo = '<img src="'.$srcLogo.'" alt="BackOffice Logo" width="100" />';
+            if (isset($options['showLogo']) && $options['showLogo']==false) {
                 $logo = '';
             }
             $this->_listaBloques['[__logo__]'] = $logo;
 
             //Nit
             $empresa = $options['empresa'];
-            $nit     = $empresa->getNit();
-            if (isset($options['showNit']) && $options['showNit'] == false) {
+            $nit = $empresa->getNit();
+            if (isset($options['showNit']) && $options['showNit']==false) {
                 $nit = '';
             }
             $nits = EntityManager::get('Nits')->findFirst(array('conditions'=>'nit="'.$nit.'"'));
-            if ($nits == false) {
+            if ($nits==false) {
                 throw new SociosException('El nit de la empresa no existe en terceros');
             }
             $this->_listaBloques['[__nit-club__]'] = number_format((float) $nit, 0, ", ", ".");
 
             //Razon Social
             $razonSocial = $nits->getNombre();
-            if (isset($options['showRazonSocial']) && $options['showRazonSocial'] == false) {
+            if (isset($options['showRazonSocial']) && $options['showRazonSocial']==false) {
                 $razonSocial = '';
             }
             $config['razonSocial'] = $razonSocial;
             $this->_listaBloques['[__razon-social__]'] = $razonSocial;
 
             //Ciudad
-            $locciu     = $nits->getLocciu();
-            $location   = BackCacher::getLocation($locciu);
-            if ($location == false) {
+            $locciu = $nits->getLocciu();
+            $location = BackCacher::getLocation($locciu);
+            if ($location==false) {
                 throw new SociosException('El locciu de empresa no existe en location');
             }
+            //$ciudad = utf8_encode($location->getName().' / '.$location->getZone()->getName());
+            //$ciudad = ($location->getName().' / '.$location->getZone()->getName());
             $ciudad = $location->getName();
-            if (isset($options['showCiudad']) && $options['showCiudad'] == false) {
+            if (isset($options['showCiudad']) && $options['showCiudad']==false) {
                 $ciudad = '';
             }
             $this->_listaBloques['[__ciudad-club__]'] = $ciudad;
 
             //Direccion
             $direccion = $terceroEmpresa->getDireccion();
-            if (isset($options['showDireccion']) && $options['showDireccion'] == false) {
+            if (isset($options['showDireccion']) && $options['showDireccion']==false) {
                 $direccion = '';
             }
             $this->_listaBloques['[__direccion-club__]'] = $direccion;
 
             //Telefono
             $telefono = $terceroEmpresa->getTelefono();
-            if (isset($options['showTelefono']) && $options['showTelefono'] == false) {
+            if (isset($options['showTelefono']) && $options['showTelefono']==false) {
                 $telefono = '';
             }
             $this->_listaBloques['[__telefono-club__]'] = $telefono;
@@ -510,8 +462,8 @@ class SociosReports extends UserComponent
         
         //Validacion de nit en socios
         $identificacion = trim($factura->getNit());
-        $socios         = EntityManager::get('Socios')->findFirst(array("identificacion='{$identificacion}'"));
-        if ($socios == false) {
+        $socios = EntityManager::get('Socios')->findFirst(array("identificacion='{$identificacion}'"));
+        if ($socios==false) {
             throw new SociosException("No existe un socio con nit '{$identificacion}'");
         }
         $this->_listaBloques['[__nit-socio__]'] = $factura->getNit();
@@ -519,12 +471,12 @@ class SociosReports extends UserComponent
         $this->_listaBloques['[__accion-socio__]'] = $socios->getNumeroAccion();
         
         //Ciudad
-        $ciudad     = 'Sin definir';
-        $locciu     = $socios->getCiudadCasa();
-        $location   = BackCacher::getLocation($locciu);
-        if ($location == false) {
+        $ciudad = 'Sin definir';
+        $locciu = $socios->getCiudadCasa();
+        $location = BackCacher::getLocation($locciu);
+        if ($location==false) {
             $ciudad = $location->getName();
-            if (isset($options['showCiudad']) && $options['showCiudad'] == false) {
+            if (isset($options['showCiudad']) && $options['showCiudad']==false) {
                 $ciudad = 'Sin definir';
             }
         }
@@ -532,14 +484,14 @@ class SociosReports extends UserComponent
 
         //Nota factura
         $notaFactura = $factura->getNotaFactura();
-        if (isset($options['showNotaFactura']) && $options['showNotaFactura'] == false) {
+        if (isset($options['showNotaFactura']) && $options['showNotaFactura']==false) {
             $notaFactura = '';
         }
         $this->_listaBloques['[__nota-factura__]'] = $notaFactura;
 
         //Nota Ica
         $notaIca = $factura->getNotaIca();
-        if (isset($options['showNotaIca']) && $options['showNotaIca'] == false) {
+        if (isset($options['showNotaIca']) && $options['showNotaIca']==false) {
             $notaIca = '';
         }
         $this->_listaBloques['[__nota-ica__]'] = $notaIca;
@@ -557,7 +509,7 @@ class SociosReports extends UserComponent
         $this->_listaBloques['[__direccion-socio__]'] = $direccionEnvio;
 
         $more = '';
-        if ($showDirTelFactura == 'S') {
+        if ($showDirTelFactura=='S') {
             $more = '
             <tr>
                 <td align="left"><b>Dirección:</b> '.utf8_encode($direccionEnvio).'</td>
@@ -567,7 +519,7 @@ class SociosReports extends UserComponent
         $this->_listaBloques['[__more-socio__]'] = $more;
 
         $options['numeroFactura'] = $factura->getNumero();
-        $options['numeroAccion']  = $socios->getNumeroAccion();
+        $options['numeroAccion'] = $socios->getNumeroAccion();
 
         $this->_listaBloques['[__nro-factura__]'] = $factura->getNumero();
 
@@ -766,6 +718,7 @@ class SociosReports extends UserComponent
 
             } else {
 
+                //$html .= '<td align="right">&nbsp;</td>'.PHP_EOL;
                 $html .= '<td align="center"><b>TOTALES</b></td>'.PHP_EOL;
 
             }
@@ -794,9 +747,9 @@ class SociosReports extends UserComponent
         $facturaId = $options['facturaId'];
 
         $factura = EntityManager::get('Invoicer')->findFirst(array('conditions'=>'numero='.$facturaId));
-        if ($factura == false) {
+        if ($factura==false) {
             $factura = EntityManager::get('Invoicer')->findFirst(array('conditions'=>"nit='{$options['nit']}' AND fecha_emision='{$options['fechaFactura']}'"));
-            if ($factura == false) {
+            if ($factura==false) {
                 throw new SociosException("La factura con numero '$facturaId' no existe");
             }
         }
@@ -805,13 +758,13 @@ class SociosReports extends UserComponent
         $empresa = $options['empresa'];
 
         $terceroEmpresa = BackCacher::getTercero($empresa->getNit());
-        if ($terceroEmpresa == false) {
+        if ($terceroEmpresa==false) {
             throw new SociosException("La empresa no existe como un tercero");
         }
         $options['terceroEmpresa'] = $terceroEmpresa;
 
         $terceroFactura = BackCacher::getTercero($factura->getNit());
-        if ($terceroFactura == false) {
+        if ($terceroFactura==false) {
             throw new SociosException("El tercero al que se generó la factura no existe '{$factura->getNit()}'");
         }
         $options['terceroFactura'] = $terceroFactura;
@@ -866,6 +819,13 @@ class SociosReports extends UserComponent
                 if ($showPos!='S' && strstr($detalle->getDescripcion(), 'PUNTO DE VENTA')==true) {
                     continue;
                 }
+                //throw new Exception($showConsumoMinimo);
+                //No mostrar consumo minimo
+                /*if ($showConsumoMinimo!='S') {
+                    if (strstr($detalle->getDescripcion(), $cargoFijoCMObj->getNombre())==true) {
+                        continue;
+                    }
+                }*/
 
                 $options['rows'][$facturaId][] = array(
                     //'codigo'         => $detalle->getItem(),
@@ -940,7 +900,7 @@ class SociosReports extends UserComponent
 
         $fechaFactura = new Date($factura->getFechaEmision());
         $periodoSocios = EntityManager::get('Periodo')->findFirst(array('conditions'=>"periodo='{$fechaFactura->getPeriod()}'"));
-        if ($periodoSocios == false) {
+        if ($periodoSocios==false) {
             throw new SociosException("No hay un periodo que este registrando la fecha de la factura actual '{$factura->getFechaEmision()}'", 1);
         }
         $moraPeriodo = $periodoSocios->getInteresesMora();
@@ -1186,6 +1146,7 @@ class SociosReports extends UserComponent
         gc_enable();
 
         Core::importFromLibrary('Mpdf', 'mpdf.php');
+        //Core::importFromLibrary('Wkpdf', 'WkHtmlToPdf.php');
         
         //Si no se envia nada busque y genere ttodas la facturas
         if (!isset($options['facturas']) || $options['facturas']<=0 || !is_array($options['facturas'])) {
@@ -1202,7 +1163,7 @@ class SociosReports extends UserComponent
         $facturas = $options['facturas'];
 
         $empresa = BackCacher::getEmpresa();
-        if ($empresa == false) {
+        if ($empresa==false) {
             throw new SociosException("No existe la empresa que generó la factura");
         }
         $options['empresa'] = $empresa;
@@ -1214,6 +1175,7 @@ class SociosReports extends UserComponent
         //CSS AND HTML BODY
         $html = "";
         $n=0;
+        //throw new SociosException(print_r($facturas, true));
         
         //OBTENEMOS TEMPLATES
         $headTemplate = file_get_contents("apps/socios/views/facturar/head_factura.html");
@@ -1231,7 +1193,7 @@ class SociosReports extends UserComponent
 
             $factura = EntityManager::get('Invoicer')->setTransaction($this->_transaction)->findFirst("numero='$facturaId'");
 
-            if ($factura == false) {
+            if ($factura==false) {
                 if (isset($options['showDebug']) && $options['showDebug']==true) {
                     throw new SociosException("No existe la factura con numero ".$facturaId);
                 } else {
@@ -1278,6 +1240,8 @@ class SociosReports extends UserComponent
             $fileName = 'factura-'.$numeroFactura.'-'.mt_rand(1000, 9999).'.pdf';
             $filePath = $path . $fileName . ".html";
             file_put_contents($filePath, $html);
+            //$pdf->writeHTML($html);
+            //$pdf->Output('public/temp/'.$fileName);
 
             //P4ML JAVA
             $command ="java -jar " . KEF_ABS_PATH . "/Library/P4ML/pd4ml.jar file:" . $filePath . " " . $path . $fileName;
@@ -1331,6 +1295,21 @@ class SociosReports extends UserComponent
 
                 //Solo PDF
                 if ($config['reportType']=='pdf') {
+                    /*Core::importFromLibrary('Mpdf', 'mpdf.php');
+                    $pdf = new mPDF('utf-8', 'letter');
+                    $pdf->SetDisplayMode('fullpage');
+                    $pdf->tMargin = 10;
+                    $pdf->lMargin = 10;
+
+                    $fileName = false;
+                    if (!empty($html)) {
+                        $pdf->debug=true;
+                        $pdf->writeHTML($html);
+                        $fileName = 'estado_cuenta-'.mt_rand(1000, 9999).'.pdf';
+                        unset($html);
+                        $pdf->Output('public/temp/'.$fileName);
+                    }
+                    */
                     $path = KEF_ABS_PATH . "/public/temp/";
                     $fileName = 'estadoCuenta-'.mt_rand(1000, 9999).'.pdf';
                     $filePath = $path . $fileName . ".html";
@@ -1358,6 +1337,14 @@ class SociosReports extends UserComponent
                     }
                 }
             }
+
+            /*$myLog->log("Fin Logger ".date("Y-m-d H:i:s"), Logger::DEBUG);
+
+            //Se guarda al log
+            $myLog->commit();
+
+            //Cierra el Log
+            $myLog->close();*/
 
             $config['file'] = 'public/temp/'.$fileName;
 
@@ -1557,8 +1544,8 @@ class SociosReports extends UserComponent
                 }
 
                 if (!isset($config['consolidado']) || $config['consolidado']!=true) {
-                    if (count($detalleEstadoCuentaObj)<=21) {
-                        for ($i=1; $i<=(21-count($detalleEstadoCuentaObj)); $i++) {
+                    if (count($detalleEstadoCuentaObj)<10) {
+                        for ($i=0; $i<(13-count($detalleEstadoCuentaObj)); $i++) {
                             $contentMoviHtml .= "
                             <tr>
                                 <td align='center'>
@@ -1734,6 +1721,8 @@ class SociosReports extends UserComponent
     public function estadoCuentaConsolidado($config)
     {
         try {
+            gc_enable();
+
             $this->_transaction = TransactionManager::getUserTransaction();
             Core::importFromLibrary('Hfos/Socios', 'SociosEstadoCuenta.php');
 
@@ -1741,15 +1730,6 @@ class SociosReports extends UserComponent
                 throw new SociosException("No se ha definido la fecha generar consolidado");
             }
             $fecha = $config['fecha'];
-            $fechaDate = new Date($fecha);
-            $fechaPeriodo = $fechaDate->getPeriod();
-
-            //verificamos si puede reparar el estado de cuenta
-            $periodo = SociosCore::getCurrentPeriodoObject($fechaPeriodo);
-            $saveEstadoCuentaFlag = true;
-            if ($periodo->getCierre()=='S') {
-                $saveEstadoCuentaFlag = false; 
-            }
 
             if (!$config['reportType']) {
                 throw new SociosException("No se ha definido el tipo de salida a generar consolidado");
@@ -1769,15 +1749,25 @@ class SociosReports extends UserComponent
             $report->setDocumentTitle('Estado de cuenta consolidado con pagos');
             $report->setColumnHeaders(array(
                 'ESTADO DE CUENTA',//0
-                'DERECHO',//1
-                'CC/NIT',//2
+                'NO. ACCION',//1
+                'IDENTIFICACION',//2
                 'NOMBRE',//3
                 'FECHA',//4
                 'SALDO ANTERIOR',//5
-                'SALDO ACTUAL',//6
-                'PAGOS DB',//7
-                'PAGOS CR',//8
-                'NUEVO SALDO'//9
+                'CARGOS',//6
+                'INTERESES',//7
+                'PAGOS ANTERIORES',//8
+                '30 DIAS',//9
+                '60 DIAS',//10
+                '90 DIAS',//11
+                '120 DIAS',//12
+                '> 120 DIAS',//13
+                'SALDO ACTUAL',//14
+                'PAGOS DEBITO A LA FECHA',//15
+                'PAGOS CREDITO A LA FECHA',//16
+                'NUEVO SALDO',//17,
+                'CONSUMOS MES',//18
+                'TOTAL CONSUMOS MES'//19
             ));
 
             $report->setCellHeaderStyle(new ReportStyle(array(
@@ -1790,12 +1780,12 @@ class SociosReports extends UserComponent
                 'fontSize' => 11
             )));
 
-            $report->setColumnStyle(array(5, 6, 7, 8, 9), new ReportStyle(array(
+            $report->setColumnStyle(array(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19), new ReportStyle(array(
                 'textAlign' => 'right',
                 'fontSize' => 11
             )));
 
-            $report->setColumnFormat(array(5, 6, 7, 8, 9), new ReportFormat(array(
+            $report->setColumnFormat(array(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19), new ReportFormat(array(
                 'type' => 'Number',
                 'decimals' => 0
             )));
@@ -1804,14 +1794,23 @@ class SociosReports extends UserComponent
 
             $totales = array();
             $totales['saldoAnt'] = 0;
+            $totales['cargos'] = 0;
+            $totales['interes'] = 0;
+            $totales['pagos1'] = 0;
+            $totales['d30'] = 0;
+            $totales['d60'] = 0;
+            $totales['d90'] = 0;
+            $totales['d120'] = 0;
+            $totales['d120m'] = 0;
             $totales['saldoNuevo'] = 0;
             $totales['pagos2'] = 0;
             $totales['pagos3'] = 0;
             $totales['saldo'] = 0;
+            $totales['consumos'] = 0;
 
             //obtenemos los pagos del mes de la fecha los pagos del periodo
             $fechaObj = new Date($fecha);
-            //$consumos = SociosCore::getConsumosPeriodo($fechaObj->getPeriod());
+            $consumos = SociosCore::getConsumosPeriodo($fechaObj->getPeriod());
             $pagos = SociosCore::getPagosPeriodo($fechaObj->getPeriod());
             $ajustes = SociosCore::getAjustesPeriodo($fechaObj->getPeriod());
 
@@ -1882,7 +1881,7 @@ class SociosReports extends UserComponent
             $num = 0;
             foreach ($sociosObj as $socios) {
                 //Buscamos Consolidados
-                $estadoCuenta = EntityManager::get('EstadoCuenta')->findFirst(array("fecha='$fecha' AND socios_id='{$socios->getSociosId()}'", 'order'=>'numero ASC'));
+                $estadoCuenta= EntityManager::get('EstadoCuenta')->findFirst(array("fecha='$fecha' AND socios_id='{$socios->getSociosId()}'", 'order'=>'numero ASC'));
 
                 if (!$estadoCuenta) {
                     continue;
@@ -1894,6 +1893,7 @@ class SociosReports extends UserComponent
                 $pagoC = 0;
                 $pagoD = 0;
                 if (isset($pagos[$nit])) {
+                    //if ($nit=='2868524') {     throw new SociosException($pagos[$nit]['valor']['C']);    }
                     $pagoC = $pagos[$nit]['valor']['C'];
                     $pagoD = $pagos[$nit]['valor']['D'];
                 }
@@ -1908,7 +1908,42 @@ class SociosReports extends UserComponent
 
                 $saldo = (float) $saldoNuevo + $pagoD - $pagoC;
 
+                //CONSUMOS
+                $consumosDescStr = '';
+                $totalConsumos = 0;
+                if (isset($consumos[$nit])) {
+                    $consumosDesc = array();
+                    foreach ($consumos[$nit]['facturas'] as $numfac => $data) {
+                        $valor = Currency::money($data['valor'], 0);
+                        $consumosDesc[] = "($valor -> $numfac)";
+                        unset($data, $valor);
+                    }
+                    $consumosDescStr = implode(", ", $consumosDesc);
+                    $totalConsumos = $consumos[$nit]['total'];
+                }
+
+
+                //$contentMovi = $this->getContentMovi($dateFechaCorte->getPeriod(), $socios, $options);
                 $contentMovi = $sociosEstadoCuenta->getContentMovi($fecha, $socios, $options);
+
+                //Revisamos los dias de cartera
+                $datos = array(
+                    'sociosId'    => $socios->getSociosId(),
+                    'fecha' => $fecha,
+                    'fechaSaldo' => $estadoCuenta->getFechaSaldo(),
+                    'accion' =>  $socios->getNumeroAccion(),
+                    'identificacion' =>  $socios->getIdentificacion(),
+                    'nombre' =>  $socios->getNombres()." ".$socios->getApellidos(),
+                    'saldoAnterior' => $estadoCuenta->getSaldoAnt(),
+                    'totalCargos' => $estadoCuenta->getCargos(),
+                    'totalAbonos' => $estadoCuenta->getPagos(),
+                    'valorAPagar' => $estadoCuenta->getSaldoNuevo(),
+                    'valorAPagarMora' => $estadoCuenta->getSaldoNuevoMora(),
+                    'contentMovi' => $contentMovi
+                );
+
+                //Guardamos en Tabla Estado de Cartera Consolidado
+                $estadoCuenta = $sociosEstadoCuenta->_saveEstadoCuentaConsolidado($datos);
 
                 //ROW
                 $report->addRow(array(
@@ -1918,23 +1953,46 @@ class SociosReports extends UserComponent
                     $socios->getNombres()." ".$socios->getApellidos(),//3
                     $fecha,//4
                     $estadoCuenta->getSaldoAnt(),//5
-                    $estadoCuenta->getSaldoNuevo(),//6
-                    $pagoD,//7
-                    $pagoC,//8
-                    $saldo,//9
+                    $estadoCuenta->getCargos(),//6
+                    $estadoCuenta->getInteres(),//7
+                    $estadoCuenta->getPagos(),//8
+                    $estadoCuenta->getD30(),//9
+                    $estadoCuenta->getD60(),//10
+                    $estadoCuenta->getD90(),//11
+                    $estadoCuenta->getD120(),//12
+                    $estadoCuenta->getD120m(),//13
+                    $estadoCuenta->getSaldoNuevo(),//14
+                    $pagoD,//15
+                    $pagoC,//16
+                    $saldo,//17
+                    $consumosDescStr,
+                    $totalConsumos
                 ));
 
                 //TOTALES
-                $totales['saldoAnt'] += (float) $estadoCuenta->getSaldoAnt();
-                $totales['saldoNuevo'] += (float) $estadoCuenta->getSaldoNuevo();
-                $totales['pagos2'] += (float) $pagoD;
-                $totales['pagos3'] += (float) $pagoC;
-                $totales['saldo'] += (float) $saldo;
+                $totales['saldoAnt'] += $estadoCuenta->getSaldoAnt();
+                $totales['cargos'] += $estadoCuenta->getCargos();
+                $totales['interes'] += $estadoCuenta->getInteres();
+                $totales['pagos1'] += $estadoCuenta->getPagos();
+                $totales['d30'] += $estadoCuenta->getD30();
+                $totales['d60'] += $estadoCuenta->getD60();
+                $totales['d90'] += $estadoCuenta->getD90();
+                $totales['d120'] += $estadoCuenta->getD120();
+                $totales['d120m'] += $estadoCuenta->getD120m();
+                $totales['saldoNuevo'] += $estadoCuenta->getSaldoNuevo();
+                $totales['pagos2'] += $pagoD;
+                $totales['pagos3'] += $pagoC;
+                $totales['saldo'] += $saldo;
+                $totales['consumos'] += $totalConsumos;
 
                 $num++;
 
                 unset($estadoCuenta, $socios, $nit, $pagoC, $pagoD, $saldoNuevo, $saldo, $consumosDescStr, $contentMovi, $datos, $totalConsumos);
 
+                if ($i>100) {
+                    gc_collect_cycles();
+                    $i = 0;
+                }
                 $i++;
             }
             unset($sociosObj);
@@ -1947,10 +2005,20 @@ class SociosReports extends UserComponent
                 "",//3
                 "",//4
                 $totales['saldoAnt'],
+                $totales['cargos'],
+                $totales['interes'],
+                $totales['pagos1'],
+                $totales['d30'],
+                $totales['d60'],
+                $totales['d90'],
+                $totales['d120'],
+                $totales['d120m'],
                 $totales['saldoNuevo'],
                 $totales['pagos2'],
                 $totales['pagos3'],
                 $totales['saldo'],
+                '',
+                $totales['consumos']
             ));
 
             unset($estadoCuentaObj);
@@ -1958,6 +2026,8 @@ class SociosReports extends UserComponent
             $report->finish();
             $fileName = $report->outputToFile('public/temp/estado_cuenta_consolidado');
             
+            gc_disable();
+
             return $fileName;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());

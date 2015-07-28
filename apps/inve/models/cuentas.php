@@ -120,26 +120,6 @@ class Cuentas extends RcsRecord {
 	 */
 	protected $cuenta;
 
-	/**
-	 * @var  string 
-	 */
-	protected $cuenta_niif;
-
-	/**
-	 * Indica si se deben consultar las cuentas padre
-	 *
-	 * @var boolean
-	 */
-	private static $_checkParents = true;
-
-	/**
-	 * Establece si se deben consultar las cuentas padre
-	 *
-	 * @param boolean $checkParents
-	 */
-	public static function setCheckParents($checkParents){
-		self::$_checkParents = $checkParents;
-	}
 
 	/**
 	 * Metodo para establecer el valor del campo tipo
@@ -478,23 +458,6 @@ class Cuentas extends RcsRecord {
 		return $this->cuenta;
 	}
 
-	/**
-	 * Devuelve el valor del campo cuenta
-	 * @return string
-	 */
-	public function getCuentaNiif(){
-		return $this->cuenta_niif;
-	}
-
-	/**
-	 * Setter of column cuenta_niif
-	 *
-	 * @param string $cuentaNiif
-	 */
-	public function setCuentaNiif($cuentaNiif){
-		$this->cuenta_niif = $cuentaNiif;
-	}
-
 	protected function validation(){
 
 		$this->validate('InclusionIn', array(
@@ -554,51 +517,39 @@ class Cuentas extends RcsRecord {
 
 	public function beforeValidationOnCreate(){
 		$cuenta = '';
-		if($this->tipo!==''){
-			if($this->tipo>0&&$this->tipo<10){
-				$cuenta.=$this->tipo;
-			} else {
-				$this->appendMessage(new ActiveRecordMessage('El tipo de cuenta es inválido', 'tipo'));
-			}
+		if($this->tipo>0&&$this->tipo<10){
+			$cuenta.=$this->tipo;
+		} else {
+			$this->appendMessage(new ActiveRecordMessage('El tipo de cuenta es inválido', 'tipo'));
 		}
-		if(ltrim($this->mayor, "\n\t0 ")!=''){
-			if($this->mayor>0&&$this->mayor<10){
-				$cuenta.=$this->mayor;
-			} else {
-				$this->appendMessage(new ActiveRecordMessage('El mayor de la cuenta es inválido ', 'mayor'));
-			}
+		if($this->mayor>0&&$this->mayor<10){
+			$cuenta.=$this->mayor;
+		} else {
+			$this->appendMessage(new ActiveRecordMessage('El mayor de la cuenta es inválido', 'mayor'));
 		}
-		if(ltrim($this->clase, "\n\t0 ")!=''){
-			$this->clase = sprintf('%02s', $this->clase);
-			if($this->clase>0&&$this->clase<100){
-				$cuenta.=$this->clase;
-			} else {
-				$this->appendMessage(new ActiveRecordMessage('La clase de cuenta es inválida', 'clase'));
-			}
+		$this->clase = sprintf('%02s', $this->clase);
+		if($this->clase>0&&$this->clase<100){
+			$cuenta.=$this->clase;
+		} else {
+			$this->appendMessage(new ActiveRecordMessage('La clase de cuenta es inválida', 'clase'));
 		}
-		if(ltrim($this->subclase, "\n\t0 ")!=''){
-			$this->subclase = sprintf('%02s', $this->subclase);
-			if($this->subclase>0&&$this->subclase<100){
-				$cuenta.=$this->subclase;
-			} else {
-				$this->appendMessage(new ActiveRecordMessage('La subclase de la cuenta es inválida ('.$this->subclase.')', 'subclase'));
-			}
+		$this->subclase = sprintf('%02s', $this->subclase);
+		if($this->subclase>0&&$this->subclase<100){
+			$cuenta.=$this->subclase;
+		} else {
+			$this->appendMessage(new ActiveRecordMessage('La subclase de la cuenta es inválida', 'subclase'));
 		}
-		if(ltrim($this->auxiliar, "\n\t0 ")!=''){
-			$this->auxiliar = sprintf('%03s', $this->auxiliar);
-			if($this->auxiliar>0&&$this->auxiliar<1000){
-				$cuenta.=$this->auxiliar;
-			} else {
-				$this->appendMessage(new ActiveRecordMessage('El auxiliar de la cuenta es inválido', 'auxiliar'));
-			}
+		$this->auxiliar = sprintf('%03s', $this->auxiliar);
+		if($this->auxiliar>0&&$this->auxiliar<1000){
+			$cuenta.=$this->auxiliar;
+		} else {
+			$this->appendMessage(new ActiveRecordMessage('El auxiliar de la cuenta es inválido', 'auxiliar'));
 		}
-		if(ltrim($this->subaux, "\n\t0 ")!=''){
-			$this->subaux = sprintf('%03s', $this->subaux);
-			if($this->subaux>0&&$this->subaux<1000){
-				$cuenta.=$this->subaux;
-			} else {
-				$this->appendMessage(new ActiveRecordMessage('El sub-auxiliar de la cuenta es inválido ('.$this->subaux.')', 'subaux'));
-			}
+		$this->subaux = sprintf('%03s', $this->subaux);
+		if($this->subaux>0&&$this->subaux<1000){
+			$cuenta.=$this->subaux;
+		} else {
+			$this->appendMessage(new ActiveRecordMessage('El sub-auxiliar de la cuenta es inválido', 'subaux'));
 		}
 		$this->cuenta = trim($cuenta);
 		$Cuentas = EntityManager::getEntityInstance('Cuentas');
@@ -632,13 +583,12 @@ class Cuentas extends RcsRecord {
 				return false;
 			}
 		}
-		if($this->cta_iva){
+		if($this->cta_iva!=''){
 			if($Cuentas->count("cuenta='{$this->cta_iva}' AND es_auxiliar='S'")==0){
 				$this->appendMessage(new ActiveRecordMessage('La cuenta de IVA no existe o no es auxiliar', 'cuenta'));
 				return false;
 			}
 		}
-		return true;
 	}
 
 	public function beforeDelete(){
@@ -682,49 +632,6 @@ class Cuentas extends RcsRecord {
 		}
 	}
 
-	public function afterSave(){
-		if(self::$_checkParents==true){
-			$parteCuenta = '';
-			$partes = array('tipo', 'mayor', 'clase', 'subclase', 'auxiliar', 'subaux');
-			foreach($partes as $parte){
-				$parteCuenta.=$this->readAttribute($parte);
-				if($parteCuenta==$this->cuenta){
-					break;
-				} else {
-					$existeCuenta = EntityManager::get('Cuentas')->count("cuenta='$parteCuenta'");
-					if(!$existeCuenta){
-						self::$_checkParents = false;
-						$cuenta = clone $this;
-						$tipo = substr($parteCuenta, 0, 1);
-						$mayor = substr($parteCuenta, 1, 1);
-						$clase = substr($parteCuenta, 2, 2);
-						$subclase = substr($parteCuenta, 4, 2);
-						$auxiliar = substr($parteCuenta, 6, 3);
-						$subaux = substr($parteCuenta, 9, 3);
-						$cuenta->setCuenta($parteCuenta);
-						$cuenta->setTipo($tipo);
-						$cuenta->setMayor($mayor);
-						$cuenta->setClase($clase);
-						$cuenta->setSubclase($subclase);
-						$cuenta->setAuxiliar($auxiliar);
-						$cuenta->setSubaux($subaux);
-						$cuenta->setEsAuxiliar('N');
-						$cuenta->setPideBan('N');
-						$cuenta->setPideBase('N');
-						$cuenta->setPideCentro('N');
-						$cuenta->setPideNit('N');
-						$cuenta->setPideFact('N');
-						if($cuenta->save()==false){
-							return false;
-						}
-						self::$_checkParents = true;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
 	public function initialize(){
 		$this->hasMany('cuenta', 'Movi', 'cuenta');
 		$this->hasMany('cuenta', 'CuentasBancos', 'cuenta');
@@ -733,7 +640,8 @@ class Cuentas extends RcsRecord {
 		$this->hasMany('cuenta', 'Saldosn', 'cuenta');
 		$this->hasMany('cuenta', 'Concepto', 'cuenta');
 		$this->hasMany('cuenta', 'Cartera', 'cuenta');
-		$this->hasMany('cuenta', 'Comcier', 'cuentai');
+		$this->hasMany('cuentai', 'Comcier', 'cuenta');
 	}
 
 }
+

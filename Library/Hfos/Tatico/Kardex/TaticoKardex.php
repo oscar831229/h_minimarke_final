@@ -104,15 +104,20 @@ class TaticoKardex extends UserComponent
 
 			$cantidad = (double) $movilin->getCantidad();
 			if ($cantidad!=0) {
-			 	$costo = $movilin->getValor()/$cantidad;
+			 	$costo = $movilin->getValor() / $cantidad;
 			} else {
 				$costo = 0;
 			}
 
 			$nuevoCostoPromedio = $movilin->getValor();
 			//Nuevos campos
-			if ($nuevoSaldo>0) {
+			if ($lastSaldoAnterior > 0) {
 				$nuevoCostoPromedio = $nuevoCostoTotal / $nuevoSaldo;
+				//$contents .=  "<br>".$movilin->getComprob()."-".$movilin->getNumero().">$nuevoCostoPromedio = $nuevoCostoTotal / $nuevoSaldo<br>";
+			}
+
+			if (LocaleMath::round($nuevoSaldo, 2) <= 0) {
+				$nuevoCostoPromedio = $costo;
 			}
 
 			$contents.= '<tr>
@@ -225,7 +230,7 @@ class TaticoKardex extends UserComponent
 			}
 
 			$lastSaldoAnterior = 0;
-			$movilins = $Movilin->find(array("item='{$inve->getItem()}' AND fecha<='$proximoCierre'", "order" => "id,fecha ASC"));
+			$movilins = $Movilin->find(array("item='{$inve->getItem()}' AND fecha<='$proximoCierre'", "order" => "fecha,almacen,prioridad"));
 			foreach ($movilins as $movilin) {
 
 				$tipoComprob = substr($movilin->getComprob(), 0, 1);

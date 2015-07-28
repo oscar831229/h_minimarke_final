@@ -9,7 +9,7 @@
  * with this package in the file docs/LICENSE.txt.
  *
  * @package 	Back-Office
- * @copyright 	BH-TECK Inc. 2009-2014
+ * @copyright 	BH-TECK Inc. 2009-2010
  * @version		$Id$
  */
 
@@ -46,26 +46,25 @@ function center($text, $size) {
 
 echo center($factura->nombre_cadena, 35), "\n";
 echo center("REGIMEN COMUN", 35), "\n";
-echo center($factura->documento." No. : " . $factura->nit, 35)."\n";
-echo center($factura->nombre_hotel, 35) . "\n";
-echo center($factura->direccion, 35) . "\n";
-echo center("Tel. ".$factura->telefonos, 35) . "\n";
+echo center($factura->documento." No. : ".$factura->nit, 35)."\n";
+echo center($factura->nombre_hotel, 35)."\n";
+echo center($factura->direccion, 35)."\n";
+echo center("Tel. ".$factura->telefonos, 35)."\n";
 if ($preview == false) {
 	echo center(($factura->tipo=='O' ? 'ORDEN DE SERVICIO ' : 'FACTURA DE VENTA').' No. '.
-	($factura->tipo=='O' ? '' : $factura->prefijo_facturacion.'-').$factura->consecutivo_facturacion, 35) . "\n";
+	($factura->tipo=='O' ? '' : $factura->prefijo_facturacion.'-').$factura->consecutivo_facturacion, 35)."\n";
 	if ($factura->tipo == "F") {
-		echo center("RESOLUCIÓN NO " . $factura->resolucion, 35) . "\n";
-		echo center("DEL " . $factura->fecha_resolucion, 35) . "\n";
-		echo center("NUMER. No " . $factura->prefijo_facturacion . " " . sprintf("%06s", $Salon->consecutivo_inicial) . " AL " .
-		$factura->prefijo_facturacion . ' ' . sprintf("%06s", $Salon->consecutivo_final), 35)."\n";
+		echo center("RESOLUCIÓN NO ".$factura->resolucion, 35)."\n";
+		echo center("DEL ".$factura->fecha_resolucion, 35)."\n";
+		echo center("NUMER. No ".$factura->prefijo_facturacion." ".sprintf("%06s", $Salon->consecutivo_inicial)." AL ".
+		$factura->prefijo_facturacion.' '.sprintf("%06s", $Salon->consecutivo_final), 35)."\n";
 	}
 } else {
 	echo center("ESTADO DE CUENTA", 35)."\n";
 }
-echo center("Fecha: {$factura->fecha}" , 35) . "\n";
-echo center("Cajero: ".$factura->usuarios_nombre, 35) . "\n";
-echo center("Ubicación: {$factura->salon_nombre}", 35) . "\n";
-echo center("Mesa: {$factura->salonmesas_numero} Personas: {$factura->numero_personas}", 40) . "\n";
+echo center("Fecha: {$factura->fecha}" , 35)."\n";
+echo center("Cajero: ".$factura->usuarios_nombre, 35)."\n";
+echo center("Ubicación: {$factura->salon_nombre} Mesa: {$factura->salonmesas_numero}", 40)."\n";
 echo center("Comanda #: {$factura->comanda} Hora: ".$factura->hora, 35)."\n";
 
 ?>
@@ -76,7 +75,6 @@ echo center("Comanda #: {$factura->comanda} Hora: ".$factura->hora, 35)."\n";
 		<th>Descrip.</th>
 		<th>Vr Venta</th>
 		<th>Iv</th>
-		<th>Im</th>
 	</tr>
 	<?php
 
@@ -86,7 +84,6 @@ echo center("Comanda #: {$factura->comanda} Hora: ".$factura->hora, 35)."\n";
 		echo '<td>', nl2br($detalle->menus_items_nombre), '</td>';
 		echo "<td align='right'>", Currency::number($detalle->total), "</td>";
 		echo "<td align='right'>", $detalle->porcentaje_iva, "</td>";
-		echo "<td align='right'>", $detalle->porcentaje_impoconsumo, "</td>";
 		echo "</tr>";
 	}
 ?>
@@ -142,17 +139,6 @@ TOTAL PEDIDO: <?php echo Currency::number($factura->total) ?><br>
 		</td>
 	</tr>
 	<tr>
-		<td colspan="2">----------------------------------</td>
-	</tr>
-	<tr>
-		<td align="right">
-			SUBTOTAL:
-		</td>
-		<td align='right'>
-			<?php echo Currency::number($factura->total - $factura->propina) ?>
-		</td>
-	</tr>
-	<tr>
 		<td align="right">
 			PROPINA VOLUNTARIA SUGERIDA:
 		</td>
@@ -165,18 +151,18 @@ TOTAL PEDIDO: <?php echo Currency::number($factura->total) ?><br>
 			T O T A L:
 		</td>
 		<td align="right" style='font-size:14px'>
-			&nbsp;<?php echo Currency::number($factura->total) ?>
+			<?php echo Currency::number($factura->total) ?>
 		</td>
 	</tr>
 	<tr>
-		<td><br></td>
+		<td></td>
 	</tr>
 </table>
 </div>
 <?php
 
-if (!$preview && $factura->propina > 0 && $factura->leyenda_propina == 'S') {
-	echo "<div style='width:270px;text-align:justify'>", $factura->texto_propina, "</div>";
+if(!$preview&&$factura->propina>0&&$factura->leyenda_propina=='S'){
+	echo "<pre style='width:270px;text-align:justify'>", $factura->texto_propina, "</pre>";
 }
 
 echo "<div align='left' style='width:270px'>";
@@ -296,7 +282,7 @@ ESTE DOCUMENTO NO ES UNA <br>FACTURA DE VENTA
 <script type='text/javascript'>
 	new Event.observe(window, "load", function(){
 		window.setTimeout(function(){
-			<?php if($preview==false && $reprint==false): ?>
+			<?php if($preview==false&&$reprint==false): ?>
 			new Utils.redirectOpenerToAction("pay/index/<?php echo $factura->account_master_id ?>:<?php echo $accountCuenta->cuenta ?>");
 			<?php endif; ?>
 			window.print();

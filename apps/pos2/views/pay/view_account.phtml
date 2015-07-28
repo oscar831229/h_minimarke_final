@@ -9,11 +9,11 @@
  * with this package in the file docs/LICENSE.txt.
  *
  * @package 	Back-Office
- * @copyright 	BH-TECK Inc. 2009-2014
+ * @copyright 	BH-TECK Inc. 2009-2010
  * @version		$Id$
  */
 
-Flash::notice("Liquidando Cuenta: " . $cuentas[0][1]) ?>
+Flash::notice("Liquidando Cuenta: ".$cuentas[0][1]) ?>
 
 <div id='messages'></div>
 <?php
@@ -21,9 +21,9 @@ Flash::notice("Liquidando Cuenta: " . $cuentas[0][1]) ?>
 $AccountMaster->findFirst((int)$cuentas[0][0]);
 $conditions = "cuenta={$cuentas[0][1]} AND account_master_id='{$cuentas[0][0]}' AND estado in ('A', 'B')";
 $accountCuenta = $AccountCuentas->findFirst($conditions);
-if ($accountCuenta != false) {
-	if($accountCuenta->habitacion_id != -1){
-		$Habitacion->findFirst($accountCuenta->habitacion_id);
+if($accountCuenta!=false){
+	if($accountCuenta->habitacion_id!=-1){
+		$Habitacion->find($accountCuenta->habitacion_id);
 	}
 } else {
 	Flash::error('La cuenta a liquidar no existe');
@@ -51,8 +51,8 @@ echo Tag::form("pay/savePay", 'autocomplete: off')
 				<td>
 					<?php
 						$habitacion = $Habitacion->find($accountCuenta->habitacion_id);
-						if ($habitacion) {
-							if ($habitacion->numhab) {
+						if($habitacion){
+							if($habitacion->numhab){
 								echo "{$habitacion->numhab} : $habitacion->nombre\n";
 							} else {
 								echo "F. DIRECTA : $habitacion->nombre\n";
@@ -89,28 +89,28 @@ echo Tag::form("pay/savePay", 'autocomplete: off')
 
 	$total_cuentas = 0;
 	$total_servicio = 0;
-	foreach ($cuentas as $cue){
+	foreach($cuentas as $cue){
 		$valor_cuenta = 0;
 		$total_cuenta = 0;
 		$total_iva_cuenta = 0;
 		$total_servicio_cuenta = 0;
 		$conditions = "cuenta={$cue[1]} AND account_master_id='{$cue[0]}' AND estado in ('S', 'A', 'B')";
 		$resumen = array();
-		foreach ($Account->find($conditions) as $account) {
+		foreach($Account->find($conditions) as $account){
 			$MenusItems->findFirst($account->menus_items_id);
 			$tvalor = $account->valor * $account->cantidad;
-			foreach ($AccountModifiers->find("account_id='{$account->id}'") as $acc_mod) {
+			foreach($AccountModifiers->find("account_id='{$account->id}'") as $acc_mod){
 				$modifier = $Modifiers->find($acc_mod->modifiers_id);
 				$tvalor+=$modifier->valor;
 				$total_cuenta+=$modifier->valor;
 			}
-			if ($account->descuento > 0) {
+			if($account->descuento>0){
 				$tvalor -= (($tvalor*$account->descuento/100));
 				$account->total -= (($account->total*$account->descuento/100));
 				$account->iva -= (($account->iva*$account->descuento/100));
 				$account->servicio -= (($account->servicio*$account->descuento/100));
 			}
-			if (!isset($resumen[$MenusItems->tipo])) {
+			if(!isset($resumen[$MenusItems->tipo])){
 				$resumen[$MenusItems->tipo] = 0;
 			}
 			$resumen[$MenusItems->tipo]+= $tvalor;
@@ -119,10 +119,10 @@ echo Tag::form("pay/savePay", 'autocomplete: off')
 			$total_servicio_cuenta += ($account->servicio * $account->cantidad);
 			$total_cuenta+= ($account->total * $account->cantidad);
 		}
-		$salonMesa = $SalonMesas->findFirst($account->salon_mesas_id);
+		$SalonMesas->findFirst($account->salon_mesas_id);
 		$Salon->findFirst($SalonMesas->salon_id);
 		echo "<tr>
-			<td align='center'>", $salonMesa->numero, "</td>
+			<td align='center'>", $SalonMesas->numero, "</td>
 			<td align='center'>", $cue[1], "</td>
 			<td align='right'>", Currency::number($valor_cuenta), "</td>
 			<td align='right'>", Currency::number($total_iva_cuenta), "</td>
@@ -146,10 +146,10 @@ echo Tag::form("pay/savePay", 'autocomplete: off')
 			$t = $AccountItem->valor * $AccountItem->cantidad;
 			$valor = $AccountItem->valor;
 			if($AccountItem->descuento){
-				$valor -= ($valor * $AccountItem->descuento/100);
+				$valor -= ($valor*$AccountItem->descuento/100);
 				$t -= ($t*$AccountItem->descuento/100);
 			}
-			$total += $t;
+			$total+=$t;
 			echo "<tr>";
 			echo "<td style='font-family: Courier New; font-size: 12px'>";
 		  	echo $AccountItem->cantidad;
@@ -187,7 +187,7 @@ echo Tag::form("pay/savePay", 'autocomplete: off')
 	<td align='right' class='totales TotalTotal'>
 		<input type='hidden' value='$total_cuentas' id='total_valor'/>
 		<input type='hidden' value='$total_servicio' id='total_servicio'/>
-		" . Currency::number($total_cuentas) . "
+		".Currency::number($total_cuentas)."
 	</td>
 	</tr>";
 ?>
@@ -255,7 +255,7 @@ $propina = LocaleMath::round($propina, 0);
 		}
 	?>
 	<td align='center'>
-		<?php if($accountCuenta->tipo_venta == 'F'){ ?>
+		<?php if($accountCuenta->tipo_venta=='F'){ ?>
 			<select name='forma<?php echo  $i ?>' id='forma<?php echo  $i ?>' class='forma_p'>
 			<option value='@'>Seleccione...</option>
 			<?php
@@ -273,14 +273,14 @@ $propina = LocaleMath::round($propina, 0);
 		<input type='text' class='azul'
 		class='pago'
 		onkeydown="valNumeric(event);"
-		id='<?php echo  'pago' . $i; ?>'
-		name='<?php echo  'pago' . $i; ?>'
-		value='<?php echo  $i == 0 ? $total_cuentas + $propina : "" ?>'
+		id='<?php echo  'pago'.$i; ?>'
+		name='<?php echo  'pago'.$i; ?>'
+		value='<?php echo  $i==0 ? $total_cuentas+$propina : "" ?>'
 		onchange="totalPagos(this)"/>
 	</td>
 	<td align='center'>
 	<?php
-	if ($i > 0) {
+	if($i>0){
 		echo Tag::image('pos2/minus.gif',
 			"onclick: if('.$i.'!=0) {
 				$('forma".$i."').selectedIndex=0;
@@ -310,12 +310,12 @@ $propina = LocaleMath::round($propina, 0);
 				<td>
 					<span><b>Habitación/Folio</b></span><br/>
 					<?php
-						$habitacion = $Habitacion->findFirst($accountCuenta->habitacion_id);
-						if ($habitacion) {
-							if($habitacion->numhab){
-								echo "<span style='font-size:12px'>" . $habitacion->numhab." : " . $Habitacion->nombre."</span>";
+						$habitacion = $Habitacion->find($accountCuenta->habitacion_id);
+						if($habitacion){
+							if($Habitacion->numhab){
+								echo "<span style='font-size:12px'>".$Habitacion->numhab." : ".$Habitacion->nombre."</span>";
 							} else {
-								echo "<span style='font-size:12px'>F.DIRECTA : " . $Habitacion->nombre."</span>";
+								echo "<span style='font-size:12px'>F.DIRECTA : ".$Habitacion->nombre."</span>";
 							}
 						} else {
 							echo "<span style='font-size:12px'>NO EXISTE EL FOLIO</span>";

@@ -52,7 +52,7 @@ class Informe_CarteraController extends ApplicationController
         try
         {
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
-
+            
             $span = 13;
             $spanTotal = 5;
             $iIni = 5;
@@ -76,7 +76,7 @@ class Informe_CarteraController extends ApplicationController
             //Cuentas de cartera de socios
             $cuentasLike = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
             $cuentaSaldoAFavor = Settings::get('cuenta_saldo_a_favor', 'SO');
-
+            
             $conditions = array();
             $conditions[] = "f_emision<='$fechaLimite' AND (cuenta LIKE '$cuentasLike' OR cuenta='$cuentaSaldoAFavor')";
 
@@ -114,8 +114,8 @@ class Informe_CarteraController extends ApplicationController
                 '61 A 90',//9
                 '91 A 120',//10
                 '> 4 MESES',//11
-                'DÍAS',//12
-                'CATEGORIZACIÓN'//13
+                'DESDE',//12
+                'DÍAS',//13
             ));
 
             $report->setCellHeaderStyle(new ReportStyle(array(
@@ -150,9 +150,9 @@ class Informe_CarteraController extends ApplicationController
                 'decimals' => 2
             ));
 
-            $report->setColumnStyle(array(0, 1, 2, 3, 4, 13), $leftColumn);
-            $report->setColumnStyle(array(5, 6, 7, 8, 9, 10, 11, 12), $rightColumn);
-            $report->setColumnFormat(array(5, 6, 7, 8, 9, 10, 11, 12), $numberFormat);
+            $report->setColumnStyle(array(0, 1, 2, 3, 4), $leftColumn);
+            $report->setColumnStyle(array(5, 6, 7, 8, 9, 10, 11, 12, 13), $rightColumn);
+            $report->setColumnFormat(array(5, 6, 7, 8, 9, 10, 11, 12, 13), $numberFormat);
 
             $columnaGranTotal = new ReportRawColumn(array(
                 'value' => 'GRAN TOTAL',
@@ -241,7 +241,7 @@ class Informe_CarteraController extends ApplicationController
                             }
                             if ($totalTercero2!=0) {
                                 $report->addRawRow($totales);
-                            }
+                            } 
                         }
                     }
 
@@ -368,18 +368,13 @@ class Informe_CarteraController extends ApplicationController
                             //$totalTercero[$i] = 0;
                         }
                     }
-
+                    
                     $day = SociosCore::getCarteraTime($cartera, $fechaLimite);
                     $dias = SociosCore::getDays($cartera, $fechaLimite);
                     $timecartera = array('30'=>0, '60' => 0, '90' => 0, '120' => 0, '120m' => 0);
-                    $timecartera[$day] = $saldoCartera;
+                    $timecartera[$day]=$cartera->getSaldo();
 
                     $tercero = BackCacher::getTercero($cartera->getNit());
-                    $socios = EntityManager::get('Socios')->findFirst("identificacion='{$tercero->getNit()}'");
-                    $categorizacion = '';
-                    if ($socios) {
-                        $categorizacion = $socios->getTipoSocios()->getNombre() . " (" . $socios->getPorcMoraDesfecha() . ")";
-                    }
                     $row = array(
                         $tercero->getNit() . ": " . $tercero->getNombre(),//0
                         $codigoCuenta,//1
@@ -393,8 +388,8 @@ class Informe_CarteraController extends ApplicationController
                         $timecartera['90'],//9
                         $timecartera['120'],//10
                         $timecartera['120m'],//11
-                        $dias,//12
-                        $categorizacion//13
+                        $cartera->getFVence(),//12
+                        $dias//13
                     );
 
                     if ($consolidado!=1) {
@@ -441,7 +436,7 @@ class Informe_CarteraController extends ApplicationController
                 'style' => $rightColumnBold,
                 'span' => $spanTotal
             ));
-
+            
             $totales = array($columnaTotalTercero);
             $totalTercero2 = 0;
             for ($i=$iIni; $i<$iFin; $i++) {

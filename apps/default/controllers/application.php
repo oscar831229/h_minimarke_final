@@ -18,12 +18,5 @@ class ControllerBase {
 		Router::routeTo(array('controller' => 'index'));
 	}
 
-	public function notFoundAction()
-	{
-		Router::routeTo(array(
-			'controller' => 'index',
-			'action' => 'index'
-		));
-	}
 }
 

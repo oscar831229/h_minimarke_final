@@ -32,8 +32,7 @@
  * @license 	New BSD License
  * @abstract
  */
-class TextReport extends ReportAdapter implements ReportInterface
-{
+class TextReport extends ReportAdapter implements ReportInterface {
 
 	/**
 	 * Salida HTML
@@ -41,7 +40,7 @@ class TextReport extends ReportAdapter implements ReportInterface
 	 * @var string
 	 */
 	private $_output;
-
+	
 	/**
 	 * Salida HTML
 	 *
@@ -194,7 +193,7 @@ class TextReport extends ReportAdapter implements ReportInterface
 	   		$output.= "\t\t<meta http-equiv='Cache-Control' CONTENT='no-cache' />\n";
 			$output.= "\t\t<title>".$this->getDocumentTitle()."</title>\n";
 			$output.= "\t\t<style type='text/css'>\n";
-			$output.= "\t\t\tbody, div, td, th { font-family: \"" . self::$_defaultFontFamily . "\", monospace; font-size: ".self::$_defaultFontSize."px; }\n";
+			$output.= "\t\t\tbody, div, td, th { font-family: \"".self::$_defaultFontFamily."\"; font-size: ".self::$_defaultFontSize."px; }\n";
 			$output.= "\t\t\ttable { border: none; }\n";
 			$output.= "\t\t\tth, td { border: none; font-weight: normal; padding-left: 10px; overflow:hidden; white-space: nowrap; }\n";
 			$output.= "\t\t\tbody { margin: 0px; padding: 0px; }\n";
@@ -227,14 +226,13 @@ class TextReport extends ReportAdapter implements ReportInterface
 			$this->_output.=$output;
 		}
 	}
-
+	
 	/**
 	 * Agrega una cadena al reporte
 	 *
 	 * @param string $output
 	 */
-	private function _appendToOutputSignature($output)
-	{
+	private function _appendToOutputSignature($output){
 		$this->_signature = $output;
 	}
 
@@ -243,8 +241,7 @@ class TextReport extends ReportAdapter implements ReportInterface
 	 *
 	 * @access protected
 	 */
-	protected  function _prepareCellHeaderStyle()
-	{
+	protected  function _prepareCellHeaderStyle(){
 
 	}
 
@@ -253,8 +250,7 @@ class TextReport extends ReportAdapter implements ReportInterface
 	 *
 	 * @access protected
 	 */
-	protected function _prepareColumnFormats()
-	{
+	protected function _prepareColumnFormats(){
 		$this->_columnFormats = $this->getColumnFormats();
 	}
 
@@ -263,8 +259,7 @@ class TextReport extends ReportAdapter implements ReportInterface
 	 *
 	 * @access protected
 	 */
-	protected function _prepareTotalizedColumns()
-	{
+	protected function _prepareTotalizedColumns(){
 		$this->_totalizeValues = $this->getTotalizeValues();
 	}
 
@@ -273,11 +268,10 @@ class TextReport extends ReportAdapter implements ReportInterface
 	 *
 	 * @access protected
 	 */
-	protected function _prepareColumnStyles()
-	{
+	protected function _prepareColumnStyles(){
 		$styles = $this->getColumnStyles();
-		if (count($styles)) {
-			foreach ($styles as $numberColumn => $style) {
+		if(count($styles)){
+			foreach($styles as $numberColumn => $style){
 				$columnStyle = $style->getStyles();
 				$preparedStyle = $this->_prepareStyle($columnStyle);
 				$this->_appendToOutput("\t\t\t.c$numberColumn { ".join(";", $preparedStyle)."; }\n");
@@ -505,7 +499,7 @@ class TextReport extends ReportAdapter implements ReportInterface
 
 	protected function _addSignature($fields, $breakLines){
 		$output = '';
-
+		
 		//breakLines
 		for($i=0;$i<$breakLines;$i++){
 			$output .= '<br/>';

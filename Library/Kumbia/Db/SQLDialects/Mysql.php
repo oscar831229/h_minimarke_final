@@ -424,7 +424,7 @@ class MysqlSQLDialect {
 	 */
 	public static function tableExists($tableName, $schemaName=''){
 		if($schemaName==''){
-			return 'SELECT COUNT(*) FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_NAME`=\''.$tableName.'\' AND `TABLE_SCHEMA` = DATABASE()';
+			return 'SELECT COUNT(*) FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_NAME`=\''.$tableName.'\'';
 		} else {
 			$schemaName = addslashes("$schemaName");
 			return 'SELECT COUNT(*) FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_NAME`= \''.$tableName.'\' AND `TABLE_SCHEMA`=\''.$schemaName.'\'';

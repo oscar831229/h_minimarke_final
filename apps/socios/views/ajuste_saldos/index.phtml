@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+echo HfosTag::iconTitle('attibutes.png', 'Ajuste de Saldos de Cartera');
+
+//echo Tag::form('ajuste_saldos/generar', 'class: ajusteSaldosForm', 'enctype: multipart/form-data', 'target: _new') ?>
+
+<div style="" class="hyImportDiv hyFormDiv">
+	<div align="center">
+		<div style="display:none" class="subirBar">
+			<div align="center" class="subirLoadBar">
+				<img alt="" src="public/img/backoffice/load-bar.gif">
+				Importando archivo, por favor espere...
+			</div>
+		</div>
+	</div>
+
+	<iframe style="display:none" name="ajustar_saldosSubirFrame" class="subirFrame"></iframe>
+
+	<table width="100%" class="importTable">
+		<tbody>
+			<tr>
+				<td width="50%" valign="top" align="center">
+					<div align="center" class="subirArchivo">
+						<!--<form method="post" enctype="multipart/form-data" class="ajusteSaldosForm" target="ajustar_saldosSubirFrame" action="ajuste_saldos/generar">-->
+						<?php echo Tag::form('ajuste_saldos/generar', 'class: ajusteSaldosForm', 'enctype: multipart/form-data', 'target: ajustar_saldosSubirFrame'); ?>
+							<div align="left">
+								<label>Seleccione el archivo</label>
+							</div>
+							<table width="100%" align="center">
+								<tbody>
+									<tr>
+										<td align="center">
+											<input type="file" name="archivo" id="archivo" class="archivo">
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</td>
+				<td width="50%">
+					<div class="infoBox">Está opción permite ajustar los saldos de los socios por cuenta y numero de documento, solo ajusta hasta el periodo actual (<?php echo $periodo; ?>).</div>
+					<div class="infoBox">Por medio de esta opción puede importar y ajustar saldos de socios desde un archivo de Microsoft Excel 2007 ó superior.</div>
+					<div class="infoBox">Para una correcta importación de los datos, el archivo debe tener las siguientes columnas:<br><br>	
+						<table cellspacing="0" class="importInfo">
+							<tbody>
+								<tr>
+									<td align="right">
+										<label>Número de Acción</label>
+									</td>
+									<td>Texto. Máximo 10 carácteres. Obligatorio</td>
+								</tr>
+								<tr>
+									<td align="right">
+										<label>Cédula</label>
+									</td>
+									<td>Texto. Máximo 16 carácteres. Obligatorio</td>
+								</tr>
+								<tr>
+									<td align="right">
+										<label>Cuenta Contable</label>
+									</td>
+									<td>Valor númerico. Máximo 16 carácteres. Obligatorio</td>
+								</tr>
+								<tr>
+									<td align="right">
+										<label>Saldo Actual Cartera</label>
+									</td>
+									<td>Valor númerico, sin decimales. Máximo 3 carácteres. Obligatorio</td>
+								</tr>
+								<tr>
+									<td align="right">
+										<label>Numero de Ajuste</label>
+									</td>
+									<td>Valor númerico. Máximo 14 carácteres. Obligatorio</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<?php //echo HfosTag::reportTypeTag(true, false) ?>
+<?php //echo Tag::endForm() ?>

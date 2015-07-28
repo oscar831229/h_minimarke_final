@@ -9,7 +9,7 @@
  * with this package in the file docs/LICENSE.txt.
  *
  * @package 	Back-Office
- * @copyright 	BH-TECK Inc. 2009-2014
+ * @copyright 	BH-TECK Inc. 2009-2010
  * @version		$Id$
  */
 
@@ -65,7 +65,6 @@ echo center("Fecha Impresión: ".Date::now(), 40)."\n";
 
 $total = 0;
 $total_iva = 0;
-$total_impo = 0;
 $total_propina = 0;
 $tipo_venta = "";
 if($salon_id=='@'){
@@ -139,7 +138,6 @@ foreach($facturas as $factura){
 	}
 	$total += $factura->total;
 	$total_iva += $factura->total_iva;
-	$total_impo += $factura->total_impoconsumo;
 	$totalTipoVenta+=$factura->total;
 }
 if($tipo_venta!=''){
@@ -169,7 +167,6 @@ if(count($formasPago)){
 <div style='pading: 20px; width:280px' align='right'>
 TOTAL PROPINA : <?php echo Currency::number($total_propina, 0) ?><br>
 TOTAL IVA : <?php echo Currency::number($total_iva) ?><br>
-TOTAL IMPO : <?php echo Currency::number($total_impo) ?><br>
 TOTAL : <?php echo Currency::number($total) ?>
 </div>
 <div style='pading: 20px; width:280px' align='left'>

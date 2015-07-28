@@ -16,26 +16,22 @@ Core::importFromLibrary('Hfos', 'Loader/Loader.php');
 
 class ControllerBase {
 
-	public function init()
-	{
+	public function init(){
 		Router::routeTo(array('controller' => 'index'));
 	}
 
-	public function initialize()
-	{
+	public function initialize(){
 		i18n::isUnicodeEnabled();
 		LocaleMath::enableBcMath();
 	}
 
-	public static function getAppModel()
-	{
+	public static function getAppModel(){
 		$datosclub = EntityManager::get('DatosClub')->findFirst();
 		return $datosclub;
 	}
 
-	public function beforeFilter()
-	{
-		if (!Gardien::isAllowed(Router::getController(), Router::getAction(), null)) {
+	public function beforeFilter(){
+		if(!Gardien::isAllowed(Router::getController(), Router::getAction(), null)){
 			Router::routeTo(array(
 				'controller' => 'gardien',
 				'action' => 'noAccess',
@@ -47,11 +43,4 @@ class ControllerBase {
 		return true;
 	}
 
-	public function notFoundAction()
-	{
-		Router::routeTo(array(
-			'controller' => 'index',
-			'action' => 'index'
-		));
-	}
 }

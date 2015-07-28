@@ -99,9 +99,8 @@ class Regimen_CuentasController extends HyperFormController {
 		)
 	);
 
-	public function initialize()
-	{
-		if (!Gardien::hasAppAccess('FC')) {
+	public function initialize(){
+		if(!Gardien::hasAppAccess('FC')){
 			unset(self::$_config['fields']['cta_iva10v']);
 			unset(self::$_config['fields']['cta_iva16v']);
 		}

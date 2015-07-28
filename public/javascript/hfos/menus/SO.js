@@ -105,21 +105,6 @@ Hfos.getApplication().getMenu().setOptions([
 				}
 			},
 			{
-				'title': 'Cambio de Categoría',
-				'icon': 'type-user.png',
-				'click': function(){
-					icon: 'type-user.png',
-					Hfos.getApplication().run({
-						id: 'win-cambio-categoria-socios',
-						icon: 'type-user.png',
-						title: "Cambio de Categoría",
-						width: '700px',
-						height: '450px',
-						action: 'cambio_categoria'
-					});
-				}
-			},
-			{
 				'title'	: 'Pagos Automáticos',
 				'icon'	: 'cheque.png',
 				'click'	: function(){
@@ -155,6 +140,21 @@ Hfos.getApplication().getMenu().setOptions([
 					});
 				}
 			},
+			/*{
+				'title': 'Generar Movimiento de Cargos',
+				'icon': 'cheque.png',
+				'click': function(){
+					icon: 'cheque.png',
+					Hfos.getApplication().run({
+						id: 'win-movimiento-cargos-socios',
+						icon: 'cheque.png',
+						title: "Generar Movimiento de Cargos",
+						width: '700px',
+						height: '350px',
+						action: 'movimiento_cargos'
+					});
+				}
+			},*/
 			{
 				'title': 'Facturas Periodicas',
 				'icon': 'cheque.png',
@@ -201,11 +201,11 @@ Hfos.getApplication().getMenu().setOptions([
 				}
 			},
 			{
-				'title': 'Convenios',
+				'title': 'Cartera',
 				'icon': 'cartera.png',
 				'options': [
 					{
-						'title': 'Proyección simulada',
+						'title': 'Proyección',
 						'icon': 'cheque.png',
 						'click': function(){
 							icon: 'cheque.png',
@@ -237,20 +237,72 @@ Hfos.getApplication().getMenu().setOptions([
 				]
 			},
 			{
-				'title': 'Importar Pagos',
-				'icon': 'credit-card.png',
-				'click': function(){
-					icon: 'credit-card.png',
-					Hfos.getApplication().run({
-						id: 'win-importar-pagos-socios',
-						icon: 'credit-card.png',
-						title: "Importar Pagos",
-						width: '900px',
-						height: '450px',
-						action: 'importar_pagos'
-					});
-				}
-			},
+				'title': 'Ajustes de Cartera',
+				'icon': 'blue-document-convert.png',
+				'options': [
+			
+					{
+						'title': 'Ajuste de Saldos',
+						'icon': 'cheque.png',
+						'click': function(){
+							icon: 'cheque.png',
+							Hfos.getApplication().run({
+								id: 'win-ajuste-saldos-socios',
+								icon: 'cheque.png',
+								title: "Ajuste de saldos",
+								width: '800px',
+								height: '550px',
+								action: 'ajuste_saldos'
+							});
+						}
+					},
+					{
+						'title': 'Ajuste de Convenios',
+						'icon': 'cheque.png',
+						'click': function(){
+							icon: 'cheque.png',
+							Hfos.getApplication().run({
+								id: 'win-ajuste-prestamos-socios',
+								icon: 'cheque.png',
+								title: "Ajuste de Convenios",
+								width: '800px',
+								height: '550px',
+								action: 'ajuste_prestamos'
+							});
+						}
+					},
+					{
+						'title': 'Ajuste de Pagos',
+						'icon': 'cheque.png',
+						'click': function(){
+							icon: 'cheque.png',
+							Hfos.getApplication().run({
+								id: 'win-ajuste-pagos-socios',
+								icon: 'cheque.png',
+								title: "Ajuste de Pagos",
+								width: '800px',
+								height: '650px',
+								action: 'ajuste_pagos'
+							});
+						}
+					},
+					{
+						'title': 'Ajuste de Consumos',
+						'icon': 'cheque.png',
+						'click': function(){
+							icon: 'cheque.png',
+							Hfos.getApplication().run({
+								id: 'win-ajuste-consumos-socios',
+								icon: 'cheque.png',
+								title: "Ajuste de Consumos",
+								width: '800px',
+								height: '650px',
+								action: 'ajuste_consumos'
+							});
+						}
+					}
+				]
+			}
 		]
 			
 	},
@@ -259,211 +311,142 @@ Hfos.getApplication().getMenu().setOptions([
 		'icon': 'archives.png',
 		'options': [
 			{
-				'title': 'Socios',
-				'icon': 'business-contact.png',
-				'options': [
-					{
-						'title': 'Consulta de socios',
-						'icon': 'business-contact.png',
-						'click': function(){
-							icon: 'business-contact.png',
-							Hfos.getApplication().run({
-								id: 'win-consulta-socios',
-								icon: 'business-contact.png',
-								title: "Consulta de socios",
-								width: '700px',
-								height: '350px',
-								action: 'consulta_socios'
-							});
-						}
-					},
-					{
-						'title': 'Suspendidos por Mora',
-						'icon': 'calculator.png',
-						'click': function(){
-							icon: 'calculator.png',
-							Hfos.getApplication().run({
-								id: 'win-suspendidos-socios',
-								icon: 'calculator.png',
-								title: "Suspendidos por Mora",
-								width: '700px',
-								height: '350px',
-								action: 'suspendidos_mora'
-							});
-						}
-					},
-					{
-						'title': 'Validación de Categorias',
-						'icon': 'publish.png',
-						'click': function(){
-							icon: 'cake.png',
-							Hfos.getApplication().run({
-								id: 'win-validacion-categorias-socios',
-								icon: 'publish.png',
-								title: "Validación de Categorias",
-								width: '700px',
-								height: '350px',
-								action: 'validacion_categorias'
-							});
-						}
-					},
-					{
-						'title': 'Cumpleaños de Socios',
-						'icon': 'cake.png',
-						'click': function(){
-							icon: 'cake.png',
-							Hfos.getApplication().run({
-								id: 'win-cumpleanos-socios',
-								icon: 'cake.png',
-								title: "Cumpleaños de Socios",
-								width: '700px',
-								height: '350px',
-								action: 'cumpleanos'
-							});
-						}
-					},
-				]
-			},
-			{
-				'title': 'Facturas',
-				'icon': 'finance-2.png',
-				'options': [
-					{
-		                'title': 'Facturas Generadas',
-		                'icon': 'finance-2.png',
-		                'click': function(){
-		                    icon: 'finance-2.png',
-		                    Hfos.getApplication().run({
-		                            id: 'win-facturas-generadas-socios',
-		                            icon: 'finance-2.png',
-		                            title: "Facturas Generadas",
-		                            width: '700px',
-		                            height: '350px',
-		                            action: 'facturas_generadas'
-		                    });
-		                }
-		        	},
-		           	{
-		                'title': 'Conceptos Causados',
-		                'icon': 'issue.png',
-		                'click': function(){
-		                    icon: 'issue.png',
-		                    Hfos.getApplication().run({
-		                            id: 'win-conceptos-causados-socios',
-		                            icon: 'issue.png',
-		                            title: "Conceptos Causados",
-		                            width: '700px',
-		                            height: '350px',
-		                            action: 'conceptos_causados'
-		                    });
-		                }
-		        	},
-		        ]
-		    },
-		    {
-				'title': 'Cartera',
-				'icon': 'cartera.png',
-				'options': [
-		        	{
-						'title': 'Cartera por Edades',
-						'icon': 'cartera.png',
-						'click': function(){
-							Hfos.getApplication().run({
-								id: 'win-informe-cartera-socios',
-								icon: 'cartera.png',
-								title: "Cartera por Edades",
-								action: "informe_cartera",
-								width: '750px',
-								height: '400px'
-							});
-						}
-					},
-		        	{
-						'title': 'Estado de Cuenta Convenios',
-						'icon': 'cartera.png',
-						'click': function(){
-							Hfos.getApplication().run({
-								id: 'win-informe-convenios-socios',
-								icon: 'cartera.png',
-								title: "Estado de Cuenta Convenios",
-								action: "informe_convenios",
-								width: '750px',
-								height: '400px'
-							});
-						}
-					},
-				]
-			},
-			{
-				'title': 'Estados de Cuenta',
-				'icon': 'invoice.png',
-				'options': [
-					{
-						'title': 'Estado de Cuenta',
-						'icon': 'invoice.png',
-						'click': function(){
-							Hfos.getApplication().run({
-								id: 'win-estado-cuenta-socios',
-								icon: 'invoice.png',
-								title: "Estado de Cuenta",
-								action: "estado_cuenta",
-								width: '750px',
-								height: '400px'
-							});
-						}
-					},
-					{
-						'title': 'Estado de Cuenta Consolidado',
-						'icon': 'invoice.png',
-						'click': function(){
-							Hfos.getApplication().run({
-								id: 'win-estado-cuenta-consolidado-socios',
-								icon: 'invoice.png',
-								title: "Estado de Cuenta Consolidado",
-								action: "estado_cuenta_consolidado",
-								width: '750px',
-								height: '400px'
-							});
-						}
-					},
-					{
-						'title': 'Validación de Estados de Cuenta',
-						'icon': 'publish.png',
-						'click': function(){
-							Hfos.getApplication().run({
-								id: 'win-estado-cuenta-validacion-socios',
-								icon: 'publish.png',
-								title: "Validación de Estados de Cuenta",
-								action: "estado_cuenta_validacion",
-								width: '750px',
-								height: '400px'
-							});
-						}
-					},
-				]
-			},
-			{
-				'title': 'Informe de Recibos de Caja',
-				'icon': 'contables.png',
+				'title': 'Consulta de socios',
+				'icon': 'issue.png',
 				'click': function(){
-					icon: 'contables.png',
+					icon: 'issue.png',
 					Hfos.getApplication().run({
-						id: 'win-informe-rc-socios',
-						icon: 'contables.png',
-						title: "Informe de Recibos de Caja",
+						id: 'win-consulta-socios',
+						icon: 'issue.png',
+						title: "Consulta de socios",
 						width: '700px',
 						height: '350px',
-						action: 'informe_rc'
+						action: 'consulta_socios'
+					});
+				}
+			},
+			{
+				'title': 'Suspendidos por Mora',
+				'icon': 'issue.png',
+				'click': function(){
+					icon: 'issue.png',
+					Hfos.getApplication().run({
+						id: 'win-suspendidos-socios',
+						icon: 'issue.png',
+						title: "Suspendidos por Mora",
+						width: '700px',
+						height: '350px',
+						action: 'suspendidos_mora'
+					});
+				}
+			},
+           	{
+                'title': 'Facturas Generadas',
+                'icon': 'issue.png',
+                'click': function(){
+                        icon: 'issue.png',
+                        Hfos.getApplication().run({
+                                id: 'win-facturas-generadas-socios',
+                                icon: 'issue.png',
+                                title: "Facturas Generadas",
+                                width: '700px',
+                                height: '350px',
+                                action: 'facturas_generadas'
+                        });
+                }
+        	},
+           	{
+                'title': 'Conceptos Causados',
+                'icon': 'issue.png',
+                'click': function(){
+                        icon: 'issue.png',
+                        Hfos.getApplication().run({
+                                id: 'win-conceptos-causados-socios',
+                                icon: 'issue.png',
+                                title: "Conceptos Causados",
+                                width: '700px',
+                                height: '350px',
+                                action: 'conceptos_causados'
+                        });
+                }
+        	},
+        	{
+				'title': 'Cartera por Edades',
+				'icon': 'cartera.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-informe-cartera-socios',
+						icon: 'cartera.png',
+						title: "Cartera por Edades",
+						action: "informe_cartera",
+						width: '750px',
+						height: '400px'
+					});
+				}
+			},
+        	{
+				'title': 'Estado de Cuenta Convenios',
+				'icon': 'cartera.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-informe-convenios-socios',
+						icon: 'cartera.png',
+						title: "Estado de Cuenta Convenios",
+						action: "informe_convenios",
+						width: '750px',
+						height: '400px'
+					});
+				}
+			},
+			{
+				'title': 'Estado de Cuenta',
+				'icon': 'invoice.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-estado-cuenta-socios',
+						icon: 'invoice.png',
+						title: "Estado de Cuenta",
+						action: "estado_cuenta",
+						width: '750px',
+						height: '400px'
+					});
+				}
+			},
+			{
+				'title': 'Estado de Cuenta Consolidado',
+				'icon': 'invoice.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-estado-cuenta-consolidado-socios',
+						icon: 'invoice.png',
+						title: "Estado de Cuenta Consolidado",
+						action: "estado_cuenta_consolidado",
+						width: '750px',
+						height: '400px'
+					});
+				}
+			},
+			{
+				'title': 'Validación de Estados de Cuenta',
+				'icon': 'publish.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-estado-cuenta-validacion-socios',
+						icon: 'publish.png',
+						title: "Validación de Estados de Cuenta",
+						action: "estado_cuenta_validacion",
+						width: '750px',
+						height: '400px'
 					});
 				}
 			},
 			{
 				'title': 'Informe de Pagos en Periodo',
-				'icon': 'cheque.png',
+				'icon': 'issue.png',
 				'click': function(){
 					Hfos.getApplication().run({
 						id: 'win-informe-pagos-periodo-socios',
-						icon: 'cheque.png',
+						icon: 'issue.png',
 						title: "Informe de Pagos en Periodo",
 						action: "pagos_periodo",
 						width: '750px',
@@ -680,7 +663,7 @@ Hfos.getApplication().getMenu().setOptions([
 							});
 						}
 					},
-                    /*{
+                    {
                         'title': 'Categoria X Edad',
                         'icon': 'cake.png',
                         'click': function(){
@@ -694,7 +677,7 @@ Hfos.getApplication().getMenu().setOptions([
                                     action: 'categoria_edad'
                                 });
                         }
-                    }*/
+                    }
 				]
 			},
 			{
@@ -739,21 +722,6 @@ Hfos.getApplication().getMenu().setOptions([
 						width: '900px',
 						height: '550px',
 						action: 'periodo'
-					});
-				}
-			},
-			{
-				'title': 'Cargos Fijos de Categoría',
-				'icon': 'type-user.png',
-				'click': function(){
-					icon: 'type-user.png',
-					Hfos.getApplication().run({
-						id: 'win-cargos-fijos-categoria-socios',
-						icon: 'type-user.png',
-						title: "Cargos Fijos de Categoría",
-						width: '700px',
-						height: '450px',
-						action: 'cargos_fijos_categoria'
 					});
 				}
 			},

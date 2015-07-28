@@ -62,7 +62,6 @@ echo "Fecha Impresión: ".Date::now()."<br/>";
 
 $total = 0;
 $totalIva = 0;
-$totalImpo = 0;
 $tipo_venta = "";
 $totalPropina = 0;
 $cajeros_total = array();
@@ -75,8 +74,8 @@ if($salon_id!='@'){
 } else {
 	$conditions = "fecha >= '$fecha_inicial' AND fecha <= '$fecha_final' and estado = 'A'";
 }
-foreach ($Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutivo_facturacion") as $factura) {
-	if (!isset($usuarios[$factura->usuarios_id])) {
+foreach($Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutivo_facturacion") as $factura){
+	if(!isset($usuarios[$factura->usuarios_id])){
 		$usuario = $UsuariosPos->findFirst($factura->usuarios_id);
 		if($usuario!=false){
 			$nombres =	explode(' ', $usuario->nombre);
@@ -163,7 +162,6 @@ foreach ($Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutiv
 	}
 	$total+=$factura->total;
 	$totalIva+=$factura->total_iva;
-	$totalImpo+=$factura->total_impoconsumo;
 	$totalTipoVenta+=$factura->total;
 	$totalAlimentos+=$factura->total_alimentos;
 	$totalBebidas+=$factura->total_bebidas;
@@ -192,8 +190,7 @@ TOTAL BEBIDAS : <?php echo Currency::number($totalBebidas) ?><br/>
 <br/>
 TOTAL PROPINA : <?php echo Currency::number($totalPropina) ?><br/>
 TOTAL IVA : <?php echo Currency::number($totalIva) ?><br/>
-TOTAL IMPO : <?php echo Currency::number($totalImpo) ?><br/>
-TOTAL: <?php echo Currency::number($total) ?><br/>
+TOTAL TODO: <?php echo Currency::number($total) ?><br/>
 <br/>
 <br/>
 <?php

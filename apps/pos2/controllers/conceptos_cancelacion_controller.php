@@ -24,5 +24,4 @@ class Conceptos_CancelacionController extends StandardForm
 		$this->setFormCaption('Conceptos de Cancelación');
 		$this->setSize('nombre', 30);
 	}
-
 }

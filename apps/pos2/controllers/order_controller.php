@@ -9,7 +9,7 @@
  * with this package in the file docs/LICENSE.txt.
  *
  * @package 	Point Of Sale
- * @copyright 	BH-TECK Inc. 2009-2014
+ * @copyright 	BH-TECK Inc. 2009-2012
  * @version		$Id$
  */
 
@@ -29,7 +29,7 @@ class OrderController extends ApplicationController
 	 *
 	 * @var string
 	 */
-	public $tipo_venta = '';
+	public $tipo_venta = 'H';
 
 	/**
 	 * Id del Account Master actual
@@ -168,17 +168,16 @@ class OrderController extends ApplicationController
 				$this->silla = 0;
 				$this->last_account_id = 0;
 				$this->numero_asientos = 0;
-				$this->tipo_venta = '';
+				$this->tipo_venta = 'H';
 			}
 		}
 
 		if ($action) {
 			$this->action = $this->filter($action, 'alpha');
 		}
-
 		$this->account_id = $salonMesasId;
 		$salonMesa = $this->SalonMesas->findFirst($salonMesasId);
-		if ($salonMesa != false) {
+		if($salonMesa!=false){
 
 			$accountMaster = $this->AccountMaster->findFirst("salon_mesas_id='$salonMesasId' AND estado = 'N'");
 			if($accountMaster){
@@ -197,20 +196,13 @@ class OrderController extends ApplicationController
 				Session::set('current_master', 0);
 			}
 
+
 			$this->salon_id = $salonMesa->salon_id;
 			$salon = $this->Salon->findFirst($this->salon_id);
-			if ($salon == false) {
+			if($salon==false){
 				Flash::error('El ambiente no existe');
 				return $this->routeTo(array('controller' => 'tables', 'action' => 'index', 'id' => 0));
 			}
-
-			if (!$this->tipo_venta) {
-				$this->tipo_venta = $salon->tipo_venta_default;
-				if (!$this->tipo_venta) {
-					$this->tipo_venta = 'H';
-				}
-			}
-
 			$this->setParamToView('salon', $salon);
 			$this->porcentaje_servicio = $salon->porcentaje_servicio;
 			if($salonMesa->numero){
@@ -223,10 +215,10 @@ class OrderController extends ApplicationController
 			return $this->routeTo(array('controller' => 'tables', 'action' => 'index', 'id' => 0));
 		}
 
-		if ($this->numero_cuenta) {
-			if ($this->current_master) {
+		if($this->numero_cuenta){
+			if($this->current_master){
 				$cuenta = $this->AccountCuentas->findFirst("account_master_id='{$this->current_master}' AND cuenta = '{$this->numero_cuenta}' AND estado='A'");
-				if ($cuenta != false) {
+				if($cuenta!=false){
 					$this->tipo_venta = $cuenta->tipo_venta;
 					Session::set('numero_cuenta', $this->numero_cuenta);
 				} else {
@@ -237,16 +229,16 @@ class OrderController extends ApplicationController
 			}
 		}
 
-		if (!$this->numero_cuenta) {
+		if(!$this->numero_cuenta){
 			Session::set('numero_cuenta', 1);
 			$this->numero_cuenta = 1;
-			if ($this->current_master) {
+			if($this->current_master){
 				$maxCuenta = $this->Account->maximum(array("cuenta", "conditions" => "account_master_id='{$this->current_master}' AND estado <> 'C'"));
-				if ($maxCuenta) {
+				if($maxCuenta){
 					$this->numero_cuenta = $maxCuenta;
 					Session::set('numero_cuenta', $maxCuenta);
 					$cuenta = $this->AccountCuentas->findFirst("account_master_id='{$this->current_master}' AND cuenta = '{$this->numero_cuenta}' AND estado='A'");
-					if ($cuenta != false) {
+					if($cuenta!=false){
 						$this->tipo_venta = $cuenta->tipo_venta;
 					}
 				}
@@ -275,7 +267,7 @@ class OrderController extends ApplicationController
 			$this->silla = 1;
 		}
 
-		if (Browser::isMobile() == true) {
+		if(Browser::isMobile()==true){
 			$this->setResponse('json');
 			$items = array();
 			$accountModifiers = array();
@@ -601,7 +593,7 @@ class OrderController extends ApplicationController
 
 					if ($account->save() == false) {
 						foreach ($account->getMessages() as $message) {
-							Flash::error('Account: ' . $message->getMessage());
+							Flash::error('Account: '.$message->getMessage());
 						}
 						$transaction->rollback();
 					}
@@ -617,7 +609,6 @@ class OrderController extends ApplicationController
 					}
 				}
 			}
-
 		}
 	}
 
@@ -662,13 +653,11 @@ class OrderController extends ApplicationController
 			$accountMaster = $this->AccountMaster->findFirst($conditions);
 			if ($accountMaster == false) {
 
-				$datos = $this->Datos->findFirst(array('columns' => 'fecha'));
-
+				$datos = $this->Datos->findFirst('columns: fecha');
 				$accountMaster = new AccountMaster();
 				$accountMaster->salon_mesas_id = $salonMesa->id;
 				$accountMaster->salon_id = $salonMesa->salon_id;
 				$accountMaster->hora = $datos->getFecha() . ' ' . Date::getCurrentTime();
-				$accountMaster->send_kitchen = 'N';
 
 				if (!Session::getData('usuarios_nombre')) {
 					$this->UsuariosPos->findFirst("estado='A'");
@@ -681,7 +670,7 @@ class OrderController extends ApplicationController
 				$accountMaster->estado = 'N';
 				if ($accountMaster->create() == false) {
 					foreach ($accountMaster->getMessages() as $message) {
-						$transaction->rollback('accountMaster: ' . $message->getMessage());
+						$transaction->rollback('accountMaster: '.$message->getMessage());
 					}
 				}
 
@@ -692,14 +681,6 @@ class OrderController extends ApplicationController
 					}
 				}
 			} else {
-
-				$accountMaster->send_kitchen = 'N';
-				if ($accountMaster->save() == false) {
-					foreach ($accountMaster->getMessages() as $message) {
-						$transaction->rollback('accountMaster: ' . $message->getMessage());
-					}
-				}
-
 				if ($salonMesa->estado != 'A') {
 					$salonMesa->estado = 'A';
 					if ($salonMesa->save() == false) {
@@ -812,11 +793,11 @@ class OrderController extends ApplicationController
 				}
 
 				$conditions = "
-				salon_mesas_id=" . $this->account_id . " AND
+				salon_mesas_id=".$this->account_id." AND
 				menus_items_id='$id' AND
-				comanda = '" . $this->numero_comanda . "' AND
-				cuenta = '" . $this->numero_cuenta . "' AND
-				asiento = '" . $this->silla . "' AND
+				comanda = '".$this->numero_comanda."' AND
+				cuenta = '".$this->numero_cuenta."' AND
+				asiento = '".$this->silla."' AND
 				estado IN ('S', 'A')";
 				$account = $this->Account->findFirst($conditions);
 				if ($account == false) {
@@ -838,13 +819,8 @@ class OrderController extends ApplicationController
 				}
 				$account->estado = 'S';
 
-				$tipoVenta = $this->TipoVenta->findById($this->tipo_venta);
-				if (!$tipoVenta) {
-					$transaction->rollback('El tipo de venta no está permitido en este ambiente: ' . $this->tipo_venta);
-				}
-
 				$this->tipo_venta = $accountCuenta->tipo_venta;
-
+				$tipoVenta = $this->TipoVenta->findById($this->tipo_venta);
 				if ($tipoVenta->costo == 'N') {
 					$precioVenta = $this->_getPrecioItem($menuItem->id);
 					if ($menuItem->porcentaje_iva > 0) {
@@ -1156,7 +1132,6 @@ class OrderController extends ApplicationController
 		$items = explode(',', $this->getPostParam('items'));
 		$this->log($items);
 		try {
-
 			$transaction = TransactionManager::getUserTransaction();
 			$this->Account->setTransaction($transaction);
 			foreach ($items as $item) {
@@ -1173,20 +1148,9 @@ class OrderController extends ApplicationController
 					}
 				}
 			}
-
-			$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-			if ($accountMaster) {
-				$accountMaster->send_kitchen = 'N';
-				if ($accountMaster->save() == false) {
-					foreach ($accountMaster->getMessages() as $message) {
-						Flash::error('AccountMaster: ' . $message->getMessage());
-					}
-					$transaction->rollback();
-				}
-			}
-
 			$transaction->commit();
-		} catch (TransactionFailed $e) {
+		}
+		catch(TransactionFailed $e){
 
 		}
 	}
@@ -1335,42 +1299,31 @@ class OrderController extends ApplicationController
 	public function downItemListAction($id=null)
 	{
 		$this->setResponse('view');
-		$account = $this->Account->findFirst($id);
-		if ($account->cantidad > $account->cantidad_atendida) {
-
-			$account->cantidad--;
-			if ($account->cantidad <= 0 && $account->cantidad_atendida == 0) {
-				$account->send_kitchen = 'N';
-				$account->estado = 'C';
-				$this->AccountModifiers->delete('menus_items_id=' . $this->Account->menus_items_id.
-				' AND salon_mesas_id='.$this->Account->salon_mesas_id .
+		$this->Account->findFirst($id);
+		if ($this->Account->cantidad > $this->Account->cantidad_atendida) {
+			$this->Account->cantidad--;
+			if ($this->Account->cantidad <= 0 && $this->Account->cantidad_atendida == 0) {
+				$this->Account->send_kitchen = 'N';
+				$this->Account->estado = 'C';
+				$this->AccountModifiers->delete('menus_items_id='.$this->Account->menus_items_id.
+				' AND salon_mesas_id='.$this->Account->salon_mesas_id.
 				' AND comanda = '.$this->Account->comanda.
 				' AND cuenta = '.$this->Account->cuenta);
 				$cuenta = $this->Account->cuenta;
 			}
-			$account->save();
-
+			$this->Account->save();
 			$conditions = "account_master_id = '".$this->current_master."' AND cuenta = '$cuenta' and estado in ('S', 'N')";
-			if (!$account->count($conditions)) {
-
-				$conditions = "account_master_id = '" . $this->current_master . "' AND cuenta = '$cuenta' and estado = 'A'";
-				$accountCuenta = $this->AccountCuentas->findFirst($conditions);
-				if ($accountCuenta) {
-					$accountCuenta->estado = 'C';
-					$accountCuenta->save();
-				}
-
-				$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-				if ($accountMaster) {
-					$accountMaster->send_kitchen = 'N';
-					$accountMaster->save();
+			if (!$this->Account->count($conditions)) {
+				$conditions = "account_master_id = '".$this->current_master."' AND cuenta = '$cuenta' and estado = 'A'";
+				if ($this->AccountCuentas->findFirst($conditions)) {
+					$this->AccountCuentas->estado = 'C';
+					$this->AccountCuentas->save();
 				}
 			}
 		}
 	}
 
-	public function manualAction()
-	{
+	public function manualAction(){
 
 	}
 
@@ -1619,8 +1572,7 @@ class OrderController extends ApplicationController
 	 * Devuelve el tipo de venta actual
 	 *
 	 */
-	public function getTipoVentaAction()
-	{
+	public function getTipoVentaAction(){
 		$this->setResponse('xml');
 		return $this->tipo_venta;
 	}
@@ -1664,11 +1616,10 @@ class OrderController extends ApplicationController
 	 *
 	 * @param integer $numeroCuenta
 	 */
-	public function deleteCuentaAction($numeroCuenta=0)
-	{
+	public function deleteCuentaAction($numeroCuenta=0){
 		$this->setResponse('view');
 		$numeroCuenta = $this->filter($numeroCuenta, 'int');
-		if ($numeroCuenta > 0) {
+		if($numeroCuenta>0){
 			try {
 
 				$transaction = TransactionManager::getUserTransaction();
@@ -1676,12 +1627,12 @@ class OrderController extends ApplicationController
 				$this->AccountCuentas->setTransaction($transaction);
 
 				$conditions = "salon_mesas_id=".$this->account_id." AND cuenta = '$numeroCuenta' and estado = 'A'";
-				if (!$this->Account->count($conditions)) {
+				if(!$this->Account->count($conditions)){
 					$accounts = $this->Account->find("salon_mesas_id=".$this->account_id." AND cuenta = '$numeroCuenta' AND estado = 'S'");
-					foreach ($accounts as $account) {
+					foreach($accounts as $account){
 						$account->send_kitchen = 'N';
 						$account->estado = 'C';
-						if ($account->save() == false) {
+						if($account->save()==false){
 							foreach($account->getMessages() as $message){
 								$transaction->rollback($message->getMessage());
 							}
@@ -1694,22 +1645,11 @@ class OrderController extends ApplicationController
 							}
 						}
 					}
-
 					$accountCuenta = $this->AccountCuentas->findFirst("account_master_id = '".$this->current_master."' AND cuenta = '$numeroCuenta' AND estado = 'A'");
 					if($accountCuenta){
 						$accountCuenta->estado = 'C';
-						if ($accountCuenta->save() == false) {
-							foreach($accountCuenta->getMessages() as $message) {
-								$transaction->rollback($message->getMessage());
-							}
-						}
-					}
-
-					$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-					if ($accountMaster) {
-						$accountMaster->send_kitchen = 'N';
-						if ($accountMaster->save() == false) {
-							foreach ($accountMaster->getMessages() as $message) {
+						if($accountCuenta->save()==false){
+							foreach($accountCuenta->getMessages() as $message){
 								$transaction->rollback($message->getMessage());
 							}
 						}
@@ -1722,7 +1662,8 @@ class OrderController extends ApplicationController
 					$this->numero_cuenta = $accountCuenta->cuenta;
 				}
 
-			} catch (TransactionFailed $e) {
+			}
+			catch(TransactionFailed $e){
 				Flash::error($e->getMessage());
 			}
 		}
@@ -1741,7 +1682,6 @@ class OrderController extends ApplicationController
 			$conditions = "salon_mesas_id=".$this->account_id." and comanda = '$id' AND estado = 'A'";
 			if (!$this->Account->count($conditions)) {
 				try {
-
 					$transaction = TransactionManager::getUserTransaction();
 					$this->Account->setTransaction($transaction);
 					$accounts = $this->Account->findForUpdate("salon_mesas_id=".$this->account_id." AND comanda = '$id' AND estado = 'S'");
@@ -1760,12 +1700,6 @@ class OrderController extends ApplicationController
 								}
 							}
 						}
-					}
-
-					$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-					if ($accountMaster) {
-						$accountMaster->send_kitchen = 'N';
-						$accountMaster->save();
 					}
 					$transaction->commit();
 				}
@@ -1786,34 +1720,26 @@ class OrderController extends ApplicationController
 		$this->setResponse('view');
 		$id = $this->filter($id, "int");
 		$account = $this->Account->find($id);
-		if ($account != false) {
-
+		if($account!=false){
 			$account->send_kitchen = 'N';
-			if ($account->cantidad_atendida == 0) {
+			if($account->cantidad_atendida==0){
 				$account->estado = 'C';
 			} else {
 				$account->cantidad = $account->cantidad_atendida;
 			}
 			$account->save();
-			if ($account->estado == 'C') {
+			if($account->estado=='C'){
 				$this->AccountModifiers->delete("account_id='{$account->id}'");
-			}
-
-			$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-			if ($accountMaster) {
-				$accountMaster->send_kitchen = 'N';
-				$accountMaster->save();
 			}
 		}
 	}
 
-	public function setPropinaAction()
-	{
+	public function setPropinaAction(){
 		$this->setResponse('view');
 		$propina = $this->getPostParam('valor', 'double');
 		$accountCuenta = $this->AccountCuentas->findFirst("account_master_id='{$this->current_master}' AND cuenta='{$this->numero_cuenta}'");
-		if ($accountCuenta != false) {
-			if ($accountCuenta->estado == 'A' || $accountCuenta->estado == 'S') {
+		if($accountCuenta!=false){
+			if($accountCuenta->estado=='A'||$accountCuenta->estado=='S'){
 				$propina = LocaleMath::round($propina, 0);
 				$accountCuenta->propina_fija = 'S';
 				$accountCuenta->propina = $propina;
@@ -1970,7 +1896,7 @@ class OrderController extends ApplicationController
 						} else {
 							$account->cuenta = $newCuenta;
 						}
-						if ($account->save() == false) {
+						if($account->save()==false){
 							foreach($account->getMessages() as $message){
 								Flash::error($message->getMessage());
 							}
@@ -2550,10 +2476,9 @@ class OrderController extends ApplicationController
 	 * Obtiene el numero de habitacion del cliente en la cuenta Activa
 	 *
 	 */
-	public function getCustomerHabitacionAction()
-	{
+	public function getCustomerHabitacionAction(){
 		$this->setResponse('xml');
-		$this->AccountCuentas->findFirst("account_master_id=" . $this->current_master . " AND cuenta=".$this->numero_cuenta);
+		$this->AccountCuentas->findFirst("account_master_id=".$this->current_master." AND cuenta=".$this->numero_cuenta);
 		return $this->AccountCuentas->habitacion_id ? $this->AccountCuentas->habitacion_id : "0";
 	}
 
@@ -2562,17 +2487,16 @@ class OrderController extends ApplicationController
 	 *
 	 * @param integer $number
 	 */
-	public function setNumberAsientosAction($number)
-	{
+	public function setNumberAsientosAction($number){
 		$this->setResponse('view');
 		$number = $this->filter($number, 'int');
-		if ($number > 0) {
+		if($number>0){
 			$this->numero_asientos = $number;
 			$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-			if ($accountMaster !== false) {
+			if($accountMaster!==false){
 				$accountMaster->numero_asientos = $number;
-				if ($accountMaster->save() == false) {
-					foreach ($accountMaster->getMessages() as $message) {
+				if($accountMaster->save()==false){
+					foreach($accountMaster->getMessages() as $message){
 						Flash::error($message->getMessage());
 					}
 				}
@@ -2586,8 +2510,7 @@ class OrderController extends ApplicationController
 	 *
 	 * @param integer $number
 	 */
-	public function setActiveAsientoAction($number)
-	{
+	public function setActiveAsientoAction($number){
 		$this->setResponse('view');
 		$number = $this->filter($number, "int");
 		if($this->numero_asientos<$number){
@@ -2596,8 +2519,7 @@ class OrderController extends ApplicationController
 		$this->silla = $number;
 	}
 
-	public function changeTipoVentaAction($tipo)
-	{
+	public function changeTipoVentaAction($tipo){
 		$this->setResponse('view');
 		$tipoVenta = $this->filter($tipo, 'onechar');
 		$currentMaster = $this->current_master;
@@ -2639,16 +2561,15 @@ class OrderController extends ApplicationController
 		}
 	}
 
-	public function changeQuantityAction($accountId, $cantidad)
-	{
+	public function changeQuantityAction($accountId, $cantidad){
 		try {
 			$this->setResponse('view');
 			$cantidad = $this->filter($cantidad, 'int');
 			$accountId = $this->filter($accountId, 'int');
-			if($cantidad >= 0 && $accountId > 0) {
+			if($cantidad>=0&&$accountId>0){
 				$transaction = TransactionManager::getUserTransaction();
 				$account = $this->Account->findFirst($accountId);
-				if ($account) {
+				if($account){
 
 					$menuItem = $this->MenusItems->findFirst($account->menus_items_id);
 					if($menuItem==false){
@@ -2668,8 +2589,7 @@ class OrderController extends ApplicationController
 							$transaction->rollback($message->getMessage());
 						}
 					}
-
-					if ($this->tipo_venta == 'F' || $this->tipo_venta == 'C' || $this->tipo_venta == 'U') {
+					if($this->tipo_venta=='F'||$this->tipo_venta=='C'||$this->tipo_venta=='U'){
 						$accountCuenta = $this->AccountCuentas->findFirst("account_master_id='{$account->account_master_id}' AND cuenta='{$account->cuenta}'");
 						if($accountCuenta!=false){
 							$accountCuenta->setTransaction($transaction);
@@ -2681,16 +2601,6 @@ class OrderController extends ApplicationController
 
 					$this->last_account_id = $account->id;
 
-					$accountMaster = $this->AccountMaster->findFirst($this->current_master);
-					if ($accountMaster) {
-						$accountMaster->send_kitchen = 'N';
-						if ($accountMaster->save() == false) {
-							foreach ($accountMaster->getMessages() as $message) {
-								$transaction->rollback('AccountMaster: ' . $message->getMessage());
-							}
-						}
-					}
-
 					$transaction->commit();
 				}
 			}
@@ -2700,16 +2610,15 @@ class OrderController extends ApplicationController
 		}
 	}
 
-	public function changeDiscountAction($accountId, $descuento)
-	{
+	public function changeDiscountAction($accountId, $descuento){
 		try {
 			$this->setResponse('view');
 			$descuento = $this->filter($descuento, 'double');
 			$accountId = $this->filter($accountId, 'int');
-			if ($descuento >= 0 && $accountId > 0) {
+			if($descuento>=0&&$accountId>0){
 				$transaction = TransactionManager::getUserTransaction();
 				$account = $this->Account->findFirst($accountId);
-				if ($account) {
+				if($account){
 					$account->setTransaction($transaction);
 					$account->descuento = $descuento;
 					if($account->save()==false){
@@ -2728,13 +2637,13 @@ class OrderController extends ApplicationController
 					$transaction->commit();
 				}
 			}
-		} catch (TransactionFailed $e) {
+		}
+		catch(TransactionFailed $e){
 			Flash::error($e->getMessage());
 		}
 	}
 
-	public function getHuespedInfoAction($id)
-	{
+	public function getHuespedInfoAction($id){
 		$this->setResponse("view");
 		$this->setParamToView('numfol', $this->filter($id, 'int'));
 		$this->loadModel('Acompanantes', 'Planes');
@@ -2761,17 +2670,12 @@ class OrderController extends ApplicationController
 					$printingType = 'C';
 				}
 
+				$imp = array();
+				$replaceWords = array(' DE ', ' CON ', ' EL ', ' LOS ', ' A ', ' LA ');
 				$accountMaster = $this->AccountMaster->findFirst($this->current_master);
 				if ($accountMaster == false) {
 					$transaction->rollback('No existe el pedido');
 				}
-
-				if ($accountMaster->send_kitchen != 'N') {
-					$transaction->rollback('Pedido ya fue enviado a cocina');
-				}
-
-				$accountMaster->send_kitchen = 'Y';
-				$accountMaster->save();
 
 				$usuario = $this->UsuariosPos->findFirst($accountMaster->usuarios_id);
 				if ($usuario == false) {
@@ -2784,8 +2688,6 @@ class OrderController extends ApplicationController
 					$comandas[$account->comanda] = true;
 				}
 
-				$imp = array();
-				$replaceWords = array(' DE ', ' CON ', ' EL ', ' LOS ', ' A ', ' LA ');
 				$comandas = array_keys($comandas);
 				foreach ($accounts as $account) {
 
@@ -2796,17 +2698,17 @@ class OrderController extends ApplicationController
 					}
 
 					$salonMesa = $account->getSalonMesas();
-					if ($salonMesa == false) {
+					if ($salonMesa==false) {
 						continue;
 					}
 
 					$salon = $accountMaster->getSalon();
-					if ($salon == false) {
+					if ($salon==false) {
 						continue;
 					}
 
 					$menuItem = $account->getMenusItems();
-					if ($menuItem == false) {
+					if ($menuItem==false) {
 						continue;
 					}
 
@@ -2828,7 +2730,7 @@ class OrderController extends ApplicationController
 					$cantidadSinEnviar = $account->cantidad-$account->cantidad_cocina;
 					if ($printingType == 'C') {
 						$nombre = str_ireplace($replaceWords, ' ', $menuItem->nombre);
-						$impresion = $clienteNombre . "{$salon->nombre}  M:{$salonMesa->numero} A:{$account->asiento}<br>$nombre C: {$cantidadSinEnviar}\n$estado\n";
+						$impresion = $clienteNombre."{$salon->nombre}  M:{$salonMesa->numero} A:{$account->asiento}<br>$nombre C: {$cantidadSinEnviar}\n$estado\n";
 						foreach ($account->getAccountModifiers() as $accountModifier) {
 							$modifier = $accountModifier->getModifiers();
 							if ($modifier != false) {
@@ -2850,36 +2752,34 @@ class OrderController extends ApplicationController
 							$nombre = str_ireplace($replaceWords, ' ', $menuItem->nombre);
 							$salonNombre = '';
 							$salonNombreP = explode(' ', $salon->nombre);
-							foreach ($salonNombreP as $part) {
-								$salonNombre .= substr($part, 0, 7) . ' ';
+							foreach($salonNombreP as $part){
+								$salonNombre.= substr($part, 0, 7).' ';
 							}
 
 							$mesero = substr($usuario->nombre, 0, 10);
-							if (!isset($imp[$salonMenusItems->printers_id])) {
+							if(!isset($imp[$salonMenusItems->printers_id])){
 								$imp[$salonMenusItems->printers_id] = array();
 							}
-							if (!isset($imp[$salonMenusItems->printers_id]['P'])) {
+							if(!isset($imp[$salonMenusItems->printers_id]['P'])){
 								$imp[$salonMenusItems->printers_id]['P'] = array();
 							}
-							if (!isset($imp[$salonMenusItems->printers_id]['C'])) {
+							if(!isset($imp[$salonMenusItems->printers_id]['C'])){
 								$imp[$salonMenusItems->printers_id]['C'] = array();
 							}
 
 							$printer = $this->Printers->findFirst($salonMenusItems->printers_id);
-							if ($printer != false) {
+							if($printer!=false){
 								$impresora = $printer->nombre;
 							} else {
 								$impresora = 'NO EXISTE LA IMPRESORA '.$salonMenusItems->printers_id;
 							}
 
 							$modifierData = '';
-							foreach ($account->getAccountModifiers() as $accountModifier) {
-								$modifier = $this->Modifiers->findFirst($accountModifier->modifiers_id);
-								if ($modifier) {
-									$modifierData.= " > ".$modifier->nombre."\n";
-								}
+							foreach($account->getAccountModifiers() as $accountModifier){
+								$modifier = $this->Modifiers->find($accountModifier->modifiers_id);
+								$modifierData.= " > ".$modifier->nombre."\n";
 							}
-							if ($modifierData != "") {
+							if($modifierData!=""){
 								$modifierData.= "\n";
 							}
 							$imp[$salonMenusItems->printers_id]['P'][$account->estado][$this->SalonMesas->numero][] = $clienteNombre."[P] A: $salonNombre  M: {$salonMesa->numero} A:{$account->asiento}\n{$account->comanda}:{$nombre} C: $cantidadSinEnviar\n$modifierData\nNota: {$account->note}";
@@ -2999,7 +2899,7 @@ class OrderController extends ApplicationController
 			}
 			$transaction->commit();
 		} catch (TransactionFailed $e) {
-			$this->redirect('tables/index/' . $this->salon_id . '?error=' . urlencode($e->getMessage()));
+			Flash::error($e->getMessage());
 		}
 	}
 

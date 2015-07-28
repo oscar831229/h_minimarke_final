@@ -13,9 +13,11 @@
  * @version		$Id$
  */
 
-class GardienPlugin extends ControllerPlugin {
+class GardienPlugin extends ControllerPlugin
+{
 
-	private function _noAccessBecauseError($errorMessage){
+	private function _noAccessBecauseError($errorMessage)
+	{
 		$controllerName = Router::getController();
 		//if($controllerName!='gardien'){
 			Router::routeTo(array(
@@ -26,7 +28,8 @@ class GardienPlugin extends ControllerPlugin {
 		//}
 	}
 
-	public function beforeExexcuteRoute($controller){
+	public function beforeExexcuteRoute($controller)
+	{
 		$controllerName = Router::getController();
 		//if($controllerName!='gardien'){
 			if(!Gardien::isAllowed($controllerName, $actionName)){
@@ -39,5 +42,4 @@ class GardienPlugin extends ControllerPlugin {
 			}
 		//}
 	}
-
 }

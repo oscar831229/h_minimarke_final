@@ -361,22 +361,6 @@
   array (
     'index' => true,
   ),
-  'niif' => 
-  array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
-  ),
-  'nic' => 
-  array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
-  ),
   'cuentas' => 
   array (
     'index' => true,

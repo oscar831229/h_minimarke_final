@@ -631,7 +631,6 @@ class Movihead extends RcsRecord
 	public function initialize(){
 		$this->hasMany(array('almacen', 'comprob', 'numero'), 'Movilin', array('almacen', 'comprob', 'numero'));
 		$this->belongsTo('nit', 'Nits', 'nit');
-		$this->belongsTo('almacen', 'Almacenes', 'codigo');
 	}
 
 	public function getAlmacenNombre(){

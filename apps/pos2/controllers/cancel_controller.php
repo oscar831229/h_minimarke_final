@@ -41,42 +41,38 @@ class CancelController extends ApplicationController
 			$this->Account->setTransaction($transaction);
 
 			$accountMaster = $this->AccountMaster->findFirst($accountMasterId);
-			if ($accountMaster) {
-				if ($accountMaster->estado == 'N') {
+			if($accountMaster){
+				if($accountMaster->estado=='N'){
 					$accountMaster->estado = 'C';
-					$accountMaster->send_kitchen = 'S';
-					if ($accountMaster->save() == false) {
-						foreach ($accountMaster->getMessages() as $message) {
+					if($accountMaster->save()==false){
+						foreach($accountMaster->getMessages() as $message){
 							Flash::error('Account-Master: '.$message->getMessage());
 						}
 						$transaction->rollback();
 					}
-
 					$salonMesa = $this->SalonMesas->findFirst($accountMaster->salon_mesas_id);
-					if ($salonMesa) {
+					if($salonMesa){
 						$salonMesa->estado = 'N';
-						if ($salonMesa->save()==false) {
-							foreach ($salonMesa->getMessages() as $message) {
-								Flash::error('Salon-Mesas: ' . $message->getMessage());
+						if($salonMesa->save()==false){
+							foreach($salonMesa->getMessages() as $message){
+								Flash::error('Salon-Mesas: '.$message->getMessage());
 							}
 							$transaction->rollback();
 						}
 					}
-
-					if ($this->Account->count("account_master_id='$accountMasterId' AND estado IN ('A', 'B')")) {
-						Flash::notice('El pedido tenía items atendidos');
+					if($this->Account->count("account_master_id='$accountMasterId' AND estado IN ('A', 'B')")){
+						Flash::notice('El pedido tenia items atendidos');
 					}
-
-					foreach ($accountMaster->getAccountCuentas() as $accountCuenta) {
-						if ($accountCuenta->numero > 0) {
+					foreach($accountMaster->getAccountCuentas() as $accountCuenta){
+						if($accountCuenta->numero>0){
 							$factura = $accountCuenta->getFactura();
-							if ($factura != false){
-								if ($factura->estado != 'N') {
+							if($factura!=false){
+								if($factura->estado!='N'){
 									$factura->estado = 'N';
-									if ($factura->nombre == '') {
+									if($factura->nombre==''){
 										$factura->nombre = 'SIN NOMBRE';
 									}
-									if ($factura->save() == false) {
+									if($factura->save()==false){
 										foreach($factura->getMessages() as $message){
 											Flash::error('Factura: '.$message->getMessage());
 										}
@@ -101,11 +97,10 @@ class CancelController extends ApplicationController
 							$transaction->rollback();
 						}
 					}
-					foreach ($accountMaster->getAccount() as $account) {
+					foreach($accountMaster->getAccount() as $account){
 						$account->estado = 'C';
-						$account->send_kitchen = 'S';
-						if ($account->save() == false) {
-							foreach ($account->getMessages() as $message) {
+						if($account->save()==false){
+							foreach($account->getMessages() as $message){
 								Flash::error($message->getMessage());
 							}
 							$transaction->rollback();
@@ -117,7 +112,8 @@ class CancelController extends ApplicationController
 				}
 			}
 
-		} catch (TransactionFailed $e) {
+		}
+		catch(TransactionFailed $e){
 			Flash::error("No se pudo cancelar el pedido");
 		}
 		$this->routeTo('action: index');

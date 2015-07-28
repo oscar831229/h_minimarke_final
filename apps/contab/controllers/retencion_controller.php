@@ -22,8 +22,7 @@
 class RetencionController extends ApplicationController
 {
 
-	public function initialize()
-	{
+	public function initialize(){
 		$controllerRequest = ControllerRequest::getInstance();
 		if($controllerRequest->isAjax()){
 			View::setRenderLevel(View::LEVEL_LAYOUT);
@@ -31,8 +30,7 @@ class RetencionController extends ApplicationController
 		parent::initialize();
 	}
 
-	public function indexAction()
-	{
+	public function indexAction(){
 
 		$empresa1 = $this->Empresa1->findFirst();
 		$empresa = $this->Empresa->findFirst();

@@ -12,7 +12,6 @@
  * @version		$Id$
  */
 
-require 'AuraNiif.php';
 /**
  * Aura
  *
@@ -268,12 +267,10 @@ class Aura extends UserComponent
 	 * @param string $fecha
 	 * @param int $activeAction
 	 */
-	public function __construct($codigoComprobante='', $numero=0, $fecha='', $activeAction=null) {
-
-		if (self::$_empresa === null) {
+	public function __construct($codigoComprobante='', $numero=0, $fecha='', $activeAction=null){
+		if(self::$_empresa===null){
 			self::$_empresa = $this->Empresa->findFirst();
 		}
-
 		$this->_externalTransaction = TransactionManager::hasUserTransaction();
 		$this->_transaction = TransactionManager::getUserTransaction();
 		$this->Movi->setTransaction($this->_transaction);
@@ -284,12 +281,12 @@ class Aura extends UserComponent
 		$this->Saldosp->setTransaction($this->_transaction);
 		$this->Cartera->setTransaction($this->_transaction);
 		$this->_activeAction = $activeAction;
-		if ($codigoComprobante!='') {
+		if($codigoComprobante!=''){
 			$numero = $this->_addComprobante($codigoComprobante, $numero);
 			$this->_defaultComprob = $codigoComprobante;
 			$this->_defaultFecha = $fecha;
 			$this->_defaultNumero = $numero;
-			if ($fecha!='') {
+			if($fecha!=''){
 				$this->_validateFecha($fecha);
 			}
 		}
@@ -302,8 +299,7 @@ class Aura extends UserComponent
 	 *
 	 * @param boolean $debug
 	 */
-	public function setDebug($debug)
-	{
+	public function setDebug($debug){
 		$this->_debug = $debug;
 	}
 
@@ -346,11 +342,11 @@ class Aura extends UserComponent
 		self::validateFecha($fecha);
 		$empresa1 = $this->Empresa1->findFirst();
 		//$fLimiteR = Date::fromFormat(substr($empresa1->getOtros(), 4, 10), 'MM/DD/YYYY');
-		//if (Date::isEarlier($fecha, $fLimiteR)) {
+		//if(Date::isEarlier($fecha, $fLimiteR)){
 			//$this->_superaLimiteRetencion = true;
 		//}
 		//$fLimiteI = Date::fromFormat(substr($empresa1->getOtros(), 14, 10), 'MM/DD/YYYY');
-		//if (Date::isEarlier($fecha, $fLimiteI)) {
+		//if(Date::isEarlier($fecha, $fLimiteI)){
 			//$this->_superaLimiteIVA = true;
 		//}
 	}
@@ -365,7 +361,7 @@ class Aura extends UserComponent
 	{
 		if (!isset($this->_comprobs[$codigoComprobante])) {
 			$comprob = $this->_getComprob($codigoComprobante);
-			if ($comprob  ==  false) {
+			if ($comprob == false) {
 				throw new AuraException("No existe el comprobante '$codigoComprobante'");
 			} else {
 				$this->_comprobs[$codigoComprobante] = $comprob;
@@ -383,30 +379,30 @@ class Aura extends UserComponent
 					throw new AuraException('El perfil público no está habilitado para realizar operaciones sobre comprobantes, inicie sesión con un usuario que tenga privilegios');
 				}
 
-				if ($this->_activeAction == null) {
-					if ($this->_exists == false) {
-						if (!self::checkPermission($identity['id'], $codigoComprobante, 'A')) {
+				if($this->_activeAction==null){
+					if($this->_exists==false){
+						if(!self::checkPermission($identity['id'], $codigoComprobante, 'A')){
 							throw new AuraException('No tiene permiso para adicionar comprobantes de "'.$comprob->getNomComprob().'"');
 						}
 					} else {
-						if (!self::checkPermission($identity['id'], $codigoComprobante, 'M')) {
+						if(!self::checkPermission($identity['id'], $codigoComprobante, 'M')){
 							throw new AuraException('No tiene permiso para actualizar comprobantes de "'.$comprob->getNomComprob().'"');
 						}
 					}
 				} else {
-					switch($this->_activeAction) {
+					switch($this->_activeAction){
 						case self::OP_CREATE:
-							if (!self::checkPermission($identity['id'], $codigoComprobante, 'A')) {
+							if(!self::checkPermission($identity['id'], $codigoComprobante, 'A')){
 								throw new AuraException('No tiene permiso para adicionar comprobantes de "'.$comprob->getNomComprob().'"');
 							}
 							break;
 						case self::OP_UPDATE:
-							if (!self::checkPermission($identity['id'], $codigoComprobante, 'M')) {
+							if(!self::checkPermission($identity['id'], $codigoComprobante, 'M')){
 								throw new AuraException('No tiene permiso para actualizar comprobantes de "'.$comprob->getNomComprob().'"');
 							}
 							break;
 						case self::OP_DELETE:
-							if (!self::checkPermission($identity['id'], $codigoComprobante, 'D')) {
+							if(!self::checkPermission($identity['id'], $codigoComprobante, 'D')){
 								throw new AuraException('No tiene permiso para eliminar comprobantes de "'.$comprob->getNomComprob().'"');
 							}
 							break;
@@ -417,7 +413,7 @@ class Aura extends UserComponent
 
 				//Autoincremente recursivo de consecutivo de comprobante
 				$consecutivoNuevo = ($numero+1);
-				while($this->Movi->count(array('conditions'=>"comprob='{$codigoComprobante}' AND numero='{$consecutivoNuevo}'"))>0) {
+				while($this->Movi->count(array('conditions'=>"comprob='{$codigoComprobante}' AND numero='{$consecutivoNuevo}'"))>0){
 					$consecutivoNuevo += 1;
 				}
 
@@ -425,7 +421,7 @@ class Aura extends UserComponent
 				$this->_consecutivos[$codigoComprobante] = $numero;
 			}
 		} else {
-			if ($numero>0) {
+			if($numero>0){
 				$this->_consecutivos[$codigoComprobante] = $numero;
 			}
 		}
@@ -437,7 +433,7 @@ class Aura extends UserComponent
 	 *
 	 * @param number $line
 	 */
-	public function setActiveLine($line) {
+	public function setActiveLine($line){
 		$this->_linea = $line;
 	}
 
@@ -446,7 +442,7 @@ class Aura extends UserComponent
 	 *
 	 * @param int $period
 	 */
-	public function setPeriod($period) {
+	public function setPeriod($period){
 		$this->_period = $period;
 	}
 
@@ -455,44 +451,44 @@ class Aura extends UserComponent
 	 *
 	 * @param array $movement
 	 */
-	public function sanizite($movement) {
-		if (isset($movement['Comprob'])) {
+	public function sanizite($movement){
+		if(isset($movement['Comprob'])){
 			$movement['Comprob'] = $this->filter($movement['Comprob'], 'comprob');
 		}
-		if (isset($movement['Numero'])) {
+		if(isset($movement['Numero'])){
 			$movement['Numero'] = $this->filter($movement['Numero'], 'int');
 		}
-		if (isset($movement['Fecha'])) {
+		if(isset($movement['Fecha'])){
 			$movement['Fecha'] = $this->filter($movement['Fecha'], 'date');
 		}
-		if (isset($movement['Cuenta'])) {
+		if(isset($movement['Cuenta'])){
 			$movement['Cuenta'] = $this->filter($movement['Cuenta'], 'cuentas');
 		}
-		if (isset($movement['Nit'])) {
+		if(isset($movement['Nit'])){
 			$movement['Nit'] = $this->filter($movement['Nit'], 'terceros');
 		}
-		if (isset($movement['Descripcion'])) {
+		if(isset($movement['Descripcion'])){
 			$movement['Descripcion'] = $this->filter($movement['Descripcion'], 'striptags', 'extraspaces');
 		}
-		if (isset($movement['CentroCosto'])) {
+		if(isset($movement['CentroCosto'])){
 			$movement['CentroCosto'] = $this->filter($movement['CentroCosto'], 'int');
 		}
-		if (isset($movement['DebCre'])) {
+		if(isset($movement['DebCre'])){
 			$movement['DebCre'] = $this->filter($movement['DebCre'], 'onechar');
 		}
-		if (isset($movement['Valor'])) {
+		if(isset($movement['Valor'])){
 			$movement['Valor'] = $this->filter($movement['Valor'], 'numeric');
 		}
-		if (isset($movement['TipoDocumento'])) {
+		if(isset($movement['TipoDocumento'])){
 			$movement['TipoDocumento'] = $this->filter($movement['TipoDocumento'], 'documento');
 		}
-		if (isset($movement['NumeroDocumento'])) {
+		if(isset($movement['NumeroDocumento'])){
 			$movement['NumeroDocumento'] = $this->filter($movement['NumeroDocumento'], 'int');
 		}
-		if (isset($movement['BaseGrab'])) {
+		if(isset($movement['BaseGrab'])){
 			$movement['BaseGrab'] = $this->filter($movement['BaseGrab'], 'numeric');
 		}
-		if (isset($movement['FechaVence'])) {
+		if(isset($movement['FechaVence'])){
 			$movement['FechaVence'] = $this->filter($movement['FechaVence'], 'date');
 		}
 		return $movement;
@@ -503,9 +499,9 @@ class Aura extends UserComponent
 	 *
 	 * @param array $movement
 	 */
-	public function addMovement($movement) {
-		if ($this->_exists) {
-			if ($this->_cleaned == false) {
+	public function addMovement($movement){
+		if($this->_exists){
+			if($this->_cleaned==false){
 				$this->_delete();
 				$this->_cleaned = true;
 			}
@@ -522,36 +518,36 @@ class Aura extends UserComponent
 	 *
 	 * @param array $movement
 	 */
-	public function appendMovement($movement) {
-		if ($this->_loaded == false) {
-			if ($this->_exists) {
+	public function appendMovement($movement){
+		if($this->_loaded==false){
+			if($this->_exists){
 				$consecutivo = 0;
 				$tokenId = IdentityManager::getTokenId();
 				$conditions = "sid='$tokenId' AND comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'";
 				$this->Movitemp->setTransaction($this->_transaction);
 				$this->Movitemp->deleteAll($conditions);
 				$movis = $this->Movi->find("comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'");
-				foreach ($movis as $movi) {
+				foreach($movis as $movi){
 					$movitemp = new Movitemp();
 					$movitemp->setTransaction($this->_transaction);
 					$movitemp->setSid($tokenId);
 					$movitemp->setConsecutivo($consecutivo);
-					foreach ($movi->getAttributes() as $attribute) {
+					foreach($movi->getAttributes() as $attribute){
 						$movitemp->writeAttribute($attribute, $movi->readAttribute($attribute));
 					}
-					if ($movitemp->save() == false) {
-						foreach ($movitemp->getMessages() as $message) {
+					if($movitemp->save()==false){
+						foreach($movitemp->getMessages() as $message){
 							throw new AuraException($message->getMessage());
 						}
 					}
 					$consecutivo++;
 					unset($movi);
 				}
-				if ($this->_cleaned == false) {
+				if($this->_cleaned==false){
 					$this->_delete();
 					$this->_cleaned = true;
 				}
-				foreach ($this->Movitemp->find($conditions) as $movitemp) {
+				foreach($this->Movitemp->find($conditions) as $movitemp){
 					$this->addMovement(array(
 						'Fecha' => $movitemp->getFecha(),
 						'Cuenta' => $movitemp->getCuenta(),
@@ -580,102 +576,100 @@ class Aura extends UserComponent
 	 * @param	array $movement
 	 * @return	array
 	 */
-	public function validate($movement) {
+	public function validate($movement){
 
 		$this->_activeMovement = $movement;
 
 		$this->_checkRequiredFields($movement);
 
-		if (!isset($movement['Comprobante'])) {
+		if(!isset($movement['Comprobante'])){
 			$movement['Comprobante'] = $this->_defaultComprob;
 		} else {
 			$this->_addComprobante($movement['Comprobante']);
 		}
-		if (!isset($movement['Numero'])) {
-			if (isset($movement['Comprobante'])&&$movement['Comprobante']) {
+		if(!isset($movement['Numero'])){
+			if(isset($movement['Comprobante'])&&$movement['Comprobante']){
 				$movement['Numero'] = $this->_consecutivos[$movement['Comprobante']];
 			} else {
 				throw new AuraException('No se ha definido el tipo de comprobante a grabar');
 			}
 		}
-		if (!isset($movement['Fecha'])) {
-			if ($this->_defaultFecha == '') {
+		if(!isset($movement['Fecha'])){
+			if($this->_defaultFecha==''){
 				$this->_defaultFecha = Date::getCurrentDate();
 				$this->_validateFecha($this->_defaultFecha);
 			}
 			$movement['Fecha'] = $this->_defaultFecha;
 		} else {
-			if ($this->_defaultFecha!='') {
-				if ($movement['Fecha'] != $this->_defaultFecha) {
+			if($this->_defaultFecha!=''){
+				if($movement['Fecha']!=$this->_defaultFecha){
 					throw new AuraException('Se definieron distintas fechas en movimientos diferentes del comprobante');
 				}
 			} else {
 				$this->_defaultFecha = $movement['Fecha'];
-				//if ($this->_debug != false) {
-					$this->_validateFecha($this->_defaultFecha);
-				//}
+				$this->_validateFecha($this->_defaultFecha);
 			}
 		}
-		if ($movement['Fecha']  ==  '') {
+		if($movement['Fecha']==''){
 			throw new AuraException('No se indicó la fecha del comprobante');
 		}
 
-		if ($movement['DebCre']   === '1') {
+		if($movement['DebCre']==='1'){
 			$movement['DebCre'] = 'C';
 		} else {
-			if ($movement['DebCre']   === '0') {
+			if($movement['DebCre']==='0'){
 				$movement['DebCre'] = 'D';
 			}
 		}
 
-		if ($movement['DebCre'] !== 'D' && $movement['DebCre'] !==  'C') {
+		if($movement['DebCre']!=='D'&&$movement['DebCre']!=='C'){
 			throw new AuraException('El campo naturaleza debe ser "C" ó "D" en la línea '.$this->_linea);
 		}
 
-		if (substr($movement['Cuenta'], 9, 3) === '000') {
+		if(substr($movement['Cuenta'], 9, 3)==='000'){
 			$movement['Cuenta'] = substr($movement['Cuenta'], 0, 9);
-			if (substr($movement['Cuenta'], 6, 3) === '000') {
+			if(substr($movement['Cuenta'], 6, 3)==='000'){
 				$movement['Cuenta'] = substr($movement['Cuenta'], 0, 6);
-				if (substr($movement['Cuenta'], 4, 2) === '00') {
+				if(substr($movement['Cuenta'], 4, 2)==='00'){
 					$movement['Cuenta'] = substr($movement['Cuenta'], 0, 4);
 				}
 			}
 		}
 
 		$cuenta = $this->_getCuenta($movement['Cuenta']);
-		if ($cuenta  ==  false) {
+		if($cuenta==false){
 			throw new AuraException('No existe la cuenta "'.$movement['Cuenta'].'" ó no es auxiliar, en la línea '.$this->_linea);
 		}
 
-		if ($this->_superaLimiteRetencion) {
-			if (substr($movement['Cuenta'], 0, 4) == '2365'||substr($movement['Cuenta'], 0, 4)  ==  '2367') {
-				throw new AuraException('Las cuentas de retención ya están cerradas ' . $this->_linea);
+		if($this->_superaLimiteRetencion){
+			if(substr($movement['Cuenta'], 0, 4)=='2365'||substr($movement['Cuenta'], 0, 4)=='2367'){
+				throw new AuraException('Las cuentas de retención ya están cerradas '.$this->_linea);
 			}
 		} else {
-			if ($this->_superaLimiteIVA) {
-				if (substr($movement['Cuenta'], 0, 1) == '4'||substr($movement['Cuenta'], 0, 4)  ==  '2408') {
-					throw new AuraException('Las cuentas de retención ya están cerradas ' . $this->_linea);
+			if($this->_superaLimiteIVA){
+				if(substr($movement['Cuenta'], 0, 1)=='4'||substr($movement['Cuenta'], 0, 4)=='2408'){
+					throw new AuraException('Las cuentas de retención ya están cerradas '.$this->_linea);
 				}
 			}
 		}
 
-		if ($cuenta->getPideNit() == 'S') {
+		if($cuenta->getPideNit()=='S'){
 			$nitErrado = false;
-			if (!isset($movement['Nit'])) {
+			if(!isset($movement['Nit'])){
 				$nitErrado = true;
 				$movement['Nit'] = '';
 			} else {
-				if ($movement['Nit'] ===''||$movement['Nit'] ==='0'||is_null($movement['Nit'])) {
+				if($movement['Nit']===''||$movement['Nit']==='0'||is_null($movement['Nit'])){
 					$nitErrado = true;
 				} else {
-					if (is_array($movement['Nit'])||is_object($movement['Nit'])) {
+					if(is_array($movement['Nit'])||is_object($movement['Nit'])){
 						$nitErrado = true;
 					} else {
 						$nitErrado = !self::_existeTercero($movement['Nit']);
 					}
 				}
 			}
-			if ($nitErrado == true) {
+			if($nitErrado==true){
 				throw new AuraException('Tercero requerido, la cuenta "'.$movement['Cuenta'].'"('.$cuenta->getNombre().') solicita tercero, en la línea '.$this->_linea.' ('.$movement['Nit'].')');
 			}
 			unset($nitErrado);
@@ -683,25 +677,25 @@ class Aura extends UserComponent
 			$movement['Nit'] = '0';
 		}
 
-		if ($cuenta->getPideFact() == 'S') {
+		if($cuenta->getPideFact()=='S'){
 			$existeTipoDocumento = false;
-			if (!isset($movement['TipoDocumento'])) {
+			if(!isset($movement['TipoDocumento'])){
 				$movement['TipoDocumento'] = '';
 				$existeTipoDocumento = false;
 			} else {
 				$movement['TipoDocumento'] = $this->filter($movement['TipoDocumento'], 'documento');
-				if ($movement['TipoDocumento'] ==='') {
+				if($movement['TipoDocumento']===''){
 					$existeTipoDocumento = false;
 				} else {
 					$existeTipoDocumento = self::_existeDocumento($movement['TipoDocumento']);
 				}
 			}
-			if (!$existeTipoDocumento) {
+			if(!$existeTipoDocumento){
 				throw new AuraException('El tipo de documento "'.$movement['TipoDocumento'].'" es inválido en la línea '.$this->_linea.', con la cuenta "'.$movement['Cuenta'].'", en el comprobante "'.$movement['Comprobante'].'-'.$movement['Numero'].'"');
 			}
 			unset($existeTipoDocumento);
-			if (isset($movement['NumeroDocumento'])) {
-				if ($movement['NumeroDocumento']<=0) {
+			if(isset($movement['NumeroDocumento'])){
+				if($movement['NumeroDocumento']<=0){
 					throw new AuraException('El número de documento "'.$movement['NumeroDocumento'].'" para la cuenta "'.$movement['Cuenta'].'" es inválido en la línea '.$this->_linea);
 				}
 			} else {
@@ -713,26 +707,26 @@ class Aura extends UserComponent
 		}
 
 		$tipoCuenta = $cuenta->getTipo();
-		if ($tipoCuenta<'4'||$tipoCuenta>'7') {
+		if($tipoCuenta<'4'||$tipoCuenta>'7'){
 			$movement['CentroCosto'] = self::$_empresa->getCentroCosto();
 		} else {
-			if ($cuenta->getPideCentro() == 'S') {
+			if($cuenta->getPideCentro()=='S'){
 				$centroCostoErrado = false;
-				if (!isset($movement['CentroCosto'])) {
+				if(!isset($movement['CentroCosto'])){
 					$movement['CentroCosto'] = '';
 					$centroCostoErrado = true;
 				} else {
-					if ($movement['CentroCosto'] ===''||$movement['CentroCosto'] == '0') {
+					if($movement['CentroCosto']===''||$movement['CentroCosto']=='0'){
 						$centroCostoErrado = true;
 					} else {
-						if ($tipoCuenta>'3'&&$tipoCuenta<'8'&&$movement['CentroCosto'] == self::$_empresa->getCentroCosto()) {
+						if($tipoCuenta>'3'&&$tipoCuenta<'8'&&$movement['CentroCosto']==self::$_empresa->getCentroCosto()){
 							throw new AuraException('La cuenta "'.$movement['Cuenta'].'" no puede utilizar el centro de costo de balance en la línea '.$this->_linea.' ('.$movement['CentroCosto'].')');
 						} else {
 							$centroCostoErrado = !self::_existeCentro($movement['CentroCosto']);
 						}
 					}
 				}
-				if ($centroCostoErrado) {
+				if($centroCostoErrado){
 					throw new AuraException('La cuenta "'.$movement['Cuenta'].'" solicita centro de costo en la línea '.$this->_linea.' ('.$movement['CentroCosto'].')');
 				}
 				unset($centroCostoErrado);
@@ -741,28 +735,28 @@ class Aura extends UserComponent
 			}
 		}
 
-		if ($movement['Valor']<0) {
+		if($movement['Valor']<0){
 			throw new AuraException('El valor "'.$movement['Valor'].'" es inválido  en la línea '.$this->_linea);
 		} else {
 			$movement['Valor'] = LocaleMath::round($movement['Valor'], 2);
-			if (strlen($movement['Valor'])>=17) {
+			if(strlen($movement['Valor'])>=17){
 				throw new AuraException('La base de datos no podrá almacenar el valor "'.$movement['Valor'].'" en la línea '.$this->_linea);
 			}
 		}
 
-		if ($cuenta->getPideBase() == 'S') {
-			if ($cuenta->getPorcIva()>0) {
-				if (!isset($movement['BaseGrab'])) {
+		if($cuenta->getPideBase()=='S'){
+			if($cuenta->getPorcIva()>0){
+				if(!isset($movement['BaseGrab'])){
 					$movement['BaseGrab'] = $movement['Valor']*$cuenta->getPorcIva();
 				} else {
-					if ($movement['BaseGrab']<$movement['Valor']) {
+					if($movement['BaseGrab']<$movement['Valor']){
 						throw new AuraException('La base '.$movement['Base'].' no es válida en la línea '.$this->_linea);
 					}
 				}
 			}
 		}
 
-		if ($movement['DebCre'] == 'D') {
+		if($movement['DebCre']=='D'){
 			$this->_totalDebitos+=$movement['Valor'];
 		} else {
 			$this->_totalCreditos+=$movement['Valor'];
@@ -771,7 +765,7 @@ class Aura extends UserComponent
 		unset($cuenta);
 
 		self::$_numberStored++;
-		if (self::$_numberStored>50) {
+		if(self::$_numberStored>50){
 			self::$_numberStored = 0;
 			GarbageCollector::collectCycles();
 		}
@@ -785,10 +779,9 @@ class Aura extends UserComponent
 	 *
 	 * @param array $movement
 	 */
-	private function _storeMovement($movement)
-	{
+	private function _storeMovement($movement){
 
-		if ($this->_debug == true) {
+		if($this->_debug==true){
 			$this->_movements[] = $movement;
 		}
 
@@ -803,9 +796,9 @@ class Aura extends UserComponent
 			$movi->setCentroCosto($movement['CentroCosto']);
 			$movi->setValor($movement['Valor']);
 			$movi->setDebCre($movement['DebCre']);
-			if (isset($movement['Folio'])) {
-				if ($movement['Folio']!=0) {
-					if (isset($movement['Descripcion'])) {
+			if(isset($movement['Folio'])){
+				if($movement['Folio']!=0){
+					if(isset($movement['Descripcion'])){
 						$movement['Descripcion'].=' F'.$movement['Folio'];
 					} else {
 						$movement['Descripcion'] = ' F'.$movement['Folio'];
@@ -813,27 +806,27 @@ class Aura extends UserComponent
 					$movi->setNumfol($movement['Folio']);
 				}
 			}
-			if (isset($movement['Descripcion'])) {
+			if(isset($movement['Descripcion'])){
 				$movi->setDescripcion($movement['Descripcion']);
 			}
-			if (isset($movement['TipoDocumento'])) {
+			if(isset($movement['TipoDocumento'])){
 				$movi->setTipoDoc($movement['TipoDocumento']);
 				$movi->setNumeroDoc($movement['NumeroDocumento']);
 			}
-			if (isset($movement['BaseGrab'])) {
+			if(isset($movement['BaseGrab'])){
 				$movi->setBaseGrab($movement['BaseGrab']);
 			}
-			if (isset($movement['Conciliado'])) {
+			if(isset($movement['Conciliado'])){
 				$movi->setConciliado($movement['Conciliado']);
 			}
-			if (isset($movement['FechaVence'])) {
+			if(isset($movement['FechaVence'])){
 				$movi->setFVence((string)$movement['FechaVence']);
 			}
-			if (isset($movement['Numfol'])) {
+			if(isset($movement['Numfol'])){
 				$movi->setNumfol($movement['Numfol']);
 			}
-			if ($movi->save() == false) {
-				if ($this->_externalTransaction == true) {
+			if($movi->save()==false){
+				if($this->_externalTransaction==true){
 					foreach ($movi->getMessages() as $message) {
 						$this->_transaction->rollback('Movi: ' . $message->getMessage().'. '.$movi->inspect().'. '.print_r($movement, true), $message->getCode());
 					}
@@ -846,12 +839,12 @@ class Aura extends UserComponent
 			unset($movi);
 
 			$saldosc = $this->Saldosc->findFirst("cuenta='{$movement['Cuenta']}' AND ano_mes='".$this->_period."'");
-			if ($saldosc == false) {
+			if($saldosc==false){
 				$saldosc = new Saldosc();
 				$saldosc->setTransaction($this->_transaction);
 				$saldosc->setCuenta($movement['Cuenta']);
 				$saldosc->setAnoMes($this->_period);
-				if ($movement['DebCre'] == 'D') {
+				if($movement['DebCre']=='D'){
 					$saldosc->setDebe($movement['Valor']);
 					$saldosc->setHaber(0);
 					$saldosc->setSaldo($movement['Valor']);
@@ -861,7 +854,7 @@ class Aura extends UserComponent
 					$saldosc->setSaldo(-$movement['Valor']);
 				}
 			} else {
-				if ($movement['DebCre'] == 'C') {
+				if($movement['DebCre']=='C'){
 					$haber = $saldosc->getHaber() + $movement['Valor'];
 					$saldosc->setHaber($haber);
 					$saldosc->setSaldo($saldosc->getDebe() - $haber);
@@ -872,13 +865,13 @@ class Aura extends UserComponent
 				}
 			}
 
-			if ($saldosc->save() == false) {
-				if ($this->_externalTransaction == true) {
-					foreach ($saldosc->getMessages() as $message) {
+			if($saldosc->save()==false){
+				if($this->_externalTransaction==true){
+					foreach($saldosc->getMessages() as $message){
 						$this->_transaction->rollback('Saldosc: '.$message->getMessage().'. '.$saldosc->inspect().'. '.print_r($movement, true), $message->getCode());
 					}
 				} else {
-					foreach ($saldosc->getMessages() as $message) {
+					foreach($saldosc->getMessages() as $message){
 						throw new AuraException('Saldosc: '.$message->getMessage().'. '.$saldosc->inspect().'. '.print_r($movement, true), $message->getCode());
 					}
 				}
@@ -886,15 +879,15 @@ class Aura extends UserComponent
 			unset($saldosc);
 
 			$cuenta = $this->_getCuenta($movement['Cuenta']);
-			if ($cuenta->getPideNit() == 'S') {
+			if($cuenta->getPideNit()=='S'){
 				$saldosn = $this->Saldosn->findFirst("cuenta='{$movement['Cuenta']}' AND nit='{$movement['Nit']}' AND ano_mes=".$this->_period);
-				if ($saldosn == false) {
+				if($saldosn==false){
 					$saldosn = new Saldosn();
 					$saldosn->setTransaction($this->_transaction);
 					$saldosn->setCuenta($movement['Cuenta']);
 					$saldosn->setNit($movement['Nit']);
 					$saldosn->setAnoMes($this->_period);
-					if ($movement['DebCre'] == 'C') {
+					if($movement['DebCre']=='C'){
 						$saldosn->setDebe(0);
 						$saldosn->setHaber($movement['Valor']);
 						$saldosn->setSaldo(-$movement['Valor']);
@@ -905,7 +898,7 @@ class Aura extends UserComponent
 					}
 				} else {
 					$saldosn->setTransaction($this->_transaction);
-					if ($movement['DebCre'] == 'C') {
+					if($movement['DebCre']=='C'){
 						$haber = $saldosn->getHaber() + $movement['Valor'];
 						$saldosn->setHaber($haber);
 						$saldosn->setSaldo($saldosn->getDebe() - $haber);
@@ -917,81 +910,29 @@ class Aura extends UserComponent
 						unset($debe);
 					}
 				}
-				if ($saldosn->save() == false) {
-					if ($this->_externalTransaction == true) {
-						foreach ($saldosn->getMessages() as $message) {
+				if($saldosn->save()==false){
+					if($this->_externalTransaction==true){
+						foreach($saldosn->getMessages() as $message){
 							$this->_transaction->rollback('Saldosn: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
 						}
 					} else {
-						foreach ($saldosn->getMessages() as $message) {
+						foreach($saldosn->getMessages() as $message){
 							throw new AuraException('Saldosn: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
 						}
 					}
 				}
 				unset($saldosn);
-
-				//SALDOS NIIF
-				if ($cuenta->getCuentaNiif()) {
-
-					$saldosNiif = $this->SaldosNiif->findFirst("cuenta='{$cuenta->getCuentaNiif ()}' AND nit='{$movement['Nit']}' AND ano_mes=".$this->_period);
-
-					if ($saldosNiif == false) {
-						$saldosNiif = new SaldosNiif ();
-						$saldosNiif->setTransaction($this->_transaction);
-						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
-						$saldosNiif->setNit($movement['Nit']);
-						$saldosNiif->setAnoMes($this->_period);
-
-						if ($movement['DebCre'] == 'C') {
-							$saldosNiif->setDebe(0);
-							$saldosNiif->setHaber($movement['Valor']);
-							$saldosNiif->setSaldo(-$movement['Valor']);
-						} else {
-							$saldosNiif->setDebe($movement['Valor']);
-							$saldosNiif->setHaber(0);
-							$saldosNiif->setSaldo($movement['Valor']);
-						}
-					} else {
-						$saldosNiif->setTransaction($this->_transaction);
-						if ($movement['DebCre'] == 'C') {
-							$haber = $saldosNiif->getHaber() + $movement['Valor'];
-							$saldosNiif->setHaber($haber);
-							$saldosNiif->setSaldo($saldosNiif->getDebe() - $haber);
-							unset($haber);
-						} else {
-							$debe = $saldosNiif->getDebe() + $movement['Valor'];
-							$saldosNiif->setDebe($debe);
-							$saldosNiif->setSaldo($debe - $saldosNiif->getHaber());
-							unset($debe);
-						}
-					}
-					if ($saldosNiif->save() == false) {
-						if ($this->_externalTransaction == true) {
-							foreach ($saldosNiif->getMessages() as $message) {
-								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
-							}
-						} else {
-							foreach ($saldosNiif->getMessages() as $message) {
-								throw new AuraException('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
-							}
-						}
-					}
-					unset($saldosNiif);
-				}
-
 			}
 
-			if ($cuenta->getPideCentro() == 'S') {
-
+			if($cuenta->getPideCentro()=='S'){
 				$saldosp = $this->Saldosp->findFirst("cuenta='{$movement['Cuenta']}' AND centro_costo='{$movement['CentroCosto']}' AND ano_mes=".$this->_period);
-
-				if ($saldosp == false) {
+				if($saldosp==false){
 					$saldosp = new Saldosp();
 					$saldosp->setTransaction($this->_transaction);
 					$saldosp->setCuenta($movement['Cuenta']);
 					$saldosp->setCentroCosto($movement['CentroCosto']);
 					$saldosp->setAnoMes($this->_period);
-					if ($movement['DebCre'] == 'C') {
+					if($movement['DebCre']=='C'){
 						$saldosp->setDebe(0);
 						$saldosp->setHaber($movement['Valor']);
 						$saldosp->setSaldo(-$movement['Valor']);
@@ -1003,7 +944,7 @@ class Aura extends UserComponent
 					$saldosp->setPres(0);
 				} else {
 					$saldosp->setTransaction($this->_transaction);
-					if ($movement['DebCre'] == 'C') {
+					if($movement['DebCre']=='C'){
 						$haber = $saldosp->getHaber() + $movement['Valor'];
 						$saldosp->setHaber($haber);
 						$saldosp->setSaldo($saldosp->getDebe() - $haber);
@@ -1013,13 +954,13 @@ class Aura extends UserComponent
 						$saldosp->setSaldo($debe - $saldosp->getHaber());
 					}
 				}
-				if ($saldosp->save() == false) {
-					if ($this->_externalTransaction == true) {
-						foreach ($saldosp->getMessages() as $message) {
+				if($saldosp->save()==false){
+					if($this->_externalTransaction==true){
+						foreach($saldosp->getMessages() as $message){
 							$this->_transaction->rollback('Saldosp: '.$message->getMessage().'. '.print_r($movement, true), $message->getCode());
 						}
 					} else {
-						foreach ($saldosp->getMessages() as $message) {
+						foreach($saldosp->getMessages() as $message){
 							throw new AuraException('Saldosp: '.$message->getMessage().'. '.print_r($movement, true), $message->getCode());
 						}
 					}
@@ -1027,16 +968,12 @@ class Aura extends UserComponent
 				unset($saldosp);
 			}
 
-			if ($cuenta->getPideFact() == 'S') {
-
+			if($cuenta->getPideFact()=='S'){
 				$tipo = substr($movement['Cuenta'], 0, 1);
 				$conditions = "cuenta='{$movement['Cuenta']}' AND nit='{$movement['Nit']}' AND tipo_doc='{$movement['TipoDocumento']}' AND numero_doc='{$movement['NumeroDocumento']}'";
 				$cartera = $this->Cartera->findFirst(array($conditions, 'for_update' => true));
-
-				if ($cartera == false) {
-
-					if ($movement['TipoDocumento']!== ''&&$movement['NumeroDocumento']!== '') {
-
+				if($cartera==false){
+					if($movement['TipoDocumento']!==''&&$movement['NumeroDocumento']!==''){
 						$cartera = new Cartera();
 						$cartera->setTransaction($this->_transaction);
 						$cartera->setCuenta($movement['Cuenta']);
@@ -1046,53 +983,53 @@ class Aura extends UserComponent
 						$cartera->setVendedor(0);
 						$cartera->setCentroCosto($movement['CentroCosto']);
 						$cartera->setFEmision((string)$movement['Fecha']);
-						if ($movement['DebCre'] == 'D') {
-							if ($tipo == '1') {
+						if($movement['DebCre']=='D'){
+							if($tipo=='1'){
 								$cartera->setValor($movement['Valor']);
 							} else {
 								$cartera->setValor(0);
 							}
 							$cartera->setSaldo($movement['Valor']);
 						} else {
-							if ($tipo == '2') {
+							if($tipo=='2'){
 								$cartera->setValor($movement['Valor']);
 							} else {
 								$cartera->setValor(0);
 							}
 							$cartera->setSaldo(-$movement['Valor']);
 						}
-						if (isset($movement['FechaVence'])) {
+						if(isset($movement['FechaVence'])){
 							$cartera->setFVence((string)$movement['FechaVence']);
 						} else {
 							$cartera->setFVence((string)$movement['Fecha']);
 						}
 					}
 				} else {
-					if ($movement['DebCre'] == 'D') {
-						if ($tipo == '1') {
+					if($movement['DebCre']=='D'){
+						if($tipo=='1'){
 							$cartera->setValor($cartera->getValor()+$movement['Valor']);
-							if (Date::isLater($cartera->getFEmision(), $movement['Fecha'])) {
+							if(Date::isLater($cartera->getFEmision(), $movement['Fecha'])){
 								$cartera->setFEmision((string)$movement['Fecha']);
 							}
 						}
 						$cartera->setSaldo($cartera->getSaldo()+$movement['Valor']);
 					} else {
-						if ($tipo == '2') {
+						if($tipo=='2'){
 							$cartera->setValor($cartera->getValor()+$movement['Valor']);
-							if (Date::isLater($cartera->getFEmision(), $movement['Fecha'])) {
+							if(Date::isLater($cartera->getFEmision(), $movement['Fecha'])){
 								$cartera->setFEmision((string)$movement['Fecha']);
 							}
 						}
 						$cartera->setSaldo($cartera->getSaldo()-$movement['Valor']);
 					}
 				}
-				if ($cartera->save() == false) {
-					if ($this->_externalTransaction == true) {
-						foreach ($cartera->getMessages() as $message) {
+				if($cartera->save()==false){
+					if($this->_externalTransaction==true){
+						foreach($cartera->getMessages() as $message){
 							$this->_transaction->rollback('Cartera: '.$message->getMessage(), $message->getCode());
 						}
 					} else {
-						foreach ($cartera->getMessages() as $message) {
+						foreach($cartera->getMessages() as $message){
 							throw new AuraException('Cartera: '.$message->getMessage(), $message->getCode());
 						}
 					}
@@ -1102,9 +1039,9 @@ class Aura extends UserComponent
 				unset($tipo);
 			}
 		}
-		catch(DbLockAdquisitionException $e) {
+		catch(DbLockAdquisitionException $e){
 			$message = 'La base de datos está bloqueada mientras otro usuario termina un proceso de grabación. Intente grabar nuevamente en un momento';
-			if ($this->_externalTransaction == true) {
+			if($this->_externalTransaction==true){
 				$this->_transaction->rollback($message);
 			} else {
 				throw new AuraException($message);
@@ -1120,10 +1057,10 @@ class Aura extends UserComponent
 	 *
 	 * @return boolean
 	 */
-	public function delete() {
+	public function delete(){
 		$this->_activeAction = self::OP_DELETE;
 		$this->_delete();
-		if ($this->_externalTransaction == true) {
+		if($this->_externalTransaction==true){
 			return true;
 		} else {
 			return $this->_transaction->commit();
@@ -1135,13 +1072,13 @@ class Aura extends UserComponent
 	 *
 	 * @return boolean
 	 */
-	private function _delete() {
+	private function _delete(){
 
-		if ($this->_activeAction == self::OP_DELETE) {
+		if($this->_activeAction==self::OP_DELETE){
 			$comprob = $this->Comprob->findFirst("codigo='{$this->_defaultComprob}'");
 			$identity = IdentityManager::getActive();
-			if (!self::checkPermission($identity['id'], $this->_defaultComprob, 'D')) {
-				if ($comprob == false) {
+			if(!self::checkPermission($identity['id'], $this->_defaultComprob, 'D')){
+				if($comprob==false){
 					throw new AuraException('No existe el comprobante "'.$this->_defaultComprob.'"');
 				} else {
 					throw new AuraException('No tiene permiso para eliminar comprobantes de "'.$comprob->getNomComprob().'"');
@@ -1149,31 +1086,28 @@ class Aura extends UserComponent
 			}
 		}
 
-		if (!$this->_exists) {
+		if(!$this->_exists){
 			throw new AuraException("No existe el comprobante a eliminar {$this->_defaultComprob}-{$this->_defaultNumero}");
 		}
 
-		if ($this->_activeAction == self::OP_DELETE) {
+		if($this->_activeAction==self::OP_DELETE){
 			$conditions = "comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero' AND estado='E'";
 			$this->Cheque->setTransaction($this->_transaction);
-			if ($this->Cheque->count($conditions)>0) {
+			if($this->Cheque->count($conditions)>0){
 				throw new AuraException('El comprobante está asociado a un cheque, debe anular el cheque primero');
 			}
 			unset($conditions);
 		}
 
 		$conditions = "comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'";
-
-		$this->backupMovi($this->_defaultComprob, $this->_defaultNumero);
-
 		$movis = $this->Movi->find(array($conditions, 'columns' => 'comprob,numero,cuenta,valor,centro_costo,nit,tipo_doc,deb_cre,numero_doc'));
-		foreach ($movis as $movi) {
+		foreach($movis as $movi){
 
-			if ($movi->getValor()!=0) {
+			if($movi->getValor()!=0){
 
 				$saldosc = $this->Saldosc->findFirst("cuenta='{$movi->getCuenta()}' AND ano_mes=0");
-				if ($saldosc!=false) {
-					if ($movi->getDebCre() == 'C') {
+				if($saldosc!=false){
+					if($movi->getDebCre()=='C'){
 						$haber = $saldosc->getHaber() - $movi->getValor();
 						$saldosc->setHaber($haber);
 						$saldosc->setSaldo($saldosc->getDebe() - $haber);
@@ -1182,13 +1116,13 @@ class Aura extends UserComponent
 						$saldosc->setDebe($debe);
 						$saldosc->setSaldo($debe - $saldosc->getHaber());
 					}
-					if ($saldosc->save() == false) {
-						if ($this->_externalTransaction == true) {
-							foreach ($saldosc->getMessages() as $message) {
+					if($saldosc->save()==false){
+						if($this->_externalTransaction==true){
+							foreach($saldosc->getMessages() as $message){
 								$this->_transaction->rollback('Saldosc: '.$message->getMessage(), $message->getCode());
 							}
 						} else {
-							foreach ($saldosc->getMessages() as $message) {
+							foreach($saldosc->getMessages() as $message){
 								throw new AuraException('Saldosc: '.$message->getMessage(), $message->getCode());
 							}
 						}
@@ -1197,15 +1131,15 @@ class Aura extends UserComponent
 				}
 
 				$cuenta = $this->_getCuenta($movi->getCuenta());
-				if ($cuenta == false) {
+				if($cuenta==false){
 					throw new AuraException('La cuenta "'.$movi->getCuenta().'" antes existía pero ya no existe. No se puede borrar el comprobante');
 				}
 
-				if ($cuenta->getPideNit() == 'S') {
+				if($cuenta->getPideNit()=='S'){
 					$saldosn = $this->Saldosn->findFirst("cuenta='{$movi->getCuenta()}' AND nit='{$movi->getNit()}' AND ano_mes=0");
-					if ($saldosn!=false) {
+					if($saldosn!=false){
 						$saldosn->setTransaction($this->_transaction);
-						if ($movi->getDebCre() == 'C') {
+						if($movi->getDebCre()=='C'){
 							$haber = $saldosn->getHaber() - $movi->getValor();
 							$saldosn->setHaber($haber);
 							$saldosn->setSaldo($saldosn->getDebe() - $haber);
@@ -1214,13 +1148,13 @@ class Aura extends UserComponent
 							$saldosn->setDebe($debe);
 							$saldosn->setSaldo($debe - $saldosn->getHaber());
 						}
-						if ($saldosn->save() == false) {
-							if ($this->_externalTransaction == true) {
-								foreach ($movi->getMessages() as $message) {
+						if($saldosn->save()==false){
+							if($this->_externalTransaction==true){
+								foreach($movi->getMessages() as $message){
 									$this->_transaction->rollback('Saldosn: '.$message->getMessage().'. '.$saldosn->inspect().'.', $message->getCode());
 								}
 							} else {
-								foreach ($saldosn->getMessages() as $message) {
+								foreach($saldosn->getMessages() as $message){
 									throw new AuraException('Saldosn: '.$message->getMessage().'. '.$saldosn->inspect().'.', $message->getCode());
 								}
 							}
@@ -1229,11 +1163,11 @@ class Aura extends UserComponent
 					unset($saldosn);
 				}
 
-				if ($cuenta->getPideCentro() == 'S') {
+				if($cuenta->getPideCentro()=='S'){
 					$saldosp = $this->Saldosp->findFirst("cuenta='{$movi->getCuenta()}' AND centro_costo='{$movi->getCentroCosto()}' AND ano_mes=0");
-					if ($saldosp!=false) {
+					if($saldosp!=false){
 						$saldosp->setTransaction($this->_transaction);
-						if ($movi->getDebCre() == 'C') {
+						if($movi->getDebCre()=='C'){
 							$haber = $saldosp->getHaber() - $movi->getValor();
 							$saldosp->setHaber($haber);
 							$saldosp->setSaldo($saldosp->getDebe() - $haber);
@@ -1242,13 +1176,13 @@ class Aura extends UserComponent
 							$saldosp->setDebe($debe);
 							$saldosp->setSaldo($debe - $saldosp->getHaber());
 						}
-						if ($saldosp->save() == false) {
-							if ($this->_externalTransaction == true) {
-								foreach ($saldosp->getMessages() as $message) {
+						if($saldosp->save()==false){
+							if($this->_externalTransaction==true){
+								foreach($saldosp->getMessages() as $message){
 									$this->_transaction->rollback('Saldosp: '.$message->getMessage(), $message->getCode());
 								}
 							} else {
-								foreach ($saldosp->getMessages() as $message) {
+								foreach($saldosp->getMessages() as $message){
 									throw new AuraException('Saldosp: '.$message->getMessage(), $message->getCode());
 								}
 							}
@@ -1257,29 +1191,29 @@ class Aura extends UserComponent
 					unset($saldosp);
 				}
 
-				if ($cuenta->getPideFact() == 'S') {
+				if($cuenta->getPideFact()=='S'){
 					$tipo = substr($movi->getCuenta(), 0, 1);
 					$conditions = "cuenta='{$movi->getCuenta()}' AND nit='{$movi->getNit()}' AND tipo_doc='{$movi->getTipoDoc()}' AND numero_doc='{$movi->getNumeroDoc()}'";
 					$cartera = $this->Cartera->findFirst(array($conditions, 'for_update' => true));
-					if ($cartera!=false) {
-						if ($movi->getDebCre() == 'D') {
-							if ($tipo == '1') {
+					if($cartera!=false){
+						if($movi->getDebCre()=='D'){
+							if($tipo=='1'){
 								$cartera->setValor($cartera->getValor()-$movi->getValor());
 							}
 							$cartera->setSaldo($cartera->getSaldo()-$movi->getValor());
 						} else {
-							if ($tipo == '2') {
+							if($tipo=='2'){
 								$cartera->setValor($cartera->getValor()-$movi->getValor());
 							}
 							$cartera->setSaldo($cartera->getSaldo()+$movi->getValor());
 						}
-						if ($cartera->save() == false) {
-							if ($this->_externalTransaction == true) {
-								foreach ($cartera->getMessages() as $message) {
+						if($cartera->save()==false){
+							if($this->_externalTransaction==true){
+								foreach($cartera->getMessages() as $message){
 									$this->_transaction->rollback('Cartera: '.$message->getMessage(), $message->getCode());
 								}
 							} else {
-								foreach ($cartera->getMessages() as $message) {
+								foreach($cartera->getMessages() as $message){
 									throw new AuraException('Cartera: '.$message->getMessage(), $message->getCode());
 								}
 							}
@@ -1294,17 +1228,17 @@ class Aura extends UserComponent
 		unset($movis);
 		$this->Movi->deleteAll("comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'");
 
-		if ($this->_activeAction == self::OP_DELETE) {
-			if ($comprob->getConsecutivo() == ($this->_defaultNumero+1)) {
+		if($this->_activeAction==self::OP_DELETE){
+			if($comprob->getConsecutivo()==($this->_defaultNumero+1)){
 				$comprob->setTransaction($this->_transaction);
 				$comprob->setConsecutivo($this->_defaultNumero);
-				if ($comprob->save() == false) {
-					if ($this->_externalTransaction == true) {
-						foreach ($comprob->getMessages() as $message) {
+				if($comprob->save()==false){
+					if($this->_externalTransaction==true){
+						foreach($comprob->getMessages() as $message){
 							$this->_transaction->rollback('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
 						}
 					} else {
-						foreach ($comprob->getMessages() as $message) {
+						foreach($comprob->getMessages() as $message){
 							throw new AuraException('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
 						}
 					}
@@ -1312,7 +1246,7 @@ class Aura extends UserComponent
 			}
 			$this->Movitemp->deleteAll("comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'");
 
-			if ($comprob) {
+			if ($comprob){
 				$comprob->setConsecutivo($this->_defaultNumero);
 				$this->_createGrab($comprob, 'D', true);
 			}
@@ -1326,9 +1260,9 @@ class Aura extends UserComponent
 	 *
 	 * @param array $movement
 	 */
-	private function _checkRequiredFields($movement) {
-		foreach (self::$_requiredFields as $requiredField) {
-			if (!isset($movement[$requiredField])) {
+	private function _checkRequiredFields($movement){
+		foreach(self::$_requiredFields as $requiredField){
+			if(!isset($movement[$requiredField])){
 				throw new AuraException("No existe el campo requerido '$requiredField' en el movimiento");
 			}
 		}
@@ -1340,7 +1274,7 @@ class Aura extends UserComponent
 	 * @param  string $comprobante
 	 * @return boolean
 	 */
-	private function _existeComprobante($comprobante) {
+	private function _existeComprobante($comprobante){
 		$comprobante = $this->filter($comprobante, 'comprob');
 		return (bool) $this->Comprob->count("codigo='$comprobante'");
 	}
@@ -1351,9 +1285,9 @@ class Aura extends UserComponent
 	 * @param  string $codigoCuenta
 	 * @return Cuentas
 	 */
-	private function _getCuenta($codigoCuenta) {
-		if (!isset(self::$_cuentas[$codigoCuenta])) {
-			self::$_cuentas[$codigoCuenta] = $this->Cuentas->findFirst("cuenta='{$codigoCuenta}' AND es_auxiliar='S'", 'columns: cuenta,nombre,tipo,pide_nit,pide_centro,pide_fact,cuenta_niif');
+	private function _getCuenta($codigoCuenta){
+		if(!isset(self::$_cuentas[$codigoCuenta])){
+			self::$_cuentas[$codigoCuenta] = $this->Cuentas->findFirst("cuenta='{$codigoCuenta}' AND es_auxiliar='S'", 'columns: cuenta,nombre,tipo,pide_nit,pide_centro,pide_fact');
 		}
 		return self::$_cuentas[$codigoCuenta];
 	}
@@ -1364,8 +1298,8 @@ class Aura extends UserComponent
 	 * @param  string $codigoComprob
 	 * @return Comprob
 	 */
-	private function _getComprob($codigoComprob) {
-		if (!isset(self::$_comprob[$codigoComprob])) {
+	private function _getComprob($codigoComprob){
+		if(!isset(self::$_comprob[$codigoComprob])){
 			self::$_comprob[$codigoComprob] = $this->Comprob->findFirst("codigo='$codigoComprob'");
 		}
 		return self::$_comprob[$codigoComprob];
@@ -1377,8 +1311,8 @@ class Aura extends UserComponent
 	 * @param  int $codigoCentro
 	 * @return boolean
 	 */
-	private function _existeCentro($codigoCentro) {
-		if (!isset(self::$_centros[$codigoCentro])) {
+	private function _existeCentro($codigoCentro){
+		if(!isset(self::$_centros[$codigoCentro])){
 			self::$_centros[$codigoCentro] = $this->Centros->count("codigo='{$codigoCentro}'")>0;
 		}
 		return self::$_centros[$codigoCentro];
@@ -1390,8 +1324,8 @@ class Aura extends UserComponent
 	 * @param  int $tipoDocumento
 	 * @return boolean
 	 */
-	private function _existeDocumento($tipoDocumento) {
-		if (!isset(self::$_documentos[$tipoDocumento])) {
+	private function _existeDocumento($tipoDocumento){
+		if(!isset(self::$_documentos[$tipoDocumento])){
 			self::$_documentos[$tipoDocumento] = $this->Documentos->count("codigo='{$tipoDocumento}'")>0;
 		}
 		return self::$_documentos[$tipoDocumento];
@@ -1403,8 +1337,8 @@ class Aura extends UserComponent
 	 * @param  int $nit
 	 * @return boolean
 	 */
-	private function _existeTercero($nit) {
-		if (!isset(self::$_terceros[$nit])) {
+	private function _existeTercero($nit){
+		if(!isset(self::$_terceros[$nit])){
 			self::$_terceros[$nit] = $this->Nits->count("nit='{$nit}'")>0;
 		}
 		return self::$_terceros[$nit];
@@ -1414,13 +1348,13 @@ class Aura extends UserComponent
 	 * Verifica si el comprobante tiene sumas iguales de débitos y créditos
 	 *
 	 */
-	private function _checkEquals() {
+	private function _checkEquals(){
 		$this->_totalCreditos = LocaleMath::round($this->_totalCreditos, 3);
 		$this->_totalDebitos = LocaleMath::round($this->_totalDebitos, 3);
-		if ($this->_totalCreditos!=$this->_totalDebitos) {
+		if($this->_totalCreditos!=$this->_totalDebitos){
 			throw new AuraException("El comprobante está descuadrado Créditos=".Currency::number($this->_totalCreditos)." y Débitos=".Currency::number($this->_totalDebitos));
 		}
-		if ($this->_activeNumberStored<2) {
+		if($this->_activeNumberStored<2){
 			throw new AuraException('El comprobante debe tener al menos 2 movimientos');
 		}
 	}
@@ -1430,19 +1364,19 @@ class Aura extends UserComponent
 	 *
 	 * @return boolean
 	 */
-	public function save() {
+	public function save(){
 		$this->_checkEquals();
-		if ($this->_exists == false) {
-			//Rcs::disable();
-			foreach ($this->_comprobs as $tipoComprob => $comprob) {
+		if($this->_exists==false){
+			Rcs::disable();
+			foreach($this->_comprobs as $tipoComprob => $comprob){
 				$comprob->setTransaction($this->_transaction);
-				if ($comprob->save() == false) {
-					if ($this->_externalTransaction == true) {
-						foreach ($comprob->getMessages() as $message) {
+				if($comprob->save()==false){
+					if($this->_externalTransaction==true){
+						foreach($comprob->getMessages() as $message){
 							$this->_transaction->rollback('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
 						}
 					} else {
-						foreach ($comprob->getMessages() as $message) {
+						foreach($comprob->getMessages() as $message){
 							throw new AuraException('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
 						}
 					}
@@ -1451,14 +1385,14 @@ class Aura extends UserComponent
 				unset($this->_comprobs[$tipoComprob]);
 			}
 		} else {
-			foreach ($this->_comprobs as $tipoComprob => $comprob) {
+			foreach($this->_comprobs as $tipoComprob => $comprob){
 				$comprob->setTransaction($this->_transaction);
 				$this->_createGrab($comprob, 'M');
 				unset($this->_comprobs[$tipoComprob]);
 			}
 		}
-		//Rcs::enable();
-		if ($this->_externalTransaction == false) {
+		Rcs::enable();
+		if($this->_externalTransaction==false){
 			$this->_transaction->commit();
 		}
 		return true;
@@ -1469,7 +1403,7 @@ class Aura extends UserComponent
 	 *
 	 * @param Comprob $comprob
 	 */
-	private function _createGrab(Comprob $comprob, $accion, $consecutivoOff=false) {
+	private function _createGrab(Comprob $comprob, $accion, $consecutivoOff=false){
 		$identity = IdentityManager::getActive();
 		$grab = new Grab();
 		$grab->setTransaction($this->_transaction);
@@ -1485,19 +1419,18 @@ class Aura extends UserComponent
 		$grab->setCodigoGrab($identity['login']);
 		$grab->setUsuariosId($identity['id']);
 
-		if ($grab->save() == false) {
-			if ($this->_externalTransaction == true) {
-				foreach ($grab->getMessages() as $message) {
+		if($grab->save()==false){
+			if($this->_externalTransaction==true){
+				foreach($grab->getMessages() as $message){
 					$this->_transaction->rollback('Grab: '.$message->getMessage(), $message->getCode());
 				}
 			} else {
-				foreach ($grab->getMessages() as $message) {
+				foreach($grab->getMessages() as $message){
 					throw new AuraException('Grab: '.$message->getMessage(), $message->getCode());
 				}
 			}
 		}
-		//Create Movi Niif
-		new AuraNiif ($grab->getComprob(), $grab->getNumero());
+
 	}
 
 	/**
@@ -1505,15 +1438,15 @@ class Aura extends UserComponent
 	 *
 	 * @param int $codigoComprobante
 	 */
-	public function getConsecutivo($codigoComprobante='') {
-		if ($codigoComprobante == '') {
-			if (count($this->_consecutivos) == 1) {
+	public function getConsecutivo($codigoComprobante=''){
+		if($codigoComprobante==''){
+			if(count($this->_consecutivos)==1){
 				return current($this->_consecutivos);
 			} else {
 				throw new AuraException('Indique el comprobante donde se consultará el consecutivo');
 			}
 		}
-		if (isset($this->_consecutivos[$codigoComprobante])) {
+		if(isset($this->_consecutivos[$codigoComprobante])){
 			return $this->_consecutivos[$codigoComprobante];
 		} else {
 			return 0;
@@ -1525,7 +1458,7 @@ class Aura extends UserComponent
 	 *
 	 * @return Date
 	 */
-	public function getDefaultFecha() {
+	public function getDefaultFecha(){
 		return $this->_defaultFecha;
 	}
 
@@ -1534,7 +1467,7 @@ class Aura extends UserComponent
 	 *
 	 * @return array
 	 */
-	public function getActiveMovement() {
+	public function getActiveMovement(){
 		return $this->_activeMovement;
 	}
 
@@ -1542,7 +1475,7 @@ class Aura extends UserComponent
 	 * Obtiene todos los movimientos grabados (solo en modo debug)
 	 *
 	 */
-	public function getMovements() {
+	public function getMovements(){
 		return $this->_movements;
 	}
 
@@ -1554,12 +1487,12 @@ class Aura extends UserComponent
 	 * @param	int $numero
 	 * @return	array
 	 */
-	public static function validateComprob($comprob, $numero) {
+	public static function validateComprob($comprob, $numero){
 		$aura = new self($comprob, $numero, null, self::OP_CREATE);
 		$line = 1;
 		$messages = array();
 		$movis = self::getModel('Movi')->find("comprob='$comprob' AND numero='$numero'", "columns: comprob,numero,fecha,cuenta,nit,centro_costo,valor,deb_cre,tipo_doc,numero_doc,base_grab");
-		foreach ($movis as $movi) {
+		foreach($movis as $movi){
 			try {
 				$aura->setActiveLine($line);
 				$aura->validate(array(
@@ -1573,7 +1506,7 @@ class Aura extends UserComponent
 					'NumeroDocumento' => $movi->getNumeroDoc()
 				));
 			}
-			catch(AuraException $e) {
+			catch(AuraException $e){
 				$messages[] = $e->getMessage();
 			}
 			$line++;
@@ -1590,12 +1523,12 @@ class Aura extends UserComponent
 	 * @param	int $periodo
 	 * @return	array
 	 */
-	public static function saveOnPeriod($comprob, $numero, $periodo=0) {
+	public static function saveOnPeriod($comprob, $numero, $periodo=0){
 		$messages = array();
 		$aura = new self($comprob, $numero, null, self::OP_UPDATE);
 		$aura->setPeriod($periodo);
 		$movis = self::copyToTemp($comprob, $numero);
-		foreach ($movis as $movi) {
+		foreach($movis as $movi){
 			try {
 				$aura->addMovement(array(
 					'Fecha' => $movi->getFecha(),
@@ -1612,20 +1545,20 @@ class Aura extends UserComponent
 					'FechaVence' => $movi->getFVence()
 				));
 			}
-			catch(AuraException $e) {
+			catch(AuraException $e){
 				$messages[] = $e->getMessage();
 			}
-			catch(DbException $e) {
+			catch(DbException $e){
 				$messages[] = $e->getMessage();
 			}
 			unset($movi);
 		}
 		try {
-			if (count($messages) == 0) {
+			if(count($messages)==0){
 				$aura->save();
 			}
 		}
-		catch(AuraException $e) {
+		catch(AuraException $e){
 			$messages[] = $e->getMessage();
 		}
 		self::dropTemp($comprob, $numero);
@@ -1638,36 +1571,36 @@ class Aura extends UserComponent
 	 * @param string $comprob
 	 * @param int $numero
 	 */
-	public static function copyToTemp($comprob, $numero) {
+	public static function copyToTemp($comprob, $numero){
 		$consecutivo = 0;
 		$tokenId = IdentityManager::getTokenId();
 		$hasTransaction = TransactionManager::hasUserTransaction();
 		$transaction = TransactionManager::getUserTransaction();
 
 		$MoviTemp = self::getModel('Movitemp');
-		if ($hasTransaction) {
+		if($hasTransaction){
 			$MoviTemp->setTransaction($transaction);
 		}
 		$MoviTemp->deleteAll("sid='$tokenId' AND comprob='$comprob' AND numero='$numero'");
 
 		$Movis = self::getModel('Movi');
-		if ($hasTransaction) {
+		if($hasTransaction){
 			$Movis->setTransaction($transaction);
 			$movis = $Movis->findForUpdate("comprob='$comprob' AND numero='$numero'");
 		} else {
 			$movis = $Movis->find("comprob='$comprob' AND numero='$numero'");
 		}
-		foreach ($movis as $movi) {
+		foreach($movis as $movi){
 			$moviTemp = new Movitemp();
 			$moviTemp->setTransaction($transaction);
 			$moviTemp->setSid($tokenId);
 			$moviTemp->setConsecutivo($consecutivo);
-			foreach ($movi->getAttributes() as $attribute) {
+			foreach($movi->getAttributes() as $attribute){
 				$moviTemp->writeAttribute($attribute, $movi->readAttribute($attribute));
 			}
-			if ($moviTemp->save() == false) {
-				if ($hasTransaction == true) {
-					foreach ($moviTemp->getMessages() as $message) {
+			if($moviTemp->save()==false){
+				if($hasTransaction==true){
+					foreach($moviTemp->getMessages() as $message){
 						$transaction->rollback('Error al grabar comprobante en temporal. '.$message->getMessage().'. ('.$moviTemp->getComprob().'-'.$moviTemp->getNumero().')', $message->getCode());
 					}
 				} else {
@@ -1687,11 +1620,11 @@ class Aura extends UserComponent
 	 * @param string $comprob
 	 * @param int $numero
 	 */
-	public static function dropTemp($comprob, $numero) {
+	public static function dropTemp($comprob, $numero){
 		$tokenId = IdentityManager::getTokenId();
 		$Movitemp = self::getModel('Movitemp');
 		$hasTransaction = TransactionManager::hasUserTransaction();
-		if ($hasTransaction) {
+		if($hasTransaction){
 			$transaction = TransactionManager::getUserTransaction();
 			$Movitemp->setTransaction($transaction);
 		}
@@ -1705,33 +1638,8 @@ class Aura extends UserComponent
 	 * @param	string $type
 	 * @return	boolean
 	 */
-	public static function checkPermission($identityId, $comprob, $type) {
+	public static function checkPermission($identityId, $comprob, $type){
 		return self::getModel('PermisosComprob')->count("usuarios_id='$identityId' AND comprob='$comprob' AND popcion='$type'");
 	}
 
-	private function backupMovi($comprob, $numero)
-	{
-		$movis = $this->Movi->find("comprob='$comprob' AND numero='$numero'");
-		if (count($movis)) {
-
-			$identity = IdentityManager::getActive();
-
-			foreach ($movis as $movi) {
-
-				$moviBackup = new Movibackup();
-
-				foreach ($movi->getAttributes() as $field) {
-					$moviBackup->writeAttribute($field, $movi->readAttribute($field));
-				}
-
-				$moviBackup->setDeletedTime(date("Y-m-d H:i:s"));
-				$moviBackup->setUsuariosId($identity["id"]);
-
-				$moviBackup->save();
-
-				unset($moviBackup);
-			}
-		}
-		unset($movis);
-	}
 }

@@ -173,7 +173,7 @@ class ChequeController extends ApplicationController {
             );
         } else {
             $cheques = array();
-            $conditions = "chequeras_id='$chequeraId' AND estado = 'A'";
+            $conditions = "chequeras_id='$chequeraId' AND estado <> 'A'";
             foreach($this->Cheque->find($conditions) as $cheque){
                 $cheques[$cheque->getNumeroCheque()] = 1;
             }
@@ -183,6 +183,9 @@ class ChequeController extends ApplicationController {
                 if(!isset($cheques[$i])){
                     $lista[] = $i;
                     $n++;
+                    if($n>50){
+                        break;
+                    }
                 }
             }
             return array(
@@ -279,7 +282,7 @@ class ChequeController extends ApplicationController {
 
                             $cartera = $this->Cartera->findFirst("nit='$nitNumero' AND tipo_doc='{$numeroDoc[0]}' AND numero_doc='{$numeroDoc[1]}'");
                             if($cartera!=false){
-
+                                
                                 $valorCartera = $this->getPostParam('abono'.$numeroDocs[$i]);
 
                                 $aura->addMovement(
@@ -289,7 +292,7 @@ class ChequeController extends ApplicationController {
                                         'Nit' => $nitNumero,
                                         'CentroCosto' => $cartera->getCentroCosto(),
                                         'Descripcion' => 'PAGO A FACTURA #'.$numeroDoc[0].'-'.$numeroDoc[1],
-                                        'Valor' => $valorCartera,
+                                        'Valor' => $valorCartera, 
                                         'TipoDocumento' => $numeroDoc[0],
                                         'NumeroDocumento' => $numeroDoc[1],
                                         'DebCre' => 'D'
@@ -421,7 +424,7 @@ class ChequeController extends ApplicationController {
                     );
                 }
             }
-
+            
         }
         /*if($nitTercero!=''){
             foreach($this->Cartera->find(array("nit='$nitTercero' AND (tipo_doc='FXP' OR tipo_doc='CXP') AND saldo<0", "order" => "numero_doc")) as $cartera){
@@ -467,7 +470,7 @@ class ChequeController extends ApplicationController {
 
         //echo 'x:', $x, ',y:', $y, ',text:', $text, ',rellenar:', $rellenar, PHP_EOL;
         $limitCols = 85;
-
+        
         //Si no existe la linea crear una linea de con n espacios segn $limitCols
         if(!isset($txt[$y])){
             $txt[$y] = str_pad($rellenar, $limitCols);
@@ -497,7 +500,7 @@ class ChequeController extends ApplicationController {
 
         return $str;
 
-    }
+    }       
 
 
     public function imprimirAction(){
@@ -569,7 +572,7 @@ class ChequeController extends ApplicationController {
                             body {
                                 font-family: "lucidaconsole";
                                 /*
-                                font-family: "Verdana";
+                                font-family: "Verdana";                             
                                 font-family: "monospace";
                                 font-family: "Courier New";
                                 font-family: "Lucida Console";
@@ -761,7 +764,7 @@ class ChequeController extends ApplicationController {
                             $extra = array();
                             $parts = preg_split('/[ ]+/', $suma);
                             foreach($parts as $part){
-                                if(i18n::strlen($value.$part)<=60){
+                                if(i18n::strlen($value.$part)<=60){                                 
                                     $final[] = $part;
                                 } else {
                                     $extra[] = $part;
@@ -831,7 +834,7 @@ class ChequeController extends ApplicationController {
                     if($delta>7){
                         $delta+=7;
                     }else{
-                        $delta ++;
+                        $delta ++;  
                     }
                 }
 
@@ -858,7 +861,7 @@ class ChequeController extends ApplicationController {
 
             }
 
-
+            
 
         }
 

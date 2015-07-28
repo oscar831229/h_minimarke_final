@@ -102,25 +102,6 @@ class ComprobantesController extends HyperFormController {
 				'notSearch' => true,
 				'filters' => array('int')
 			),
-			'consecutivo_niif' => array(
-				'single' => 'Consecutivo Niif',
-				'type' => 'int',
-				'size' => 7,
-				'maxlength' => 7,
-				'notSearch' => true,
-				'filters' => array('int')
-			),
-			'tipo_movi_niif' => array(
-				'single' => 'Tipo Movi Niif',
-				'type' => 'closed-domain',
-				'size' => 1,
-				'maxlength' => 1,
-				'values' => array(
-					'N' => 'NORMAL',
-					'I' => 'NORMAL CON NIIF',
-				),
-				'filters' => array('alpha')
-			),
 			'comprob_contab' => array(
 				'single' => 'Comprobante Contable',
 				'type' => 'relation',

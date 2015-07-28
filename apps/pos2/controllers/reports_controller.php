@@ -13,8 +13,7 @@
  * @version		$Id$
  */
 
-class ReportsController extends ApplicationController
-{
+class ReportsController extends ApplicationController {
 
 	public $fecha_final;
 	public $fecha_inicial;
@@ -25,33 +24,20 @@ class ReportsController extends ApplicationController
 	public $tipoItem;
 	public $usuarioId;
 
-	public function initialize()
-	{
+	public function initialize(){
 		$this->setPersistance(true);
 		$this->loadModel('Datos', 'Salon', 'UsuariosPos');
 	}
 
-	public function indexAction()
-	{
+	public function indexAction(){
 
 	}
 
-	public function huespedesAction()
-	{
+	public function huespedesAction(){
 		$this->setResponse('view');
 	}
 
-	public function ventaPlatoConsolidadoHtmlAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal='')
-	{
-		$this->setResponse('view');
-		$this->tipoItem = substr($tipoItem, 0, 1);
-		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
-		$this->fecha_final = $this->filter($fechaFinal, 'date');
-		$this->salon_id = $this->filter($salonId, 'int');
-	}
-
-	public function ventaPlatoAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal='')
-	{
+	public function ventaPlatoAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal=''){
 		$this->setResponse('view');
 		$this->loadModel('AccountMaster', 'Account', 'MenusItems');
 		$this->tipoItem = $tipoItem;
@@ -60,8 +46,7 @@ class ReportsController extends ApplicationController
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function cortesiasAction($salonId, $fechaInicial='', $fechaFinal='')
-	{
+	public function cortesiasAction($salonId, $fechaInicial='', $fechaFinal=''){
 		$this->setResponse('view');
 		$this->loadModel('Factura', 'TipoVenta');
 		$this->fecha_inicial = $this->filter($fechaInicial, "date");
@@ -69,8 +54,7 @@ class ReportsController extends ApplicationController
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function ventaPlatoHtmlAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal='')
-	{
+	public function ventaPlatoHtmlAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal=''){
 		$this->setResponse('view');
 		$this->tipoItem = substr($tipoItem, 0, 1);
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
@@ -78,8 +62,7 @@ class ReportsController extends ApplicationController
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function venta_plato_cajeroAction($salon_id, $fecha_inicial, $fecha_final)
-	{
+	public function venta_plato_cajeroAction($salon_id, $fecha_inicial, $fecha_final){
 		$this->setResponse('view');
 		$this->loadModel('AccountMaster', 'Account', 'MenusItems');
 		$this->fecha_inicial = $this->filter($fecha_inicial, 'date');
@@ -95,8 +78,7 @@ class ReportsController extends ApplicationController
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function cuadre_caja_todosAction($salonId, $fechaInicial, $fechaFinal)
-	{
+	public function cuadre_caja_todosAction($salonId, $fechaInicial, $fechaFinal){
 		$this->setResponse('view');
 		$this->loadModel('AccountCuentas', 'Factura', 'Habitacion', 'TipoVenta', 'HabitacionHistorico', 'PagosFactura');
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
@@ -125,24 +107,21 @@ class ReportsController extends ApplicationController
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function menor_utilidadAction($salonId, $fechaInicial, $fechaFinal)
-	{
+	public function menor_utilidadAction($salonId, $fechaInicial, $fechaFinal){
 		$this->setResponse('view');
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
 		$this->fecha_final = $this->filter($fechaFinal, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function facturasHtmlAction($salonId, $fechaInicial, $fechaFinal)
-	{
+	public function facturasHtmlAction($salonId, $fechaInicial, $fechaFinal){
 		$this->setResponse('view');
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
 		$this->fecha_final = $this->filter($fechaFinal, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
-	public function cuadreCajaTodosHtmlAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal='')
-	{
+	public function cuadreCajaTodosHtmlAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal=''){
 		$this->setResponse('view');
 		$this->tipoItem = $this->filter($tipoItem, 'onechar');
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
@@ -151,8 +130,7 @@ class ReportsController extends ApplicationController
 		$this->loadModel('AccountMaster', 'Account', 'MenusItems', 'Factura', 'FormasPago');
 	}
 
-	public function saldosInventariosAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal='')
-	{
+	public function saldosInventariosAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal=''){
 		$this->setResponse('view');
 		$this->tipoItem = $this->filter($tipoItem, 'onechar');
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');

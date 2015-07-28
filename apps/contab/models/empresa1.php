@@ -139,9 +139,9 @@ class Empresa1 extends RcsRecord {
 	 * Devuelve el valor del campo otros
 	 * @return string
 	 */
-	public function getOtros()
-	{
+	public function getOtros(){
 		return $this->otros;
 	}
+
 }
 

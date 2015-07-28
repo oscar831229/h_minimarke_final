@@ -158,7 +158,7 @@ class CuentasController extends HyperFormController {
 				'filters' => array('onechar')
 			),
 			'porc_iva' => array(
-				'single' => 'Porcentaje de IVA (%)',
+				'single' => 'Porcentaje de IVA',
 				'type' => 'text',
 				'size' => 3,
 				'maxlength' => 3,
@@ -219,11 +219,11 @@ class CuentasController extends HyperFormController {
 			'porc_retenc' => array(
 				'single' => 'Porcentaje de Retención',
 				'type' => 'text',
-				'size' => 5,
-				'maxlength' => 5,
+				'size' => 3,
+				'maxlength' => 3,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' => array('float')
+				'filters' => array('double')
 			),
 			'cta_iva' => array(
 				'single' => 'Cuenta Retención',
@@ -240,25 +240,6 @@ class CuentasController extends HyperFormController {
 				'notBrowse' => true,
 				'notSearch' => true,
 				'filters' => array('double')
-			),
-			'usa_revelacion' => array(
-				'single' => 'Usa Revelaciones Niif?',
-				'type' => 'closed-domain',
-				'size' => 1,
-				'maxlength' => 1,
-				'values' => array(
-					'S' => 'SI',
-					'N' => 'NO'
-				),
-				'notBrowse' => true,
-				'filters' => array('onechar')
-			),
-			'cuenta_niif' => array(
-				'single' => 'Cuenta NIIF',
-				'type' => 'niif',
-				'notBrowse' => true,
-				'notSearch' => true,
-				'filters' => array('niif')
 			),
 		)
 	);

@@ -96,12 +96,12 @@
   ),
   'salidas_buffet' => 
   array (
-    'index' => true,
-    'new' => true,
-    'edit' => true,
-    'delete' => true,
-    'search' => true,
-    'report' => true,
+    'index' => false,
+    'new' => false,
+    'edit' => false,
+    'delete' => false,
+    'search' => false,
+    'report' => false,
   ),
   'pedidos' => 
   array (
@@ -155,7 +155,7 @@
   ),
   'consumos' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'listado_referencias' => 
   array (
@@ -300,34 +300,34 @@
   ),
   'regimen_cuentas' => 
   array (
-    'index' => true,
-    'new' => true,
-    'edit' => true,
-    'delete' => true,
-    'search' => true,
-    'report' => true,
-    'import' => true,
+    'index' => false,
+    'new' => false,
+    'edit' => false,
+    'delete' => false,
+    'search' => false,
+    'report' => false,
+    'import' => false,
   ),
   'consumos_internos' => 
   array (
-    'index' => true,
-    'new' => true,
-    'edit' => true,
-    'delete' => true,
-    'search' => true,
-    'report' => true,
+    'index' => false,
+    'new' => false,
+    'edit' => false,
+    'delete' => false,
+    'search' => false,
+    'report' => false,
   ),
   'retecompras' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'settings' => 
   array (
-    'index' => true,
-    'save' => true,
+    'index' => false,
+    'save' => false,
   ),
 );

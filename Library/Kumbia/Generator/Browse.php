@@ -155,32 +155,24 @@ abstract class Browse
 		}
 
 		$browseSelect = "SELECT ";
-		$browseFrom = array();
-
-		$source = $form['source'];
-		$browseFrom[$source] = " FROM " . $source;
-
-		$browseWhere = " WHERE 1=1 ";
+		$browseFrom = " FROM ".$form['source'];
+		$browseWhere = " WHERE 1 = 1";
 		$browseLike = "";
-
 		$source = $form['source'];
-
 		$nalias = 1;
 		$first = false;
-
-		foreach ($form['components'] as $name => $component) {
-
-			if (!isset($component['notBrowse'])) {
+		foreach($form['components'] as $name => $component){
+			if(!isset($component['notBrowse'])){
 				$component['notBrowse'] = false;
 			}
-			if (!isset($component['browseCaption'])) {
+			if(!isset($component['browseCaption'])){
 				$component['browseCaption'] = "";
 			}
-			if (!isset($component['class'])) {
+			if(!isset($component['class'])){
 				$component['class'] = "";
 			}
-			if (($component['type']!='hidden')&&(!$component['notBrowse'])) {
-				if ($component['browseCaption']) {
+			if(($component['type']!='hidden')&&(!$component['notBrowse'])){
+				if($component['browseCaption']){
 					StandardGenerator::formsPrint("<th align='center' valign='bottom'>
 	                <table><tr><td align='center'><a href='" . self::doBrowseLocation($name, $form['source'])."'>".$component['browseCaption']."</a></td>
 	                <td>" . self::doTypeBrowseLocation($name, $form['source'])."</td></tr></table></td>\r\n");
@@ -197,53 +189,41 @@ abstract class Browse
 					} else {
 						$first = true;
 					}
-					$foreignTable = $component['foreignTable'];
-					if (!isset($browseFrom[$foreignTable])) {
-						$browseFrom[$foreignTable] = ' ';
-					}
-					if(strpos(' ' . $browseFrom[$foreignTable], $foreignTable)){
+					if(strpos(' '.$browseFrom, $component['foreignTable'])){
 						$alias = 't'.$nalias;
 						++$nalias;
-						if (!isset($browseFrom[$alias])) {
-							$browseFrom[$alias] = '';
-						}
-						$browseFrom[$alias] .= $foreignTable . ' as ' . $alias;
+						$browseFrom.=','.$component['foreignTable'].' '.$alias;
 					} else {
-						$browseFrom[$foreignTable] .= $foreignTable;
+						$browseFrom.=','.$component['foreignTable'];
 						$alias = '';
 					}
-					if (strpos($component['detailField'], '(')) {
-						$browseSelect .= $component['detailField']." AS $name, $source.$name as pk_$name";
-						if (!isset($_GET['q'])) {
+					if(strpos($component['detailField'], '(')){
+						$browseSelect.=$component['detailField']." AS $name, $source.$name as pk_$name";
+						if(!isset($_GET['q'])){
 							$_GET['q'] = '';
 						}
-						$browseLike .= " OR {$component['detailField']} LIKE '%{$_GET['q']}%'";
+						$browseLike.=" OR {$component['detailField']} LIKE '%{$_GET['q']}%'";
 					} else {
 						if(!$alias){
-							$browseSelect .= $foreignTable . "." . $component['detailField']." as $name, $source.$name as pk_$name";
+							$browseSelect.=$component['foreignTable'].".".$component['detailField']." as $name, $source.$name as pk_$name";
 						} else {
-							$browseSelect .= $alias . "." . $component['detailField'] . " as $name, $source.$name as pk_$name";
+							$browseSelect.=$alias.".".$component['detailField']." as $name, $source.$name as pk_$name";
 						}
 					}
-					if (isset($component["extraTables"])&&$component["extraTables"]) {
-						$extraTables = $component["extraTables"];
-						$browseFrom[$extraTables] .= $extraTables;
+					if(isset($component["extraTables"])&&$component["extraTables"]){
+						$browseFrom.=",".$component["extraTables"];
 					}
 					if($component['column_relation']){
-						$foreignTable = $component['foreignTable'];
 						if($alias){
-							$with = (strpos('ON', $browseFrom[$alias])) ? ' AND ' : ' ON ';
-							$browseFrom[$alias] .= $with . $alias.".".$component['column_relation']." = ".$source.".".$name;
+							$browseWhere.=" AND ".$alias.".".$component['column_relation']." = ".$form['source'].".".$name;
 						} else {
-							$with = (strpos('ON', $browseFrom[$foreignTable])) ? ' AND ' : ' ON ';
-							$browseFrom[$foreignTable] .= $with . $foreignTable . "." . $component['column_relation'] . " = " . $source . "." . $name;
+							$browseWhere.=" AND ".$component['foreignTable'].".".$component['column_relation']." = ".$form['source'].".".$name;
 						}
 					} else {
-						$with = (strpos('ON', $browseFrom[$foreignTable])) ? ' AND ' : ' ON ';
-						$browseFrom[$foreignTable] .= $with . $foreignTable.".".$name." = ".$source.".".$name;
+						$browseWhere.=" AND ".$component['foreignTable'].".".$name." = ".$form['source'].".".$name;
 					}
 					if(isset($component["whereCondition"])&&$component['whereCondition']){
-						$browseWhere .= " AND " . $component['whereCondition'];
+						$browseWhere.=" AND ".$component['whereCondition'];
 					}
 				}
 			} else {
@@ -284,7 +264,7 @@ abstract class Browse
 						} else {
 							$first = true;
 						}
-						$browseSelect .= $form['source'].".$name";
+						$browseSelect.=$form['source'].".$name";
 					}
 				}
 			}
@@ -295,11 +275,11 @@ abstract class Browse
 		}
 		if(!isset($_REQUEST['orderBy'])){
 			ActiveRecordUtils::sqlItemSanizite($_REQUEST['typeOrd']);
-			$browseSelect.= implode(' LEFT JOIN ', $browseFrom) . $browseWhere." Order By 1 ".$_REQUEST['typeOrd'];
+			$browseSelect.= $browseFrom.$browseWhere." Order By 1 ".$_REQUEST['typeOrd'];
 		} else {
 			ActiveRecordUtils::sqlItemSanizite($_REQUEST['typeOrd']);
 			ActiveRecordUtils::sqlSanizite($_REQUEST['orderBy']);
-			$browseSelect.= implode(' LEFT JOIN ', $browseFrom).$browseWhere." Order By ".$_REQUEST['orderBy']." ".$_REQUEST['typeOrd'];
+			$browseSelect.= $browseFrom.$browseWhere." Order By ".$_REQUEST['orderBy']." ".$_REQUEST['typeOrd'];
 		}
 
 		if(!isset($_REQUEST['limBrowse'])){
@@ -324,7 +304,6 @@ abstract class Browse
 		}
 
 		if($db = DbPool::getConnection()){
-			//print_r($browseSelect);
 			$q = $db->query($browseSelect);
 			if($q===false) {
 				Flash::error($db->error());
@@ -342,7 +321,7 @@ abstract class Browse
 
 			if($db->numRows($q)){
 				$nTr = 0;
-				$queryBrowse = "select count(*) " . implode(' LEFT JOIN ', $browseFrom) . " $brw";
+				$queryBrowse = "select count(*) $browseFrom $brw";
 				$qq = $db->query($queryBrowse);
 				$num = $db->fetchArray($qq);
 				$num = $num[0];
