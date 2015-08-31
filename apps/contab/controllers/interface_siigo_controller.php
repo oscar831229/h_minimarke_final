@@ -157,7 +157,7 @@ class Interface_SiigoController extends ApplicationController
 			'sucursal' => '000',
 			'producto' => '0000000000000',
 			'codven' => '0001',
-			'ciudad' => '0000',
+			'ciudad' => '0011',
 			'zona' => '000',
 			'bodega' => '0000',
 			'ubicacion' => '000',
