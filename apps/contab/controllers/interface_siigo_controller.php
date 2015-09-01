@@ -150,7 +150,7 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÓN
 				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAÍS
 				'0',//DIGITO VERIFICACION
-				'0',//CALIFICACIÓN
+				'000',//CALIFICACIÓN
 				sprintf('%05s', 0),//ACTIVIDAD ECONÓMICA
 				sprintf('%04s', 0),//FORMA DE PAGO
 				sprintf('%04s', 0),//COBRADOR
