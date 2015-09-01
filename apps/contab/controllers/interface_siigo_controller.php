@@ -135,6 +135,7 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%011s', '0'),//tel2
 				sprintf('%011s', '0'),//tel3
 				sprintf('%011s', '0'),//tel4
+				sprintf('%011s', '0'),//FAX
 				sprintf('%06s', substr($tercero->getApAereo(), 0, 6)),
 				sprintf('%- 100s', ''), //email
 				'M', //Sexo
