@@ -139,7 +139,7 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%06s', substr($tercero->getApAereo(), 0, 6)),
 				sprintf('%- 100s', ''), //email
 				'M', //Sexo
-				'0',
+				'4',
 				$tipoDoc, //tipo documento
 				sprintf('%011s', '0'),//Cupo credito
 				sprintf('%02s', '1'),//Lista de precios
@@ -176,7 +176,7 @@ class Interface_SiigoController extends ApplicationController
 				'N',//TIPO DE SOCIEDAD
 				sprintf('%- 10s', ''),//AUTORIZACION IMPRENTA
 				sprintf('%- 11s', ''),//AUTORIZACION CONTRIBUYENTE
-				sprintf('%04s', 0),//TIPO CONTRIBUYENTE
+				sprintf('%04s', 99),//TIPO CONTRIBUYENTE
 				sprintf('%- 50s', ''),//CONTACTO FACTURA
 				sprintf('%- 90s', ''),//MAIL CONTACTO FACTURA 
 			);
@@ -217,7 +217,7 @@ class Interface_SiigoController extends ApplicationController
 
 	private function getCodigoPais($locciu)
 	{
-		return '057';
+		return '001';
 	}
 
 	private function getCodigoCiudad($locciu)
