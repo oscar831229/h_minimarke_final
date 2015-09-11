@@ -420,7 +420,7 @@ class CuentasController extends HyperFormController {
 
 	public function queryByCuentaAction(){
 		$this->setResponse('json');
-		$codigoCuenta = $this->getQueryParam('cuenta', 'cuentas');
+		$codigoCuenta = $this->getRequestParam('cuenta', 'cuentas');
 		$cuenta = $this->Cuentas->findFirst("cuenta='$codigoCuenta'");
 		if($cuenta==false){
 			return array(
@@ -438,7 +438,7 @@ class CuentasController extends HyperFormController {
 	public function queryByNameAction(){
 		$this->setResponse('json');
 		$response = array();
-		$nombre = $this->getPostParam('nombre', 'extraspaces');
+		$nombre = $this->getRequestParam('nombre', 'extraspaces');
 		if($nombre!=''){
 			$nombre = preg_replace('/[ ]+/', '%', $nombre);
 			$cuentas = $this->Cuentas->find('nombre LIKE \''.$nombre.'%\' AND es_auxiliar=\'S\'', 'order: nombre', 'limit: 13');

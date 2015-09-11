@@ -95,7 +95,7 @@ class Hfos_Application
 			'impresion'
 		),
 		'CO' => array(
-			'movimiento', 'cuentas', 'incluir', 'excluir', 'terceros', 'balance', 'amortizacion',
+			'movimiento', 'movimiento_niif', 'cuentas', 'incluir', 'excluir', 'terceros', 'balance', 'amortizacion',
 			'consecutivos', 'libro-auxiliar', 'movimiento-terceros',
 			'movimiento-documentos', 'movimiento-centros', 'balance-centros', 'listado-movimiento',
 			'listado-retencion', 'retencion', 'cheque', 'formato-cheque',
@@ -107,7 +107,7 @@ class Hfos_Application
 			'comprobante-cierre', 'ordenes-servicio', 'pyg', 'ejecucion-pres',
 			'cierre-cuentas', 'reabrir-cuentas', 'caratulas', 'balance-general', 'certificado-retencion',
 			'certificado-ica', 'cierre-anual', 'reabrir-ano', 'recibo-caja', 'listado-comprob',
-			'interfase-siigo'
+			'interfase-siigo', 'cuentas-selector2'
 		),
 		'NO' => array(
 			'liquidacion'

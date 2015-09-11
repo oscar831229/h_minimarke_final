@@ -19,6 +19,7 @@ $menuDisposition = array(
 		'description' => 'Opciones para mantener movimiento contable',
 		'options' => array(
 			'movimiento',
+			'movimiento_niif',
 			'consultas',
 			'cambio_nit',
 			'incluir',
@@ -265,6 +266,50 @@ $accessList = array(
 			)
 		)
 	),
+
+	'movimiento_niif' => array(
+		'elevation' => true,
+		'description' => 'Movimiento Niif',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingresar a'
+			),
+			'buscar' => array(
+				'description' => 'Buscar en'
+			),
+			'guardar' => array(
+				'description' => 'Crear ó Actualizar en'
+			),
+			'eliminar' => array(
+				'description' => 'Eliminar en'
+			),
+			'cambiarFecha' => array(
+				'description' => 'Cambiar Fecha de'
+			),
+			'copiar' => array(
+				'description' => 'Copiar en'
+			),
+			'nuevo' => array(
+				'sameAs' => 'guardar'
+			),
+			'editar' => array(
+				'sameAs' => 'guardar'
+			),
+			'guardarLinea' => array(
+				'sameAs' => 'guardar'
+			),
+			'validarFecha' => array(
+				'sameAs' => 'guardar'
+			),
+			'borrarLineas' => array(
+				'sameAs' => 'guardar'
+			),
+			'getDetalles' => array(
+				'sameAs' => 'buscar'
+			)
+		)
+	),
+
 	'consultas' => array(
 		'elevation' => true,
 		'description' => 'Consultas de Movimiento Contable',

@@ -39,3 +39,7 @@ CREATE TABLE `movibackup` (
   `usuarios_id` int(11) NOT NULL,
   KEY `contab_1_index` (`comprob`,`numero`,`nit`,`fecha`,`deb_cre`,`cuenta`,`tipo_doc`,`numero_doc`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table movitempniif like movitemp;
+alter table movitempniif add column cuenta_movi varchar(20) null;
+alter table movitempniif add column numero_movi varchar(20) null;

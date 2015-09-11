@@ -12,7 +12,7 @@
  * @version		$Id$
  */
 
-var Movimientos = {
+var MovimientosNiif = {
 
 	/**
 	 * Abre un movimiento con el key dado
@@ -20,12 +20,12 @@ var Movimientos = {
 	 */
 	abrir: function(key){
 		Hfos.getApplication().run({
-			id: 'win-movimiento',
+			id: 'win-movimiento-niif',
 			icon: 'document-library.png',
 			title: "Movimiento Contable",
-			action: "movimiento",
+			action: "movimiento_niif",
 			height: '570px',
-			onStartup: Movimientos._openDocument.bind(this, key)
+			onStartup: MovimientosNiif._openDocument.bind(this, key)
 		});
 	},
 
@@ -35,7 +35,7 @@ var Movimientos = {
 
 };
 
-var Movimiento = Class.create(HfosProcessContainer, {
+var MovimientoNiif = Class.create(HfosProcessContainer, {
 
 	next: {
 		'cuenta': 'nombreCuenta',
@@ -129,7 +129,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 		this._removeDetails();
 		if (this.getState()=='edit'||this.getState()=='new'){
 			var key = this._getKeyToClean();
-			new HfosAjax.Request('movimiento/clean', {
+			new HfosAjax.Request('movimiento_niif/clean', {
 				parameters: key,
 				checkAcl: true
 			});
@@ -233,7 +233,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	_abrirMovimiento: function(key){
 		Hfos.getUI().blockInput();
 		this.setKey(key);
-		this.go('movimiento/editar', {
+		this.go('movimiento_niif/editar', {
 			checkAcl: true,
 			parameters: key,
 			onSuccess: this._setEditCallbacks.bind(this)
@@ -298,7 +298,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 					case '1':
 						Hfos.getUI().blockInput();
 						this.setKey(response.key);
-						this.go('movimiento/editar', {
+						this.go('movimiento_niif/editar', {
 							checkAcl: true,
 							parameters: response.key,
 							onSuccess: this._setEditCallbacks.bind(this)
@@ -345,7 +345,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 		Hfos.getUI().blockInput();
 		var key = hyDetail.retrieve('primary');
 		this.setKey(key);
-		this.go('movimiento/editar', {
+		this.go('movimiento_niif/editar', {
 			parameters: key,
 			checkAcl: true,
 			onSuccess: this._setEditCallbacks.bind(this)
@@ -356,7 +356,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 * Obtiene y actualiza las sumas en pantalla
 	 */
 	_getSumas: function(){
-		new HfosAjax.JsonRequest('movimiento/getSumas', {
+		new HfosAjax.JsonRequest('movimiento_niif/getSumas', {
 			parameters: this._key,
 			checkAcl: true,
 			onSuccess: function(response){
@@ -462,7 +462,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 * Nuevo comprobante
 	 */
 	_newComprobante: function(){
-		this.go('movimiento/nuevo', {
+		this.go('movimiento_niif/nuevo', {
 			checkAcl: true,
 			onSuccess: this._setNewCallbacks.bind(this)
 		});
@@ -486,7 +486,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 */
 	_backComprobante: function(){
 		var key = this._getKeyToClean();
-		this.go('movimiento/index', {
+		this.go('movimiento_niif/index', {
 			checkAcl: true,
 			parameters: 'clean=1&'+key,
 			onSuccess: this._setIndexCallbacks.bind(this)
@@ -502,7 +502,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 		HfosCuentasSelectores2.removeAll();
 		this.setIgnoreTermSignal(true);
 		this.getElement("headerSpinner").show();
-		new HfosAjax.JsonRequest('movimiento/guardar', {
+		new HfosAjax.JsonRequest('movimiento_niif/guardar', {
 			parameters: this._key,
 			checkAcl: true,
 			onSuccess: function(saveButton, response){
@@ -512,7 +512,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 						if (spinner) {
 							spinner.hide();
 						};
-						this.go('movimiento/index', {
+						this.go('movimiento_niif/index', {
 							checkAcl: true,
 							parameters: this._key,
 							onSuccess: function(){
@@ -574,13 +574,13 @@ var Movimiento = Class.create(HfosProcessContainer, {
 								rows.push(checkElements[i].up(1).retrieve('position'));
 							}
 						};
-						new HfosAjax.JsonRequest('movimiento/copiarLineas', {
+						new HfosAjax.JsonRequest('movimiento_niif/copiarLineas', {
 							checkAcl: true,
 							parameters: 'lineas=' + rows.join(',') + '&' + this._key,
 							onSuccess: function(rows, response){
 								if (response.status == 'OK') {
 									if (this.getState() == 'new') {
-										this.go('movimiento/nuevo', {
+										this.go('movimiento_niif/nuevo', {
 											checkAcl: true,
 											parameters: this._key,
 											onSuccess: this._setNewCallbacks.bind(this)
@@ -620,7 +620,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 			title: 'Movimiento Contable',
 			message: 'Seguro desea eliminar el comprobante?',
 			onAccept: function(){
-				new HfosAjax.JsonRequest('movimiento/eliminar', {
+				new HfosAjax.JsonRequest('movimiento_niif/eliminar', {
 					parameters: this._key,
 					checkAcl: true,
 					onCreate: function(){
@@ -630,7 +630,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 					}.bind(this),
 					onSuccess: function(response){
 						if (response.status=='OK'){
-							this.go('movimiento/index', {
+							this.go('movimiento_niif/index', {
 								checkAcl: true,
 								parameters: this._key,
 								onSuccess: function(){
@@ -664,7 +664,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 			parameters: this._key,
 			beforeClose: function(form, canceled, response){
 				if (canceled == false) {
-					this.go('movimiento/nuevo', {
+					this.go('movimiento_niif/nuevo', {
 						checkAcl: true,
 						parameters: response.key,
 						onSuccess: this._setNewCallbacks.bind(this)
@@ -735,7 +735,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 */
 	_getComprobanteConsecutivo: function(element)
 	{
-		this.go('movimiento/nuevo', {
+		this.go('movimiento_niif/nuevo', {
 			checkAcl: true,
 			parameters: 'codigoComprobante=' + element.getValue(),
 			onCreate: function(){
@@ -818,7 +818,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 		if (saveButton !== null) {
 			saveButton.disable();
 		}
-		new HfosAjax.JsonRequest('movimiento/guardarLinea?'+this._key, {
+		new HfosAjax.JsonRequest('movimiento_niif/guardarLinea?'+this._key, {
 			parameters: row,
 			checkAcl: true,
 			onCreate: function(){
@@ -878,7 +878,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 */
 	_onChangeFecha: function(fecha)
 	{
-		new HfosAjax.JsonRequest('movimiento/validarFecha', {
+		new HfosAjax.JsonRequest('movimiento_niif/validarFecha', {
 			parameters: this._key + '&fecha=' + fecha,
 			checkAcl: true,
 			onSuccess: function(response) {
@@ -1055,7 +1055,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 								rows.push(checkElements[i].up(1).retrieve('position'));
 							}
 						};
-						new HfosAjax.JsonRequest('movimiento/borrarLineas', {
+						new HfosAjax.JsonRequest('movimiento_niif/borrarLineas', {
 							checkAcl: true,
 							parameters: 'lineas='+rows.join(',')+'&'+this._key,
 							onSuccess: function(rows, response){
@@ -1582,7 +1582,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	_showDetalles: function(element)
 	{
 		var position = parseInt(element.up(1).retrieve('position'), 10);
-		new HfosAjax.Request('movimiento/getDetalles', {
+		new HfosAjax.Request('movimiento_niif/getDetalles', {
 			method: 'GET',
 			checkAcl: true,
 			parameters: 'cuenta='+element.getValue()+'&consecutivo='+position+'&'+this._key,
@@ -2245,7 +2245,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	{
 		var key = this.getContentElement().lang;
 		if (key != '') {
-			this.go('movimiento/nuevo', {
+			this.go('movimiento_niif/nuevo', {
 				checkAcl: true,
 				parameters: key,
 				onCreate: function(){
@@ -2289,6 +2289,6 @@ var Movimiento = Class.create(HfosProcessContainer, {
 
 });
 
-HfosBindings.late('win-movimiento', 'afterCreateOrRestore', function(hfosWindow) {
-	var movimiento = new Movimiento(hfosWindow);
+HfosBindings.late('win-movimiento-niif', 'afterCreateOrRestore', function(hfosWindow) {
+	var movimientoNiif = new MovimientoNiif(hfosWindow);
 });

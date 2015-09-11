@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+if($cuenta->getPideNit()=='S'){
+	echo '<b>Datos del tercero</b>
+	<table>
+		<tr>
+			<td align="right"><label for="nit">Tercero</label></td>
+			<td>', Tag::textField(array('nit', 'value' => $numeroNit, 'size' => 12, 'autocomplete' => 'off')), '</td>
+			<td>', Tag::textUpperField(array('nitNombre', 'value' => $nombreNit, 'size' => 50, 'autocomplete' => 'off')), '</td>';
+			if($existeNit==true){
+				$display = 'style="display:none"';
+			} else {
+				$display = '';
+			}
+			echo '<td><input type="button" id="crearNit" class="detailButton" value="Crear" ', $display, '/></td>';
+		echo '</tr>
+	</table>';
+}
+
+if($cuenta->getPideCentro()=='S'){
+	if(isset($centroCostos)){
+		echo '<b>Centro de Costo</b>
+		<table>
+			<tr>
+				<td align="right"><label for="centro">Centro de Costo</label></td>
+				<td>',
+					Tag::select(array(
+						'centroCosto',
+						$centroCostos,
+						'using' => 'codigo,nom_centro',
+						'autocomplete' => 'off',
+						'useDummy' => 'yes'
+					)),
+				'</td>
+			</tr>
+		</table>';
+	}
+}
+
+if($cuenta->getPideFact()=='S'){
+	echo '<b>Datos del Documento</b>
+	<table>
+		<tr>
+			<td align="right"><label for="tipoDocumento">Tipo Documento</label></td>
+			<td>',
+				Tag::select(array(
+					'tipoDocumento',
+					$tipoDocumentos,
+					'using' => 'codigo,nom_documen',
+					'value' => $moviTemp->getTipoDoc(),
+					'autocomplete' => 'off'
+				)),
+			'</td>
+			<td align="right"><label for="numeroDocumento">Número</label></td>
+			<td>', Tag::textField(array('numeroDocumento', 'value' => $moviTemp->getNumeroDoc(), 'size' => 4, 'autocomplete' => 'off')), '</td>
+			<td align="right"><label for="fechaVence">Fecha</label></td>
+			<td>', Tag::dateField(array('fechaVence', 'value' => $moviTemp->getFVence(), 'autocomplete' => 'off', 'finalYear'=>date('Y')+15)), '</td>
+			<td><input type="button" id="verCartera" class="detailButton" value="Cartera"/></td>
+		</tr>
+	</table>';
+}
+
+if($cuenta->getPideBase()=='S'){
+	echo '<b>Base Gravable/Retención</b>
+	<table>
+		<tr>
+			<td align="right"><label for="baseGravable">Valor Base</label></td>
+			<td>', Tag::hiddenField(array("cuentaPorcIva", "value" => $cuenta->getPorcIva())),
+				Tag::textField(array('baseGravable', 'value' => $moviTemp->getBaseGrab(), 'size' => 10, 'autocomplete' => 'off', 'class' => 'numeric')), '</td>
+		</tr>
+	</table>';
+}
+
+if($moviTemp->getNumfol()!=0){
+	echo '<b>Folio Front</b><br/>';
+	echo $moviTemp->getNumfol();
+}

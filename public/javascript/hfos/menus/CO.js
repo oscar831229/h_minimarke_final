@@ -31,6 +31,19 @@ Hfos.getApplication().getMenu().setOptions([
 				}
 			},
 			{
+				'title': 'Movimiento Niif',
+				'icon': 'document-library.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-movimiento-niif',
+						icon: 'document-library.png',
+						title: "Movimiento Niif",
+						action: "movimiento_niif",
+						height: '570px'
+					});
+				}
+			},
+			{
 				'title': 'Consultas de Movimiento',
 				'icon': 'publish.png',
 				'click': function(){

@@ -14,12 +14,12 @@
  */
 
 /**
- * MovimientoController
+ * Movimiento_niifController
  *
- * Controlador del movimiento
+ * Controlador del movimiento niif
  *
  */
-class MovimientoController extends ApplicationController
+class Movimiento_niifController extends ApplicationController
 {
 
 	public function initialize()
@@ -40,7 +40,7 @@ class MovimientoController extends ApplicationController
 			if($numero>0){
 				$tokenId = IdentityManager::getTokenId();
 				$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'";
-				$this->Movitemp->deleteAll($conditions);
+				$this->Movitempniif->deleteAll($conditions);
 			}
 			Tag::displayTo('codigoComprobante', '');
 			Tag::displayTo('numero', '');
@@ -71,7 +71,7 @@ class MovimientoController extends ApplicationController
 					return $this->routeToAction('getDetallesError');
 				}
 
-				/*$maximoNumero = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
+				/*$maximoNumero = $this->MoviNiif->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
 				$numero = $comprob->getConsecutivo();
 				if($numero<$maximoNumero){
 					$numero = $maximoNumero;
@@ -82,7 +82,7 @@ class MovimientoController extends ApplicationController
 				$numero = $tipoComprobante->getConsecutivo();
 
 				//verificamos si no existe ese comprobante con ese numero
-				$movi = $this->Movi->findFirst(array('conditions'=>"comprob='$codigoComprobante' AND numero='$numero'"));
+				$movi = $this->MoviNiif->findFirst(array('conditions'=>"comprob='$codigoComprobante' AND numero='$numero'"));
 				if($movi!=false){
 					Flash::error('El comprobante "'.$comprob->getNomComprob().'" con numero "'.$numero.'" ya existe, debe cambiar el consecutivo del comprobante');
 					return $this->routeToAction('getDetallesError');
@@ -92,7 +92,7 @@ class MovimientoController extends ApplicationController
 
 			$tokenId = IdentityManager::getTokenId();
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-			foreach ($this->Movitemp->find($conditions, 'order: consecutivo') as $movi) {
+			foreach ($this->Movitempniif->find($conditions, 'order: consecutivo') as $movi) {
 				$codigoCuenta = $movi->getCuenta();
 				$cuenta = BackCacher::getCuenta($codigoCuenta);
 				if ($cuenta != false) {
@@ -192,9 +192,9 @@ class MovimientoController extends ApplicationController
 			$conditions[] = 'numero = \'' . $numero . '\'';
 		}
 		if (count($conditions) > 0) {
-			$movis = $this->Movi->find(array(join(' AND ', $conditions), 'columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
+			$movis = $this->MoviNiif->find(array(join(' AND ', $conditions), 'columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
 		} else {
-			$movis = $this->Movi->find(array('columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
+			$movis = $this->MoviNiif->find(array('columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
 		}
 		if (count($movis) == 1) {
 			$movi = $movis->getFirst();
@@ -251,7 +251,7 @@ class MovimientoController extends ApplicationController
 
 
 		$movimientos = array();
-		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'");
+		$movis = $this->MoviNiif->find("comprob='$codigoComprobante' AND numero='$numero'");
 		foreach ($movis as $movi) {
 			$codigoCuenta = $movi->getCuenta();
 			$cuenta = BackCacher::getCuenta($codigoCuenta);
@@ -292,13 +292,13 @@ class MovimientoController extends ApplicationController
 
 		$tokenId = IdentityManager::getTokenId();
 		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'";
-		$this->Movitemp->deleteAll($conditions);
+		$this->Movitempniif->deleteAll($conditions);
 
 		$consecutivo = 0;
 		$fechaComprobante = null;
 		$movimientos = array();
 		$tokenId = IdentityManager::getTokenId();
-		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'");
+		$movis = $this->MoviNiif->find("comprob='$codigoComprobante' AND numero='$numero'");
 		foreach ($movis as $movi) {
 			$cuenta = BackCacher::getCuenta($movi->getCuenta());
 			if($cuenta!=false){
@@ -313,7 +313,7 @@ class MovimientoController extends ApplicationController
 					'descripcion' => $movi->getDescripcion(),
 					'valor' => Utils::dropDecimals($movi->getValor())
 				);
-				$moviTemp = new Movitemp();
+				$moviTemp = new Movitempniif();
 				$moviTemp->setSid($tokenId);
 				$moviTemp->setConsecutivo($consecutivo);
 				foreach($movi->getAttributes() as $attribute){
@@ -342,9 +342,9 @@ class MovimientoController extends ApplicationController
 		$codigoCuenta = $this->getQueryParam('cuenta', 'cuentas');
 
 		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND consecutivo='$consecutivo'";
-		$moviTemp = $this->Movitemp->findFirst($conditions);
+		$moviTemp = $this->Movitempniif->findFirst($conditions);
 		if($moviTemp==false){
-			$moviTemp = new Movitemp();
+			$moviTemp = new Movitempniif();
 			$moviTemp->setEstado('A');
 		}
 
@@ -386,7 +386,7 @@ class MovimientoController extends ApplicationController
 			$tipo = $cuenta->getTipo();
 			if($tipo>'3'&&$tipo<'8'){
 				if(!$moviTemp->getCentroCosto()){
-					$rowcounts = $this->Movi->count(array('conditions' => "cuenta='$codigoCuenta'", 'group' => 'cuenta,centro_costo', 'order' => 'rowcount', 'limit' => 1));
+					$rowcounts = $this->MoviNiif->count(array('conditions' => "cuenta='$codigoCuenta'", 'group' => 'cuenta,centro_costo', 'order' => 'rowcount', 'limit' => 1));
 					if(count($rowcounts)>0){
 						$rowcount = $rowcounts->getFirst();
 						Tag::displayTo('centroCosto', $rowcount->centro_costo);
@@ -426,7 +426,7 @@ class MovimientoController extends ApplicationController
 			$consecutivo = $this->filter($consecutivo, 'int');
 
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND consecutivo='$consecutivo'";
-			$moviTemp = $this->Movitemp->findFirst($conditions);
+			$moviTemp = $this->Movitempniif->findFirst($conditions);
 
 			if($moviTemp!=false){
 				$moviTemp->setEstado('B');
@@ -466,14 +466,14 @@ class MovimientoController extends ApplicationController
 			$consecutivo = $this->filter($consecutivo, 'int');
 
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND consecutivo='$consecutivo'";
-			$moviTemp = $this->Movitemp->findFirst($conditions);
+			$moviTemp = $this->Movitempniif->findFirst($conditions);
 
 			if ($moviTemp!=false) {
 
 
 				//aumentamos consecutivo
 				$moviTemp2 = clone $moviTemp;
-				$consecutivo2 = $this->Movitemp->maximum(array("consecutivo","conditions"=>"sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'"));
+				$consecutivo2 = $this->Movitempniif->maximum(array("consecutivo","conditions"=>"sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'"));
 				$moviTemp2->setConsecutivo($consecutivo2+1);
 
 				if ($moviTemp2->save()==false) {
@@ -518,7 +518,7 @@ class MovimientoController extends ApplicationController
 		$tokenId = IdentityManager::getTokenId();
 
 		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'";
-		$moviTemp = $this->Movitemp->findFirst($conditions);
+		$moviTemp = $this->Movitempniif->findFirst($conditions);
 		if($moviTemp!=false){
 			$fechaMovi = (string) $moviTemp->getFecha();
 			$fechaVence = (string) $moviTemp->getFVence();
@@ -533,7 +533,7 @@ class MovimientoController extends ApplicationController
 		}
 
 		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND consecutivo='$consecutivo'";
-		$moviTemp = $this->Movitemp->findFirst($conditions);
+		$moviTemp = $this->Movitempniif->findFirst($conditions);
 
 		$nit = '';
 		if($controllerRequest->isSetPostParam('nit')){
@@ -597,7 +597,7 @@ class MovimientoController extends ApplicationController
 			$movement = $aura->validate($movement);
 
 			if($moviTemp==false){
-				$moviTemp = new Movitemp();
+				$moviTemp = new Movitempniif();
 				$moviTemp->setSid($tokenId);
 				$moviTemp->setComprob($codigoComprobante);
 				$moviTemp->setNumero($numero);
@@ -659,7 +659,7 @@ class MovimientoController extends ApplicationController
 		$creditos = 0;
 		$tokenId = IdentityManager::getTokenId();
 		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-		foreach ($this->Movitemp->find($conditions, 'columns: deb_cre,valor') as $moviTemp) {
+		foreach ($this->Movitempniif->find($conditions, 'columns: deb_cre,valor') as $moviTemp) {
 			if ($moviTemp->getDebCre() == 'D') {
 				$debitos += $moviTemp->getValor();
 			} else {
@@ -722,15 +722,15 @@ class MovimientoController extends ApplicationController
 
 				$conditionsTemp = "comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
 				$conditionsMovi = "comprob='$codigoComprobante' AND numero='$numero'";
-				$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo', 'group: sid');
-				$moviObj = $this->Movi->find($conditionsMovi, 'order: numero');
+				$sIdObj = $this->Movitempniif->find($conditionsTemp, 'order: consecutivo', 'group: sid');
+				$moviObj = $this->MoviNiif->find($conditionsMovi, 'order: numero');
 				if (count($sIdObj) > 1 || count($moviObj)) {
 
-					$numeroComprob = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
+					$numeroComprob = $this->MoviNiif->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
 
 					//Aumentar el consecutivo de movitemp
 					$conditionsTemp = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-					$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo', 'group: sid');
+					$sIdObj = $this->Movitempniif->find($conditionsTemp, 'order: consecutivo', 'group: sid');
 					foreach ($sIdObj as $moviTemp)
 					{
 						$moviTemp->setNumero($numeroComprob);
@@ -744,7 +744,7 @@ class MovimientoController extends ApplicationController
 
 
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-			foreach ($this->Movitemp->find($conditions, 'order: consecutivo') as $moviTemp) {
+			foreach ($this->Movitempniif->find($conditions, 'order: consecutivo') as $moviTemp) {
 				$aura->addMovement(array(
 					'Fecha' => $moviTemp->getFecha(),
 					'FechaVence' => $moviTemp->getFVence(),
@@ -762,7 +762,7 @@ class MovimientoController extends ApplicationController
 			}
 
 			$aura->save();
-			$this->Movitemp->deleteAll($conditions);
+			$this->Movitempniif->deleteAll($conditions);
 			return array(
 				'status' => 'OK',
 				'message' => "Se guardo el movimiento contable en el comprobante '$codigoComprobante-$numeroComprob'"
@@ -801,7 +801,7 @@ class MovimientoController extends ApplicationController
 		if ($comprob != false) {
 
 			if ($tipo == 'N') {
-				$movi = $this->Movi->findFirst("comprob='$codigoComprobante' AND numero='$numero'");
+				$movi = $this->MoviNiif->findFirst("comprob='$codigoComprobante' AND numero='$numero'");
 
 				$titulo = new ReportText('MOVIMIENTO CONTABLE ' . $comprob->getNomComprob() . '/' . $numero . ' de ' . $movi->getFecha()->getLocaleDate('medium'), array(
 					'fontSize' => 16,
@@ -904,7 +904,7 @@ class MovimientoController extends ApplicationController
 
 	private function moviContent($parameters, $report)
 	{
-		$movi = $this->Movi->find($parameters);
+		$movi = $this->MoviNiif->find($parameters);
 
 		foreach ($movi as $movi) {
 			$cuenta = BackCacher::getCuenta($movi->getCuenta());
@@ -1037,7 +1037,7 @@ class MovimientoController extends ApplicationController
 			comprob='$comprobanteOrigen' AND
 			numero='$numeroOrigen' AND
 			(cuenta LIKE '2365%' OR cuenta LIKE '2367%')";
-			$movimientoRetencion = $this->Movitemp->count($conditions);
+			$movimientoRetencion = $this->Movitempniif->count($conditions);
 			if($movimientoRetencion){
 				$fLimiteR = Date::fromFormat(substr($empresa1->getOtros(), 4, 10), 'MM/DD/YYYY');
 				if(Date::isEarlier($fecha, $fLimiteR)){
@@ -1052,7 +1052,7 @@ class MovimientoController extends ApplicationController
 			comprob='$comprobanteOrigen' AND
 			numero='$numeroOrigen' AND
 			(cuenta LIKE '4%' OR cuenta like '2408%')";
-			$movimientoIva = $this->Movitemp->count($conditions);
+			$movimientoIva = $this->Movitempniif->count($conditions);
 			if($movimientoIva){
 				if (strlen($empresa1->getOtros()) > 20) {
 					$fLimiteI = Date::fromFormat(substr($empresa1->getOtros(), 14, 10), 'MM/DD/YYYY');
@@ -1073,28 +1073,28 @@ class MovimientoController extends ApplicationController
 
 		$comprob = $this->Comprob->findFirst("codigo='$codigoComprobante'");
 
-		$maximoNumero = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
+		$maximoNumero = $this->MoviNiif->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
 		$numero = $comprob->getConsecutivo();
 		if ($numero < $maximoNumero) {
 
 			//Se usa el del comprob siempre//$numero = $maximoNumero;
 		}
 
-		$this->Movitemp->deleteAll("sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'");
-		$movis = $this->Movitemp->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen' AND estado='A'");
+		$this->Movitempniif->deleteAll("sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'");
+		$movis = $this->Movitempniif->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen' AND estado='A'");
 		//Si no encontro movitemp crearlo si existe movi
 		if (!count($movis)) {
 
 			$consecutivo = 0;
 			$fechaComprobante = null;
-			$movis = $this->Movi->find("comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
+			$movis = $this->MoviNiif->find("comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
 			foreach ($movis as $movi) {
 				$cuenta = BackCacher::getCuenta($movi->getCuenta());
 				if ($cuenta != false) {
 					if($fechaComprobante===null){
 						$fechaComprobante = $movi->getFecha();
 					}
-					$moviTemp = new Movitemp();
+					$moviTemp = new Movitempniif();
 					$moviTemp->setSid($tokenId);
 					$moviTemp->setConsecutivo($consecutivo);
 					foreach($movi->getAttributes() as $attribute){
@@ -1109,11 +1109,11 @@ class MovimientoController extends ApplicationController
 			}
 
 			//volvemos a tratar de coger el movitemp
-			$movis = $this->Movitemp->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen' AND estado='A'");
+			$movis = $this->Movitempniif->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen' AND estado='A'");
 		}
 		//echo "<br>","sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen' AND estado='A'";
 		foreach ($movis as $movi) {
-			$moviTemp = new Movitemp();
+			$moviTemp = new Movitempniif();
 			$moviTemp->setSid($tokenId);
 			foreach($movi->getAttributes() as $attribute){
 				$moviTemp->writeAttribute($attribute, $movi->readAttribute($attribute));
@@ -1131,7 +1131,7 @@ class MovimientoController extends ApplicationController
 				}
 			}
 		}
-		$this->Movitemp->deleteAll("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
+		$this->Movitempniif->deleteAll("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
 
 		return array(
 			'status' => 'OK',
@@ -1147,7 +1147,7 @@ class MovimientoController extends ApplicationController
 		$numero = $this->getPostParam('numero', 'int');
 
 		$tokenId = IdentityManager::getTokenId();
-		$moviTemp = $this->Movitemp->findFirst("sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'");
+		$moviTemp = $this->Movitempniif->findFirst("sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'");
 		if($moviTemp!=false){
 			Tag::displayTo('fechaComprobante', (string) $moviTemp->getFecha());
 		} else {
@@ -1189,9 +1189,9 @@ class MovimientoController extends ApplicationController
 		}
 
 		$tokenId = IdentityManager::getTokenId();
-		$movis = $this->Movitemp->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
+		$movis = $this->Movitempniif->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
 		foreach($movis as $movi){
-			$moviTemp = new Movitemp();
+			$moviTemp = new Movitempniif();
 			$moviTemp->setSid($tokenId);
 			foreach($movi->getAttributes() as $attribute){
 				$moviTemp->writeAttribute($attribute, $movi->readAttribute($attribute));
@@ -1271,7 +1271,7 @@ class MovimientoController extends ApplicationController
 		if($numero>0){
 			$tokenId = IdentityManager::getTokenId();
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'";
-			$this->Movitemp->deleteAll($conditions);
+			$this->Movitempniif->deleteAll($conditions);
 		}
 	}
 

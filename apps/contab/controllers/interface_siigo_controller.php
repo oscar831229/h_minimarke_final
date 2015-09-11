@@ -121,14 +121,63 @@ class Interface_SiigoController extends ApplicationController
 					$tipo = 'P';
 			}
 
+			$locciu = $tercero->getLocciu();
+			$tipoDoc = $this->getTipodoc($tercero->getTipodoc());
+
 			$data = array(
 				sprintf('%013s', substr($movi->getNit(), 0, 13)),
 				'000',
 				$tipo,
 				sprintf('%- 60s', substr($tercero->getNombre(), 0, 60)),
-				$contacto,
+				sprintf('%- 50s', substr($contacto, 0, 50)),
 				sprintf('%- 100s', substr($tercero->getDireccion(), 0, 100)),
 				sprintf('%011s', substr($tercero->getTelefono(), 0, 11)),
+				sprintf('%011s', '0'),//tel2
+				sprintf('%011s', '0'),//tel3
+				sprintf('%011s', '0'),//tel4
+				sprintf('%06s', substr($tercero->getApAereo(), 0, 6)),
+				sprintf('%- 100s', ''), //email
+				'M', //Sexo
+				'000',
+				$tipoDoc, //tipo documento
+				sprintf('%011s', '0'),//Cupo credito
+				sprintf('%02s', '1'),//Lista de precios
+				sprintf('%04s', '0'),//Codigo del vendor
+				sprintf('%04s', substr($this->getCodigoCiudad($locciu), 0, 4)),//Codigo de Ciudad
+				sprintf('%011s', '0.00'),//PORCENTAJE DE DESCUENTO
+				sprintf('%03s', '0'),//PERIODO DE PAGO
+				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÓN
+				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAÍS
+				'0',//DIGITO VERIFICACION
+				'0',//CALIFICACIÓN
+				sprintf('%05s', 0),//ACTIVIDAD ECONÓMICA
+				sprintf('%04s', 0),//FORMA DE PAGO
+				sprintf('%04s', 0),//COBRADOR
+				sprintf('%02s', $this->getTipoPersona($tipoDoc)),//TIPO DE PERSONA
+				'N',//DECLARANTE
+				'N',//AGENTE RETENEDOR
+				$this->getAutorretenedor($tercero->getAutoret()), //AUTORRETENEDOR
+				'N',//BENEFICIARIO RETEIVA 60%
+				'N',//AGENTE RETENEDOR ICA
+				'A',//ESTADO
+				'N',//ENTE PUBLICO
+				sprintf('%010s', 0),//CODIGO ENTE PUBLICO
+				'N',//ES RAZON SOCIAL
+				sprintf('%- 15s', ''),//PRIMER NOMBRE
+				sprintf('%- 15s', ''),//SEGUNDO NOMBRE
+				sprintf('%- 15s', ''),//PRIMER APELLIDO
+				sprintf('%- 15s', ''),//SEGUNDO APELLIDO
+				sprintf('%- 20s', ''),//NUMERO DE IDENTIFICACION DEL EXTRANJERO
+				'000',//RUTA
+				sprintf('%- 10s', ''),//REGISTRO
+				sprintf('%08s', 0),//FECHA VENCIMIENTO
+				sprintf('%08s', 0),//FECHA CUMPLEAÑOS
+				'N',//TIPO DE SOCIEDAD
+				sprintf('%- 10s', ''),//AUTORIZACION IMPRENTA
+				sprintf('%- 11s', ''),//AUTORIZACION CONTRIBUYENTE
+				sprintf('%04s', 0),//TIPO CONTRIBUYENTE
+				sprintf('%- 50s', ''),//CONTACTO FACTURA
+				sprintf('%- 90s', ''),//MAIL CONTACTO FACTURA
 			);
 
 			$line = join('', $data);
@@ -140,6 +189,58 @@ class Interface_SiigoController extends ApplicationController
 			'file' => $fileName
 		);
 
+	}
+
+	private function getAutorretenedor($autoret)
+	{
+		if (!$autoret) {
+			$autoret = 'N';
+		}
+
+		return $autoret;
+	}
+
+	private function getTipoPersona($tipo)
+	{
+		switch ($tipo) {
+			case 'E':
+				return '02';
+				break;
+
+			default:
+				return '01';
+				break;
+		}
+		return '01';
+	}
+
+	private function getCodigoPais($locciu)
+	{
+		return '057';
+	}
+
+	private function getCodigoCiudad($locciu)
+	{
+		return '0011';
+	}
+
+	private function getTipodoc($tipo)
+	{
+		$clase = '';
+		switch ($tipo) {
+			case 'A':
+				$clase = 'N';
+				break;
+			case 'E':
+				$clase = 'E';
+				break;
+
+			default:
+				$clase = 'C';
+				break;
+		}
+
+		return $clase;
 	}
 
 	protected function _processFacturacion($fecha, $comprobVentas, $comprobIngresos)
@@ -157,7 +258,7 @@ class Interface_SiigoController extends ApplicationController
 			'sucursal' => '000',
 			'producto' => '0000000000000',
 			'codven' => '0001',
-			'ciudad' => '0000',
+			'ciudad' => '0011',
 			'zona' => '000',
 			'bodega' => '0000',
 			'ubicacion' => '000',

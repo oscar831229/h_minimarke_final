@@ -1,4 +1,5 @@
 apps/*/config/*.ini
+apps/identity/security/data/*
 public/temp/*.pdf
 public/temp/*.html
 public/temp/*.xlsx
