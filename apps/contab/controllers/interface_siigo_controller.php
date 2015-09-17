@@ -61,7 +61,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobVentas) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ventas no estÃ¡ configurado'
+				'message' => 'El comprobante de ventas no está configurado'
 			);
 		}
 
@@ -69,7 +69,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobIngresos) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ingresos no estÃ¡ configurado'
+				'message' => 'El comprobante de ingresos no está configurado'
 			);
 		}
 
@@ -147,11 +147,11 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%04s', substr($this->getCodigoCiudad($locciu), 0, 4)),//Codigo de Ciudad
 				sprintf('%011s', '0.00'),//PORCENTAJE DE DESCUENTO
 				sprintf('%03s', '0'),//PERIODO DE PAGO
-				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÃ“N
-				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÃ“DIGO DEL PAÃS
+				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÓN
+				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAIS
 				'0',//DIGITO VERIFICACION
 				'000',//CALIFICACIÃ“N
-				sprintf('%05s', 0),//ACTIVIDAD ECONÃ“MICA
+				sprintf('%05s', 0),//ACTIVIDAD ECONÓMICA
 				sprintf('%04s', 0),//FORMA DE PAGO
 				sprintf('%04s', 0),//COBRADOR
 				sprintf('%02s', $this->getTipoPersona($tipoDoc)),//TIPO DE PERSONA
@@ -172,7 +172,7 @@ class Interface_SiigoController extends ApplicationController
 				'000',//RUTA
 				sprintf('%- 10s', ''),//REGISTRO
 				sprintf('%08s', 0),//FECHA VENCIMIENTO
-				sprintf('%08s', 0),//FECHA CUMPLEAÃ‘OS
+				sprintf('%08s', 0),//FECHA CUMPLEAÑOS
 				'N',//TIPO DE SOCIEDAD
 				sprintf('%- 10s', ''),//AUTORIZACION IMPRENTA
 				sprintf('%- 11s', ''),//AUTORIZACION CONTRIBUYENTE
