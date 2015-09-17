@@ -41,7 +41,7 @@ class Interface_SiigoController extends ApplicationController
 			));
 		}
 
-		$this->setParamToView('message', 'Indique los parámetros y haga click en "Generar"');
+		$this->setParamToView('message', 'Indique los parÃ¡metros y haga click en "Generar"');
 	}
 
 	public function generarAction()
@@ -61,7 +61,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobVentas) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ventas no está configurado'
+				'message' => 'El comprobante de ventas no estÃ¡ configurado'
 			);
 		}
 
@@ -69,7 +69,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobIngresos) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ingresos no está configurado'
+				'message' => 'El comprobante de ingresos no estÃ¡ configurado'
 			);
 		}
 
@@ -147,11 +147,11 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%04s', substr($this->getCodigoCiudad($locciu), 0, 4)),//Codigo de Ciudad
 				sprintf('%011s', '0.00'),//PORCENTAJE DE DESCUENTO
 				sprintf('%03s', '0'),//PERIODO DE PAGO
-				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÓN
-				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAÍS
+				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÃ“N
+				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÃ“DIGO DEL PAÃS
 				'0',//DIGITO VERIFICACION
-				'000',//CALIFICACIÓN
-				sprintf('%05s', 0),//ACTIVIDAD ECONÓMICA
+				'000',//CALIFICACIÃ“N
+				sprintf('%05s', 0),//ACTIVIDAD ECONÃ“MICA
 				sprintf('%04s', 0),//FORMA DE PAGO
 				sprintf('%04s', 0),//COBRADOR
 				sprintf('%02s', $this->getTipoPersona($tipoDoc)),//TIPO DE PERSONA
@@ -172,11 +172,11 @@ class Interface_SiigoController extends ApplicationController
 				'000',//RUTA
 				sprintf('%- 10s', ''),//REGISTRO
 				sprintf('%08s', 0),//FECHA VENCIMIENTO
-				sprintf('%08s', 0),//FECHA CUMPLEAÑOS
+				sprintf('%08s', 0),//FECHA CUMPLEAÃ‘OS
 				'N',//TIPO DE SOCIEDAD
 				sprintf('%- 10s', ''),//AUTORIZACION IMPRENTA
 				sprintf('%- 11s', ''),//AUTORIZACION CONTRIBUYENTE
-				sprintf('%04s', 99),//TIPO CONTRIBUYENTE
+				sprintf('%02s', 99),//TIPO CONTRIBUYENTE
 				sprintf('%- 50s', ''),//CONTACTO FACTURA
 				sprintf('%- 90s', ''),//MAIL CONTACTO FACTURA 
 			);
