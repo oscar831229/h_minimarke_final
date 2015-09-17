@@ -192,9 +192,10 @@ class Interface_SiigoController extends ApplicationController
 
 		$data['nit'] = sprintf('%013s', substr($movi->getNit(), 0, 13));
 		$data['numero'] = sprintf('%011s', $movi->getNumeroDoc());
-		$data['cuenta'] = sprintf('%010s', substr($movi->getCuenta(), 0, 10));
-		$data['fecha'] = $fechaMovi;
-		$data['centro'] = '0'.substr($movi->getCentroCosto(), 0, 3);
+		//$data['cuenta'] = sprintf('%010s', substr($movi->getCuenta(), 0, 10));
+		$data['cuenta'] = str_pad($movi->getCuenta(), 10, '0');
+		//$data['centro'] = '0'.substr($movi->getCentroCosto(), 0, 3);
+		$data['centro'] = '0100';
 		$data['subcentro'] = substr($movi->getCentroCosto(), 3, 2);
 		$data['desc'] = sprintf('%- 50s', substr($movi->getDescripcion(), 0, 50));
 		$data['debcre'] = $movi->getDebcre();
