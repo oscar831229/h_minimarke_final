@@ -41,7 +41,7 @@ class Interface_SiigoController extends ApplicationController
 			));
 		}
 
-		$this->setParamToView('message', 'Indique los parámetros y haga click en "Generar"');
+		$this->setParamToView('message', 'Indique los parÃ¡metros y haga click en "Generar"');
 	}
 
 	public function generarAction()
@@ -148,9 +148,9 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%011s', '0.00'),//PORCENTAJE DE DESCUENTO
 				sprintf('%03s', '0'),//PERIODO DE PAGO
 				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÓN
-				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAÍS
+				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAIS
 				'0',//DIGITO VERIFICACION
-				'000',//CALIFICACIÓN
+				'000',//CALIFICACIÃ“N
 				sprintf('%05s', 0),//ACTIVIDAD ECONÓMICA
 				sprintf('%04s', 0),//FORMA DE PAGO
 				sprintf('%04s', 0),//COBRADOR
@@ -176,7 +176,7 @@ class Interface_SiigoController extends ApplicationController
 				'N',//TIPO DE SOCIEDAD
 				sprintf('%- 10s', ''),//AUTORIZACION IMPRENTA
 				sprintf('%- 11s', ''),//AUTORIZACION CONTRIBUYENTE
-				sprintf('%04s', 99),//TIPO CONTRIBUYENTE
+				sprintf('%02s', 99),//TIPO CONTRIBUYENTE
 				sprintf('%- 50s', ''),//CONTACTO FACTURA
 				sprintf('%- 90s', ''),//MAIL CONTACTO FACTURA 
 			);
