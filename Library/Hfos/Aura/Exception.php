@@ -14,3 +14,7 @@
 class AuraException extends CoreException {
 
 }
+
+class AuraNiifException extends CoreException {
+
+}

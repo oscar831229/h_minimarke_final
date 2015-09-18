@@ -13,6 +13,8 @@
  * @version		$Id$
  */
 
+Core::importFromLibrary('Hfos/Aura','Exception.php');
+
 /**
  * Movimiento_niifController
  *
@@ -37,7 +39,7 @@ class Movimiento_niifController extends ApplicationController
 		if ($controllerRequest->isSetPostParam('clean')) {
 			$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
 			$numero = $this->getPostParam('numero', 'int');
-			if($numero>0){
+			if ($numero > 0) {
 				$tokenId = IdentityManager::getTokenId();
 				$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'";
 				$this->Movitempniif->deleteAll($conditions);
@@ -94,7 +96,7 @@ class Movimiento_niifController extends ApplicationController
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
 			foreach ($this->Movitempniif->find($conditions, 'order: consecutivo') as $movi) {
 				$codigoCuenta = $movi->getCuenta();
-				$cuenta = BackCacher::getCuenta($codigoCuenta);
+				$cuenta = BackCacher::getCuentaNiif($codigoCuenta);
 				if ($cuenta != false) {
 					$movimientos[] = array(
 						'numero' => $movi->getConsecutivo(),
@@ -254,7 +256,7 @@ class Movimiento_niifController extends ApplicationController
 		$movis = $this->MoviNiif->find("comprob='$codigoComprobante' AND numero='$numero'");
 		foreach ($movis as $movi) {
 			$codigoCuenta = $movi->getCuenta();
-			$cuenta = BackCacher::getCuenta($codigoCuenta);
+			$cuenta = BackCacher::getCuentaNiif($codigoCuenta);
 			$movimientos[] = array(
 				'cuenta' => $codigoCuenta,
 				'nombreCuenta' => $cuenta->getNombre(),
@@ -272,11 +274,11 @@ class Movimiento_niifController extends ApplicationController
 
 		Session::set('lastAction', 'editar');
 
-		echo $codigoComprobante = $this->getRequestParam('codigoComprobante', 'alpha');
+		$codigoComprobante = $this->getRequestParam('codigoComprobante', 'alpha');
 		$numero = $this->getRequestParam('numero', 'int');
 
 		$comprob = $this->Comprob->findFirst("codigo='$codigoComprobante'");
-		if ($comprob==false) {
+		if ($comprob == false) {
 			Flash::error('No se encontró el comprobante "'.$codigoComprobante.'"');
 			return $this->routeToAction('getDetallesError');
 		} else {
@@ -295,14 +297,15 @@ class Movimiento_niifController extends ApplicationController
 		$this->Movitempniif->deleteAll($conditions);
 
 		$consecutivo = 0;
-		$fechaComprobante = null;
 		$movimientos = array();
+		$fechaComprobante = null;
+
 		$tokenId = IdentityManager::getTokenId();
 		$movis = $this->MoviNiif->find("comprob='$codigoComprobante' AND numero='$numero'");
 		foreach ($movis as $movi) {
-			$cuenta = BackCacher::getCuenta($movi->getCuenta());
-			if($cuenta!=false){
-				if($fechaComprobante===null){
+			$cuenta = BackCacher::getCuentaNiif($movi->getCuenta());
+			if ($cuenta!=false) {
+				if ($fechaComprobante===null) {
 					$fechaComprobante = $movi->getFecha();
 				}
 				$movimientos[] = array(
@@ -323,7 +326,7 @@ class Movimiento_niifController extends ApplicationController
 				$moviTemp->save();
 				$consecutivo++;
 			} else {
-				Flash::error('La cuenta '.$movi->getCuenta().' no existe');
+				Flash::error('La cuenta ' . $movi->getCuenta() . ' no existe');
 			}
 		}
 		$this->setParamToView('movimientos', $movimientos);
@@ -348,7 +351,7 @@ class Movimiento_niifController extends ApplicationController
 			$moviTemp->setEstado('A');
 		}
 
-		$cuenta = $this->Cuentas->findFirst(array("cuenta='$codigoCuenta'", 'colums' => 'cuenta,tipo,nombre,pide_nit,pide_centro,pide_fact,pide_base,es_auxiliar'));
+		$cuenta = $this->Niif->findFirst(array("cuenta='$codigoCuenta'", 'columns' => 'cuenta,tipo,nombre,pide_nit,pide_centro,pide_fact,pide_base,es_auxiliar'));
 		if($cuenta==false){
 			Flash::error('La cuenta no existe');
 			return $this->routeToAction('getDetallesError');
@@ -502,6 +505,7 @@ class Movimiento_niifController extends ApplicationController
 
 	public function guardarLineaAction()
 	{
+		Core::importFromLibrary('Hfos/Aura','AuraNiif.php');
 
 		$this->setResponse('json');
 		$controllerRequest = ControllerRequest::getInstance();
@@ -592,11 +596,11 @@ class Movimiento_niifController extends ApplicationController
 
 		$auraException = false;
 		try {
-			$aura = new Aura($codigoComprobante, $numero);
+			$aura = new AuraNiif($codigoComprobante, $numero);
 			$aura->setActiveLine($consecutivo+1);
 			$movement = $aura->validate($movement);
 
-			if($moviTemp==false){
+			if ($moviTemp==false) {
 				$moviTemp = new Movitempniif();
 				$moviTemp->setSid($tokenId);
 				$moviTemp->setComprob($codigoComprobante);
@@ -688,7 +692,7 @@ class Movimiento_niifController extends ApplicationController
 		$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
 		$numero = $this->getPostParam('numero', 'int');
 		try {
-			$aura = new Aura($codigoComprobante, $numero, null, Aura::OP_DELETE);
+			$aura = new AuraNiif($codigoComprobante, $numero, null, Aura::OP_DELETE);
 			$aura->delete();
 			return array(
 				'status' => 'OK'
@@ -703,7 +707,7 @@ class Movimiento_niifController extends ApplicationController
 
 	public function guardarAction()
 	{
-
+		Core::importFromLibrary('Hfos/Aura','AuraNiif.php');
 		$this->setResponse('json');
 
 		$controllerRequest = ControllerRequest::getInstance();
@@ -740,7 +744,7 @@ class Movimiento_niifController extends ApplicationController
 				}
 			}
 
-			$aura = new Aura($codigoComprobante, $numeroComprob);
+			$aura = new AuraNiif($codigoComprobante, $numeroComprob);
 
 
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
@@ -907,7 +911,7 @@ class Movimiento_niifController extends ApplicationController
 		$movi = $this->MoviNiif->find($parameters);
 
 		foreach ($movi as $movi) {
-			$cuenta = BackCacher::getCuenta($movi->getCuenta());
+			$cuenta = BackCacher::getCuentaNiif($movi->getCuenta());
 			if ($movi->getNumeroDoc()) {
 				$numeroDoc = $movi->getTipoDoc() . '-' . $movi->getNumeroDoc();
 			} else {
@@ -950,7 +954,7 @@ class Movimiento_niifController extends ApplicationController
 
 		foreach ($movi as $movi) {
 
-			$cuenta = BackCacher::getCuenta($movi->getCuenta());
+			$cuenta = BackCacher::getCuentaNiif($movi->getCuenta());
 			$niif 	= BackCacher::getCuentaNiif($movi->getCuenta());
 
 			if ($movi->getNumeroDoc()) {
@@ -1089,7 +1093,7 @@ class Movimiento_niifController extends ApplicationController
 			$fechaComprobante = null;
 			$movis = $this->MoviNiif->find("comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
 			foreach ($movis as $movi) {
-				$cuenta = BackCacher::getCuenta($movi->getCuenta());
+				$cuenta = BackCacher::getCuentaNiif($movi->getCuenta());
 				if ($cuenta != false) {
 					if($fechaComprobante===null){
 						$fechaComprobante = $movi->getFecha();
@@ -1216,7 +1220,7 @@ class Movimiento_niifController extends ApplicationController
 		} else {
 			$carteras = $this->Cartera->find("cuenta='$codigoCuenta' AND nit='$nitNumero' AND saldo!=0","order: f_emision ASC");
 			if(count($carteras)==0){
-				$cuenta = BackCacher::getCuenta($codigoCuenta);
+				$cuenta = BackCacher::getCuentaNiif($codigoCuenta);
 				if($cuenta==false){
 					Flash::notice('El tercero no tiene cartera pendiente por pagar ó abonar');
 				} else {

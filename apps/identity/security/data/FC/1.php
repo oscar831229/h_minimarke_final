@@ -80,11 +80,11 @@
   ),
   'lista_precios' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'settings' => 
   array (

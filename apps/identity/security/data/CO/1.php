@@ -55,6 +55,15 @@
     'cambiarFecha' => true,
     'copiar' => true,
   ),
+  'movimiento_niif' => 
+  array (
+    'index' => true,
+    'buscar' => true,
+    'guardar' => true,
+    'eliminar' => true,
+    'cambiarFecha' => true,
+    'copiar' => true,
+  ),
   'consultas' => 
   array (
     'index' => true,
@@ -242,12 +251,12 @@
   'recibo_caja' => 
   array (
     'index' => true,
-    'buscar' => true,
-    'ver' => true,
-    'nuevo' => true,
-    'generar' => true,
-    'anular' => true,
-    'imprimir' => true,
+    'buscar' => false,
+    'ver' => false,
+    'nuevo' => false,
+    'generar' => false,
+    'anular' => false,
+    'imprimir' => false,
   ),
   'cheque' => 
   array (
@@ -331,7 +340,7 @@
   ),
   'interface_siigo' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'cierre_contable' => 
   array (
@@ -363,19 +372,19 @@
   ),
   'niif' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'nic' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'cuentas' => 
   array (
@@ -456,11 +465,11 @@
   ),
   'cuentas_cree' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'centros' => 
   array (

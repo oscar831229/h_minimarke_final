@@ -43,3 +43,9 @@ CREATE TABLE `movibackup` (
 create table movitempniif like movitemp;
 alter table movitempniif add column cuenta_movi varchar(20) null;
 alter table movitempniif add column numero_movi varchar(20) null;
+
+create table movibackupniif like movibackup;
+alter table movibackupniif add column cuenta_movi varchar(20);
+
+create table grabniif like grab;
+#alter table grabniif add column cuenta_movi varchar(20);
