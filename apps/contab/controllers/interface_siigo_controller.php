@@ -163,10 +163,10 @@ class Interface_SiigoController extends ApplicationController
 			'ubicacion' => '000',
 			'cantidad' => '000000000000000',
 			'tipdoc' => 'R',
-    		'comcru' => 'R01',
+    		'comcru' => 'F01', //Nuevo, antes R01
     		'numcru' => '00000000000',
-    		'seccru' => '000',
-    		'forpag' => '0000',
+    		'seccru' => '001', //Antes 000
+    		'forpag' => '0001', //Antes 0000
     		'codban' => '00'
 		);
 
@@ -256,12 +256,30 @@ class Interface_SiigoController extends ApplicationController
 			'codban',
 		);
 
+		$fecha = "";
+		$codban = "";
 		$row = array();
 		foreach ($fields as $field) {
 			if (isset($data[$field])) {
-				$row[] = $data[$field];
+			
+				$fecha = $field == "fecha" ? $data[$field];
+				$codban = $field == "numero" ? $data[$field];
+				
+				switch($field) {
+					case "feccru":
+							$row[] = $fecha;
+						break;
+					case "codban":
+							$row[] = $codban;
+						break;
+					default:
+							$row[] = $data[$field];
+						break;
+				}
+				//$row[] = $data[$field];
+					
 			} else {
-				$row[] = $field;
+				$row[] = $field;	
 			}
 		}
 
