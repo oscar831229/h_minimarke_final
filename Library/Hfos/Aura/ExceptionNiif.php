@@ -11,6 +11,6 @@
  * @author 		BH-TECK Inc. 2009-2010
  * @version		$Id$
  */
-class AuraException extends CoreException {
+class AuraNiifException extends CoreException {
 
 }

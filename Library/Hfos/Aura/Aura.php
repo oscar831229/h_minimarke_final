@@ -1497,7 +1497,9 @@ class Aura extends UserComponent
 			}
 		}
 		//Create Movi Niif
-		new AuraNiif ($grab->getComprob(), $grab->getNumero());
+		$auraNiif = new AuraNiif;
+		$auraNiif->setTransaction($this->_transaction);
+		$auraNiif->createMoviNiifByMovi($grab->getComprob(), $grab->getNumero());
 	}
 
 	/**

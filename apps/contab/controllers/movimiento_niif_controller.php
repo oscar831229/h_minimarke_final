@@ -505,8 +505,6 @@ class Movimiento_niifController extends ApplicationController
 
 	public function guardarLineaAction()
 	{
-		Core::importFromLibrary('Hfos/Aura','AuraNiif.php');
-
 		$this->setResponse('json');
 		$controllerRequest = ControllerRequest::getInstance();
 
@@ -689,14 +687,17 @@ class Movimiento_niifController extends ApplicationController
 		$this->setResponse('json');
 		$controllerRequest = ControllerRequest::getInstance();
 
-		$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
-		$numero = $this->getPostParam('numero', 'int');
 		try {
+			$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
+			$numero = $this->getPostParam('numero', 'int');
+
 			$aura = new AuraNiif($codigoComprobante, $numero, null, Aura::OP_DELETE);
 			$aura->delete();
+
 			return array(
 				'status' => 'OK'
 			);
+
 		} catch(Exception $e){
 			return array(
 				'status' => 'FAILED',
@@ -707,7 +708,6 @@ class Movimiento_niifController extends ApplicationController
 
 	public function guardarAction()
 	{
-		Core::importFromLibrary('Hfos/Aura','AuraNiif.php');
 		$this->setResponse('json');
 
 		$controllerRequest = ControllerRequest::getInstance();

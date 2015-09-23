@@ -1244,7 +1244,7 @@ class AuraNiif extends UserComponent
      */
     public function createMoviNiifByMovi($comprob, $numero)
     {
-        $movis = $this->MoviNiif->find(array(
+        $movis = $this->Movi->setTransaction($this->_transaction)->find(array(
             "conditions" => "comprob = '$comprob' AND numero= '$numero'"
         ));
 
@@ -1294,4 +1294,9 @@ class AuraNiif extends UserComponent
         }
 
     }
+
+	public function setTransaction($transaction)
+	{
+		$this->_transaction = $transaction;
+	}
 }

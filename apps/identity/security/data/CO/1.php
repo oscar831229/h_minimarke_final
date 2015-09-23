@@ -251,12 +251,12 @@
   'recibo_caja' => 
   array (
     'index' => true,
-    'buscar' => false,
-    'ver' => false,
-    'nuevo' => false,
-    'generar' => false,
-    'anular' => false,
-    'imprimir' => false,
+    'buscar' => true,
+    'ver' => true,
+    'nuevo' => true,
+    'generar' => true,
+    'anular' => true,
+    'imprimir' => true,
   ),
   'cheque' => 
   array (
@@ -340,7 +340,7 @@
   ),
   'interface_siigo' => 
   array (
-    'index' => false,
+    'index' => true,
   ),
   'cierre_contable' => 
   array (
@@ -372,19 +372,19 @@
   ),
   'niif' => 
   array (
-    'index' => false,
-    'save' => false,
-    'delete' => false,
-    'search' => false,
-    'rcs' => false,
+    'index' => true,
+    'save' => true,
+    'delete' => true,
+    'search' => true,
+    'rcs' => true,
   ),
   'nic' => 
   array (
-    'index' => false,
-    'save' => false,
-    'delete' => false,
-    'search' => false,
-    'rcs' => false,
+    'index' => true,
+    'save' => true,
+    'delete' => true,
+    'search' => true,
+    'rcs' => true,
   ),
   'cuentas' => 
   array (
@@ -465,11 +465,11 @@
   ),
   'cuentas_cree' => 
   array (
-    'index' => false,
-    'save' => false,
-    'delete' => false,
-    'search' => false,
-    'rcs' => false,
+    'index' => true,
+    'save' => true,
+    'delete' => true,
+    'search' => true,
+    'rcs' => true,
   ),
   'centros' => 
   array (
