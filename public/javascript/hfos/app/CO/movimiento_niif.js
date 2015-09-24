@@ -659,7 +659,7 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 	 * Copia un comprobante
 	 */
 	_copyComprobante: function(){
-		new HfosModalForm(this, 'movimiento/copiar', {
+		new HfosModalForm(this, 'movimiento_niif/copiar', {
 			checkAcl: true,
 			parameters: this._key,
 			beforeClose: function(form, canceled, response){
@@ -701,7 +701,7 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 	 */
 	_printInternal: function()
 	{
-		new HfosModalForm(this, 'movimiento/imprimir', {
+		new HfosModalForm(this, 'movimiento_niif/imprimir', {
 			checkAcl: true,
 			parameters: this._key,
 			beforeClose: function(form, canceled, response){
@@ -719,7 +719,7 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 	 */
 	_cambiarFechaComprobante: function()
 	{
-		new HfosModalForm(this, 'movimiento/cambiarFecha', {
+		new HfosModalForm(this, 'movimiento_niif/cambiarFecha', {
 			checkAcl: true,
 			parameters: this._key,
 			beforeClose: function(form, canceled, response) {
@@ -1744,7 +1744,7 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 		}
 
 		if (nitElement.getValue() !== '') {
-			new HfosModalForm(this, 'movimiento/verCartera', {
+			new HfosModalForm(this, 'movimiento_niif/verCartera', {
 				parameters: {
 					'nit': nitElement.getValue(),
 					'cuenta': cuentaElement.getValue()
@@ -2268,7 +2268,7 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 	{
 		var params = this.getContentElement().lang;
 		if (params != '') {
-			new HfosModalForm(this, 'movimiento/revisiones', {
+			new HfosModalForm(this, 'movimiento_niif/revisiones', {
 				parameters: params,
 				beforeClose: function(params, form, canceled, response){
 					/*if (canceled==false){

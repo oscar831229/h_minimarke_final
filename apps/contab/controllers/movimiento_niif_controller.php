@@ -867,7 +867,7 @@ class Movimiento_niifController extends ApplicationController
 		$parameters = array("comprob='$codigoComprobante' AND numero='$numero'");
 		switch ($orden) {
 			case 'F':
-				$parameters['order'] = "numfol, cuenta, deb_cre";
+				$parameters['order'] = "cuenta, deb_cre";
 				break;
 			case 'C':
 				$parameters['order'] = "cuenta, deb_cre";
@@ -878,7 +878,7 @@ class Movimiento_niifController extends ApplicationController
 			case 'S':
 				break;
 			default:
-				$parameters['order'] = "numfol, cuenta, deb_cre";
+				$parameters['order'] = "cuenta, deb_cre";
 				break;
 		}
 
@@ -897,7 +897,7 @@ class Movimiento_niifController extends ApplicationController
 
 		$report->finish();
 
-		$fileName = $report->outputToFile('public/temp/movimiento-'.$codigoComprobante.'-'.$numero);
+		$fileName = $report->outputToFile('public/temp/movimiento-niif-'.$codigoComprobante.'-'.$numero);
 
 		return array(
 			'status' => 'OK',
@@ -1032,49 +1032,8 @@ class Movimiento_niifController extends ApplicationController
 			);
 		}
 
-		try {
-
-			$empresa1 = $this->Empresa1->findFirst();
-			$tokenId = IdentityManager::getTokenId();
-
-			$conditions = "sid='$tokenId' AND
-			comprob='$comprobanteOrigen' AND
-			numero='$numeroOrigen' AND
-			(cuenta LIKE '2365%' OR cuenta LIKE '2367%')";
-			$movimientoRetencion = $this->Movitempniif->count($conditions);
-			if($movimientoRetencion){
-				$fLimiteR = Date::fromFormat(substr($empresa1->getOtros(), 4, 10), 'MM/DD/YYYY');
-				if(Date::isEarlier($fecha, $fLimiteR)){
-					return array(
-						'status' => 'FAILED',
-						'message' => 'No se puede usar la fecha, porque es menor al limite de presentación de retención'
-					);
-				}
-			}
-
-			$conditions = "sid='$tokenId' AND
-			comprob='$comprobanteOrigen' AND
-			numero='$numeroOrigen' AND
-			(cuenta LIKE '4%' OR cuenta like '2408%')";
-			$movimientoIva = $this->Movitempniif->count($conditions);
-			if($movimientoIva){
-				if (strlen($empresa1->getOtros()) > 20) {
-					$fLimiteI = Date::fromFormat(substr($empresa1->getOtros(), 14, 10), 'MM/DD/YYYY');
-					if(Date::isEarlier($fecha, $fLimiteI)){
-						return array(
-							'status' => 'FAILED',
-							'message' => 'No se puede usar la fecha, porque es menor al limite de presentación de IVA'
-						);
-					}
-				}
-			}
-		} catch (DateException $e) {
-			return array(
-				'status' => 'FAILED',
-				'message' => 'La fecha de limite de retención o IVA no es válida por favor verifique '
-			);
-		}
-
+		$empresa1 = $this->Empresa1->findFirst();
+		$tokenId = IdentityManager::getTokenId();
 		$comprob = $this->Comprob->findFirst("codigo='$codigoComprobante'");
 
 		$maximoNumero = $this->MoviNiif->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
@@ -1086,6 +1045,7 @@ class Movimiento_niifController extends ApplicationController
 
 		$this->Movitempniif->deleteAll("sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'");
 		$movis = $this->Movitempniif->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen' AND estado='A'");
+
 		//Si no encontro movitemp crearlo si existe movi
 		if (!count($movis)) {
 
@@ -1162,7 +1122,8 @@ class Movimiento_niifController extends ApplicationController
 		$this->setParamToView('numero', $numero);
 	}
 
-	public function hacerCambioFechaAction(){
+	public function hacerCambioFechaAction()
+	{
 
 		$this->setResponse('json');
 
@@ -1179,33 +1140,42 @@ class Movimiento_niifController extends ApplicationController
 			$fechaCierre = $empresa->getFCierrec();
 			if(Date::isEarlier($fecha, $fechaCierre)){
 				return array(
-					'status' => 'FAILED',
+					'status'  => 'FAILED',
 					'message' => 'La fecha del comprobante debe ser mayor al último cierre'
 				);
 			}
 
-		}
-		catch(DateException $e){
+		} catch(DateException $e){
 			return array(
-				'status' => 'FAILED',
+				'status'  => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
 
 		$tokenId = IdentityManager::getTokenId();
 		$movis = $this->Movitempniif->find("sid='$tokenId' AND comprob='$comprobanteOrigen' AND numero='$numeroOrigen'");
-		foreach($movis as $movi){
+
+		$flag = true;
+		foreach ($movis as $movi) {
+
 			$moviTemp = new Movitempniif();
-			$moviTemp->setSid($tokenId);
+
 			foreach($movi->getAttributes() as $attribute){
 				$moviTemp->writeAttribute($attribute, $movi->readAttribute($attribute));
 			}
+
+			$moviTemp->setSid($tokenId);
 			$moviTemp->setFecha($fecha);
-			$moviTemp->save();
+
+			if ($moviTemp->save() == false) {
+				$flag = false;
+			}
+
 		}
 
 		return array(
-			'status' => 'OK'
+			'status' => 'OK',
+			'flag'   => $flag
 		);
 
 	}

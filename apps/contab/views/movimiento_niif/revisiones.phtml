@@ -27,7 +27,7 @@ View::getContent();
 			</table>
 		</div>
 		<div class="messages"></div>
-		<?php echo Tag::form('movimiento/revisiones', 'onbeforesubmit: return false', 'autocomplete: off'); ?>
+		<?php echo Tag::form('movimiento_niif/revisiones', 'onbeforesubmit: return false', 'autocomplete: off'); ?>
 			<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
 			<?php
 				if (isset($grabObj)) {
@@ -39,7 +39,7 @@ View::getContent();
 							'<th class="sortcol">Usuario</th>',
 						'</tr>';
 
-					foreach ($grabObj as $grab) 
+					foreach ($grabObj as $grab)
 					{
 						$accion = "?? ({$grab->getAccion()})";
 						if (isset($acciones[$grab->getAccion()])) {
@@ -50,7 +50,7 @@ View::getContent();
 							'<td>',$grab->getFechaGrab(),'</td>',
 							'<td>',$grab->getHoraGrab(),'</td>',
 							'<td>',$grab->getCodigoGrab(),'</td>',
-						'</tr>';							
+						'</tr>';
 					}
 				}
 			?>

@@ -26,7 +26,7 @@
 		</div>
 		<div class="messages"><?php View::getContent() ?></div>
 		<?php
-			echo Tag::form('movimiento/tomarCartera', 'onbeforesubmit: return false', 'autocomplete: off');
+			echo Tag::form('movimiento_niif/tomarCartera', 'onbeforesubmit: return false', 'autocomplete: off');
 			if(isset($carteras)){
 				echo '<table class="tablaDatosCartera">
 					<tr>
