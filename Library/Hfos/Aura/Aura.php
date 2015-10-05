@@ -12,7 +12,7 @@
  * @version		$Id$
  */
 
-require 'AuraNiif.php';
+require_once 'AuraNiif.php';
 /**
  * Aura
  *

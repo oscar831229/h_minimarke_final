@@ -11,6 +11,7 @@
  * @author      BH-TECK Inc. 2009-2015
  * @version     $Id$
  */
+ error_reporting(E_ALL);
 
 /**
  * Aura para Niif
@@ -266,7 +267,8 @@ class AuraNiif extends UserComponent
 	 * @param string $fecha
 	 * @param int $activeAction
 	 */
-	public function __construct($codigoComprobante='', $numero=0, $fecha='', $activeAction=null) {
+	public function __construct($codigoComprobante='', $numero=0, $fecha='', $activeAction=null)
+	{
 
 		if (self::$_empresa === null) {
 			self::$_empresa = $this->Empresa->findFirst();
@@ -854,15 +856,6 @@ class AuraNiif extends UserComponent
 			throw new AuraNiifException("No existe el comprobante a eliminar {$this->_defaultComprob}-{$this->_defaultNumero}");
 		}
 
-		if ($this->_activeAction == self::OP_DELETE) {
-			$conditions = "comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero' AND estado='E'";
-			$this->Cheque->setTransaction($this->_transaction);
-			if ($this->Cheque->count($conditions)>0) {
-				throw new AuraNiifException('El comprobante está asociado a un cheque, debe anular el cheque primero');
-			}
-			unset($conditions);
-		}
-
 		$conditions = "comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'";
 
 		$this->backupMovi($this->_defaultComprob, $this->_defaultNumero);
@@ -912,30 +905,12 @@ class AuraNiif extends UserComponent
 		$this->MoviNiif->deleteAll("comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'");
 
 		if ($this->_activeAction == self::OP_DELETE) {
-			if ($comprob->getConsecutivo() == ($this->_defaultNumero+1)) {
-				$comprob->setTransaction($this->_transaction);
-				$comprob->setConsecutivo($this->_defaultNumero);
-				if ($comprob->save() == false) {
-					if ($this->_externalTransaction == true) {
-						foreach ($comprob->getMessages() as $message) {
-							$this->_transaction->rollback('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
-						}
-					} else {
-						foreach ($comprob->getMessages() as $message) {
-							throw new AuraNiifException('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
-						}
-					}
-				}
-			}
 			$this->Movitempniif->deleteAll("comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'");
-
 			if ($comprob) {
 				$comprob->setConsecutivo($this->_defaultNumero);
 				$this->_createGrab($comprob, 'D', true);
 			}
-
 		}
-
 	}
 
 	/**

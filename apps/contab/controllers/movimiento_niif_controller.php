@@ -14,6 +14,7 @@
  */
 
 Core::importFromLibrary('Hfos/Aura','Exception.php');
+Core::importFromLibrary('Hfos/Aura','ExceptionNiif.php');
 
 /**
  * Movimiento_niifController
@@ -684,10 +685,10 @@ class Movimiento_niifController extends ApplicationController
 
 	public function eliminarAction()
 	{
-		$this->setResponse('json');
-		$controllerRequest = ControllerRequest::getInstance();
-
 		try {
+			$this->setResponse('json');
+			$controllerRequest = ControllerRequest::getInstance();
+
 			$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
 			$numero = $this->getPostParam('numero', 'int');
 
