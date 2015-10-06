@@ -91,6 +91,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 		$report->setDocumentTitle('Balance Consolidado Anual');
 
 		$headers = array(
+			'PERIODO',
 			'CÓDIGO',
 			'DEBITOS',
 			'CRÉDITOS',
@@ -109,7 +110,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			'fontSize' => 11
 		)));
 
-		$report->setColumnStyle(array(1, 2, 3), new ReportStyle(array(
+		$report->setColumnStyle(array(2, 3, 4), new ReportStyle(array(
 			'textAlign' => 'right',
 			'fontSize' => 11,
 		)));
@@ -118,7 +119,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			'type' => 'Number',
 			'decimals' => 2
 		));
-		$report->setColumnFormat(array(1, 2, 3), $numberFormat);
+		$report->setColumnFormat(array(2, 3, 4), $numberFormat);
 
 		$leftColumn = new ReportStyle(array(
 			'textAlign' => 'left',
@@ -130,7 +131,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			'fontSize' => 11,
 		));
 
-		$report->setTotalizeColumns(array(1, 2, 3));
+		$report->setTotalizeColumns(array(2, 3, 4));
 
 		$report->start(true);
 
@@ -138,7 +139,10 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 		$totalCreditos = 0;
 		$totalSaldo = 0;
 
-		$saldoscs = $this->Saldosc->find("ano_mes >= ".$year."01 AND ano_mes <= ".$year."12");
+		$saldoscs = $this->Saldosc->find(array(
+			"condition" => "ano_mes >= ".$year."01 AND ano_mes <= ".$year."12",
+			"order" => "ano_mes, cuenta ASC"
+		));
 		if (!count($saldoscs)) {
 			throw new Exception("No se encontro saldos en el a&ntilde;o '$year'");
 		}
@@ -149,6 +153,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			$saldo = $saldosc->getSaldo();
 
 			$report->addRow(array(
+				$saldosc->getAnoMes(),
 				$saldosc->getCuenta(),
 				$debe,
 				$haber,
@@ -161,9 +166,9 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 		}
 
 		$report->setTotalizeValues(array(
-			1 => $totalDebitos,
-			2 => $totalCreditos,
-			3 => $totalSaldo
+			2 => $totalDebitos,
+			3 => $totalCreditos,
+			4 => $totalSaldo
 		));
 
 		$report->finish();
