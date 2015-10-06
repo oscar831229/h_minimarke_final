@@ -84,6 +84,10 @@
   array (
     'index' => true,
   ),
+  'informe_balance_consolidado' => 
+  array (
+    'index' => true,
+  ),
   'libro_auxiliar' => 
   array (
     'index' => true,

@@ -32,6 +32,7 @@ $menuDisposition = array(
 		'description' => 'Informes de comprobación y balances',
 		'options' => array(
 			'balance',
+			'informe_balance_consolidado',
 			'libro_auxiliar',
 			'consecutivos',
 			'movimiento_terceros',
@@ -359,6 +360,17 @@ $accessList = array(
 			)
 		)
 	),
+
+	'informe_balance_consolidado' => array(
+		'elevation' => true,
+		'description' => 'Balance Consolidado Anual',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a'
+			)
+		)
+	),
+
 	'libro_auxiliar' => array(
 		'elevation' => true,
 		'description' => 'Libro Auxiliar',

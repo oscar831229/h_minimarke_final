@@ -137,6 +137,20 @@ Hfos.getApplication().getMenu().setOptions([
 						}
 					},
 					{
+						'title': 'Balance Consolidado Anual',
+						'icon': 'issue.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-balance-consolidado',
+								icon: 'issue.png',
+								title: "Balance Consolidado Anual",
+								action: "informe_balance_consolidado",
+								width: '530px',
+								height: '270px'
+							});
+						}
+					},
+					{
 						'title': 'Libro Auxiliar',
 						'icon': 'issue.png',
 						'click': function(){
