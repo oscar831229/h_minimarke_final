@@ -413,12 +413,7 @@ var TransaccionInve = Class.create({
 			// Cargando los datos de la pestaña detalle
 			var transactionType = this._getTransactionType(this._type);
 			//var fields = ['item', 'item_det', 'unidad', 'cantidad', 'cantidad_rec', 'valor', 'iva'];
-			if (this._type=='O') {
-				var fields = ['item', 'item_det', 'descripcion2', 'unidad', 'cantidad', 'valor', 'iva'];
-			} else {
-				var fields = ['item', 'item_det', 'unidad', 'cantidad', 'valor', 'iva'];
-			}
-
+			var fields = ['item', 'item_det', 'unidad', 'cantidad', 'valor', 'iva'];
 			this._hyperGrid.loadBaseData(transactionType, fields);
 
 			//Eventos de las pestañas del maestro
@@ -850,6 +845,7 @@ var TransaccionInve = Class.create({
 			} else {
 				if (this._type=='R'){
 					this._form.selectOne('#unidad_objetivo').disable();
+					this._form.selectOne('input#valor').disable();
 				}
 			}
 		};
@@ -897,6 +893,10 @@ var TransaccionInve = Class.create({
 				this._hyperGrid.getField('unidad').setValue(element.unidad);
 				this._hyperGrid.getField('cantidad').setValue(cantidad);
 				this._hyperGrid.getField('valor').setValue(valor);
+				/*var cantidadRecElement = this._hyperGrid.getField('cantidad_rec');
+				if(cantidadRecElement!==null){
+					cantidadRecElement.setValue(parseFloat(element.cantidad, 10) * this._cantidad);
+				};*/
 				var ivaElement = this._hyperGrid.getField('iva');
 				if(ivaElement!==null){
 					ivaElement.setValue(element.iva);
@@ -1028,7 +1028,21 @@ var TransaccionInve = Class.create({
 			}
 		};
 
+		/*total = totalNeto + impuestos;
+
+		var otrosImpuestos = ['retencion', 'ica', 'horti', 'cree'];
+		for (var i = 0;i < otrosImpuestos.length; i++) {
+			var field = this._form.selectOne('#' + otrosImpuestos[i]);
+			if (field !== null) {
+				if (field.getValue() != '') {
+					total -= parseFloat(field.getValue(), 10);
+				}
+			};
+		};*/
+
+		//this._form.selectOne('#total_neto').setValue(totalNeto);
 		this._form.selectOne('#saldo').setValue(impuestos);
+		//this._form.selectOne('#total').setValue(total);
 
 		if (typeof element != "undefined") {
 			element.addClassName('changedOnTab', true)
@@ -1128,10 +1142,6 @@ var TransaccionInve = Class.create({
 			this._hyperGrid.getField('valor').setValue(row.valor);
 			if(this._type=='E'||this._type=='O'){
 				this._hyperGrid.getField('iva').setValue(row.iva);
-				//to6.1.12
-				if (typeof row.descripcion2 != "undefined" && this._hyperGrid.getField('descripcion2')) {
-					this._hyperGrid.getField('descripcion2').setValue(row.descripcion2);
-				}
 			};
 			this._hyperGrid.addRow();
 		};
@@ -1235,10 +1245,6 @@ var TransaccionInve = Class.create({
 			var row = data.movilin[i];
 			this._hyperGrid.getField('item').setValue(row.item);
 			this._hyperGrid.getField('item_det').setValue(row.descripcion);
-			//to6.1.12
-			if (typeof row.descripcion2 != "undefined" && this._hyperGrid.getField('descripcion2')) {
-				this._hyperGrid.getField('descripcion2').setValue(row.descripcion2);
-			}
 			this._hyperGrid.getField('unidad').setValue(row.unidad);
 			this._hyperGrid.getField('cantidad').setValue(row.cantidad);
 			this._hyperGrid.getField('valor').setValue(row.valor);
@@ -1349,28 +1355,23 @@ var TransaccionInve = Class.create({
 	_sendTransaction: function(record){
 		var almacen = record.getValueFromName("almacen");
 		var numero = record.getValueFromName("numero");
-		var controller = "";
 		if(this._type=='O'){
-			controller = "ordenes";
-		}
-		if(this._type=='P'){
-			controller = "pedidos";
-		}
-		new HfosAjax.JsonRequest(controller + '/send', {
-			parameters: {
-				almacen: almacen,
-				numero: numero
-			},
-			onSuccess: function(almacen, numero, response){
-				if(response.status=='OK'){
-					this._hyperForm.getMessages().success(response.message);
-				} else {
-					if(response.status=='FAILED'){
-						this._hyperForm.getMessages().error(response.message);
+			new HfosAjax.JsonRequest('ordenes/send', {
+				parameters: {
+					almacen: almacen,
+					numero: numero
+				},
+				onSuccess: function(almacen, numero, response){
+					if(response.status=='OK'){
+						this._hyperForm.getMessages().success(response.message);
+					} else {
+						if(response.status=='FAILED'){
+							this._hyperForm.getMessages().error(response.message);
+						}
 					}
-				}
-			}.bind(this, almacen, numero)
-		});
+				}.bind(this, almacen, numero)
+			});
+		}
 	},
 
 	/**

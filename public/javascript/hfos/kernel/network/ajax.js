@@ -260,8 +260,6 @@ var HfosAjax = {
 						callbackFunction(Json.decode(transport.responseText), transport);
 					}.bind(this, options[callbackName]);
 				} else {
-					console.log("action: " + action);
-					console.log("HfosWallet.has: " + HfosWallet.has(action));
 					if(!HfosWallet.has(action)){
 						options[callbackName] = function(action, callbackFunction, transport){
 							if (!transport.responseText.trim()) {
@@ -270,8 +268,6 @@ var HfosAjax = {
 							}
 
 							var response = Json.decode(transport.responseText);
-							console.log("response \n:");
-							console.log(response);
 							if(typeof response.status == "undefined"){
 								callbackFunction(response, transport);
 							} else {

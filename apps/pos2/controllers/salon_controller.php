@@ -23,9 +23,9 @@ class SalonController extends StandardForm
 	protected function crearMesas()
 	{
 		$ventaA = $this->getPostParam('fl_venta_a');
-		if ($ventaA == 'A') {
+		if($ventaA=='A'){
 			$salon_id = $this->getRequestParam('fl_id');
-			if (!$this->SalonMesas->count("salon_id='{$salon_id}' AND estado<>'N'")) {
+			if(!$this->SalonMesas->count("salon_id='{$salon_id}' AND estado<>'N'")){
 				$salonm = new SalonMesas();
 				$salonm->salon_id = $salon_id;
 				$salonm->vpos = 1;
@@ -41,7 +41,7 @@ class SalonController extends StandardForm
 				Flash::error('No se puede configurar el ambiente como autoservicio, porque hay cuentas abiertas');
 			}
 		} else {
-			if ($ventaA == 'H') {
+			if($ventaA=='H'){
 				$salonId = $this->getRequestParam('fl_id', 'int');
 				try {
 					$transaction = TransactionManager::getUserTransaction();
@@ -97,8 +97,7 @@ class SalonController extends StandardForm
 		}
 	}
 
-	public function initialize()
-	{
+	public function initialize(){
 
 		$this->setTemplateAfter('admin_menu');
 		$this->setFormCaption('Datos de Ambientes');
@@ -111,7 +110,6 @@ class SalonController extends StandardForm
 		$this->setCaption('propina_automatica', 'Propina Automática');
 		$this->setCaption('cierre_pedidos', 'Controlar Pedidos Activos al Cerrar Día');
 		$this->setCaption('texto_impresion', 'Texto Impresión');
-		$this->setCaption('tipo_venta_default', 'Tipo Pedido Predeterminado');
 
 		$this->setTypeTextarea('texto_propina');
 		$this->setTypeTextarea('texto_impresion');
@@ -123,7 +121,7 @@ class SalonController extends StandardForm
 		'alto_mesas', 'porcentaje_servicio', 'consecutivo_comanda');
 
 		$config = CoreConfig::readFromActiveApplication('app.ini');
-		if (isset($config->pos->ramocol)) {
+		if(isset($config->pos->ramocol)){
 			$ramocol = $config->pos->ramocol;
 		} else {
 			$ramocol = 'ramocol';
@@ -176,13 +174,6 @@ class SalonController extends StandardForm
 			array('H', 'HABITACIONES'),
 			//array('P', 'PARTICULAR'),
 			array('A', 'AUTOSERVICIO')
-		));
-
-		$this->setComboDynamic(array(
-			'field'           => 'tipo_venta_default',
-			'detail_field'    => 'detalle',
-			'relation'        => 'tipo_venta',
-			'column_relation' => 'id'
 		));
 
 		$this->setComboStatic('estado', array(

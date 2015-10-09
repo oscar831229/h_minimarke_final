@@ -120,12 +120,6 @@ class Cuentas extends RcsRecord {
 	 */
 	protected $cuenta;
 
-	/**
-	 * Cuentas Niif
-	 * @var  string description
-	 */
-	private static $cuenta_niif;
-
 
 	/**
 	 * Metodo para establecer el valor del campo tipo
@@ -462,21 +456,6 @@ class Cuentas extends RcsRecord {
 	 */
 	public function getCuenta(){
 		return $this->cuenta;
-	}
-
-	/**
-	 * Devuelve el valor del campo cuenta
-	 * @return string
-	 */
-	public function getCuentaNiif(){
-		return $this->cuenta_niif;
-	}
-
-	/**
-	 *
-	 */
-	public function setCuentaNiif($cuentaNiif){
-		return $this->cuenta_niif = $cuentaNiif;
 	}
 
 	protected function validation(){

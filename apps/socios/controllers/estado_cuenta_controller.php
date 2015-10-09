@@ -49,13 +49,10 @@ class Estado_CuentaController extends ApplicationController
         $fechaIniStr = "$ano-$mes-01";
         //throw new Exception($fechaIniStr);
         
-        $fechaIniDate = new Date($fechaIniStr);
-        $fechaIniDate->toLastDayOfMonth();
+        $fechaFinDate = new Date($fechaIniStr);
+        $fechaFinDate->toLastDayOfMonth();
 
-        $fechaFinDate = clone $fechaIniDate;
-        $fechaFinDate->addDays(15);
-
-        Tag::displayTo("fechaIni", $fechaIniDate->getDate());
+        Tag::displayTo("fechaIni", $fechaFinDate->getDate());
         Tag::displayTo("fechaFin", $fechaFinDate->getDate());
 
         $this->setParamToView('mes', $periodo);
@@ -90,7 +87,7 @@ class Estado_CuentaController extends ApplicationController
                 'periodo'   => $periodo,
                 'fechaIni'  => $fechaIni,
                 'fechaFin'  => $fechaFin,
-                'reemplaza' => $reemplazar
+                'reemplazar' => $reemplazar
             );
 
             if (isset($sociosId) && $sociosId) {

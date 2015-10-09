@@ -439,7 +439,7 @@ class SociosMigration extends UserComponent
 				//Si encontro alguien 00 con sus XXXX iguales retorne su id es su titular
 				if ($socioPayaT!=false) {
 					$socio->setTitularId($socioPayaT->getSociosId());
-					if ($socio->save() == false) {
+					if ($socio->save()==false) {
 						foreach ($socio->getMessages() as $message) 
 						{
 							throw new Exception($message->getMessage());
@@ -456,7 +456,7 @@ class SociosMigration extends UserComponent
 	*/
 	private function _getLocationByCiudadesId($ciudadId=false)
 	{
-		if ($ciudadId == false) {
+		if ($ciudadId==false) {
 			return 0;
 		}
 
@@ -513,7 +513,7 @@ class SociosMigration extends UserComponent
 			$prestamosSocios->setNumeroCuotas($config['numeroCuotas']);
 			$prestamosSocios->setEstado('D');//Debe
 
-			if ($prestamosSocios->save() == false) {
+			if ($prestamosSocios->save()==false) {
 				foreach ($prestamosSocios->getMessages() as $message) 
 				{
 					throw new Exception('addPrestamo: '.$message->getMessage());	
@@ -640,7 +640,7 @@ class SociosMigration extends UserComponent
 		$flag = true;
 
 		$socio = $this->Socios->setTransaction($this->_transaction)->findFirst(array('conditions'=>"numero_accion='{$data->numeroAccion}' AND identificacion='{$data->identificacion}'"));
-		if ($socio == false) {
+		if ($socio==false) {
 			echo "<br>",'El socios no existe ',"numero_accion='{$data->numeroAccion}' AND identificacion='{$data->identificacion}'";
 			$flag = false;
 		} else {
@@ -661,11 +661,11 @@ class SociosMigration extends UserComponent
 					$movimiento->setSaldoActual($data->saldoAnterior->saldo);
 					
 					$periodo = $this->Periodo->findFirst(array('conditions'=>"periodo='{$movimiento->getPeriodo()}'"));
-					if ($periodo == false) {
+					if ($periodo==false) {
 						throw new Exception('El periodo no existe!');
 					}
 
-					if ($movimiento->save() == false) {
+					if ($movimiento->save()==false) {
 						foreach ($movimiento->getMessages() as $message) 
 						{
 							throw new Exception($message->getMessage());
@@ -690,7 +690,7 @@ class SociosMigration extends UserComponent
 						$detalleMovimiento->setEstado('A');
 						$detalleMovimiento->setTipoDocumento('CXS');
 
-						if ($detalleMovimiento->save() == false) {
+						if ($detalleMovimiento->save()==false) {
 							foreach ($detalleMovimiento->getMessages() as $message) 
 							{
 								throw new Exception($message->getMessage());
@@ -732,7 +732,7 @@ class SociosMigration extends UserComponent
 			$numeroAccion = $data->numeroAccion;
 			
 			$socios = $this->Socios->findFirst(array('conditions'=>"numero_accion='$numeroAccion'"));
-			if ($socios == false) {
+			if ($socios==false) {
 				return false;
 			}
 
@@ -1162,7 +1162,7 @@ class SociosMigration extends UserComponent
 
 			echo "<br>","numero_accion='$numeroAccion-00'";
 			$socios = $this->Socios->findFirst(array('conditions'=>"identificacion='{$data->identificacion}'"));
-			if ($socios == false) {
+			if ($socios==false) {
 				return 'FAILED';
 			} else {
 				$data->identificacion = $socios->getIdentificacion();
@@ -1400,7 +1400,7 @@ class SociosMigration extends UserComponent
 
 					$socios = $this->Socios->findFirst(array('conditions'=>"identificacion='$nit'"));
 					//$socios = $this->Socios->findFirst(array('conditions'=>"numero_accion='$numeroAccion' AND identificacion='$nit'"));
-					if ($socios == false) {
+					if ($socios==false) {
 						echo "<br>El socios numero de accion '$numeroAccion' e identificacion '$nit' no existe";
 						continue;
 						throw new Exception("El socios numero de accion '$numeroAccion' e identificacion '$nit' no existe", 1);
@@ -1418,7 +1418,7 @@ class SociosMigration extends UserComponent
 					$prestamosSocios->setCuentaCruce($cuentaPrestamoC);
 					$prestamosSocios->setEstado('D');//Debe
 
-					if ($prestamosSocios->save() == false) {
+					if ($prestamosSocios->save()==false) {
 						foreach ($prestamosSocios->getMessages() as $message) 
 						{
 							throw new Exception('addPrestamo: '.$message->getMessage());	
@@ -1763,7 +1763,7 @@ class SociosMigration extends UserComponent
 			
 			#Buscamos socio
 			$socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst("numero_accion='$numeroAccion' AND estados_socios_id=1");
-			if ($socios == false) {
+			if ($socios==False) {
 				echo "<br>socios con accion $numeroAccion no existe";
 				continue;
 				#throw new Exception("El número de acción no existe ($numeroAccion)", 1);

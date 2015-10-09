@@ -42,8 +42,7 @@ class JsonViewResponse
 	 *
 	 * @param ControllerResponse $controllerResponse
 	 */
-	private function _prepareOutput($controllerResponse)
-	{
+	private function _prepareOutput($controllerResponse){
 		$controllerResponse->setHeader('X-Content-Type: application/json; charset=utf-8', true);
 		$controllerResponse->setHeader('Content-Type: application/json; charset=utf-8', true);
 		$controllerResponse->setHeader('Pragma: no-cache', true);
@@ -56,11 +55,11 @@ class JsonViewResponse
 	 * @param ControllerResponse $controllerResponse
 	 * @param mixed $valueReturned
 	 */
-	public function render($controllerResponse, $valueReturned)
-	{
+	public function render($controllerResponse, $valueReturned){
 		$this->_prepareOutput($controllerResponse);
-
-		if (version_compare(phpversion(), '5.4.0', '>=')) {
+		
+		$phpversion = phpversion();
+		if ($phpversion>=5.4) {
 			echo json_encode($valueReturned, JSON_UNESCAPED_UNICODE);
 		} else {
 			echo json_encode($valueReturned);
@@ -73,14 +72,13 @@ class JsonViewResponse
 	 * @param	ControllerResponse $controllerResponse
 	 * @param	Exception $e
 	 */
-	public function renderException($controllerResponse, $e)
-	{
+	public function renderException($controllerResponse, $e){
 		$this->_prepareOutput($controllerResponse);
 		$config = CoreConfig::readAppConfig();
-		if (isset($config->application->debug) && $config->application->debug) {
+		if(isset($config->application->debug)&&$config->application->debug){
 			$traceback = array();
-			foreach ($e->getTrace() as $trace) {
-				if (isset($trace['file'])) {
+			foreach($e->getTrace() as $trace){
+				if(isset($trace['file'])){
 					$traceback[] = array(
 						'file' => CoreException::getSafeFilePath($trace['file']),
 						'line' => $trace['line']

@@ -78,8 +78,7 @@ if($cuenta->getPideBase()=='S'){
 	<table>
 		<tr>
 			<td align="right"><label for="baseGravable">Valor Base</label></td>
-			<td>', Tag::hiddenField(array("cuentaPorcIva", "value" => $cuenta->getPorcIva())),
-				Tag::textField(array('baseGravable', 'value' => $moviTemp->getBaseGrab(), 'size' => 10, 'autocomplete' => 'off', 'class' => 'numeric')), '</td>
+			<td>', Tag::textField(array('baseGravable', 'value' => $moviTemp->getBaseGrab(), 'size' => 10, 'autocomplete' => 'off', 'class' => 'numeric')), '</td>
 		</tr>
 	</table>';
 }

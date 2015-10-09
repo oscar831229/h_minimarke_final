@@ -107,7 +107,7 @@ CREATE TABLE `relaykey` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-CREATE TABLE `financiacion` (
+/*CREATE TABLE `invoicer`.`financiacion` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `factura_id` int(11) NOT NULL,
   `descripcion` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE `financiacion` (
   `mora` decimal(12,3) NOT NULL DEFAULT '0.000',
   `total` decimal(12,3) NOT NULL DEFAULT '0.000',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4586 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4586 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci*/
 
 alter table socios change celular celular varchar(40) null;
 alter table socios change celular_trabajo celular_trabajo varchar(40) null;
@@ -317,23 +317,6 @@ create index socios_index_11 USING BTREE ON invoicer(numero,nit,fecha_emision,fe
 alter table detalle_invoicer drop index socios_index_12;
 create index socios_index_12 USING BTREE ON detalle_invoicer(facturas_id,item);
 
-#Agregando campo de no generar estado de cuenta a ciertos socios
-alter table socios add column genera_estcue char(1) not null default 'S';
-alter table socios add column estado_front char(1) not null default 'A';
-
-#Importar pagos Diners
-create table importar_pagos (
-  id integer not null auto_increment primary key,
-  fecha date not null,
-  comprob varchar(4) not null,
-  numero int not null,
-  nit varchar(20) not null,
-  valor decimal(15,2) not null,
-  usuarios_id int not null,
-  date_create datetime not null
-);
-
-alter table periodo add column dia_factura int(2) null;
 
 /*
 alter table facturas drop index socios_index_11;

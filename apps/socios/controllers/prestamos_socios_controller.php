@@ -44,13 +44,13 @@ class Prestamos_SociosController extends HyperFormController {
 				'filters' => array('alpha')
 			),
 			'cuenta' => array(
-				'single' => 'Cuenta Crédito',
+				'single' => 'Cuenta',
 				'type' => 'Cuenta',
 				'filters' => array('int'),
 				'notBrowse'	=> true,
 			),			
 			'cuenta_cruce' => array(
-				'single' => 'Cuenta Débito',
+				'single' => 'Cuenta Cruce',
 				'type' => 'Cuenta',
 				'filters' => array('int'),
 				'notBrowse'	=> true,
@@ -173,8 +173,6 @@ class Prestamos_SociosController extends HyperFormController {
 		);
 		$sociosFactura = new SociosFactura();
 		$sociosFactura->crearAmortizacion($config);
-		//verifica el convenio si esta causado o no
-		$sociosFactura->revisarConvenios($record); 	
 		
 		#creamos movimiento
 		//$sociosFactura->makePrestamosAura($transaction, $record);
@@ -247,13 +245,7 @@ class Prestamos_SociosController extends HyperFormController {
 			$socios = BackCacher::getSocios($sociosId);
 			if ($socios) {
 				$nit = $socios->getIdentificacion();
-				$conditions = "";
-				if ($prestamosSocios->getComprob() && $prestamosSocios->getNumero()>0) {
-					$conditions = "cuenta='{$prestamosSocios->getCuenta()}' AND nit='$nit' AND deb_cre='C' AND numero_doc='{$prestamosSocios->getId()}'";
-				} else {
-					$conditions = "cuenta='{$prestamosSocios->getCuenta()}' AND nit='$nit' AND deb_cre='C'";
-				}
-				$moviObj = $this->Movi->setTransaction($transaction)->find(array($conditions,'columns'=>'deb_cre,valor,fecha,comprob,numero'));
+				$moviObj = $this->Movi->setTransaction($transaction)->find(array("cuenta='{$prestamosSocios->getCuenta()}' AND nit='$nit' AND deb_cre='C'",'columns'=>'deb_cre,valor,fecha,comprob,numero'));
 				$this->setParamToView('moviObj', $moviObj);
 			}
 			$this->setParamToView('valorInicial', $prestamosSocios->getValorFinanciacion());

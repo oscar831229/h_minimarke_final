@@ -116,26 +116,6 @@ class TercerosController extends HyperFormController {
 				'notReport' => true,
 				'filters' => array('striptags', 'extraspaces')
 			),
-			'email' => array(
-				'single' => 'Email',
-				'type' => 'text',
-				'size' => 35,
-				'maxlength' => 145,
-				'notBrowse' => true,
-				'notSearch' => true,
-				'notReport' => true,
-				'filters' => array('striptags')
-			),
-			'celular' => array(
-				'single' => 'Celular',
-				'type' => 'text',
-				'size' => 35,
-				'maxlength' => 145,
-				'notBrowse' => true,
-				'notSearch' => true,
-				'notReport' => true,
-				'filters' => array('striptags', 'extraspaces')
-			),
 			'lista' => array(
 				'single' => 'Tipo',
 				'type' => 'closed-domain',

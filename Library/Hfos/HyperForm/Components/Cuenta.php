@@ -39,10 +39,9 @@ class CuentaHyperComponent extends UserComponent {
 		return $code;
 	}
 
-	public static function getDetail($value)
-	{
-		if ($value) {
-			return $value . ' / ' . self::_getNombreCuenta($value);
+	public static function getDetail($value){
+		if($value!=''){
+			return $value.' / '.self::_getNombreCuenta($value);
 		} else {
 			return '';
 		}

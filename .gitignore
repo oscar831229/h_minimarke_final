@@ -1,5 +1,10 @@
 apps/*/config/*.ini
 apps/identity/security/data/*
+apps/defualt/config/*
+apps/identity/config/*
+apps/contab/config/*
+apps/inve/config/*
+apps/pos2/config/*
 public/temp/*.pdf
 public/temp/*.html
 public/temp/*.xlsx

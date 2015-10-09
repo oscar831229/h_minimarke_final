@@ -65,14 +65,12 @@ class Estado_Cuenta_ValidacionController extends ApplicationController
 			if (!$fecha) {
 				$fecha = $this->getPostParam('fecha', 'date');
 				$reportType = $this->getPostParam('reportType', 'alpha');
-				$sociosId = $this->getPostParam('sociosId', 'int');
 			}
 			$dateFecha = new Date($fecha);
 			
 			$config = array(
 				'reportType' => $reportType,
-				'fecha' => $fecha,
-				'sociosId' => $sociosId
+				'fecha' => $fecha
 			);
 			
 			//Generamos factura

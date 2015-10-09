@@ -168,8 +168,6 @@ $menuDisposition = array(
 		'title' => 'Básicas',
 		'description' => 'Administrar parametrización de la aplicación',
 		'options' => array(
-            'niif',
-            'nic',
 			'cuentas',
 			'terceros',
 			'tipodoc',
@@ -1177,66 +1175,6 @@ $accessList = array(
 	),
 
 	//Básicas
-    'niif' => array(
-        'elevation' => true,
-        'description' => 'Cuentas NIIF',
-        'actions' => array(
-            'index' => array(
-                'description' => 'Ingreso a',
-            ),
-            'new' => array(
-                'sameAs' => 'save'
-            ),
-            'edit' => array(
-                'sameAs' => 'save'
-            ),
-            'save' => array(
-                'description' => 'Adicionar ó Modificar en'
-            ),
-            'delete' => array(
-                'description' => 'Eliminar en'
-            ),
-            'search' => array(
-                'description' => 'Consultar ó Reporte en',
-            ),
-            'queryByNit' => array(
-                'sameAs' => 'search'
-            ),
-            'rcs' => array(
-                'description' => 'Consultar revisiones en'
-            )
-        )
-    ),
-    'nic' => array(
-        'elevation' => true,
-        'description' => 'NIC',
-        'actions' => array(
-            'index' => array(
-                'description' => 'Ingreso a',
-            ),
-            'new' => array(
-                'sameAs' => 'save'
-            ),
-            'edit' => array(
-                'sameAs' => 'save'
-            ),
-            'save' => array(
-                'description' => 'Adicionar ó Modificar en'
-            ),
-            'delete' => array(
-                'description' => 'Eliminar en'
-            ),
-            'search' => array(
-                'description' => 'Consultar ó Reporte en',
-            ),
-            'queryByNit' => array(
-                'sameAs' => 'search'
-            ),
-            'rcs' => array(
-                'description' => 'Consultar revisiones en'
-            )
-        )
-    ),
 	'cuentas' => array(
 		'elevation' => true,
 		'description' => 'Plan de Cuentas',

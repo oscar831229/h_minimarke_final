@@ -53,23 +53,55 @@ class Cargos_FijosController extends HyperFormController {
 				//'notBrowse' => true,
 				'filters' => array('double')
 			),
-			'cuenta_debito' => array(
-				'single' => 'Cuenta Débito',
+			'naturaleza' => array(
+				'single' => 'Naturaleza',
+				'type' => 'closed-domain',
+				'size' => 1,
+				'notNull' => true,
+				'maxlength' => 1,
+				'values' => array(
+					'C' => 'Crédito',
+					'D' => 'Débito'
+				),
+				'filters' => array('onechar')
+			),
+			'cuenta_contable' => array(
+				'single' => 'Cuenta Contable',
 				'type' => 'Cuenta',
 				'notSearch' => true,
 				'notBrowse' => true,
 				'filters' => array('cuentas')
 			),
-			'cuenta_credito' => array(
-				'single' => 'Cuenta Crédito',
+			'cuenta_iva' => array(
+				'single' => 'Cuenta Iva',
 				'type' => 'Cuenta',
 				'notSearch' => true,
 				'notBrowse' => true,
 				'filters' => array('cuentas')
+			),
+			'cuenta_consolidar' => array(
+				'single' => 'Cuenta Consolidar',
+				'type' => 'Cuenta',
+				'notSearch' => true,
+				'notBrowse' => true,
+				'filters' => array('cuentas')
+			),
+			'tercero_fijo' => array(
+				'single' => 'Tercero Fijo',
+				'type' => 'Tercero',
+				'notBrowse' => true,
+				'filters' => array('alpha')
 			),
 			'centro_costos' => array(
 				'single' => 'Centro de Costos',
 				'type' => 'Centro',
+				'filters' => array('alpha')
+			),
+			'centro_costos_iva' => array(
+				'single' => 'Centro de Costo del Iva',
+				'type' => 'Centro',
+				'notSearch' => true,
+				'notBrowse' => true,
 				'filters' => array('alpha')
 			),
 			'iva' => array(
@@ -95,28 +127,7 @@ class Cargos_FijosController extends HyperFormController {
 				'notBrowse' => true,
 				 'filters' => array('double')
 			),
-			'cuenta_iva_deb' => array(
-				'single' => 'Cuenta Iva Débito',
-				'type' => 'Cuenta',
-				'notSearch' => true,
-				'notBrowse' => true,
-				'filters' => array('cuentas')
-			),
-			'cuenta_iva_cre' => array(
-				'single' => 'Cuenta Iva Crédito',
-				'type' => 'Cuenta',
-				'notSearch' => true,
-				'notBrowse' => true,
-				'filters' => array('cuentas')
-			),
-            'centro_costos_iva' => array(
-				'single' => 'Centro de Costo del Iva',
-				'type' => 'Centro',
-				'notSearch' => true,
-				'notBrowse' => true,
-				'filters' => array('alpha')
-			),
-			'ico' => array(
+            'ico' => array(
                 'single' => '% Ico',
                 'type' => 'decimal',
                 'size' => 10,
@@ -125,15 +136,8 @@ class Cargos_FijosController extends HyperFormController {
                 'notBrowse' => true,
                 'filters' => array('double')
             ),
-            'cuenta_ico_deb' => array(
-                'single' => 'Cuenta Ico Débito',
-                'type' => 'Cuenta',
-                'notSearch' => true,
-                'notBrowse' => true,
-                'filters' => array('cuentas')
-            ),
-            'cuenta_ico_cre' => array(
-                'single' => 'Cuenta Ico Crédito',
+            'cuenta_ico' => array(
+                'single' => 'Cuenta Ico',
                 'type' => 'Cuenta',
                 'notSearch' => true,
                 'notBrowse' => true,
@@ -193,12 +197,6 @@ class Cargos_FijosController extends HyperFormController {
 				'notBrowse' => true,
 				'notSearch' => true,
 				'filters' => array('onechar')
-			),
-			'tercero_fijo' => array(
-				'single' => 'Tercero Fijo',
-				'type' => 'Tercero',
-				'notBrowse' => true,
-				'filters' => array('alpha')
 			),
 			'estado' => array(
 				'single' => 'Estado',

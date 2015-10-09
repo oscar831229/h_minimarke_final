@@ -20,9 +20,7 @@
  */
 class AuraUtils extends UserComponent
 {
-	/**
-	 *
-	 */
+
 	public function recalculaPeriodoActual()
 	{
 		try {
@@ -172,9 +170,9 @@ class AuraUtils extends UserComponent
 					}
 				}
 			}
-
+			
 			//reclaculamos Cartera
-			$this->recalculaCartera();
+			$this->recalculaCarteraAll();
 
 			$transaction->commit();
 		} catch(Exception $e){
@@ -373,7 +371,7 @@ class AuraUtils extends UserComponent
 	{
         set_time_limit(0);
 
-		try
+		try 
 		{
 
 			$transaction = TransactionManager::getUserTransaction();

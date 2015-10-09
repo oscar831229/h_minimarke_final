@@ -44,7 +44,7 @@ return{
 				window.b = b;
 				window.a = a;
 				a.call(b,d,c++)
-			});
+			})
 		}
 		catch(d){
 			if (d != $break)

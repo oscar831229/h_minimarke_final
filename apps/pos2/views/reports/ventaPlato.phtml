@@ -49,8 +49,8 @@ function center($text, $size){
 		echo center("Fecha: {$fecha_inicial} - {$fecha_final}" , 40)."\n";
 	}
 	echo center("Cajero: ".i18n::strtoupper(Session::getData("usuarios_nombre")), 40)."\n";
-	if ($salon_id != '@') {
-		if ($Salon->find($salon_id)) {
+	if($salon_id!='@'){
+		if($Salon->find($salon_id)){
 			echo center("Ambiente: {$Salon->nombre}" , 40)."\n";
 		}
 	}

@@ -9,16 +9,16 @@
  * with this package in the file docs/LICENSE.txt.
  *
  * @package 	Back-Office
- * @copyright 	BH-TECK Inc. 2009-2014
+ * @copyright 	BH-TECK Inc. 2009-2010
  * @version		$Id$
  */
 
 $config = CoreConfig::readAppConfig();
-if ($config->application->mode == 'development') {
+if($config->application->mode=='development'){
 	Tag::stylesheetLink('pos2/status');
 } else {
-	Tag::stylesheetLink('pos2/production/cancel', false, 'v=' . ControllerBase::APP_VERSION);
-	echo Tag::javascriptInclude('pos2/production/cancel', true, 'v=' . ControllerBase::APP_VERSION);
+	Tag::stylesheetLink('pos2/production/cancel', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/cancel', true, 'v='.ControllerBase::APP_VERSION);
 }
 
 ?>
@@ -56,9 +56,9 @@ if ($config->application->mode == 'development') {
 					<tbody>
 					<?php
 
-					foreach ($SalonMesas->find("estado='A'") as $salonMesa) {
-						$accountMaster = $AccountMaster->findFirst("salon_mesas_id=" . $salonMesa->id . " AND estado='N'");
-						if ($accountMaster == false) {
+					foreach($SalonMesas->find("estado='A'") as $salonMesa){
+						$accountMaster = $AccountMaster->findFirst("salon_mesas_id=".$salonMesa->id." AND estado='N'");
+						if($accountMaster==false){
 							$salonMesa->estado = 'N';
 							$salonMesa->save();
 						} else {

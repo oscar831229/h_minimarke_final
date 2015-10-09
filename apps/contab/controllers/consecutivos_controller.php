@@ -19,20 +19,17 @@
  * Control de Consecutivos
  *
  */
-class ConsecutivosController extends ApplicationController
-{
+class ConsecutivosController extends ApplicationController {
 
-	public function initialize()
-	{
+	public function initialize(){
 		$controllerRequest = ControllerRequest::getInstance();
-		if ($controllerRequest->isAjax()) {
+		if($controllerRequest->isAjax()){
 			View::setRenderLevel(View::LEVEL_LAYOUT);
 		}
 		parent::initialize();
 	}
 
-	public function indexAction()
-	{
+	public function indexAction(){
 
 		$empresa = $this->Empresa->findFirst();
 		$fechaCierre = $empresa->getFCierrec();
@@ -43,13 +40,14 @@ class ConsecutivosController extends ApplicationController
 		$this->setParamToView('comprobs', $this->Comprob->find('order: nom_comprob'));
 
 		$this->setParamToView('message', 'Usando este modulo puede consultar las inconsistencias del movimiento');
+
 	}
 
-	public function generarAction()
-	{
+	public function generarAction(){
 
 		$this->setResponse('json');
-		try {
+		try
+		{
 			$codigoComprob = $this->getPostParam('codigoComprobante', 'comprob');
 
 			$fechaInicial = $this->getPostParam('fechaInicial', 'date');
@@ -59,17 +57,17 @@ class ConsecutivosController extends ApplicationController
 			$numeroFinal = $this->getPostParam('numeroFinal', 'int');
 
 			$conditions = array();
-			if ($codigoComprob != '') {
+			if($codigoComprob!=''){
 				$conditions[] = "comprob='$codigoComprob'";
 			}
-			if ($numeroInicial > 0) {
+			if($numeroInicial>0){
 				$conditions[] = "numero>='$numeroInicial' AND numero<='$numeroFinal'";
 			}
-			if ($fechaInicial != '') {
+			if($fechaInicial!=''){
 				$conditions[] = "fecha>='$fechaInicial' AND fecha<='$fechaFinal'";
 			}
 
-			if (count($conditions)) {
+			if(count($conditions)){
 				$movis = $this->Movi->find(array(join(' AND ', $conditions), 'order' => 'comprob, numero', 'columns' => 'comprob,numero', 'group' => 'comprob,numero'));
 			} else {
 				$movis = $this->Movi->find(array('order' => 'comprob, numero', 'columns' => 'comprob,numero', 'group' => 'comprob,numero'));
@@ -114,43 +112,42 @@ class ConsecutivosController extends ApplicationController
 
 			$lastComprob = "";
 			$lastNumero = 0;
-			foreach ($movis as $movi) {
-
-				if ($lastComprob!='') {
-					if ($lastComprob == $movi->getComprob()) {
-						if ($movi->getNumero() != ($lastNumero + 1)) {
+			foreach($movis as $movi){
+				if($lastComprob!=''){
+					if($lastComprob==$movi->getComprob()){
+						if($movi->getNumero()!=($lastNumero+1)){
 							$comprob = BackCacher::getComprob($movi->getComprob());
 							$report->addRow(array(
-								$movi->getComprob() . '/' . $comprob->getNomComprob(),
-								$lastNumero + 1,
-								'Falta el consecutivo ' . ($lastNumero + 1)
+								$movi->getComprob().'/'.$comprob->getNomComprob(),
+								$lastNumero+1,
+								'Falta el consecutivo'
 							));
 						}
 					}
 				}
-
 				try {
 					$messages = Aura::validateComprob($movi->getComprob(), $movi->getNumero());
-					if (count($messages)) {
-						foreach ($messages as $message) {
+					if(count($messages)){
+						foreach($messages as $message){
 							$comprob = BackCacher::getComprob($movi->getComprob());
 							$report->addRow(array(
-								$movi->getComprob() . '/' . $comprob->getNomComprob(),
+								$movi->getComprob().'/'.$comprob->getNomComprob(),
 								$movi->getNumero(),
 								$message
 							));
 						}
 					} else {
-						if ($soloDescuadrados == 'N') {
+						if($soloDescuadrados=='N'){
 							$comprob = BackCacher::getComprob($movi->getComprob());
 							$report->addRow(array(
-								$movi->getComprob() . '/' . $comprob->getNomComprob(),
+								$movi->getComprob().'/'.$comprob->getNomComprob(),
 								$movi->getNumero(),
 								'Ninguna'
 							));
 						}
 					}
-				} catch (AuraException $e) {
+				}
+				catch(AuraException $e){
 					$comprob = BackCacher::getComprob($movi->getComprob());
 					$report->addRow(array(
 						$movi->getComprob().'/'.$comprob->getNomComprob(),
@@ -168,10 +165,10 @@ class ConsecutivosController extends ApplicationController
 
 			return array(
 				'status' => 'OK',
-				'file' => 'temp/' . $fileName
+				'file' => 'temp/'.$fileName
 			);
-
-		} catch (Exception $e) {
+		}
+		catch(Exception $e) {
 			return array(
 				'status' => 'FAILED',
 				'message' => $e->getMessage()

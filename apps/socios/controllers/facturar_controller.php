@@ -24,236 +24,231 @@ Core::importFromLibrary('Hfos/Socios','SociosReports.php');
  */
 class FacturarController extends HyperFormController 
 {
-	/**
-	 * Estructura de formulario
-	 *
-	 * @var array
-	 */
 	static protected $_config = array(
-		'model' 		=> 'Invoicer',
-		'plural' 		=> 'facturas generadas',
-		'single' 		=> 'factura Generada',
-		'genre' 		=> 'F',
-		'tabName' 		=> 'Invoicer',
+		'model' => 'Invoicer',
+		'plural' => 'facturas generadas',
+		'single' => 'factura Generada',
+		'genre' => 'F',
+		'tabName' => 'Invoicer',
 		'preferedOrder' => 'numero DESC',
-		'icon' 			=> 'cheque.png',
+		'icon' => 'cheque.png',
 		'ignoreButtons' => array(
 			'import'
 		),
 		'fields' => array(
 			'id' => array(
-				'primary' 	=> true,
-				'single' 	=> 'Código',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'primary' => true,
+				'single' => 'Código',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'primary' 	=> true,
-				'readOnly' 	=> true,
-				'filters' 	=> array('int')
+				'primary' => true,
+				'readOnly' => true,
+				'filters' => array('int')
 			),
 			'consecutivos_id' => array(
-				'single' 		=> 'Consecutivo',
-				'type' 			=> 'relation',
-				'relation' 		=> 'Consecutivos',
+				'single' => 'Consecutivo',
+				'type' => 'relation',
+				'relation' => 'Consecutivos',
 				'fieldRelation' => 'id',
-				'detail' 		=> 'detalle',
-				'filters' 		=> array('int')
+				'detail' => 'detalle',
+				'filters' => array('int')
 			),
 			'prefijo' => array(
-				'single' 	=> 'Prefijo',
-				'type' 		=> 'text',
-				'size' 		=> 10,
+				'single' => 'Prefijo',
+				'type' => 'text',
+				'size' => 10,
 				'maxlength' => 10,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('upper')
+				'filters' => array('upper')
 			),
 			'numero' => array(
-				'single' 	=> 'Número',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'single' => 'Número',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'filters' 	=> array('int')
+				'filters' => array('int')
 			),
 			'nit' => array(
-				'single' 	=> 'Tercero',
-				'type' 		=> 'tercero',
-				'size' 		=> 10,
+				'single' => 'Tercero',
+				'type' => 'tercero',
+				'size' => 10,
 				'maxlength' => 14,
-				'notNull' 	=> true,
-				'filters' 	=> array('terceros')
+				'notNull' => true,
+				'filters' => array('terceros')
 			),
 			'nombre' => array(
-				'single' 	=> 'Nombre',
-				'type' 		=> 'text',
-				'size' 		=> 50,
+				'single' => 'Nombre',
+				'type' => 'text',
+				'size' => 50,
 				'maxlength' => 50,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('striptags', 'extraspaces')
+				'filters' => array('striptags', 'extraspaces')
 			),
 			'direccion' => array(
-				'single' 	=> 'Dirección',
-				'type' 		=> 'text',
-				'size' 		=> 25,
+				'single' => 'Dirección',
+				'type' => 'text',
+				'size' => 25,
 				'maxlength' => 25,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('striptags', 'extraspaces')
+				'filters' => array('striptags', 'extraspaces')
 			),
 			'fecha_emision' => array(
-				'single' 	=> 'Fecha de Emisión',
-				'type' 		=> 'date',
-				'default' 	=> '',
+				'single' => 'Fecha de Emisión',
+				'type' => 'date',
+				'default' => '',
 				//'notBrowse' => true,
 				//'notSearch' => true,
-				'filters' 	=> array('date')
+				'filters' => array('date')
 			),
 			'fecha_vencimiento' => array(
-				'single' 	=> 'Fecha de Entrega',
-				'type' 		=> 'date',
-				'default' 	=> '',
+				'single' => 'Fecha de Entrega',
+				'type' => 'date',
+				'default' => '',
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('date')
+				'filters' => array('date')
 			),
 			'nota_factura' => array(
-				'single' 	=> 'Nota de Factura',
-				'type' 		=> 'textarea',
-				'rows' 		=> 2,
-				'cols' 		=> 40,
+				'single' => 'Nota de Factura',
+				'type' => 'textarea',
+				'rows' => 2,
+				'cols' => 40,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('striptags')
+				'filters' => array('striptags')
 			),
 			'nota_ica' => array(
-				'single' 	=> 'Nota de Ica',
-				'type' 		=> 'textarea',
-				'rows' 		=> 2,
-				'cols' 		=> 40,
+				'single' => 'Nota de Ica',
+				'type' => 'textarea',
+				'rows' => 2,
+				'cols' => 40,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('striptags')
+				'filters' => array('striptags')
 			),
 			'venta16' => array(
-				'single' 	=> 'Base Gravable',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'single' => 'Base Gravable',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'notNull' 	=> true,
+				'notNull' => true,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('int')
+				'filters' => array('int')
 			),
 			'venta10' => array(
-				'single' 	=> 'Ingresos a Terceros',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'single' => 'Ingresos a Terceros',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'notNull' 	=> true,
+				'notNull' => true,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('int')
+				'filters' => array('int')
 			),
 			'venta10' => array(
-				'single' 	=> 'Base No Gravable',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'single' => 'Base No Gravable',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'notNull' 	=> true,
+				'notNull' => true,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('int')
+				'filters' => array('int')
 			),
 			'iva16' => array(
-				'single' 	=> 'Iva 16',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'single' => 'Iva 16',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'notNull' 	=> true,
+				'notNull' => true,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('int')
+				'filters' => array('int')
 			),
 			'comprob_contab' => array(
-				'single' 	=> 'Comprobante Contable',
-				'type' 		=> 'comprob',
-				'size' 		=> 10,
+				'single' => 'Comprobante Contable',
+				'type' => 'comprob',
+				'size' => 10,
 				'maxlength' => 14,
-				'notNull' 	=> true,
-				'readOnly' 	=> true,
+				'notNull' => true,
+				'readOnly' => true, 
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('comprob')
+				'filters' => array('comprob')
 			),
 			'numero_contab' => array(
-				'single' 	=> 'Número de Comprobante Contable',
-				'type' 		=> 'int',
-				'size' 		=> 10,
+				'single' => 'Número de Comprobante Contable',
+				'type' => 'int',
+				'size' => 10,
 				'maxlength' => 10,
-				'readOnly' 	=> true,
+				'readOnly' => true,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' 	=> array('int')
+				'filters' => array('int')
 			),
 			'estado' => array(
-				'single' 	=> 'Estado',
-				'type' 		=> 'closed-domain',
-				'size' 		=> 1,
+				'single' => 'Estado',
+				'type' => 'closed-domain',
+				'size' => 1,
 				'maxlength' => 1,
-				'values' 	=> array(
+				'values' => array(
 					'A' => 'Activa',
 					'I' => 'Inactiva'
 				),
-				'filters' 	=> array('onechar')
+				'filters' => array('onechar')
 			)
 		),
 		'detail' => array(
 			//invoicer(id) a -> detalle invoicer(facturas_id)
-			'relation' 	=> array('id'=>'facturas_id'),
-			'model' 	=> 'DetalleInvoicer',
-			'tabName' 	=> 'Detalle',
-			'fields' 	=> array(
+			'relation' => array('id'=>'facturas_id'),
+			'model' => 'DetalleInvoicer',
+			'tabName' => 'Detalle',
+			'fields' => array(
 				'item' => array(
-					'single' 	=> 'Cargo Fijo',
-					'type' 		=> 'text',
-					'notNull' 	=> true,
-					'size' 		=> 7,
+					'single' => 'Cargo Fijo',
+					'type' => 'text',
+					'notNull' => true,
+					'size' => 7,
 					'maxlength' => 15,
-					'filters' 	=> array('upper')
+					'filters' => array('upper')
 				),
 				'descripcion' => array(
-					'single' 	=> 'Descripción',
-					'type' 		=> 'text',
-					'notNull' 	=> true,
-					'size' 		=> 46,
+					'single' => 'Descripción',
+					'type' => 'text',
+					'notNull' => true,
+					'size' => 46,
 					'maxlength' => 250,
-					'filters' 	=> array('upper')
+					'filters' => array('upper')
 				),				
 				'valor' => array(
-					'single' 	=> 'Valor',
-					'notNull' 	=> true,
-					'type' 		=> 'decimal',
-					'size' 		=> 12,
+					'single' => 'Valor',
+					'notNull' => true,
+					'type' => 'decimal',
+					'size' => 12,
 					'maxlength' => 15,
-					'filters' 	=> array('float')
+					'filters' => array('float')
 				),
 				'iva' => array(
-					'single' 	=> 'Iva',
-					'notNull' 	=> true,
-					'type' 		=> 'decimal',
-					'size' 		=> 12,
+					'single' => 'Iva',
+					'notNull' => true,
+					'type' => 'decimal',
+					'size' => 12,
 					'maxlength' => 15,
-					'filters' 	=> array('float')
+					'filters' => array('float')
 				),
 				'total' => array(
-					'single' 	=> 'Total',
-					'notNull' 	=> true,
-					'type' 		=> 'decimal',
-					'size' 		=> 12,
+					'single' => 'Total',
+					'notNull' => true,
+					'type' => 'decimal',
+					'size' => 12,
 					'maxlength' => 15,
-					'filters' 	=> array('float')
-				)
+					'filters' => array('float')
+				),
 			),
 			'keys' => array(
 				'unique_index' => array(
@@ -263,9 +258,6 @@ class FacturarController extends HyperFormController
 		),
 	);
 
-	/**
-	 * Initialize Form
-	 */
 	public function initialize()
 	{
 		parent::setConfig(self::$_config);
@@ -278,21 +270,15 @@ class FacturarController extends HyperFormController
 	public function getFormatoAction()
 	{
 		$this->setResponse('view');
-
 		$controller = $this->getControllerName();
 		$this->setParamToView('controller', $controller);
-
 		$controllerRequest = ControllerRequest::getInstance();
 		$sociosId = $controllerRequest->getParamPost('sociosId', 'int');
-
-		if ($sociosId > 0) {
+		if ($sociosId>0) {
 			$this->setParamToView('sociosId', $sociosId);
 		}
 	}
-
-	/**
-	 *
-	 */
+	
 	public function erroresAction()
 	{
 
@@ -317,13 +303,13 @@ class FacturarController extends HyperFormController
 			$periodo = SociosCore::getCurrentPeriodo();
 
 			//variables de generación de facturas
-			$fechaFactura 		 = $this->getPostParam('dateIni','date');
-			$fechaVencimiento 	 = $this->getPostParam('dateFin','date');
-			$sostenimiento 		 = $this->getPostParam('sostenimiento');
-			$administracion 	 = $this->getPostParam('administracion');
-			$novedades 			 = $this->getPostParam('novedades');
-			$consumoMinimo 		 = $this->getPostParam('consumoMinimo');
-			$interesesMora 		 = $this->getPostParam('interesesMora');
+			$fechaFactura = $this->getPostParam('dateIni','date');
+			$fechaVencimiento = $this->getPostParam('dateFin','date');
+			$sostenimiento = $this->getPostParam('sostenimiento');
+			$administracion = $this->getPostParam('administracion');
+			$novedades = $this->getPostParam('novedades');
+			$consumoMinimo = $this->getPostParam('consumoMinimo');
+			$interesesMora = $this->getPostParam('interesesMora');
 			$ajusteSostenimiento = $this->getPostParam('ajusteSostenimiento');
 
 
@@ -331,14 +317,14 @@ class FacturarController extends HyperFormController
 			
 			//Recalculamos movimientos
 			$configMovi = array(
-				'periodo' 				=> $periodo,
-				'fechaFactura' 			=> $fechaFactura,
-				'fechaVencimiento' 		=> $fechaVencimiento,
-				'g_sostenimiento' 		=> $sostenimiento,
-				'g_administracion' 		=> $administracion,
-				'g_novedades' 			=> $novedades,
-				'g_consumoMinimo' 		=> $consumoMinimo,
-				'g_interesesMora' 		=> $interesesMora,
+				'periodo' => $periodo,
+				'fechaFactura' => $fechaFactura,
+				'fechaVencimiento' => $fechaVencimiento,
+				'g_sostenimiento' => $sostenimiento,
+				'g_administracion' => $administracion,
+				'g_novedades' => $novedades,
+				'g_consumoMinimo' => $consumoMinimo,
+				'g_interesesMora' => $interesesMora,
 				'g_ajusteSostenimiento' => $ajusteSostenimiento
 			);
 
@@ -354,24 +340,25 @@ class FacturarController extends HyperFormController
 			
 			//Buscamos socios			
 			$sociosObj = $this->Socios->find(array(
-				"columns" => 'socios_id',
-				'order'	  => 'CAST(numero_accion AS SIGNED) ASC'
+				"columns"=>'socios_id', 
+				'order'=>'CAST(numero_accion AS SIGNED) ASC'
 			));
 			foreach ($sociosObj as $socios) 
 			{
+
 				$sociosId = $socios->getSociosId();
 				
 				//Crea la(s) factura(s)
 				$configFactura = array(
-					'periodo'			=> $periodo,
-					'sociosId'			=> $sociosId,
-					'fechaFactura' 		=> $fechaFactura,
-					'fechaVencimiento' 	=> $fechaVencimiento,
-					'g_sostenimiento' 	=> $sostenimiento,
-					'g_administracion' 	=> $administracion,
-					'g_novedades' 		=> $novedades,
-					'g_consumoMinimo' 	=> $consumoMinimo,
-					'g_interesesMora' 	=> $interesesMora
+					'periodo'	=> $periodo,
+					'sociosId'	=> $sociosId,
+					'fechaFactura' => $fechaFactura,
+					'fechaVencimiento' => $fechaVencimiento,
+					'g_sostenimiento' => $sostenimiento,
+					'g_administracion' => $administracion,
+					'g_novedades' => $novedades,
+					'g_consumoMinimo' => $consumoMinimo,
+					'g_interesesMora' => $interesesMora
 				);
 
 				$sociosFactura->generarFactura($configFactura);
@@ -384,16 +371,18 @@ class FacturarController extends HyperFormController
 			$transaction->commit();
 				
 			return array(
-				'status'  => 'OK',
-				'message' => 'La facturación fue generada exitosamente en la fecha "' . $fechaFactura . '".'
+				'status' => 'OK',
+				'message' => 'La facturación fue generada exitosamente en la fecha "'.$fechaFactura.'".'
 			);
 
-		} catch(SociosException $e) {
+		}
+		catch(SociosException $e) {
 			return array(
 				'status'	=> 'FAILED',
 				'message'	=> $e->getMessage()
 			);
-		} catch(Exception $e) {
+		}
+		catch(Exception $e) {
 			return array(
 				'status'	=> 'FAILED',
 				'message'	=> "generarAction: ".$e->getMessage()
@@ -414,18 +403,18 @@ class FacturarController extends HyperFormController
 		{
 			$transaction = TransactionManager::getUserTransaction();
 
-			$sociosId 	  = $this->getPostParam('sociosId', 'int');
+			$sociosId = $this->getPostParam('sociosId', 'int');
 			$fechaFactura = $this->getPostParam('dateIni','date');
 			
 			if (!$fechaFactura) {
 				return array(
-					'status'  => 'FAILED',
+					'status' => 'FAILED',
 					'message' => 'Es necesario dar la fecha de la factura'
 				);
 			}
 			
 			$config = array(
-				'reportType'   => 'pdf',
+				'reportType' => 'pdf',
 				'fechaFactura' => $fechaFactura,
 			);
 
@@ -436,12 +425,14 @@ class FacturarController extends HyperFormController
 				'file'		=> $config['file'],
 				'message' 	=> 'Se genero correctamente las facturas del periodo'
 			);
-		} catch(SociosException $e) {
+		}
+		catch(SociosException $e) {
 			return array(
 				'status'	=> 'FAILED',
 				'message'	=> $e->getMessage()
 			);
-		} catch(Exception $e) {
+		}
+		catch(Exception $e) {
 			return array(
 				'status'	=> 'FAILED',
 				'message'	=> $e->getMessage()
@@ -460,21 +451,12 @@ class FacturarController extends HyperFormController
 		
 		try 
 		{
+			
 			$transaction = TransactionManager::getUserTransaction();
-			$periodo 	 = SociosCore::getCurrentPeriodo();
-
-			if ($periodo == false) {
-				$transaction->rollback('No existe un periodo sin cerrar actualmente');
-			}
-
+			
 			//fecha de factura
 			$fechaFactura = $this->getPostParam('dateIni','date');
-			$date 		  = new Date($fechaFactura);
-
-			if (intval($periodo) > intval($date->getPeriod())) {
-				throw new SociosException("No se puede borrar facturas en un periodo cerrado");
-			}
-
+			
 			$sociosIdArray = array();
 			$nitsArray = array();
 			$facturaObj = EntityManager::get("Factura")->find(array("conditions"=>"fecha_factura='$fechaFactura'",'columns'=>'socios_id'));
@@ -490,19 +472,19 @@ class FacturarController extends HyperFormController
 			unset($facturaObj);
 
 			$config = array(
-				'nits'			=> $nitsArray,
-				'facturas' 		=> $sociosIdArray,
+				'nits'		=> $nitsArray,
+				'facturas' 	=> $sociosIdArray,
 				'fechaFactura' 	=> $fechaFactura,
-				'showDebug' 	=> true
+				'showDebug' => true
 			);
 
-			$sociosFactura 	= new SociosFactura();
-			$status 		= $sociosFactura->anularFacturasPeriodo($config);
+			$sociosFactura = new SociosFactura();
+			$status = $sociosFactura->anularFacturasPeriodo($config);
 			
 			$transaction->commit();
 					
 			return array(
-				'status'  => 'OK',
+				'status' => 'OK',
 				'message' => 'Se borraron las facturas de la fecha "'.$fechaFactura.'" con su movimiento contable.'
 			);
 		}
@@ -540,7 +522,7 @@ class FacturarController extends HyperFormController
 
 			//Buscamos las Facturas pendientes por enviar pendientes
 			$deliveryObj = $this->Delivery->find("estado='P' AND periodo='$periodo'");
-            $periodoObj  = $this->Periodo->find();
+            $periodoObj = $this->Periodo->find();
 
 			$this->setParamToView('deliveryObj',$deliveryObj);
 			$this->setParamToView('periodo',$periodo);
@@ -554,21 +536,20 @@ class FacturarController extends HyperFormController
      * Muestra un html con el listado de facturas y sus correos a enviar
      * @param int $periodoAct
      */
-    public function showFacturasToSendAction($periodoAct = 0)
+    public function showFacturasToSendAction($periodoAct=0)
     {
         $this->setResponse('view');
 
         try {
+            //$periodoAct = $this->getRequestParam("periodoAct", "int");
             if (!$periodoAct) {
                 echo Flash::warning("No se ha definido el periodo a mostrar");
             }
-
             $periodo = SociosCore::getCurrentPeriodoObject($periodoAct);
             if (!$periodo) {
                 echo Flash::warning("No existe un periodo creado en Periodos '$periodoAct'");
             }
-
-			$facturaObj = EntityManager::get('Factura')->find("periodo='$periodoAct'");
+            $facturaObj = EntityManager::get('Factura')->find("periodo='$periodoAct'");
             if (!count($facturaObj)) {
                 throw new SociosException("No existen facturas en el periodo '$periodoAct'");
             }
@@ -652,17 +633,19 @@ class FacturarController extends HyperFormController
 			Core::importFromLibrary('Hfos/Socios','SociosReports.php');
 			Core::importFromLibrary('Hfos/Delivery','Delivery.php');
 			
-			$periodo 		= SociosCore::getCurrentPeriodo();
-			$sociosReports 	= new SociosReports();
-			$delivery 		= new DeliveryHfos();
+			$periodo = SociosCore::getCurrentPeriodo();
+			$sociosReports = new SociosReports();
+			$delivery = new DeliveryHfos();
 
-			foreach ($numfacArray as $numfac)
+			//$temp = array($numfacArray[0]);
+
+			//foreach ($temp as $numfac) 
+			foreach ($numfacArray as $numfac) 
 			{
 				$factura = EntityManager::get('Factura')->findFirst("numero='$numfac'");
 				if (!$factura) {
 					throw new Exception("La factura Nro. '$numfac' no existe", 1);
 				}
-
 				$socios = BackCacher::getSocios($factura->getSociosId());
 				if (!$socios) {
 					throw new Exception("El socio con id '{$factura->getSociosId()}' no existe", 1);
@@ -672,10 +655,11 @@ class FacturarController extends HyperFormController
 					continue;
 				}
 
-				$config  = array('SociosId' => $factura->getSociosId(), 'periodo' => $periodo, 'fechaFactura' => $factura->getFechaFactura());
+				$config = array('SociosId' => $factura->getSociosId(), 'periodo' => $periodo, 'fechaFactura' => $factura->getFechaFactura());
 				$filePdf = $sociosReports->factura($config, $transaction);
 				$message = $configSend.' Descargalo <a href="http://'.$server.'/s/public/temp/'.$filePdf.'">aqui</a>';
-                $status  = $delivery->send(
+                //throw new Exception(print_r($config, true));
+				$status = $delivery->send(
 					0, 
 					array($socios->getCorreo1(), $socios->getNombres().' '.$socios->getApellidos()), 
 					'Factura Periodo '.$periodo, 
@@ -697,6 +681,7 @@ class FacturarController extends HyperFormController
 					);
 				}
 				
+				//$status = $delivery->send(0, array('carvajaldiazeduar@gmail.com', 'Eduar Carvajal'), 'Factura Periodo '.$periodo, 'Estimado Socios, estamos enviando un link de su factura a su correo. Link: http://'.$server.'/s/public/temp/'.$filePdf, $from='cartera@clubpayande.com', $extra);
 				if (!$status) {
 					throw new Exception('Factura no enviada: '.$delivery->getLastError());	
 				}
@@ -712,41 +697,34 @@ class FacturarController extends HyperFormController
 	/**
 	* Selecciona las fecha a generar la factura
 	*/
-	public function selectperiodoAction($personal = false)
+	public function selectperiodoAction($personal=false)
 	{
 		$this->setResponse('view');
-		$perodoActual 	= SociosCore::getCurrentPeriodo();
-		$year 			= substr($perodoActual, 0, 4);
-		$month 			= substr($perodoActual, 4, 2);
-		$dateIni 		= "$year-$month-01";
+		$perodoActual = SociosCore::getCurrentPeriodo();
 
+		$year = substr($perodoActual, 0, 4);
+		$month = substr($perodoActual, 4, 2);
+
+		$dateIni = "$year-$month-01";
 		$dateIniObj = new Date($dateIni);
-		$dateIniObj->toLastDayOfMonth();
-
-		$dateFinObj = clone $dateIniObj;
-		$dateFinObj->addDays(15);
-		
-		Tag::displayTo('dateIni', $dateIniObj->getDate());
-		Tag::displayTo('dateFin', $dateFinObj->getDate());
+		$dateFin = $dateIniObj->getLastDayOfMonth();
+		Tag::displayTo('dateIni',$dateIni);
+		Tag::displayTo('dateFin',$dateFin->getDate());
 
 		//Personal
 		$this->setParamToView('personal', $personal);
 	}
 
 	/**
-	 * Selecciona las fecha de facturas a borrar/imprimir
-	 *
-	 * @param bool $type
-	 * @param bool $personal
-	 * @throws ControllerException
-	 */
-	public function selectfechaAction($type = false, $personal = false)
+	* Selecciona las fecha de facturas a borrar/imprimir
+	*/
+	public function selectfechaAction($type=false,$personal=false)
 	{
 		$this->setResponse('view');
 		
-		$facturasObj = EntityManager::get('Factura')->find(array("conditions"=>"1=1", "columns"=>"fecha_factura", "group"=>"fecha_factura",'order'=>'fecha_factura DESC'));
+		$facturasObj = EntityManager::get('Factura')->find(array("conditions"=>"1=1","columns"=>"fecha_factura","group"=>"fecha_factura",'order'=>'fecha_factura DESC'));
 		
-		$this->setParamToView('facturasObj', $facturasObj);
+		$this->setParamToView('facturasObj',$facturasObj);
 
 		$title = "????";
 		switch ($type) {
@@ -767,36 +745,21 @@ class FacturarController extends HyperFormController
 		$this->setParamToView('personal', $personal);
 	}
 
-	/**
-	 * @param $transaction
-	 * @param $record
-	 * @return bool
-	 */
 	public function afterInsert($transaction, $record)
 	{
 		return $this->_saveDetail($transaction, $record);
 	}
 
-	/**
-	 * @param $transaction
-	 * @param $record
-	 * @return bool
-	 */
 	public function afterUpdate($transaction, $record)
 	{
 		return $this->_saveDetail($transaction, $record);
 	}
 
-	/**
-	 * @param $transaction
-	 * @param $record
-	 * @return bool
-	 */
 	public function _saveDetail($transaction, $record)
 	{
 		try
 		{
-			$request  = $this->getRequestInstance();
+			$request = $this->getRequestInstance();
 			
 			if($request->isSetRequestParam('item')){
 				$item = $request->getParamPost('item', 'alpha');
@@ -832,7 +795,9 @@ class FacturarController extends HyperFormController
 			for ($i=0;$i<count($item);$i++)
 			{
 				if (isset($action[$i])) {
-					if ($action[$i] == 'add') {
+					if ($action[$i]=='add') {
+						
+						
 						$detalleInvoicer = new DetalleInvoicer();
 						$detalleInvoicer->setTransaction($transaction);
 						$detalleInvoicer->setFacturasId($record->getId());
@@ -844,10 +809,10 @@ class FacturarController extends HyperFormController
 						$detalleInvoicer->setIva($iva[$i]);
 						$detalleInvoicer->setTotal($valor[$i]+$iva[$i]);
 
-						if (!$detalleInvoicer->save()) {
+						if(!$detalleInvoicer->save()) {
 							foreach ($detalleInvoicer->getMessages() as $msg) 
 							{
-								throw new Exception("detalleInvoicer:" . $msg->getMessage());
+								throw new Exception("detalleInvoicer:".$msg->getMessage());
 							}
 						}
 					}
@@ -855,16 +820,14 @@ class FacturarController extends HyperFormController
 			}
 
 			return true;
-		} catch (Exception $e) {
+		}
+		catch (Exception $e) {
 			$this->appendMessage($e->getMessage());
 			return false;
 		}
+		
 	}
 
-	/**
-	 * @return string
-	 * @throws ControllerException
-	 */
 	public function beforeDelete() {
 		$this->setResponse('json');
 		return 'No se puede borrar una factura por este medio';

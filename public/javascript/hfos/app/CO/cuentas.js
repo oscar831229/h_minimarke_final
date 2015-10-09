@@ -99,7 +99,6 @@ var Cuentas = Class.create(HfosProcessContainer, {
 	},
 
 	_setSaveCallbacks: function(){
-		HfosCommon.addNiifCompleter('cuenta_niif');
 		HfosCommon.addCuentaCompleter('contrapartida');
 		HfosCommon.addCuentaCompleter('cta_retencion');
 		HfosCommon.addCuentaCompleter('cta_iva');

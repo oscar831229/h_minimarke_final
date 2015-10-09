@@ -154,7 +154,7 @@ class Libro_MayorController extends ApplicationController
                     }
                     $libro[$codigoCuenta]['es_auxiliar'] = true;
 
-                    if ($cuenta->getEsAuxiliar() == 'S') {
+                    if ($cuenta->getEsAuxiliar()=='S') {
                         $conditionsSaldosc = "ano_mes='$periodoAnterior' AND cuenta = '$codigoCuenta'";
                         $saldosc = $this->Saldosc->find($conditionsSaldosc);
                         foreach ($saldosc as $saldoc) {
@@ -168,18 +168,18 @@ class Libro_MayorController extends ApplicationController
                     $conditions = "cuenta >= '$codigoCuenta' AND cuenta <= '{$codigoCuenta}9999999' AND fecha>='$fecha' AND fecha<='$fechaUltimo'";
                     $movis = $this->Movi->find(array($conditions, 'columns' => 'valor,deb_cre'));
                     foreach ($movis as $movi) {
-                        if ($movi->getDebCre() == 'D') {
-                            $libro[$codigoCuenta]['debitos'] += $movi->getValor();
+                        if ($movi->getDebCre()=='D') {
+                            $libro[$codigoCuenta]['debitos']+=$movi->getValor();
                         } else {
-                            $libro[$codigoCuenta]['creditos'] += $movi->getValor();
+                            $libro[$codigoCuenta]['creditos']+=$movi->getValor();
                         }
 
                         unset($movi);
                     }
 
-                    $totalSaldoAnteriorMayor += $libro[$codigoCuenta]['saldoAnterior'];
-                    $totalDebitosMayor += $libro[$codigoCuenta]['debitos'];
-                    $totalCreditosMayor += $libro[$codigoCuenta]['creditos'];
+                    $totalSaldoAnteriorMayor    += $libro[$codigoCuenta]['saldoAnterior'];
+                    $totalDebitosMayor          += $libro[$codigoCuenta]['debitos'];
+                    $totalCreditosMayor         += $libro[$codigoCuenta]['creditos'];
 
                     unset($conditions);
                     unset($movis);
@@ -214,7 +214,6 @@ class Libro_MayorController extends ApplicationController
             $rightColumnT = new ReportStyle(array(
                 'textAlign' => 'right',
                 'fontSize' => 13,
-                'fontWeight' => 'bold',
             ));
 
             $numberFormat = new ReportFormat(array(
@@ -227,6 +226,7 @@ class Libro_MayorController extends ApplicationController
                 'style' => $rightColumn,
                 'span' => 8
             ));
+
 
             $subTotalCB = new ReportRawColumn(array(
                 'value' => 'SUBTOTAL CUENTAS BALANCE',
@@ -242,13 +242,65 @@ class Libro_MayorController extends ApplicationController
 
             $flagTotBal = false;
 
-            $totales = array(0, 0, 0, 0, 0, 0);//Cols 1-6
+            $totales = array(0,0,0,0,0,0);//Cols 1-6
 
             foreach ($libro as $codigoCuenta => $libroCuenta) {
+                if ($libroCuenta['saldoAnterior']!=0||$libroCuenta['debitos']!=0||$libroCuenta['creditos']!=0) {
+                    $cuenta = BackCacher::getCuenta($codigoCuenta);
+
+                    $total_nvo = $libroCuenta['saldoAnterior']+($libroCuenta['debitos']-$libroCuenta['creditos']);
+
+                    $col5 = '';
+                    $col6 = '';
+
+                    if ($total_nvo>0) {
+                        $col5 = abs($total_nvo);
+                    } else {
+                        $col6 = abs($total_nvo);
+                    }
+
+                    if ($libroCuenta['saldoAnterior']>0) {
+                        $rowTmp = array(
+                            $codigoCuenta,
+                            $cuenta->getNombre(),
+                            abs($libroCuenta['saldoAnterior']),
+                            '',
+                            abs($libroCuenta['debitos']),
+                            abs($libroCuenta['creditos']),
+                            $col5,
+                            $col6
+                        );
+                    } else {
+                        $rowTmp = array(
+                            $codigoCuenta,
+                            $cuenta->getNombre(),
+                            '',
+                            abs($libroCuenta['saldoAnterior']),
+                            abs($libroCuenta['debitos']),
+                            abs($libroCuenta['creditos']),
+                            $col5,
+                            $col6
+                        );
+                    }
+                    #no mostrar auxiliares
+                    if (isset($libroCuenta['es_auxiliar']) && $libroCuenta['es_auxiliar']==true) {
+                        continue;
+                    }
+                    $report->addRow($rowTmp);
+
+                    //Sumamos columnas para totalizar
+                    $totales[0] += (float) $rowTmp[2];
+                    $totales[1] += (float) $rowTmp[3];
+                    $totales[2] += (float) $rowTmp[4];
+                    $totales[3] += (float) $rowTmp[5];
+                    $totales[4] += (float) $rowTmp[6];
+                    $totales[5] += (float) $rowTmp[7];
+                }
+
                 $primerNumero = (int) substr($codigoCuenta, 0, 1);
 
                 //Si es Cuenta de Balance
-                if ($primerNumero >= 8 && $flagTotBal == false) {
+                if ($primerNumero>7 && $flagTotBal==false) {
 
                     $sum1 = new ReportRawColumn(array(
                         'value' => $totales[0],
@@ -296,64 +348,12 @@ class Libro_MayorController extends ApplicationController
                     ));
 
                     //Reiniciamos conteo
-                    $totales = array(0, 0, 0, 0, 0, 0);//Cols 1-6
+                    $totales = array(0,0,0,0,0,0);//Cols 1-6
 
                     //Para no vovler a amostrar el total
                     $flagTotBal = true;
 
                     unset($sum1, $sum2, $sum3, $sum4, $sum5, $sum6);
-                }
-
-                if ($libroCuenta['saldoAnterior'] != 0 || $libroCuenta['debitos'] != 0 || $libroCuenta['creditos'] != 0) {
-                    $cuenta = BackCacher::getCuenta($codigoCuenta);
-
-                    $total_nvo = $libroCuenta['saldoAnterior'] + ($libroCuenta['debitos'] - $libroCuenta['creditos']);
-
-                    $col5 = '';
-                    $col6 = '';
-
-                    if ($total_nvo > 0) {
-                        $col5 = abs($total_nvo);
-                    } else {
-                        $col6 = abs($total_nvo);
-                    }
-
-                    if ($libroCuenta['saldoAnterior'] > 0) {
-                        $rowTmp = array(
-                            $codigoCuenta,
-                            $cuenta->getNombre(),
-                            abs($libroCuenta['saldoAnterior']),
-                            '',
-                            abs($libroCuenta['debitos']),
-                            abs($libroCuenta['creditos']),
-                            $col5,
-                            $col6
-                        );
-                    } else {
-                        $rowTmp = array(
-                            $codigoCuenta,
-                            $cuenta->getNombre(),
-                            '',
-                            abs($libroCuenta['saldoAnterior']),
-                            abs($libroCuenta['debitos']),
-                            abs($libroCuenta['creditos']),
-                            $col5,
-                            $col6
-                        );
-                    }
-                    #no mostrar auxiliares
-                    if (isset($libroCuenta['es_auxiliar']) && $libroCuenta['es_auxiliar'] == true) {
-                        continue;
-                    }
-                    $report->addRow($rowTmp);
-
-                    //Sumamos columnas para totalizar
-                    $totales[0] += (float) $rowTmp[2];
-                    $totales[1] += (float) $rowTmp[3];
-                    $totales[2] += (float) $rowTmp[4];
-                    $totales[3] += (float) $rowTmp[5];
-                    $totales[4] += (float) $rowTmp[6];
-                    $totales[5] += (float) $rowTmp[7];
                 }
 
                 unset($libroCuenta);

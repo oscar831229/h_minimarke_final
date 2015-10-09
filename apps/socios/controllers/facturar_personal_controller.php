@@ -64,14 +64,14 @@ class Facturar_PersonalController extends ApplicationController
 		
 		try {
 			//variables de generación de facturas
-			$fechaFactura 		 = $this->getPostParam('dateIni','date');
-			$fechaVencimiento 	 = $this->getPostParam('dateFin','date');
+			$fechaFactura = $this->getPostParam('dateIni','date');
+			$fechaVencimiento = $this->getPostParam('dateFin','date');
 
-			$sostenimiento 		 = $this->getPostParam('sostenimiento');
-			$administracion 	 = $this->getPostParam('administracion');
-			$novedades 			 = $this->getPostParam('novedades');
-			$consumoMinimo 		 = $this->getPostParam('consumoMinimo');
-			$interesesMora 		 = $this->getPostParam('interesesMora');
+			$sostenimiento = $this->getPostParam('sostenimiento');
+			$administracion = $this->getPostParam('administracion');
+			$novedades = $this->getPostParam('novedades');
+			$consumoMinimo = $this->getPostParam('consumoMinimo');
+			$interesesMora = $this->getPostParam('interesesMora');
 			$ajusteSostenimiento = $this->getPostParam('ajusteSostenimiento');
 
 			$sociosId = $this->getPostParam('sociosId','int');
@@ -92,17 +92,17 @@ class Facturar_PersonalController extends ApplicationController
 			
 			//Crea la(s) factura(s)
 			$configMovi = array(
-				'periodo'				=> $periodo,
-				'sociosId'				=> $sociosId,
-				'fechaFactura' 			=> $fechaFactura,
-				'fechaVencimiento' 		=> $fechaVencimiento,
-				'g_sostenimiento' 		=> $sostenimiento,
-				'g_administracion' 		=> $administracion,
-				'g_novedades' 			=> $novedades,
-				'g_consumoMinimo' 		=> $consumoMinimo,
-				'g_interesesMora' 		=> $interesesMora,
+				'periodo'	=> $periodo,
+				'sociosId'	=> $sociosId,
+				'fechaFactura' => $fechaFactura,
+				'fechaVencimiento' => $fechaVencimiento,
+				'g_sostenimiento' => $sostenimiento,
+				'g_administracion' => $administracion,
+				'g_novedades' => $novedades,
+				'g_consumoMinimo' => $consumoMinimo,
+				'g_interesesMora' => $interesesMora,
 				'g_ajusteSostenimiento' => $ajusteSostenimiento,
-				'showDebug'				=> true
+				'showDebug'	=> true
 			);
 			$sociosFactura = new SociosFactura();
 
@@ -116,15 +116,17 @@ class Facturar_PersonalController extends ApplicationController
 			$transaction->commit();
 			
 			return array(
-				'status'  => 'OK',
+				'status' => 'OK',
 				'message' => 'La factura del socio fue re-calculada exitosamente en el periodo '.$periodo.'.'
 			);
-		} catch(SociosException $e) {
+		}
+		catch(SociosException $e) {
 			return array(
 				'status'	=> 'FAILED',
 				'message'	=> $e->getMessage()
 			);
-		} catch(Exception $e) {
+		}
+		catch(Exception $e) {
 			return array(
 				'status'	=> 'FAILED',
 				'message'	=> $e->getMessage()
@@ -142,21 +144,22 @@ class Facturar_PersonalController extends ApplicationController
 		
 		try 
 		{
-			$transaction  = TransactionManager::getUserTransaction();
-			$sociosId 	  = $this->getPostParam('sociosId', 'int');
+			$transaction = TransactionManager::getUserTransaction();
+
+			$sociosId = $this->getPostParam('sociosId', 'int');
 			$fechaFactura = $this->getPostParam('dateIni','date');
 			
 			if (!$fechaFactura) {
 				return array(
-					'status'  => 'FAILED',
+					'status' => 'FAILED',
 					'message' => 'Es necesario dar la fecha de la factura'
 				);
 			}
 			
 			$config = array(
-				'reportType'   => 'pdf',
+				'reportType' => 'pdf',
 				'fechaFactura' => $fechaFactura,
-				'SociosId'	   => $sociosId,
+				'SociosId'		=> $sociosId,
 			);
 
 			//Generamos factura
@@ -171,9 +174,9 @@ class Facturar_PersonalController extends ApplicationController
 				'file'		=> $config['file']
 			);
 
-		} catch(Exception $e) {
+		}catch(Exception $e) {
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
@@ -188,32 +191,29 @@ class Facturar_PersonalController extends ApplicationController
 		
 		set_time_limit(0);
 		
-		$controllerRequest  = ControllerRequest::getInstance();
-		$sociosId 			= $controllerRequest->getParamPost('sociosId', 'int');
-
-		if ($sociosId <= 0) {
+		$controllerRequest = ControllerRequest::getInstance();
+		$sociosId = $controllerRequest->getParamPost('sociosId', 'int');
+		if ($sociosId<=0) {
 			Flash::error('Debe ingresar el id del socio');
 		}else{
 			try {
 				
 				$transaction = TransactionManager::getUserTransaction();
-				$periodo 	 = SociosCore::getCurrentPeriodo();
-
-				if ($periodo == false) {
+			
+				//periodo actual
+				$periodo = SociosCore::getCurrentPeriodo();		
+				
+				if ($periodo==false) {
 					$transaction->rollback('No existe un periodo sin cerrar actualmente');
 				}
 
-				$fechaFactura  	= $this->getPostParam('dateIni','date');
-				$date 			= new Date($fechaFactura);
-				
-				if (intval($periodo) > intval($date->getPeriod())) {
-					throw new SociosException("No se puede borrar facturas en un periodo cerrado");
-				}
+				//fecha de factura
+				$fechaFactura = $this->getPostParam('dateIni','date');
 
-				$sociosIdArray 	= array();
-				$nitsArray 	   	= array();
-				$facturaObj 	= EntityManager::get("Factura")->find(array("conditions"=>"fecha_factura='$fechaFactura' AND socios_id='$sociosId'",'columns'=>'socios_id'));
+				$sociosIdArray = array();
+				$nitsArray = array();
 
+				$facturaObj = EntityManager::get("Factura")->find(array("conditions"=>"fecha_factura='$fechaFactura' AND socios_id='$sociosId'",'columns'=>'socios_id'));
 				foreach ($facturaObj as $factura) 
 				{
 					$socio = BackCacher::getSocios($factura->getSociosId());
@@ -226,24 +226,24 @@ class Facturar_PersonalController extends ApplicationController
 				unset($facturaObj);
 				
 				$config = array(
-					'nits'			=> $nitsArray,
-					'facturas' 		=> $sociosIdArray,
+					'nits'		=> $nitsArray,
+					'facturas' 	=> $sociosIdArray,
 					'fechaFactura' 	=> $fechaFactura,
-					'showDebug' 	=> true
+					'showDebug' => true
 				);
 				
-				$sociosFactura  = new SociosFactura();
-				$status 		= $sociosFactura->anularFacturasPeriodo($config);
+				$sociosFactura = new SociosFactura();
+				$status = $sociosFactura->anularFacturasPeriodo($config);
 				
 				$transaction->commit();
 
 				return array(
-					'status'  => 'OK',
+					'status' => 'OK',
 					'message' => 'Se borró la factura del socio en el periodo con su movimiento contable.'
 				);
 			} catch(Exception $e) {
 				return array(
-					'status'  => 'FAILED',
+					'status' => 'FAILED',
 					'message' => $e->getMessage()
 				);
 			}
@@ -261,7 +261,8 @@ class Facturar_PersonalController extends ApplicationController
 		
 		try {
 			$transaction = TransactionManager::getUserTransaction();
-			$sociosId 	 = $this->getPostParam('sociosId','int');
+			
+			$sociosId = $this->getPostParam('sociosId','int');
 			if (!$sociosId) {
 				throw new Exception('Es necesario dar el socio para generar cargos mensuales');
 			}
@@ -281,17 +282,12 @@ class Facturar_PersonalController extends ApplicationController
 
 		} catch(Exception $e) {
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
 	}
 
-	/**
-	 * @param $numero
-	 * @return array
-	 * @throws ControllerException
-	 */
 	public function getInvoicerAction($numero) 
 	{
 		$this->setResponse('json');
@@ -299,17 +295,17 @@ class Facturar_PersonalController extends ApplicationController
 		try {
 			$transaction = TransactionManager::getUserTransaction();
 			$reportType = 'pdf';
-			$config 	= array(
-				'reportType' => $reportType,
-				'facturas'	 => array($numero)
+			$config = array(
+				'reportType'	=> $reportType,
+				'facturas'		=> array($numero)
 			);
 			
-			$sociosReports 	= new SociosReports();
-			$fileName 		= $sociosReports->getInvoicerPrint($options);
+			$sociosReports = new SociosReports();
+			$fileName = $sociosReports->getInvoicerPrint($options);
 
-			$config['file'] = 'public/temp/' . $fileName;
+			$config['file'] = 'public/temp/'.$fileName;
 			
-			if (isset($config['file']) && $config['file'] == false) {
+			if (isset($config['file']) && $config['file']==false) {
 				throw new Exception("No hay datos a mostrar", 1);
 			}
 			return array(
@@ -320,7 +316,7 @@ class Facturar_PersonalController extends ApplicationController
 
 		} catch(Exception $e) {
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}

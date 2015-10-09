@@ -13,20 +13,17 @@
  * @version		$Id$
  */
 
-class TablesController extends ApplicationController
-{
+class TablesController extends ApplicationController {
 
 	public $salon;
 
-	public function initialize()
-	{
+	public function initialize(){
 		$this->setPersistance(true);
 	}
 
-	private function _getSalon($salonId)
-	{
+	private function _getSalon($salonId){
 		$usuarioId = Session::get('usuarios_id');
-		if ($salonId == 0 || !$this->Salon->count("id='$salonId' AND estado='A'")) {
+		if($salonId==0||!$this->Salon->count("id='$salonId' AND estado='A'")){
 			$query = new ActiveRecordJoin(array(
 				'fields' => array('{#Salon}.id', '{#Salon}.nombre', '{#Salon}.venta_a', '{#Salon}.alto_mesas', '{#Salon}.ancho_mesas'),
 				'entities' => array('Salon', 'Permisos'),
@@ -40,7 +37,7 @@ class TablesController extends ApplicationController
 		} else {
 			$salon = $this->Salon->findFirst($salonId);
 			$conditions = "salon_id='$salonId' AND usuarios_id='$usuarioId' AND estado='A'";
-			if ($this->Permisos->count($conditions) == 0) {
+			if($this->Permisos->count($conditions)==0){
 				Flash::error('No tiene permiso para trabajar en el ambiente "'.$salon->nombre.'"');
 				return false;
 			}
@@ -48,17 +45,16 @@ class TablesController extends ApplicationController
 		return $salon;
 	}
 
-	public function indexAction($salonId=0, $sendkitchen="")
-	{
+	public function indexAction($salonId=0, $sendkitchen=""){
 
 		$datosFront = $this->DatosHotel->findFirst();
 		$datos = $this->Datos->findFirst();
-		if (!Date::isEquals($datosFront->getFecha(), $datos->getFecha())) {
+		if(!Date::isEquals($datosFront->getFecha(), $datos->getFecha())){
 			return $this->routeTo(array('controller' => 'appmenu'));
 		}
 
 		$salonId = $this->filter($salonId, 'int');
-		if ($this->Salon->count("estado='A'")) {
+		if($this->Salon->count("estado='A'")){
 
 			$salon = $this->_getSalon($salonId);
 			if($salon==false){
@@ -84,10 +80,9 @@ class TablesController extends ApplicationController
 		}
 	}
 
-	private function _getSalonMesa($salonId)
-	{
+	private function _getSalonMesa($salonId){
 		$salonMesa = $this->SalonMesas->findFirst("salon_id='$salonId' AND estado='N'");
-		if ($salonMesa == false) {
+		if($salonMesa==false){
 			$salonMesa = new SalonMesas();
 			$salonMesa->salon_id = $salonId;
 			$salonMesa->vpos = 0;
@@ -103,13 +98,11 @@ class TablesController extends ApplicationController
 		return $salonMesa;
 	}
 
-	public function crearMesasAction()
-	{
+	public function crearMesasAction(){
 
 	}
 
-	public function addTableAction()
-	{
+	public function addTableAction(){
 		$this->setResponse('json');
 		$salonMesas = new SalonMesas();
 		$salonMesas->salon_id = $this->salon;
@@ -127,11 +120,10 @@ class TablesController extends ApplicationController
 		return $salonMesas->id;
 	}
 
-	public function moveTableAction($id)
-	{
+	public function moveTableAction($id){
 		$this->setResponse('view');
 		$id = $this->filter($id, 'int');
-		if ($id > 0) {
+		if($id>0){
 			$salonMesas = $this->SalonMesas->findFirst($id);
 			$salonMesas->vpos = $this->getPostParam('y', 'int');
 			$salonMesas->hpos = $this->getPostParam('x', 'int');
@@ -140,20 +132,18 @@ class TablesController extends ApplicationController
 		}
 	}
 
-	public function deleteTableAction($id=0)
-	{
+	public function deleteTableAction($id=0){
 		$this->setResponse('view');
 		$id = $this->filter($id, 'int');
-		if ($id > 0) {
+		if($id>0){
 			$this->SalonMesas->delete($id);
 		}
 	}
 
-	public function changeNumberAction($id=0)
-	{
+	public function changeNumberAction($id=0){
 		$this->setResponse('view');
 		$id = $this->filter($id, 'int');
-		if ($id > 0) {
+		if($id>0){
 			$salonMesa = $this->SalonMesas->findFirst($id);
 			if($salonMesa!=false){
 				$numero = $this->getPostParam('numero', 'alpha');
@@ -163,59 +153,49 @@ class TablesController extends ApplicationController
 		}
 	}
 
-	public function openTableAction()
-	{
+	public function openTableAction(){
 		$numero = $this->getPostParam('numero', 'alpha');
 		$salonId = Session::get("current_salon", "int");
-		if ($numero && $salonId > 0) {
+		if($numero&&$salonId>0){
 			$salonMesa = $this->SalonMesas->findFirst("salon_id='$salonId' AND numero='$numero'");
-			if ($salonMesa != false) {
+			if($salonMesa!=false){
 				return $this->routeTo(array('controller' => 'order', 'action' => 'add', 'id' => $salonMesa->id));
 			}
 		}
 		return $this->routeToAction('index');
 	}
 
-	public function chooseTableAction($salonMesasId=0, $salonId=0, $action=null)
-	{
+	public function chooseTableAction($salonMesasId=0, $salonId=0, $action=null){
 
 		$salonId = $this->filter($salonId, 'int');
 		$salonMesasId = $this->filter($salonMesasId, 'int');
 		$action = $this->filter($action, 'alpha');
 
-		if($salonMesasId > 0 && $salonId > 0){
+		if($salonMesasId>0 && $salonId>0){
 
 			$salonMesa = $this->SalonMesas->findFirst($salonMesasId);
-			if ($salonMesa == false) {
+			if($salonMesa==false){
 				$this->routeTo(array('action'  => 'index'));
 			}
-			if ($salonId == 0) {
+			if($salonId==0){
 				$salon = $this->_getSalon($salonMesa->salon_id);
 			} else {
 				$salon = $this->_getSalon($salonId);
 			}
 
-			if ($salon) {
-				if ($salon->venta_a == 'A'){
-					if($action=='joinOrders'){
-						Flash::error('Los ambientes de venta directa no permiten unir pedidos');
-					} else {
-						Flash::error('Los ambientes de venta directa no permiten cambio de mesa');
-					}
-					return $this->routeTo(array(
-						'controller' => 'order',
-						'action' => 'add',
-						'id' => $salonMesasId
-					));
+			if($salon->venta_a=='A'){
+				if($action=='joinOrders'){
+					Flash::error('Los ambientes de venta directa no permiten unir pedidos');
+				} else {
+					Flash::error('Los ambientes de venta directa no permiten cambio de mesa');
 				}
-				$this->setParamToView('salon', $salon);
-				$this->setParamToView('action', $action);
-				$this->setParamToView('salonMesasId', $salonMesasId);
-				$this->loadModel('Habitacion', 'Datos', 'AccountMaster', 'AccountCuentas');
-			} else {
-				$this->routeTo(array('action'  => 'index'));
+				return $this->routeTo(array('controller' => 'order', 'action' => 'add', 'id' => $salonMesasId));
 			}
 
+			$this->setParamToView('salon', $salon);
+			$this->setParamToView('action', $action);
+			$this->setParamToView('salonMesasId', $salonMesasId);
+			$this->loadModel('Habitacion', 'Datos', 'AccountMaster', 'AccountCuentas');
 		} else {
 			$this->routeTo(array('action'  => 'index'));
 		}

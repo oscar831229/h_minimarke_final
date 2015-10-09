@@ -100,40 +100,9 @@
 						)) ?>
 					</td>
 				</tr>
-				<tr>
-					<td align="right"><label for="usa_revelacion">Usa Revelaciones?</label></td>
-					<td>
-						<?php echo Tag::selectStatic('usa_revelacion', array(
-							'N' => 'NO',
-							'S' => 'SI'
-						)) ?>
-					</td>
-					<td align="right"><label for="es_mayor">Es Cuenta Mayor?</label></td>
-					<td>
-						<?php echo Tag::selectStatic('es_mayor', array(
-							'N' => 'NO',
-							'S' => 'SI'
-						)) ?>
-					</td>
-				</tr>
-				<tr>
-					<td align="right"><label for="porc_retenc">Porcentaje de Retención</label></td>
-					<td><?php echo Tag::numericField(array('porc_retenc', 'size' => 7, 'maxlength' => 7)) ?>%</td>
-				</tr>
 			</table>
 			<table width="75%" align="center">
 				<tr>
-					<td align="right"><label for="cuenta_niif">Cuenta de NIIF</label></td>
-					<td colspan="3">
-						<table class="cuentaCompleter" cellspacing="0">
-							<tr>
-								<td><?php echo Tag::textField(array('cuenta_niif', 'size' => 12)) ?></td>
-								<td><?php echo Tag::textField(array('cuenta_niif_det', 'size' => 35, 'class' => 'cuentaDetalle')) ?></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<!--<tr>
 					<td align="right"><label for="cuentaContrapartida">Cuenta Contrapartida</label></td>
 					<td colspan="3">
 						<table class="cuentaCompleter" cellspacing="0">
@@ -154,6 +123,7 @@
 							</tr>
 						</table>
 					</td>
+					<td><?php echo Tag::numericField(array('porc_retenc', 'size' => 5, 'maxlength' => 6)) ?>%</td>
 				</tr>
 				<tr>
 					<td align="right"><label for="cuentaIva">Cuenta de IVA</label></td>
@@ -166,7 +136,7 @@
 						</table>
 					</td>
 					<td><?php echo Tag::numericField(array('porcen_iva', 'size' => 5, 'maxlength' => 6)) ?>%</td>
-				</tr>-->
+				</tr>
 			</table>
 		</p>
 

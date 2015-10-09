@@ -230,10 +230,10 @@ echo center("Comanda #: {$comanda} Hora: ".Date::getCurrentTime("H:i"), 35)."\n"
 				echo "<td align='right'>".$MenusItems->porcentaje_iva."</td>";
 				echo "</tr>";
 				$AccountItem->cantidad_atendida = $AccountItem->cantidad;
-				if ($preview == false) {
-					if ($AccountItem->estado != 'L') {
-						if ($AccountItem->save() == false) {
-							foreach ($AccountItem->getMessages() as $message) {
+				if($preview==false){
+					if($AccountItem->estado!='L'){
+						if($AccountItem->save()==false){
+							foreach($AccountItem->getMessages() as $message){
 								Flash::error($message->getMessage());
 							}
 							$transaction->rollback();
@@ -299,20 +299,12 @@ if(!isset($resumen['A'])){
 if(!isset($resumen['B'])){
 	$resumen['B'] = 0;
 }
-$subtotalp = $resumen['A'] + $resumen['B'];
-$propina = $subtotalp * ($Salon->porcentaje_servicio / 100);
-$total += $propina
+$subtotalp = $resumen['A']+$resumen['B'];
+$propina = $subtotalp*($Salon->porcentaje_servicio/100);
+$total+=$propina
 ?>
 <?php echo Locale::money($propina) ?>
 </td>
-<tr>
-<td align="right" style='font-size:14px'>
-TOTAL SIN PROPINA:
-</td>
-<td align="right" style='font-size:14px'>
-<?php echo Locale::money($total - $propina) ?>
-</td>
-</tr>
 </tr>
 <tr>
 <td align="right" style='font-size:14px'>
@@ -327,29 +319,21 @@ T O T A L:
 </tr>
 </table>
 </div>
-<?php if (!$preview && $propina > 0 && $Salon->leyenda_propina == 'S'): ?>
+<?php if(!$preview&&$propina>0&&$Salon->leyenda_propina=='S'): ?>
 <div style='width:270px;text-align:justify'>
 <br>
 ADVERTENCIA PROPINA<br>
-Por disposici&oacute;n de la
-Superintendencia de Industria
-y Comercio se informa que,
-en este establecimiento la
-propina es sugerida al
-consumidor y corresponde
-a un porcentaje del
-10% sobre el valor total
-de la cuenta, el cual
-podr&aacute; ser aceptado,
-rechazado &oacute; modificado
-por usted, de acuerdo con su
-valorizaci&oacute;n del
-servicio prestado. Si no
-desea cancelar dicho valor
-haga caso omiso del mismo.
-Si desea cancelar un valor
-diferente indiquelo asi para
-hacer el ajuste correspondiente.
+Por disposici&oacute;n de la Superintendencia
+de Industria y Comercio se informa que, en este
+establecimiento la propina es sugerida al
+consumidor y corresponde a un porcentaje del
+10% sobre el valor total de la cuenta, el cual
+podr&aacute; ser aceptado, rechazado &oacute;
+modificado por usted, de acuerdo con su
+valorizaci&oacute;n del servicio prestado. Si no
+desea cancelar dicho valor haga caso omiso del
+mismo. Si desea cancelar un valor diferente
+indiquelo asi para hacer el ajuste correspondiente.
 $ _____________
 </div>
 <?php endif; ?>
@@ -397,7 +381,7 @@ CARGO POR PLAN: <?php echo Locale::money($total) ?>
 
 
  Firma:---------------------
- <?php echo $AccountCuentas->clientes_nombre . "\n" ?>
+ <?php echo $AccountCuentas->clientes_nombre."\n" ?>
  C.C. <?php echo $AccountCuentas->clientes_cedula ?>
 </pre>
 </div>
@@ -409,7 +393,7 @@ CARGO POR PLAN: <?php echo Locale::money($total) ?>
 
 
  Firma:---------------------
- <?php echo $AccountCuentas->clientes_nombre . "\n" ?>
+ <?php echo $AccountCuentas->clientes_nombre."\n" ?>
  C.C. <?php echo $AccountCuentas->clientes_cedula ?>
 </pre>
 </div>
@@ -419,13 +403,13 @@ CARGO POR PLAN: <?php echo Locale::money($total) ?>
 <?php endif ?>
 
 
-<?php if($tipo_venta == 'C'): ?>
+<?php if($tipo_venta=='C'): ?>
 <pre>
 
 
 
  Firma:---------------------
- <?php echo $AccountCuentas->clientes_nombre . "\n" ?>
+ <?php echo $AccountCuentas->clientes_nombre."\n" ?>
  C.C. <?php echo $AccountCuentas->clientes_cedula ?>
 </pre>
 </div>

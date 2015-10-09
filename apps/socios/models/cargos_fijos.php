@@ -20,12 +20,17 @@ class CargosFijos extends ActiveRecord {
 	/**
 	 * @var string
 	 */
-	protected $cuenta_credito;
+	protected $cuenta_contable;
 
 	/**
 	 * @var string
 	 */
-	protected $cuenta_iva_deb;
+	protected $naturaleza;
+
+	/**
+	 * @var string
+	 */
+	protected $cuenta_iva;
 
 	/**
 	 * @var string
@@ -65,7 +70,7 @@ class CargosFijos extends ActiveRecord {
 	/**
 	 * @var string
 	 */
-	protected $cuenta_debito;
+	protected $cuenta_consolidar;
 
 	/**
 	 * @var string
@@ -90,17 +95,7 @@ class CargosFijos extends ActiveRecord {
 	/**
 	 * @var string
 	 */
-	protected $cuenta_ico_deb;
-
-	/**
-	 * @var string
-	 */
-	protected $cuenta_iva_cre;
-
-	/**
-	 * @var string
-	 */
-	protected $cuenta_ico_cre;
+	protected $cuenta_ico;
 
 
 	/**
@@ -128,19 +123,27 @@ class CargosFijos extends ActiveRecord {
 	}
 
 	/**
-	 * Metodo para establecer el valor del campo cuenta_credito
-	 * @param string $cuenta_credito
+	 * Metodo para establecer el valor del campo cuenta_contable
+	 * @param string $cuenta_contable
 	 */
-	public function setCuentaCredito($cuenta_credito){
-		$this->cuenta_credito = $cuenta_credito;
+	public function setCuentaContable($cuenta_contable){
+		$this->cuenta_contable = $cuenta_contable;
 	}
 
 	/**
-	 * Metodo para establecer el valor del campo cuenta_iva_deb
-	 * @param string $cuenta_iva_deb
+	 * Metodo para establecer el valor del campo naturaleza
+	 * @param string $naturaleza
 	 */
-	public function setCuentaIvaDeb($cuenta_iva_deb){
-		$this->cuenta_iva_deb = $cuenta_iva_deb;
+	public function setNaturaleza($naturaleza){
+		$this->naturaleza = $naturaleza;
+	}
+
+	/**
+	 * Metodo para establecer el valor del campo cuenta_iva
+	 * @param string $cuenta_iva
+	 */
+	public function setCuentaIva($cuenta_iva){
+		$this->cuenta_iva = $cuenta_iva;
 	}
 
 	/**
@@ -200,11 +203,11 @@ class CargosFijos extends ActiveRecord {
 	}
 
 	/**
-	 * Metodo para establecer el valor del campo cuenta_debito
-	 * @param string $cuenta_debito
+	 * Metodo para establecer el valor del campo cuenta_consolidar
+	 * @param string $cuenta_consolidar
 	 */
-	public function setCuentaDebito($cuenta_debito){
-		$this->cuenta_debito = $cuenta_debito;
+	public function setCuentaConsolidar($cuenta_consolidar){
+		$this->cuenta_consolidar = $cuenta_consolidar;
 	}
 
 	/**
@@ -240,27 +243,11 @@ class CargosFijos extends ActiveRecord {
 	}
 
 	/**
-	 * Metodo para establecer el valor del campo cuenta_ico_deb
-	 * @param string $cuenta_ico_deb
+	 * Metodo para establecer el valor del campo cuenta_ico
+	 * @param string $cuenta_ico
 	 */
-	public function setCuentaIcoDeb($cuenta_ico_deb){
-		$this->cuenta_ico_deb = $cuenta_ico_deb;
-	}
-
-	/**
-	 * Metodo para establecer el valor del campo cuenta_iva_cre
-	 * @param string $cuenta_iva_cre
-	 */
-	public function setCuentaIvaCre($cuenta_iva_cre){
-		$this->cuenta_iva_cre = $cuenta_iva_cre;
-	}
-
-	/**
-	 * Metodo para establecer el valor del campo cuenta_ico_cre
-	 * @param string $cuenta_ico_cre
-	 */
-	public function setCuentaIcoCre($cuenta_ico_cre){
-		$this->cuenta_ico_cre = $cuenta_ico_cre;
+	public function setCuentaIco($cuenta_ico){
+		$this->cuenta_ico = $cuenta_ico;
 	}
 
 
@@ -289,19 +276,27 @@ class CargosFijos extends ActiveRecord {
 	}
 
 	/**
-	 * Devuelve el valor del campo cuenta_credito
+	 * Devuelve el valor del campo cuenta_contable
 	 * @return string
 	 */
-	public function getCuentaCredito(){
-		return $this->cuenta_credito;
+	public function getCuentaContable(){
+		return $this->cuenta_contable;
 	}
 
 	/**
-	 * Devuelve el valor del campo cuenta_iva_deb
+	 * Devuelve el valor del campo naturaleza
 	 * @return string
 	 */
-	public function getCuentaIvaDeb(){
-		return $this->cuenta_iva_deb;
+	public function getNaturaleza(){
+		return $this->naturaleza;
+	}
+
+	/**
+	 * Devuelve el valor del campo cuenta_iva
+	 * @return string
+	 */
+	public function getCuentaIva(){
+		return $this->cuenta_iva;
 	}
 
 	/**
@@ -361,11 +356,11 @@ class CargosFijos extends ActiveRecord {
 	}
 
 	/**
-	 * Devuelve el valor del campo cuenta_debito
+	 * Devuelve el valor del campo cuenta_consolidar
 	 * @return string
 	 */
-	public function getCuentaDebito(){
-		return $this->cuenta_debito;
+	public function getCuentaConsolidar(){
+		return $this->cuenta_consolidar;
 	}
 
 	/**
@@ -401,27 +396,11 @@ class CargosFijos extends ActiveRecord {
 	}
 
 	/**
-	 * Devuelve el valor del campo cuenta_ico_deb
+	 * Devuelve el valor del campo cuenta_ico
 	 * @return string
 	 */
-	public function getCuentaIcoDeb(){
-		return $this->cuenta_ico_deb;
-	}
-
-	/**
-	 * Devuelve el valor del campo cuenta_iva_cre
-	 * @return string
-	 */
-	public function getCuentaIvaCre(){
-		return $this->cuenta_iva_cre;
-	}
-
-	/**
-	 * Devuelve el valor del campo cuenta_ico_cre
-	 * @return string
-	 */
-	public function getCuentaIcoCre(){
-		return $this->cuenta_ico_cre;
+	public function getCuentaIco(){
+		return $this->cuenta_ico;
 	}
 
 }

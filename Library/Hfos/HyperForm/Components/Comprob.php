@@ -31,7 +31,7 @@ class ComprobHyperComponent extends UserComponent {
 		$nombreComprob = self::_getNombreComprob($value);
 		$code = '<table cellspacing="0" cellpadding="0" class="comprobCompleter">
 			<tr>
-				<td>'.Tag::textField(array($name, 'size' => '12', 'maxlength' => 12, 'value' => $value)).'</td>
+				<td>'.Tag::numericField(array($name, 'size' => '12', 'maxlength' => 12, 'value' => $value)).'</td>
 				<td>'.Tag::textField(array($name.'_det', 'size' => 35, 'class' => 'comprobDetalle', 'value' => $nombreComprob)).'</td>
 			</tr>
 		</table>

@@ -1756,7 +1756,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 					var carteraTable = form.selectOne('table#carteraTable');
 					if (carteraTable != null) {
 						var browse = new HfosBrowseData(this);
-						browse.fromHtmlTable(form, carteraTable, 12);
+						browse.fromHtmlTable(form, carteraTable, 20);
 					};
 				}.bind(this),
 				beforeClose: function(detailElement, position, form, canceled, response){
@@ -2094,31 +2094,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 */
 	_baseGravableNavigation: function(element)
 	{
-		var contentElement = this.getContentElement();
 		var position = parseInt(element.retrieve('position'), 10);
-		var detailElement = this._getDetailElement(position);
-
-		var valorElement = this.selectOne('input#valor' + position);
-		var cuentaPorcIvaElement = detailElement.selectOne('input#cuentaPorcIva');
-		if (valorElement && cuentaPorcIvaElement) {
-			var valor = parseFloat(element.getValue());
-			if (valor) {
-				new HfosModal.confirm({
-					title: 'Base Gravable',
-					message: 'Desea que el sistema calcule la base gravable según el porcentaje de la cuenta?',
-					onAccept: function() {
-						var porcIva = parseFloat(cuentaPorcIvaElement.getValue());
-						if (porcIva) {
-							var baseCalc = valor * porcIva / 100;
-							valorElement.setValue(baseCalc);
-						} else {
-							alert("No se ha definido el porcentaje de iva de esta cuenta que pide base, por favor ingresarla");
-						}
-					}
-				});
-			}
-		}
-
 		this._pushRowForUpdate(element, position);
 
 		var focusElement = this.select('input.descripcion')[position];

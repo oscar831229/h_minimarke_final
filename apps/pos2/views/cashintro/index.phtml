@@ -8,7 +8,7 @@
   <td height='380' valign="top" align="center">
   <?php
 
-  	if ($CashTray->count("estado='N'")) {
+  	if($CashTray->count("estado='N'")){
   		foreach($CashTray->find("estado='N'") as $cash){
 	 		print "<button class='cashButton' onclick='window.location=\"?/cashintro/make/{$cash->id}\"'
 		 	>Caja {$cash->descripcion}</button>\n";

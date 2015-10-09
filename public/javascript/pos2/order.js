@@ -52,10 +52,9 @@ var Pedido = Class.create({
 
 	_lastMenuSelected: null,
 
-	getMenuItems: function(element, id, event)
-	{
+	getMenuItems: function(element, id, event){
 
-		if (this._lastMenuSelected != element) {
+		if(this._lastMenuSelected!=element){
 			element.className = "menuButtonSelected";
 			if(this._lastMenuSelected!=null){
 				this._lastMenuSelected.className = "menuButton";
@@ -63,8 +62,8 @@ var Pedido = Class.create({
 			this._lastMenuSelected = element;
 		};
 
-		if (typeof this._menuCache[id] == "undefined") {
-			new Ajax.Request(Utils.getKumbiaURL("order/getMenu/" + id), {
+		if(typeof this._menuCache[id] == "undefined"){
+			new Ajax.Request(Utils.getKumbiaURL("order/getMenu/"+id), {
 				method: 'GET',
 				onSuccess: function(id, transport){
 					this._menuCache[id] = JSON.parse(transport.responseText);
@@ -76,9 +75,8 @@ var Pedido = Class.create({
 		}
 	},
 
-	adjustItemsList: function(items)
-	{
-		if (this._menuDetailsElement.style.height == '') {
+	adjustItemsList: function(items){
+		if(this._menuDetailsElement.style.height==''){
 			new Effect.Morph(this._menuDetailsElement, {
 				duration: 0.3,
 				style: {
@@ -86,7 +84,7 @@ var Pedido = Class.create({
 				}
 			});
 		};
-		if (items.length > 8) {
+		if(items.length>8){
 			this._menuDetailsElement.style.overflowY = 'scroll';
 		} else {
 			this._menuDetailsElement.style.overflowY = 'auto';
@@ -99,7 +97,7 @@ var Pedido = Class.create({
 		for (var i = 0; i < items.length; i++) {
 			var button = document.createElement('BUTTON');
 			button.className = 'menuItemButton';
-			button.title = 'Precio: ' + items[i].valor;
+			button.title = 'Precio: '+items[i].valor;
 			button.update(items[i].nombre);
 			button.observe('click', this.addItemToAccount.bind(this, button, items[i]));
 			this._menuDetailsElement.appendChild(button);
@@ -182,7 +180,7 @@ var Pedido = Class.create({
 	},
 
 	deleteModifier: function(element) {
-		Modal.confirm("¿Seguro desea eliminar el modificador '" + element.innerHTML + "'?", function(accountModifierId) {
+		Modal.confirm("¿Seguro desea eliminar el modificador '"+element.innerHTML+"'?", function(accountModifierId){
 			new Ajax.Request(Utils.getKumbiaURL("order/deleteModifier/"+accountModifierId), {
 				method: 'GET',
 				onSuccess: this.refresh.bind(this)
@@ -213,12 +211,11 @@ var Pedido = Class.create({
 		};
 	},
 
-	refresh: function(type)
-	{
-		if (typeof type != "string") {
+	refresh: function(type){
+		if(typeof type != "string"){
 			type = ""
 		};
-		new Ajax.Request(Utils.getKumbiaURL("order/refresh/" + type), {
+		new Ajax.Request(Utils.getKumbiaURL("order/refresh/"+type), {
 			method: 'GET',
 			onSuccess: function(transport){
 				this._preOrder.update(transport.responseText);
@@ -227,8 +224,7 @@ var Pedido = Class.create({
 		});
 	},
 
-	closeRefresh: function()
-	{
+	closeRefresh: function(){
 		var myWindow = $('myWindow');
 		if (myWindow) {
 			myWindow.close();
@@ -265,7 +261,7 @@ var Pedido = Class.create({
 					}
 				};
 				var numero = parseInt($('number').value, 10);
-				if (numero <= 0) {
+				if(numero<=0){
 					if(this._comandasElement.options.length==0){
 						Growler.show('Debe ingresar un número de Comanda antes de empezar');
 						return false;
@@ -318,7 +314,7 @@ var Pedido = Class.create({
 			method: 'GET',
 			onSuccess: function(transport){
 				var response = JSON.parse(transport.responseText);
-				if (response > 1) {
+				if(response>1){
 					Modal.confirm('¿Esta seguro de eliminar esta comanda?', function(){
 						new Ajax.Request(Utils.getKumbiaURL("order/queryComanda/"+this._comandasElement.getValue()), {
 							method: 'GET',
@@ -348,61 +344,52 @@ var Pedido = Class.create({
 		});
 	},
 
-	_setNumeroSillas: function()
-	{
-		new WINDOW.open({
-			title: "Digite el Número de Personas",
-			action:'numero',
-			width: "220px",
-			height: "390px",
-			onbeforeclose: function(action){
-				if (action == "cancel") {
-					if (this._numeroAsientos == 0) {
-						return this.backToTables();
-					}
-				};
-				var number = parseInt($('number').value, 10);
-				if (number > 50) {
-					Growler.show("El número de personas es muy alto");
-					return false;
-				};
-				if (number < 1) {
-					Growler.show("El número de personas es muy bajo");
-					return false;
-				};
-				this.addSillas(number);
-				this.setNumeroSillas(number);
-			}.bind(this)
-		});
-	},
-
-	pedirPersonas: function()
-	{
-		if (this._numeroAsientos == 0) {
-			if (this._pedirPersonas == "S") {
-				this._setNumeroSillas();
+	pedirPersonas: function(){
+		if(this._numeroAsientos==0){
+			if(this._pedirPersonas=="S"){
+				new WINDOW.open({
+					title: "Digite el Número de Personas",
+					action:'numero',
+					width: "220px",
+					height: "390px",
+					onbeforeclose: function(action){
+						if(action=="cancel"){
+							return this.backToTables();
+						};
+						var number = parseInt($('number').value, 10);
+						if(number>14){
+							Growler.show("El número de personas es muy alto");
+							return false;
+						};
+						if(number<1){
+							Growler.show("El número de personas es muy bajo");
+							return false;
+						};
+						this.addSillas(number);
+						this.setNumeroSillas(number);
+					}.bind(this)
+				});
 			}
 		}
 	},
 
-	setNumeroSillas: function(number)
-	{
-		new Ajax.Request(Utils.getKumbiaURL("order/setNumberAsientos/" + number), {
+	setNumeroSillas: function(number){
+		new Ajax.Request(Utils.getKumbiaURL("order/setNumberAsientos/"+number), {
 			method: 'GET'
 		});
 	},
 
 	setActiveAsiento: function(number){
-		new Ajax.Request(Utils.getKumbiaURL("order/setActiveAsiento/" + number), {
+		new Ajax.Request(Utils.getKumbiaURL("order/setActiveAsiento/"+number), {
 			method: 'GET'
 		});
 	},
 
-	addSillas: function(number) {
+	addSillas: function(number){
 
 		var i = 0;
-		var number = parseInt(number, 10);
-		for (i = 1; i <= number; i++) {
+		var number = parseInt(number, 10)+1;
+		for(i=1;i<=number;i++){
 			var chair = $("s"+i);
 			new Effect.Appear(chair, {
 				duration: 0.6
@@ -412,7 +399,7 @@ var Pedido = Class.create({
 			};
 			chair.number = i;
 			chair.show();
-			if (i == number) {
+			if(i==number){
 				new Effect.Opacity(chair, { duration: 0.5, to: 0.4 });
 			}
 		};
@@ -421,12 +408,11 @@ var Pedido = Class.create({
 		}
 	},
 
-	changeSelectedSilla: function(number)
-	{
-		for (var i = 1; i < 15; i++) {
+	changeSelectedSilla: function(number){
+		for(var i=1;i<15;i++){
 			var silla = $("s"+i);
-			if (silla.visible()) {
-				if (i == number) {
+			if(silla.visible()){
+				if(i==number){
 					silla.removeClassName("inactiveAsiento");
 					silla.addClassName("activeAsiento");
 					this.setActiveAsiento(number);
@@ -438,16 +424,15 @@ var Pedido = Class.create({
 		}
 	},
 
-	addCuenta: function()
-	{
+	addCuenta: function(){
 		new Ajax.Request(Utils.getKumbiaURL("order/addCuenta"), {
 			method: 'GET',
 			onSuccess: function(transport){
 
 				var nuevaCuenta = JSON.parse(transport.responseText);
 				var options = this._cuentasElement.options;
-				for (var i = 0; i < options.length; i++) {
-					if (options[i].value == nuevaCuenta) {
+				for(var i=0;i<options.length;i++){
+					if(options[i].value==nuevaCuenta){
 						nuevaCuenta++;
 						continue;
 					}
@@ -472,14 +457,12 @@ var Pedido = Class.create({
 		});
 	},
 
-	setLastCuenta: function()
-	{
+	setLastCuenta: function(){
 		this._cuentasElement.selectedIndex = this._cuentasElement.options.length - 1;
 		new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()));
 	},
 
-	deleteCuenta: function()
-	{
+	deleteCuenta: function(){
 		new Ajax.Request(Utils.getKumbiaURL("order/getNumeroCuentas"), {
 			method: 'GET',
 			onSuccess: function(transport){
@@ -490,7 +473,7 @@ var Pedido = Class.create({
 							method: 'GET',
 							onSuccess: function(transport){
 								var response = JSON.parse(transport.responseText);
-								if (response > 0) {
+								if(response>0){
 									Growler.show('No se puede borrar esta cuenta porque tiene items atendidos');
 									return false;
 								} else {
@@ -514,8 +497,7 @@ var Pedido = Class.create({
 		});
 	},
 
-	onChangeCuenta: function()
-	{
+	onChangeCuenta: function(){
 		new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()), {
 			onSuccess: function(transport){
 				var response = JSON.parse(transport.responseText);
@@ -773,12 +755,11 @@ var Pedido = Class.create({
 		}
 	},
 
-	enableShortCuts: function(event)
-	{
-		if (this._searchMode==false) {
-			if (!$('myWindow')) {
-				if (event.ctrlKey == true) {
-					if (event.keyCode == 49) {
+	enableShortCuts: function(event){
+		if(this._searchMode==false){
+			if(!$('myWindow')){
+				if(event.ctrlKey==true){
+					if(event.keyCode==49){
 						this.goToModifiers();
 						return;
 					};
@@ -815,20 +796,18 @@ var Pedido = Class.create({
 		}
 	},
 
-	selectItem: function(element)
-	{
+	selectItem: function(element){
 		var itemsSelected = this._preOrder.querySelectorAll('tr.itemSelected');
-		for (var i = 0; i < itemsSelected.length; i++) {
+		for(var i=0;i<itemsSelected.length;i++){
 			itemsSelected[i].removeClassName('itemSelected');
 		};
 		element.addClassName('itemSelected');
-		new Ajax.Request(Utils.getKumbiaURL("order/changeSelectedItem/" + element.lang), {
+		new Ajax.Request(Utils.getKumbiaURL("order/changeSelectedItem/"+element.lang), {
 			method: 'GET'
 		});
 	},
 
-	selectAllItems: function()
-	{
+	selectAllItems: function(){
 		var checkItems = this._preOrder.querySelectorAll('input.checkItem');
 		for(var i=0;i<checkItems.length;i++){
 			if(checkItems[i].disabled==false){
@@ -837,8 +816,7 @@ var Pedido = Class.create({
 		}
 	},
 
-	prepareBuscarItem: function()
-	{
+	prepareBuscarItem: function(){
 		var buscarItem = $("buscarItem");
 		buscarItem.observe("focus", function(event){
 			if(this.value=="Buscar por nombre"){
@@ -1038,10 +1016,6 @@ var Pedido = Class.create({
 		plusCuenta.observe('click', this.addCuenta.bind(this));
 		plusCuenta.title = "Agregar Cuenta";
 
-		var changeSillas = $('changeSillas');
-		changeSillas.observe('click', this._setNumeroSillas.bind(this));
-		changeSillas.title = "Cambiar Personas";
-
 		var minusComanda = $('minusCuenta');
 		minusComanda.observe('click', this.deleteCuenta.bind(this));
 		minusComanda.title = "Eliminar Cuenta Actual";
@@ -1050,23 +1024,23 @@ var Pedido = Class.create({
 		$('selectAllArrow').observe('click', this.selectAllItems.bind(this));
 
 		var tipoVenta = $('tipo_venta');
-		if (tipoVenta.getValue() == 'F') {
+		if(tipoVenta.getValue()=='F'){
 			$('gendoc').update("Imprimir<br>Factura");
 		} else {
 			$('gendoc').update("Imprimir<br>Orden");
 		};
 		tipoVenta.observe('change', this.onChangeTipoVenta.bind(this, tipoVenta));
 
-		if (this._pideAsientos == 'N') {
+		if(this._pideAsientos=='N'){
 			$('asientosDiv').hide();
 		} else {
-			if (this._numeroAsientos > 0) {
-				this.addSillas(this._numeroAsientos - 1);
+			if(this._numeroAsientos>0){
+				this.addSillas(this._numeroAsientos-1);
 			}
 		};
 
 		var itemsChanged = this._preOrder.querySelectorAll('tr.itemChanged');
-		for (var i = 0; i < itemsChanged.length; i++) {
+		for(var i=0;i<itemsChanged.length;i++){
 			new Effect.Highlight(itemsChanged[i]);
 		};
 
@@ -1149,23 +1123,20 @@ var Pedido = Class.create({
 		}
 	},
 
-	addCustomerCallback: function()
-	{
+	addCustomerCallback: function(){
 		var aplSubmit = $("apl_submit");
-		if (aplSubmit) {
-
+		if(aplSubmit){
 			aplSubmit.observe("click", function(){
 				ajaxRemoteForm($("myform"), "customer_messages");
 			});
-
 			var habitacion = $('habitacion');
-			if (habitacion) {
+			if(habitacion){
 				window.setTimeout(function(){
 					$("numHabitacion").activate();
 				}, 200);
 				habitacion.observe('change', this.getHuespedInfo.bind(this, habitacion));
 				var huespedButtons = $$('.huespedButton');
-				for (var i = 0; i < huespedButtons.length; i++) {
+				for(var i=0;i<huespedButtons.length;i++){
 					huespedButtons[i].observe('click', this.selectThisFolio.bind(this, huespedButtons[i]))
 				}
 			} else {
@@ -1180,24 +1151,9 @@ var Pedido = Class.create({
 					});
 				}, 200);
 			}
-
-			/*var createCustomerBtn = $("createCustomerBtn");
-			if (createCustomerBtn) {
-				createCustomerBtn.observe("click", function() {
-					$("myWindow").close();
-					new WINDOW.open({
-						action: "order/createFDirecta",
-						width: "940px",
-						height: "620px",
-						title: "Seleccionar Folio",
-						afterRender: this.addCustomerCallback.bind(this)
-					});
-				});
-			}*/
-
 		} else {
 			var numeroAccion = $('numeroAccion');
-			if (numeroAccion) {
+			if(numeroAccion){
 				window.setTimeout(function(){
 					$("numeroAccion").activate();
 				}, 200);
@@ -1212,8 +1168,7 @@ var Pedido = Class.create({
 		}
 	},
 
-	getHuespedInfo: function(element)
-	{
+	getHuespedInfo: function(element){
 		new Ajax.Request(Utils.getKumbiaURL('order/getHuespedInfo/'+element.getValue()), {
 			onSuccess: function(transport){
 				$('huesped_info').update(transport.responseText);
@@ -1325,7 +1280,7 @@ var Pedido = Class.create({
 		};
 		var height = listaPedido.getHeight();
 		var itemsSelected = this._preOrder.querySelectorAll("tr.itemSelected");
-		for(var i = 0; i < itemsSelected.length; i++){
+		for(var i = 0; i < itemsSelected.length; i++) {
 			var offset = itemsSelected[i].positionedOffset();
 			var scrollPos = (offset[1] - listaPedido.offsetTop - itemsSelected[i].getHeight() - 20);
 			if (scrollPos > 0) {
@@ -1340,7 +1295,7 @@ var Pedido = Class.create({
 	setHeightDimensions: function()
 	{
 		var height = $('mainTable').getHeight();
-		this._menuDetailsHeight = parseInt(height * 0.47, 10) + 'px';
+		this._menuDetailsHeight = parseInt(height * 0.57, 10) + 'px';
 		this._listaPedidoHeight = parseInt(height * 0.55, 10) + 'px';
 	},
 

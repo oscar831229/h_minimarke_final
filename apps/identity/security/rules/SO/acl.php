@@ -26,12 +26,25 @@ $menuDisposition = array(
 		'options' => array(
 			'socios',
 			'rechazos',
-			//NO se usa //'cambio_accion',
-			'asignacion_estados',
+			'cambio_accion',
 			'asignacion_cargos',
 			'asignacion_cargos_grupo',
-            'cambio_categoria',
-			'pagos_automaticos'
+			'estados_socios',
+			'asignacion_estados',
+			'pagos_automaticos',
+			'tipo_asociacion_socio'
+		)
+	),
+	array(
+		'title' => 'Cartera',
+		'description' => 'Opciones de Cartera',
+		'options' => array(
+			'proyeccion',
+			'prestamos_socios',
+			//'ajuste_saldos',
+			//'ajuste_prestamos',
+			//'ajuste_pagos',
+			//'ajuste_consumos',
 		)
 	),
 	array(
@@ -39,20 +52,16 @@ $menuDisposition = array(
 		'description' => 'Opciones de Facturación',
 		'options' => array(
 			'cargos_socios',
-			//No se usa//'movimiento_cargos',
+			'movimiento_cargos',
 			'facturar',
 			'facturar_personal',
-			'novedades_factura',
-			'proyeccion',
-			'prestamos_socios',
-			'importar_pagos'
+			'novedades_factura'
 		)
 	),
 	array(
 		'title' => 'Informes',
 		'description' => 'Informes de Socios',
 		'options' => array(
-			'informe_rc',
 			'consulta_socios',
 			'suspendidos_mora',
 			'facturas_generadas',
@@ -62,9 +71,7 @@ $menuDisposition = array(
 			'estado_cuenta',
 			'estado_cuenta_consolidado',
 			'estado_cuenta_validacion',
-			'validacion_categorias',
-			'cumpleanos',
-			'pagos_periodo'
+			'pagos_periodo',
 		)
 	),
 	array(
@@ -79,29 +86,28 @@ $menuDisposition = array(
 		'title' => 'Básicas',
 		'description' => 'Opciones de Básicas en socios',
 		'options' => array(
-			//Socios
-			'tipo_correspondencia',
+			'cargos_fijos',
+			'periodo',
 			'tipo_documentos',
 			'hobbies',
 			'parentescos',
 			'estados_civiles',
+			'formas_pago',
 			'tipo_socios',
 			'tipo_titularidad',
 			'clubes',
-			'estados_socios',
-			'accion_estados',
-			'tipo_asociacion_socio',
-			'formas_pago',
 			'interes_mora',
 			'tipos_pago',
-			'categoria_edad',
-			//Basicas
-			'cargos_fijos',
-			'consecutivos',
-            'periodo',
-            'cargos_fijos_categoria',
+			'tipo_asociacion_socio',
+			//'bancos',
+			//'parametros_basicos_cartera',
 			'datos_club',
-			'settings'
+			'settings',
+			'tipo_correspondencia',
+			'estados_socios',
+			'accion_estados',
+			'consecutivos',
+            'categoria_edad'
 		)
 	)
 );
@@ -409,33 +415,6 @@ $accessList = array(
 			)
 		)
 	),
-	'cambio_categoria' => array(
-		'elevation' => true,
-		'description' => 'Cambio de Categoría',
-		'actions' => array(
-			'index' => array(
-				'description' => 'Ingreso a',
-			),
-			'new' => array(
-				'sameAs' => 'save'
-			),
-			'edit' => array(
-				'sameAs' => 'save'
-			),
-			'save' => array(
-				'description' => 'Adicionar ó Modificar en'
-			),
-			'delete' => array(
-				'description' => 'Eliminar en'
-			),
-			'search' => array(
-				'description' => 'Consultar ó Reporte en',
-			),
-			'rcs' => array(
-				'description' => 'Consultar revisiones en'
-			)
-		)
-	),
 	'novedades_factura' => array(
 		'elevation' => true,
 		'description' => 'Novedades de Factura',
@@ -503,18 +482,55 @@ $accessList = array(
 			)
 		)
 	),
-	'importar_pagos' => array(
+	'ajuste_saldos' => array(
 		'elevation' => true,
-		'description' => 'Importar Pagos',
+		'description' => 'Ajuste de Saldos',
 		'actions' => array(
 			'index' => array(
 				'description' => 'Ingreso a',
 			),
 			'generar' => array(
-				'description' => 'Realizar '
+				'description' => 'Generar la'
 			),
 		)
 	),
+	'ajuste_prestamos' => array(
+		'elevation' => true,
+		'description' => 'Ajuste de Prestamos',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+			'generar' => array(
+				'description' => 'Generar la'
+			),
+		)
+	),
+	'ajuste_pagos' => array(
+		'elevation' => true,
+		'description' => 'Ajuste de Pagos',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+			'generar' => array(
+				'description' => 'Generar la'
+			),
+		)
+	),
+	'ajuste_consumos' => array(
+		'elevation' => true,
+		'description' => 'Ajuste de Consumos',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+			'generar' => array(
+				'description' => 'Generar la'
+			),
+		)
+	),
+
 	//Menú Cierres
 	'cierre_periodo' => array(
 		'elevation' => true,
@@ -975,33 +991,6 @@ $accessList = array(
 			)
 		)
 	),
-	'cargos_fijos_categoria' => array(
-		'elevation' => true,
-		'description' => 'Cargos Fijos x Categoría',
-		'actions' => array(
-			'index' => array(
-				'description' => 'Ingreso a',
-			),
-			'new' => array(
-				'sameAs' => 'save'
-			),
-			'edit' => array(
-				'sameAs' => 'save'
-			),
-			'save' => array(
-				'description' => 'Adicionar ó Modificar en'
-			),
-			'delete' => array(
-				'description' => 'Eliminar en'
-			),
-			'search' => array(
-				'description' => 'Consultar ó Reporte en',
-			),
-			'rcs' => array(
-				'description' => 'Consultar revisiones en'
-			)
-		)
-	),
 	'datos_club' => array(
 		'elevation' => true,
 		'description' => 'Datos del Club',
@@ -1115,18 +1104,6 @@ $accessList = array(
 			),
 		)
 	),
-	'informe_rc' => array(
-		'elevation' => true,
-		'description' => 'Informe de Recibos de Caja',
-		'actions' => array(
-			'index' => array(
-				'description' => 'Ingreso a la',
-			),
-			'generar' => array(
-				'description' => 'Generar la'
-			),
-		)
-	),
 	'accion_estados' => array(
 		'elevation' => true,
 		'description' => 'Accion de Estados',
@@ -1187,30 +1164,6 @@ $accessList = array(
 	'estado_cuenta_validacion' => array(
 		'elevation' => true,
 		'description' => 'Validación de Estados de Cuenta',
-		'actions' => array(
-			'index' => array(
-				'description' => 'Ingreso a la',
-			),
-			'report' => array(
-				'description' => 'Generar a la'
-			)
-		)
-	),
-	'validacion_categorias' => array(
-		'elevation' => true,
-		'description' => 'Validación de Categorias',
-		'actions' => array(
-			'index' => array(
-				'description' => 'Ingreso a la',
-			),
-			'report' => array(
-				'description' => 'Generar a la'
-			)
-		)
-	),
-	'cumpleanos' => array(
-		'elevation' => true,
-		'description' => 'Cumpleaños de Socios',
 		'actions' => array(
 			'index' => array(
 				'description' => 'Ingreso a la',

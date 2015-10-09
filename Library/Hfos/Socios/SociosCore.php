@@ -75,7 +75,7 @@ class SociosCore extends UserComponent
                     $transaction->rollback('El valor de número de acción solo puede ser S/N');
                     break;
             }
-            if ($configuration->save() == false) {
+            if ($configuration->save()==false) {
                 foreach ($configuration->getMessages() as $message) {
                     $transaction->rollback($message->getMessage());
                 }
@@ -85,10 +85,10 @@ class SociosCore extends UserComponent
 
     /**
      * Metodo que crea un contrato de prueba
-     *
+     * 
      * @param array $config
      * @param ActiverecordTransaction $transaction
-     *
+     * 
      * @return ActiveRecord $Socios
      */
     public static function crearSocio(&$config, $transaction)
@@ -96,35 +96,35 @@ class SociosCore extends UserComponent
 
         //Miramos el tipo de número de acción
         SociosCore::setNumeroAccionManual($config, $transaction);
-
+        
         //Creamos registro de socios
         $Socios = EntityManager::get('Socios', true)->setTransaction($transaction);
-
+        
         if ($config['titularId']) {
 
         } else {
             $Socios->setSociosId(0);
         }
-
+        
         $Socios->setTitularId($config['titularId']);
         if ($config['fechaIngreso'] && $config['fechaIngreso']!='0000-00-00') {
             $Socios->setFechaIngreso($config['fechaIngreso']);
         } else {
             $Socios->setFechaIngreso('1900-01-01');
         }
-
+        
         if ($config['fechaNacimiento'] && $config['fechaNacimiento']!='0000-00-00') {
             $Socios->setFechaNacimiento($config['fechaNacimiento']);
         } else {
             $Socios->setFechaNacimiento('1900-01-01');
         }
-
+        
         if ($config['imprime']) {
             $Socios->setImprime($config['imprime']);
         } else {
             $Socios->setImprime('S');
         }
-
+        
         $Socios->setParentescosId($config['parentescosId']);
         $Socios->setTipoDocumentosId($config['tipoDocumentosId']);
         $Socios->setIdentificacion($config['identificacion']);
@@ -147,18 +147,18 @@ class SociosCore extends UserComponent
         $Socios->setEnviaCorreo($config['enviaCorreo']);
         $Socios->setCobra($config['cobra']);
         $Socios->setEstadosSociosId($config['estadosSociosId']);
-
+        
         if (isset($config['estadosCivilesId']) && $config['estadosCivilesId']>0) {
             $Socios->setEstadosCivilesId($config['estadosCivilesId']);
         }
-
+        
         if (isset($config['imagenSocio'])) {
             $Socios->setImagenSocio($config['imagenSocio']);
         }
-
+        
         //Número de acción
         if (isset($config['numeroAccionManual'])==true && $config['numeroAccionManual']=='S') {
-            if (isset($config['numeroAccion'])==true && empty($config['numeroAccion']) == false) {
+            if (isset($config['numeroAccion'])==true && empty($config['numeroAccion'])==false) {
                 $Socios->setNumeroAccion($config['numeroAccion']);
             } else {
                 $transaction->rollback('Por favor ingresar un valor correcto a número de acción');
@@ -167,15 +167,15 @@ class SociosCore extends UserComponent
             $numeroAccion = SociosCore::makeNumeroAccion($Socios, $transaction);
             $Socios->setNumeroAccion($numeroAccion);
         }
-
+        
         //Guardamos
         $Socios->setDebug(true);
-        if ($Socios->save() == false) {
+        if ($Socios->save()==false) {
             foreach ($Socios->getMessages() as $message) {
                 $transaction->rollback($message->getMessage());
             }
         }
-
+        
         if ($Socios!=false) {
             $config['Socios'] = $Socios;
             $config['SociosId'] = $Socios->getSociosId();
@@ -210,7 +210,7 @@ class SociosCore extends UserComponent
                 );
                 SociosCore::saveExpLaboral($configExpLaboral, $transaction);
             }
-
+            
             //Actividades
             if (isset($config['actividades'])) {
                 $configActividades = array(
@@ -249,7 +249,7 @@ class SociosCore extends UserComponent
                 );
                 SociosCore::saveOtrosSocios($configOtrosSocios, $transaction);
             }
-
+            
             //Porteria
             /*$configPorteriaSocios = array(
                 'SociosId'        => $Socios->getSociosId(),
@@ -257,7 +257,7 @@ class SociosCore extends UserComponent
             );
             SociosCore::savePorteria($configPorteriaSocios, $transaction);
             */
-
+            
             //If have numero tarjeta
             if ($config['numeroTarjeta']) {
                 $configNumeroTarjeta = array(
@@ -295,8 +295,8 @@ class SociosCore extends UserComponent
         $pagosAutomaticos->setBancosId($configNumeroTarjeta['bancosId']);
         $pagosAutomaticos->setDigitoVerificacion($configNumeroTarjeta['digitoVerificacion']);
         $pagosAutomaticos->setEstado($configNumeroTarjeta['estado']);
-
-        if ($pagosAutomaticos->save() == false) {
+        
+        if ($pagosAutomaticos->save()==false) {
             foreach ($pagosAutomaticos->getMessages() as $message) {
                 $transaction->rollback($message->getMessage());
             }
@@ -311,10 +311,10 @@ class SociosCore extends UserComponent
         //Delete all models
         $models = array('Socios', 'Estudios', 'Explaboral', 'AsociacionSocio', 'Actividades', 'Asoclubes', 'AsignacionCargos', 'CargosSocios', 'Movimiento', 'DetalleMovimiento', 'Factura', 'DetalleFactura', 'pagosAutomaticos');
         ActiveRecord::disableEvents(true);
-
+        
         foreach ($models as $model) {
             $tempModel = self::getModel($model)->setTransaction($transaction);
-            if ($tempModel->delete(array('conditions'=>'1=1')) == false) {
+            if ($tempModel->delete(array('conditions'=>'1=1'))==false) {
                 foreach ($tempModel->getMessages() as $message) {
                     $transaction->rollback($message->getMessage());
                 }
@@ -330,18 +330,18 @@ class SociosCore extends UserComponent
         $periodo->setCierre('N');
         $periodo->setFacturado('N');
         $periodo->setInteresesMora(2.0);
-
-        if ($periodo->save() == false) {
+        
+        if ($periodo->save()==false) {
             foreach ($periodo->getMessages() as $message) {
                 $transaction->rollback($message->getMessage());
             }
         }
-
+        
         //Initialize autoincremnt of RC y reservas in empresa
         $datosClub = self::getModel('DatosClub')->setTransaction($transaction)->findFirst();
         $datosClub->setTransaction($transaction);
         $datosClub->setNumsoc(0);//incializa consecutivo de Socios
-        if ($datosClub->save() == false) {
+        if ($datosClub->save()==false) {
             foreach ($datosClub->getMessages() as $message) {
                 $transaction->rollback($message->getMessage());
             }
@@ -350,7 +350,7 @@ class SociosCore extends UserComponent
 
     /**
      * Metodo que actualiza la información de estudios de una socio
-     *
+     * 
      * @param $config = array(
      *     'SociosId'        => $sociosId,
      *     'estudiosId'    => $ids,
@@ -364,7 +364,7 @@ class SociosCore extends UserComponent
     public static function saveEstudios(&$config, $transaction)
     {
         //Parametros
-        if (isset($config['SociosId']) == false || empty($config['SociosId'])==true) {
+        if (isset($config['SociosId'])==false || empty($config['SociosId'])==true) {
             $transaction->rollback('El id del socio es necesario para registrar sus estudios');
         }
         $sociosId        = $config['SociosId'];
@@ -379,10 +379,10 @@ class SociosCore extends UserComponent
         if (is_array($estudiosId)==true && count($estudiosId)>0) {
             $noBorrarIds = ' AND id NOT IN('.implode(', ', $estudiosId).')';
         }
-
+        
         $estudios = EntityManager::get('Estudios')->setTransaction($transaction)->delete(array('conditions'=>'socios_id="'.$sociosId.'"'.$noBorrarIds));
         $numero = 0;
-
+        
         if (is_array($instituciones)==true && count($instituciones)>0) {
 
             //Recorremos las isntituciones e insertamos los registros
@@ -394,7 +394,7 @@ class SociosCore extends UserComponent
                 $estudios->setFechaGrado($fechaGrados[$numero]);
                 $estudios->setTitulo($titulos[$numero]);
 
-                if ($estudios->save() == false) {
+                if ($estudios->save()==false) {
                     foreach ($estudios->getMessages() as $message) {
                         $transaction->rollback($message->getMessage());
                     }
@@ -407,7 +407,7 @@ class SociosCore extends UserComponent
 
     /**
     * Metodo que actualiza la información de la experiencia laboral de un socio
-    *
+    * 
     * @param $config = array(
     *     'SociosId'                => $record->getSociosId(),
     *    'expLaboralesId'        => $expLaboralesId,
@@ -423,7 +423,7 @@ class SociosCore extends UserComponent
     public static function saveExpLaboral(&$config, $transaction)
     {
         //Parametros
-        if (isset($config['SociosId']) == false || empty($config['SociosId'])==true) {
+        if (isset($config['SociosId'])==false || empty($config['SociosId'])==true) {
             $transaction->rollback('El id del socio es necesario para registrar sus experiencias laborales');
         }
 
@@ -435,31 +435,31 @@ class SociosCore extends UserComponent
         $expLaboralesTelefono    = $config['expLaboralesTelefono'];
         $expLaboralesFax        = $config['expLaboralesFax'];
         $expLaboralesFecha        = $config['expLaboralesFecha'];
-
+        
         //Borramos todos los estudion
         $noBorrarIds = '';
         if (is_array($expLaboralesId)==true && count($expLaboralesId)>0) {
             $noBorrarIds = ' AND id NOT IN('.implode(', ', $expLaboralesId).')';
         }
-
+        
         //Borramos registros
         $explaboral = EntityManager::get('Explaboral')->setTransaction($transaction)->deleteAll('socios_id='.$sociosId.$noBorrarIds);
         $numero = 0;
         if (is_array($expLaboralesEmpresa)==true && count($expLaboralesEmpresa)>0) {
-
+            
             //Recorremos las experiencias laborales e insertamos los registros
             foreach ($expLaboralesEmpresa as $n => $val) {
-                if (isset($expLaboralesEmpresa[$numero]) && empty($expLaboralesEmpresa[$numero]) == false
+                if (isset($expLaboralesEmpresa[$numero]) && empty($expLaboralesEmpresa[$numero])==false
                     &&
-                    isset($expLaboralesDireccion[$numero]) && empty($expLaboralesDireccion[$numero]) == false
+                    isset($expLaboralesDireccion[$numero]) && empty($expLaboralesDireccion[$numero])==false
                     &&
-                    isset($expLaboralesCargo[$numero]) && empty($expLaboralesCargo[$numero]) == false
+                    isset($expLaboralesCargo[$numero]) && empty($expLaboralesCargo[$numero])==false
                     &&
-                    isset($expLaboralesTelefono[$numero]) && empty($expLaboralesTelefono[$numero]) == false
+                    isset($expLaboralesTelefono[$numero]) && empty($expLaboralesTelefono[$numero])==false
                     &&
-                    isset($expLaboralesFax[$numero]) && empty($expLaboralesFax[$numero]) == false
+                    isset($expLaboralesFax[$numero]) && empty($expLaboralesFax[$numero])==false
                     &&
-                    isset($expLaboralesFecha[$numero]) && empty($expLaboralesFecha[$numero]) == false
+                    isset($expLaboralesFecha[$numero]) && empty($expLaboralesFecha[$numero])==false
                 ) {
                     $explaboral = EntityManager::get('Explaboral', true)->setTransaction($transaction);
                     $explaboral->setSociosId($sociosId);
@@ -470,7 +470,7 @@ class SociosCore extends UserComponent
                     $explaboral->setFax($expLaboralesFax[$numero]);
                     $explaboral->setFecha($expLaboralesFecha[$numero]);
 
-                    if ($explaboral->save() == false) {
+                    if ($explaboral->save()==false) {
                         foreach ($explaboral->getMessages() as $message) {
                             $transaction->rollback($message->getMessage());
                         }
@@ -487,26 +487,26 @@ class SociosCore extends UserComponent
      * @param array = $config(
      *     'SociosId'        => int,
      *     'actividades'    => array(id1, id2, ...)
-     * )
+     * ) 
      * @param $transaction
      */
     public static function saveActividades(&$config, $transaction)
     {
         //Parametros
-        if (isset($config['SociosId']) == false || empty($config['SociosId'])==true) {
+        if (isset($config['SociosId'])==false || empty($config['SociosId'])==true) {
             $transaction->rollback('El id del socio es necesario para registrar sus actividades');
         }
 
         $sociosId            = $config['SociosId'];
         $actividadesArray    = array();
-
+        
         if (isset($config['actividades'])==true) {
             $actividadesArray = $config['actividades'];
         }
-
+        
         //Borramos todas las actividades del socio
         $actividades = EntityManager::get('Actividades')->setTransaction($transaction)->delete('socios_id='.$sociosId);
-
+        
         //Recorremos las actividades e insertamos los registros
         if (is_array($actividadesArray)==true && count($actividadesArray)>0) {
             foreach ($actividadesArray as $actividad) {
@@ -514,7 +514,7 @@ class SociosCore extends UserComponent
                 $actividades->setSociosId($sociosId);
                 $actividades->setHobbiesId($actividad);
 
-                if ($actividades->save() == false) {
+                if ($actividades->save()==false) {
                     foreach ($actividades->getMessages() as $message) {
                         $actividades->appendMessage('Actividades: '.$message->getMessage());
                         return false;
@@ -535,25 +535,25 @@ class SociosCore extends UserComponent
     public static function saveClubes(&$config, $transaction)
     {
         //Parametros
-        if (isset($config['SociosId']) == false || empty($config['SociosId'])==true) {
+        if (isset($config['SociosId'])==false || empty($config['SociosId'])==true) {
             $transaction->rollback('El id del socio es necesario para registrar sus actividades');
         }
 
         $sociosId     = $config['SociosId'];
         $clubesArray  = array();
-
+        
         if (isset($config['clubes'])==true) {
             $clubesArray = $config['clubes'];
         }
-
+        
         $clubesDesdeArray    = array();
         if (isset($config['clubesDesde'])==true) {
             $clubesDesdeArray = $config['clubesDesde'];
         }
-
+        
         //Borramos todos los clubes asociados al socio
         $asoclubes = EntityManager::get('Asoclubes')->setTransaction($transaction)->delete('socios_id='.$sociosId);
-
+        
         //Recorremos los clubes e insertamos los registros
         if (is_array($clubesArray)==true && count($clubesArray)>0) {
             foreach ($clubesArray as $clubId) {
@@ -562,7 +562,7 @@ class SociosCore extends UserComponent
                 $asoclubles->setClub($clubId);
                 $asoclubles->setDesde($clubesDesdeArray[$clubId]);
 
-                if ($asoclubles->save() == false) {
+                if ($asoclubles->save()==false) {
                     foreach ($asoclubles->getMessages() as $message) {
                         $transaction->rollback($message->getMessage());
                     }
@@ -578,13 +578,13 @@ class SociosCore extends UserComponent
      * @param array = $config(
      *     'SociosId'        => int
      *     'cargosFijos'    => array(id1, id2, ...)
-     * )
+     * ) 
      * @param $transaction
      */
     public static function saveCargosFijos(&$config, $transaction)
     {
         //Parametros
-        if (isset($config['SociosId']) == false || empty($config['SociosId'])==true) {
+        if (isset($config['SociosId'])==false || empty($config['SociosId'])==true) {
             $transaction->rollback('El id del socio es necesario para registrar sus actividades');
         }
 
@@ -597,7 +597,7 @@ class SociosCore extends UserComponent
 
         //Borramos todos los cargos asignados al socio
         $asignacionCargos = EntityManager::get('AsignacionCargos')->setTransaction($transaction)->delete('socios_id='.$sociosId);
-
+        
         //Recorremos los cargos fijos e insertamos los registros
         if (is_array($cagosFijosArray)==true && count($cagosFijosArray)>0) {
             foreach ($cagosFijosArray as $cargoFijoId) {
@@ -606,7 +606,7 @@ class SociosCore extends UserComponent
                 $asignacionCargos->setCargosFijosId($cargoFijoId);
                 $asignacionCargos->setEstado('A');//Activo
 
-                if ($asignacionCargos->save() == false) {
+                if ($asignacionCargos->save()==false) {
                     foreach ($asignacionCargos->getMessages() as $message) {
                         $transaction->rollback($message->getMessage());
                     }
@@ -639,7 +639,7 @@ class SociosCore extends UserComponent
                 if ($nitInvo!=$nitSocios) {
                     $invoicer->setNit($nitSocios);
                     $invoicer->setNitEntregar($nitSocios);
-                    if ($invoicer->save() == false) {
+                    if ($invoicer->save()==false) {
                         foreach ($invoicer->getMessages() as $msg) {
                             throw new SociosException("InvoicerNit: ".$msg->getMessage());
                             unset($msg);
@@ -667,11 +667,11 @@ class SociosCore extends UserComponent
 
         $nit = $socios->getIdentificacion();
         $tercero = EntityManager::get('Nits')->findFirst(array('conditions'=>'nit="'.$nit.'"'));
-        $nombre = sprintf("%04s",   $socios->getNumeroAccion())." - ".$socios->getApellidos().' '.$socios->getNombres();
+        $nombre = $socios->getNumeroAccion()."/".$socios->getApellidos().' '.$socios->getNombres();
         //throw new Exception($nombre);
-
+        
         //Rcs::disable();
-        if ($tercero == false) {
+        if ($tercero==false) {
             $tercero = new Nits();
             $tercero->setNit($nit);
             $tercero->setClase('C');//Cedula
@@ -679,7 +679,7 @@ class SociosCore extends UserComponent
             $tercero->setNombre($nombre);
             $tercero->setDireccion($socios->getDireccionCasa());
             $tercero->setTelefono($socios->getTelefonoCasa());
-            if ($tercero->save() == false) {
+            if ($tercero->save()==false) {
                 foreach ($tercero->getMessages() as $message) {
                     throw new SociosException($message->getMessage());
                 }
@@ -688,7 +688,7 @@ class SociosCore extends UserComponent
             $tercero->setClase('C');//Cedula
             $tercero->setTipoDoc(13);//Cedula Local
             $tercero->setNombre($nombre);
-            if ($tercero->save() == false) {
+            if ($tercero->save()==false) {
                 foreach ($tercero->getMessages() as $message) {
                     throw new SociosException($message->getMessage());
                 }
@@ -725,20 +725,23 @@ class SociosCore extends UserComponent
                 $clientes->setNumest(0);
                 $clientes->setLocnac(0);
                 $observaciones = "Se creo por maestro de socios";
-                $clientes->setCredito('S');
             }
+            $clientes->setCredito('S');
+            $clientes->setCredito('A');
 
-            if (!$socios->getEstadoFront()) {
-                $clientes->setEstsis('A');
+            if ($socios->getCobra()=='S') {
+                //$clientes->setCredito('S');
+                //$clientes->setEstsis("A");//Activo
+                //$observaciones = "Se asigno Credito Si por estar generando estado de cuenta en maestro de socios.";
             } else {
-                //asigna el estado de maestro de socios
-                $clientes->setEstsis($socios->getEstadoFront());
+                //$clientes->setCredito('N');
+                //$clientes->setEstsis("I");//Inctivo
+                //$observaciones = "Se asigno Credito No por no estar generando estado de cuenta en maestro de socios.";
             }
-
             $identity = IdentityManager::getActive();
             $clientes->setObservacion($clientes->getObservacion().",\n".date("Y-m-d H:i:s")." [{$identity['login']}]- ".$observaciones);
 
-            $clientes->setNombre($nombre);
+            $clientes->setNombre($socios->getNumeroAccion()." // ".$socios->getNombres()." ".$socios->getApellidos());
             $clientes->setAccion($socios->getNumeroAccion());
             $clientes->setDireccion($socios->getDireccionCasa());
 
@@ -753,19 +756,19 @@ class SociosCore extends UserComponent
 
     /**
      * Metodo que crea/actualiza los socios que presento el presente socio en el club
-     *
+     * 
      * @param array = $config(
      *     'SociosId'                => $record->getSociosId(),
      *    'asignacionSocioId'        => $this->getPostParam('asignacionSocioId'),
      *    'otrosSociosId'            => $this->getPostParam('otrosSociosId'),
      *    'tipoAsociacionSocioId'    => $this->getPostParam('tipoAsociacionSocioId')
-     * )
+     * ) 
      * @param $transaction
      */
     public static function saveOtrosSocios(&$config, $transaction)
     {
         //Parametros
-        if (isset($config['SociosId']) == false || empty($config['SociosId'])==true) {
+        if (isset($config['SociosId'])==false || empty($config['SociosId'])==true) {
             $transaction->rollback('El id del socio es necesario para registrar sus socios representantes.');
         }
 
@@ -773,29 +776,29 @@ class SociosCore extends UserComponent
         $asignacionSocioId        = $config['asignacionSocioId'];
         $otrosSociosId            = $config['otrosSociosId'];
         $tipoAsociacionSocioId    = $config['tipoAsociacionSocioId'];
-
+        
         //Borramos todos los estudion
         $noBorrarIds = '';
         if (is_array($asignacionSocioId)==true && count($asignacionSocioId)>0) {
             $noBorrarIds = ' AND id NOT IN('.implode(', ', $asignacionSocioId).')';
         }
-
+        
         //Borramos registros
         $asociacionSocio = EntityManager::get('AsociacionSocio')->setTransaction($transaction)->deleteAll('socios_id='.$sociosId.$noBorrarIds);
         $numero = 0;
         if (is_array($otrosSociosId)==true && count($otrosSociosId)>0) {
             //Recorremos las experiencias laborales e insertamos los registros
             foreach ($otrosSociosId as $n => $val) {
-                if (isset($otrosSociosId[$numero]) && empty($otrosSociosId[$numero]) == false
+                if (isset($otrosSociosId[$numero]) && empty($otrosSociosId[$numero])==false
                     &&
-                    isset($tipoAsociacionSocioId[$numero]) && empty($tipoAsociacionSocioId[$numero]) == false
+                    isset($tipoAsociacionSocioId[$numero]) && empty($tipoAsociacionSocioId[$numero])==false
                 ) {
                     $asociacionSocio = EntityManager::get('AsociacionSocio', true)->setTransaction($transaction);
                     $asociacionSocio->setSociosId($sociosId);
                     $asociacionSocio->setOtroSocioId($otrosSociosId[$numero]);
                     $asociacionSocio->setTipoAsociacionSocioId($tipoAsociacionSocioId[$numero]);
 
-                    if ($asociacionSocio->save() == false) {
+                    if ($asociacionSocio->save()==false) {
                         foreach ($asociacionSocio->getMessages() as $message) {
                             $transaction->rollback($message->getMessage());
                         }
@@ -809,17 +812,17 @@ class SociosCore extends UserComponent
 
     /**
      * Metodo que crea/actualiza los socios que presento el presente socio en el club en porteria
-     *
+     * 
      * @param array = $config(
      *     'socios'                => $record,
-     * )
+     * ) 
      * @param $transaction
      */
     public static function savePorteria(&$config, $transaction)
     {
 
         //Parametros
-        if (isset($config['SociosId']) == false || $config['SociosId'] == false) {
+        if (isset($config['SociosId'])==false || $config['SociosId']==false) {
             $transaction->rollback('El id del socios es necesatio. data: '.print_r($config, true));
         }
 
@@ -827,7 +830,7 @@ class SociosCore extends UserComponent
 
         $socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst($SociosId);
 
-        if ($socios == false) {
+        if ($socios==false) {
             $transaction->rollback('No existe socio en aplicativo de socios');
         }
 
@@ -840,11 +843,11 @@ class SociosCore extends UserComponent
 
         //Search by socios_id
         $sociosPorteria = EntityManager::get('SociosPorteria')->setTransaction($transaction)->findFirst(array('conditions'=>"socios_id='$SociosId'"));
-        if ($sociosPorteria == false) {
+        if ($sociosPorteria==false) {
 
             //search by numeroA_ccion and identificacion
             $sociosPorteria = EntityManager::get('SociosPorteria')->setTransaction($transaction)->findFirst(array('conditions'=>"numero_accion='{$socios->getNumeroAccion()}' AND identificacion='{$socios->getIdentificacion()}'"));
-            if ($sociosPorteria == false) {
+            if ($sociosPorteria==false) {
                 //New record
                 $sociosPorteria = EntityManager::get('SociosPorteria', true)->setTransaction($transaction);
             }
@@ -864,7 +867,7 @@ class SociosCore extends UserComponent
         if ($socios->getFechaRetiro() && $socios->getFechaRetiro()!='0000-00-00') {
             $sociosPorteria->setFechaRetiro($socios->getFechaRetiro());
         }
-
+        
         $sociosPorteria->setNombres($socios->getNombres());
         $sociosPorteria->setApellidos($socios->getApellidos());
         $sociosPorteria->setIdentificacion($socios->getIdentificacion());
@@ -899,7 +902,7 @@ class SociosCore extends UserComponent
         //Socios id
         $sociosPorteria->setSociosId($SociosId);
 
-        if ($sociosPorteria->save() == false) {
+        if ($sociosPorteria->save()==false) {
             foreach ($sociosPorteria->getMessages() as $message) {
                 $transaction->rollback($message->getMessage());
             }
@@ -909,10 +912,10 @@ class SociosCore extends UserComponent
 
     /**
      * Metodo que genera el número de acción del socio segun si es manual o no
-     *
+     * 
      * @param ActiveRecord $record
      * @param ActiveRecordTransaction $transaction
-     *
+     * 
      * @return string $numeroAccion
      */
     public static function makeNumeroAccion($record, $transaction)
@@ -924,15 +927,15 @@ class SociosCore extends UserComponent
 
         //Miramos si es numero de accion manual o no
         $configuration = EntityManager::get('Configuration')->setTransaction($transaction)->findFirst(array('conditions'=>'application="SO" AND name="numero_accion_manual"'));
-        if ($configuration == false) {
+        if ($configuration==false) {
             $transaction->rollback('No existe configuración de número de acción manual');
         }
-
+        
         //Si esta vacio el numero de acción y Es numero de ación con consecutivo
         if (empty($numeroAccion)==true && $configuration->getValue()=='N') {
             if ($record->getTitularId() > 0) {
                 $titular = EntityManager::get('Socios', true)->setTransaction($transaction)->findFirst($record->getTitularId());
-                if ($titular == false) {
+                if ($titular==false) {
                     $transaction->rollback('El titular no existe ');
                 }
                 $numeroAccion = $titular->getNumeroAccion();
@@ -951,14 +954,14 @@ class SociosCore extends UserComponent
 
     /**
      * Metodo que aumenta el consecutivo del socio si es automatico
-     *
+     * 
      * @param ActiveRecordTransaction $transaction
      */
     public static function aumentarConsecutivoSocios($transaction)
     {
         //Miramos si es numero de accion manual o no
         $configuration = EntityManager::get('Configuration')->findFirst(array('conditions'=>'application="SO" AND name="numero_accion_manual"'));
-        if ($configuration == false) {
+        if ($configuration==false) {
             $configuration->appendMessage(new TransacctionMessage('No existe configuración de número de acción manual'));
             return false;
         }
@@ -969,7 +972,7 @@ class SociosCore extends UserComponent
             $consecutivo = $datosClub->getNumSoc()+1;
             $datosClub->setNumSoc($consecutivo);
 
-            if ($datosClub->save() == false) {
+            if ($datosClub->save()==false) {
                 foreach ($datosClub->getMessages() as $message) {
                     $transaction->rollback($message->getMessage());
                 }
@@ -994,7 +997,7 @@ class SociosCore extends UserComponent
         $periodo = EntityManager::get('Periodo')->findFirst(array('conditions'=>"periodo='$periodoChar'"));
 
         //Si no existe creamos el periodo
-        if ($periodo == false) {
+        if ($periodo==false) {
             $periodo = SociosCore::makePeriodo($periodoChar, $transaction);
         }
         return $periodo->getPeriodo();
@@ -1033,7 +1036,7 @@ class SociosCore extends UserComponent
         $mora = $periodo->getInteresesMora();
         return $mora;
     }
-
+     
      /**
      * Metodo que obtiene el periodo actual y si no existe lo genera
      *
@@ -1046,41 +1049,41 @@ class SociosCore extends UserComponent
         if (!$periodoChar) {
             $periodoChar = date("Ym");
         }
-
+        
         //Validamos si existe periodo
         $periodo = EntityManager::get('Periodo')->findFirst(array('conditions'=>"periodo='$periodoChar'"));
-
+        
         //Si no existe creamos el periodo
-        if ($periodo == false) {
+        if ($periodo==false) {
             $periodo = EntityManager::get('Periodo', true);
             if ($transaction!=false) {
                 $periodo->setTransaction($transaction);
             }
             //throw new SociosException($periodoChar);
-
+            
             $periodo->setPeriodo($periodoChar);
 
             //make date
             $periodo->setCierre('N');
             $periodo->setFacturado('N');
-
+            
             //buscamos interes de mora de periodo
             $interesMoraDefault = Settings::get('interes_mora_default', 'SO');
             if (!$interesMoraDefault) {
                 throw new SociosException("El porcentaje de mora por defecto para periodo no se ha digitado");
             }
-
+            
             $periodo->setInteresesMora($interesMoraDefault);
 
             //Consecutivo segun fechas
-            $consecutivo = EntityManager::get('Consecutivos')->findFirst(array("conditions" => "numero_actual<numero_final", "order" => "id DESC"));
+            $consecutivo = EntityManager::get('Consecutivos')->findFirst("numero_actual<numero_final");
             if (!$consecutivo) {
                 throw new SociosException("El no hay consecutivos con numeros disponibles.");
             }
             $periodo->setConsecutivosId($consecutivo->getId());
-
-            if ($periodo->save() == false) {
-                foreach ($periodo->getMessages() as $message)
+            
+            if ($periodo->save()==false) {
+                foreach ($periodo->getMessages() as $message) 
                 {
                     throw new SociosException($message->getMessage());
                 }
@@ -1088,27 +1091,27 @@ class SociosCore extends UserComponent
         }
         return $periodo;
     }
-
+    
     /**
      * Metodo que genera toda la información de un socio
-     *
+     * 
      * @param ActiveRecord $socios
-     *
+     * 
      * @return array $info
      */
-    public static function makeAllSocioInfo($socios)
+    public static function makeAllSocioInfo($socios) 
     {
         $info = array();
         $models = array('Socios', 'Estudios', 'Explaboral', 'Actividades', 'Asoclubes', 'CargosSocios', 'AsociacionSocio');
 
         if ($socios!=false) {
-            foreach ($models as $model)
+            foreach ($models as $model) 
             {
                 $modelTemp = EntityManager::get($model)->findFirst(array('conditions'=>'socios_id='.$socios->getSociosId()));
 
                 if ($modelTemp!=false) {
                     $info[$model] = array();
-                    foreach ($modelTemp->getAttributes() as $field)
+                    foreach ($modelTemp->getAttributes() as $field) 
                     {
                         $info[$model][$field] = $modelTemp->readAttribute($field);
                     }
@@ -1117,13 +1120,13 @@ class SociosCore extends UserComponent
         }
         return $info;
     }
-
-    public static function cambiarEstadoSocio($sociosParam, $estadosSociosId=false)
+    
+    public static function cambiarEstadoSocio($sociosParam, $estadosSociosId=false) 
     {
         if (!$estadosSociosId) {
             throw new SociosException('No se ha definido que estado se desea cambiar');
         }
-
+        
         if (is_object($sociosParam)) {
             $socios = $sociosParam;
         } else {
@@ -1134,30 +1137,30 @@ class SociosCore extends UserComponent
                 }
             }
         }
-
+        
         //Estados de Socios
         $estadosSocios = EntityManager::get('EstadosSocios')->findFirst($estadosSociosId);
         if (!$estadosSocios) {
             throw new SociosException('El estado a asignar no existe');
         }
-
+        
         //Miramos si no genera factura ese socio
         if ($estadosSocios->getAccion()=='I') {
             $socios->setCobra('N');
         }
-
+        
         //Cambiamo el estado al socio
         $socios->setEstadosSociosId($estadosSociosId);
-        if ($socios->save() == false) {
+        if ($socios->save()==false) {
             foreach ($socios->getMessages() as $msg)
             {
                 throw new SociosException($msg->getMessage());
             }
         }
-
+        
         //Buscamos acciones a tomar segun estado a cambiar
         $accionEstadosObj = EntityManager::get('AccionEstados')->find(array("estados_socios_id='$estadosSociosId'"));
-        foreach ($accionEstadosObj as $accionEstados)
+        foreach ($accionEstadosObj as $accionEstados) 
         {
             //realizamos la accion definida
             $asignacionCargosObj = EntityManager::get('AsignacionCargos')->find("socios_id='{$socios->getSociosId()}' AND cargos_fijos_id='{$accionEstados->getCargosFijosIdIni()}'");
@@ -1171,8 +1174,8 @@ class SociosCore extends UserComponent
                     $asignacionCargos->setCargosFijosId($accionEstados->getCargosFijosIdFin());
                     $asignacionCargos->setEstado('A');
                 }
-
-                if ($asignacionCargos->save() == false) {
+                
+                if ($asignacionCargos->save()==false) {
                     foreach ($socios->getMessages() as $msg)
                     {
                         throw new SociosException($msg->getMessage());
@@ -1184,7 +1187,7 @@ class SociosCore extends UserComponent
         }
         unset($accionEstadosObj);
     }
-
+    
     /**
      * Obtiene los cargos fijos existentes
      * @return array
@@ -1192,22 +1195,22 @@ class SociosCore extends UserComponent
     public function getCargosFijos()
     {
         $cargos = array();
-
-        $cargosFijosObj = EntityManager::get("CargosFijos")->find("estado='A'");
+        
+        $cargosFijosObj = EntityManager::get("CargosFijos")->find("estado='A'"); 
         if (!count($cargosFijosObj)) {
             throw new SociosException('No se ha ingresado cargos fijos al sistema');
         }
-
+        
         foreach ($cargosFijosObj as $cargoFijo)
         {
             $cargos[$cargoFijo->getId()] = SociosCore::modelToArray($cargoFijo);
             unset($cargoFijo);
         }
         unset($cargosFijosObj);
-
+        
         return $cargos;
     }
-
+    
     /**
      * Obtiene los tipo socios existentes
      * @return array
@@ -1230,7 +1233,7 @@ class SociosCore extends UserComponent
     /**
      * Obtiene las facturas directas generadas de socios en el POS que no pasan a cartera
      * @param int periodo
-     * @param string nit
+     * @param string nit 
      * @return array
      */
     public static function getFacturasDirectasPos($periodo,$nit)
@@ -1238,11 +1241,11 @@ class SociosCore extends UserComponent
         if (!$nit) {
             throw new SociosException("getFacturasDirectasPos: Debe dar el nit a buscar");
         }
-
+        
         if (!$periodo) {
             throw new SociosException("getFacturasDirectasPos: Debe dar el perido a buscar");
         }
-
+        
         $ano = substr($periodo,0,4);
         $mes = substr($periodo,4,2);
 
@@ -1263,12 +1266,12 @@ class SociosCore extends UserComponent
             unset($factura);
         }
         unset($facturaObj);
-
+        
         return $ret;
     }
 
     /**
-    * Devulve el total de facturas directas de pos no estan en hotel5 y que fuern enviados a
+    * Devulve el total de facturas directas de pos no estan en hotel5 y que fuern enviados a 
     * forma de pago Socios Cartera
     *
     * @param int $periodAtras
@@ -1305,7 +1308,7 @@ class SociosCore extends UserComponent
     }
 
     /**
-    * Devulve el array de facturas directas de pos no estan en hotel5 y que fuern enviados a
+    * Devulve el array de facturas directas de pos no estan en hotel5 y que fuern enviados a 
     * forma de pago Socios Cartera
     *
     * @param int $periodAtras
@@ -1348,7 +1351,7 @@ class SociosCore extends UserComponent
     /**
      * Obtiene las facturas directas generadas de socios
      * @param int periodo
-     * @param string nit
+     * @param string nit 
      * @return array
      */
     public function getFacturasDirectas($periodo,$nit)
@@ -1356,11 +1359,11 @@ class SociosCore extends UserComponent
         if (!$nit) {
             throw new SociosException("getFacturasDirectas: Debe dar el nit a buscar");
         }
-
+        
         if (!$periodo) {
             throw new SociosException("getFacturasDirectas: Debe dar el perido a buscar");
         }
-
+        
         $ano = substr($periodo,0,4);
         $mes = substr($periodo,4,2);
 
@@ -1374,7 +1377,7 @@ class SociosCore extends UserComponent
 
         $conditionsPos = "cedula='$nit' AND year(fecfac)=$ano AND month(fecfac)=$mes AND saldo>0 AND estado='A'";
         //throw new SociosException($conditionsPos);
-
+        
         $facturaHotelObj = EntityManager::get("FacturasHotel")->find($conditionsPos);
 
         foreach ($facturaHotelObj as $facturaHotel)
@@ -1384,53 +1387,10 @@ class SociosCore extends UserComponent
         }
         unset($facturaHotelObj);
         //throw new SociosException(print_r($ret,true));
-
+        
         return $ret;
     }
-
-    /**
-     * Obtiene las facturas directas generadas de socios
-     * @param int periodo
-     * @param string nit
-     * @return array
-     */
-    public function getFacturasDirectasAll($periodo,$nit)
-    {
-        if (!$nit) {
-            throw new SociosException("getFacturasDirectas: Debe dar el nit a buscar");
-        }
-
-        if (!$periodo) {
-            throw new SociosException("getFacturasDirectas: Debe dar el perido a buscar");
-        }
-
-        $ano = substr($periodo,0,4);
-        $mes = substr($periodo,4,2);
-
-        //Se buscan es el mes anterior no el actual
-        $periodoAnterior = SociosCore::subPeriodo($periodo,1);
-        $anoAnte = substr($periodoAnterior,0,4);
-        $mesAnte = substr($periodoAnterior,4,2);
-
-        $ret = array();
-        //$facturaHotelObj = EntityManager::get("FacturasHotel")->find(array("MONTH(fecfac) = '$mes' AND YEAR(fecfac) = '$ano' AND cedula = '$nit' AND estado='A'"));
-
-        $conditionsPos = "cedula='$nit' AND year(fecfac)=$ano AND month(fecfac)=$mes AND estado='A'";
-        //throw new SociosException($conditionsPos);
-
-        $facturaHotelObj = EntityManager::get("FacturasHotel")->find($conditionsPos);
-
-        foreach ($facturaHotelObj as $facturaHotel)
-        {
-            $ret[(float) $facturaHotel->getNumfac()] = SociosCore::modelToArray($facturaHotel);
-            unset($facturaHotel);
-        }
-        unset($facturaHotelObj);
-        //throw new SociosException(print_r($ret,true));
-
-        return $ret;
-    }
-
+    
     /**
      * Verifica si un recibo de caja tiene una forma de pago
      * @param int $numrec
@@ -1439,14 +1399,14 @@ class SociosCore extends UserComponent
      */
      public function getReccajFP($numrec,$forpag)
      {
-         //Buscamos en valcar los Recibos de caja que tiene la factura
+         //Buscamos en valcar los Recibos de caja que tiene la factura 
         $detrec = EntityManager::get('Detrec')->findFirst("numrec='$numrec' AND forpag='$forpag'");
         if ($detrec) {
             return true;
         }
         return false;
      }
-
+    
     /**
      * Buscamos en valcar los abonos hechos con una forma de pago
      * @param int $numfol
@@ -1456,8 +1416,8 @@ class SociosCore extends UserComponent
      public function getValcarRC($numfol,$forpag)
      {
         $total = 0;
-
-        //Buscamos en valcar los Recibos de caja que tiene la factura
+        
+        //Buscamos en valcar los Recibos de caja que tiene la factura 
         $valcars = EntityManager::get('Valcar')->find("numfol='$numfol' AND cladoc='RC'");
         foreach ($valcars as $valcar)
         {
@@ -1468,27 +1428,27 @@ class SociosCore extends UserComponent
             unset($valcar);
         }
         unset($valcars);
-
+        
         return $total;
-     }
-
+     } 
+    
     /**
-     * Obtiene las facturas directas generadas de socios que fueron enviadas a cartera
+     * Obtiene las facturas directas generadas de socios que fueron enviadas a cartera 
      * @param int periodo
-     * @param string nit
+     * @param string nit 
      * @return array
      */
     public function getFacturasCartera($periodo,$nit)
     {
-        try
+        try 
         {
             //Buscamos las facturas directas
             $facturas = $this->getFacturasDirectas($periodo,$nit);
             if (!count($facturas)) {
                 return array('facturas' => array(), 'total' => 0);
             }
-
-            //Buscamos facturas que tienen formade pago de cartera de socios
+            
+            //Buscamos facturas que tienen formade pago de cartera de socios   
             $total = 0;
             $totalIva = 0;
             foreach ($facturas as $numfac => $factura)
@@ -1496,30 +1456,30 @@ class SociosCore extends UserComponent
                 if ($factura['saldo']>0) {
                     $total += $factura['saldo'];
                 } else {
-                    unset($facturas[$numfac]);
+                    unset($facturas[$numfac]); 
                 }
                 unset($factura);
             }
-
+            
             $ret = array('facturas' => $facturas, 'total' => $total);
-
+            
             return $ret;
         }
         catch(Exception $e) {
             throw new SociosException("getFacturasCartera: ".$e->getMessage());
         }
     }
-
+    
     /**
      * Convierte un modelo a array
-     *
+     * 
      * @param Object $model
-     * @return array $modelData
+     * @return array $modelData 
     */
-    public static function modelToArray($model)
+    public static function modelToArray($model) 
     {
         $modelData = array();
-        foreach ($model->getAttributes() as $field)
+        foreach ($model->getAttributes() as $field) 
         {
             $modelData[$field] = $model->readAttribute($field);
         }
@@ -1550,7 +1510,7 @@ class SociosCore extends UserComponent
         $year = substr($periodo,0,4);
         $month = substr($periodo,4,2);
 
-        try
+        try 
         {
             $date = new Date("$year-$month-{$periodoObj->getDiaFactura()}");
             return $date;
@@ -1625,7 +1585,7 @@ class SociosCore extends UserComponent
     {
         usort($contentMovi, 'ordenarContentMovi');
         return $contentMovi;
-    }
+    }    
 
     /**
     * Valida que una cuenta pida tercero y cartera
@@ -1637,7 +1597,7 @@ class SociosCore extends UserComponent
         if (!$cuenta) {
             throw new SociosException("La cuenta no existe");
         }
-
+        
         if ($cuenta->getPideNit()!='S') {
             throw new SociosException("La cuenta '$cuentaStr' debe pedir tercero para usarla en cartera");
         }
@@ -1646,7 +1606,7 @@ class SociosCore extends UserComponent
             throw new SociosException("La cuenta '$cuentaStr' debe pedir documento para usarla en cartera");
         }
 
-        return true;
+        return true; 
     }
 
     /**
@@ -1684,7 +1644,7 @@ class SociosCore extends UserComponent
         //$nit='1018406098';
         $conditions = "MONTH(fecha)='$month' AND YEAR(fecha)='$year' AND comprob IN('".$comprobsPagosAs."') AND cuenta LIKE '".$cuentasAjsEstadoCuenta."' OR cuenta = '$cuentaSaldoAFavor'";
         //throw new SociosException($conditions);
-
+        
         $moviObj = EntityManager::get('Movi')->find(array('conditions'=>$conditions));
 
         foreach ($moviObj as $movi) {
@@ -1754,7 +1714,7 @@ class SociosCore extends UserComponent
         $cuentasAjsEstadoCuenta = SociosCore::getCuentaAjusteEstadoCuenta();
 
         $conditions = "MONTH(fecha)='$month' AND YEAR(fecha)='$year' AND comprob IN('".$comprobsPagosAs."') AND cuenta LIKE '".$cuentasAjsEstadoCuenta."' OR cuenta = '$cuentaSaldoAFavor' AND nit='$nit'";
-
+        
         $moviObj = EntityManager::get('Movi')->find(array('conditions'=>$conditions));
 
         foreach ($moviObj as $movi) {
@@ -1823,7 +1783,7 @@ class SociosCore extends UserComponent
         $cuentasAjsEstadoCuenta = SociosCore::getCuentaAjusteEstadoCuenta();
 
         $conditions = "MONTH(fecha)='$month' AND YEAR(fecha)='$year' AND comprob IN('".$comprobsPagosAs."') AND cuenta LIKE '".$cuentasAjsEstadoCuenta."' OR cuenta = '$cuentaSaldoAFavor' AND nit='$nit'";
-
+        
         $ret = EntityManager::get('Movi')->exists($conditions);
 
         return $ret;
@@ -1868,7 +1828,7 @@ class SociosCore extends UserComponent
 
         $conditions = "MONTH(fecha)='$month' AND YEAR(fecha)='$year' AND comprob IN($comprobantes) AND (cuenta LIKE '".$cuentasAjsEstadoCuenta."' OR cuenta = '$cuentaSaldoAFavor')";
         //throw new SociosException($conditions);
-
+        
         $moviObj = EntityManager::get('Movi')->find(array('conditions'=>$conditions));
 
         foreach ($moviObj as $movi)
@@ -1876,19 +1836,19 @@ class SociosCore extends UserComponent
             $nit = $movi->getNit();
             if (!isset($ret[$nit])) {
                 $ret[$nit] = array(
-                    'valor'=> array('D'=>0,'C'=>0),
-                    'fecha' => array(),
-                    'comprob' => array(),
+                    'valor'=> array('D'=>0,'C'=>0), 
+                    'fecha' => array(), 
+                    'comprob' => array(), 
                     'numeroDoc' => array()
                 );
             }
 
             $key = $movi->getComprob()."-".$movi->getNumero();
             $keyDoc = $movi->getTipoDoc()."-".$movi->getNumeroDoc();
-            $ret[$nit]['comprob'][$key] = $key;
-            $ret[$nit]['fecha'][$key] = $movi->getFecha();
-            $ret[$nit]['numeroDoc'][$key] = $keyDoc;
-            $ret[$nit]['valor'][$movi->getDebCre()] += $movi->getValor();
+            $ret[$nit]['comprob'][$key] = $key; 
+            $ret[$nit]['fecha'][$key] = $movi->getFecha(); 
+            $ret[$nit]['numeroDoc'][$key] = $keyDoc; 
+            $ret[$nit]['valor'][$movi->getDebCre()] += $movi->getValor(); 
 
             unset($movi,$nit);
         }
@@ -1911,12 +1871,12 @@ class SociosCore extends UserComponent
         $ret = array();
         $year = substr($periodo, 0, 4);
         $month = substr($periodo, 4, 2);
-
+        
         $sociosCore = new SociosCore();
 
         $estadoCuentaObj = EntityManager::get('EstadoCuenta')->find("month(fecha)='$month' AND year(fecha)='$year'");
 
-        foreach ($estadoCuentaObj as $estadoCuenta)
+        foreach ($estadoCuentaObj as $estadoCuenta) 
         {
 
             $socios = BackCacher::getSocios($estadoCuenta->getSociosId());
@@ -1942,7 +1902,7 @@ class SociosCore extends UserComponent
             foreach ($facturasDirectasPos as $factura)
             {
                 $numfac = $factura['prefijo_facturacion']."-".$factura['consecutivo_facturacion'];
-
+                
                 if (!isset($ret[$nit]['facturas'][$numfac])) {
                     $ret[$nit]['facturas'][$numfac] = array(
                         'fecha' => $factura['fecha'],
@@ -1963,12 +1923,12 @@ class SociosCore extends UserComponent
 
             $totalFD = 0;
             $detalleCM = 'CONSUMO MINIMO';
-
+            
             //Contamos consumos de Factura Directas de POS
             foreach ($facturasDirectasHotel as $facturaHotel)
             {
                 $numfac = $facturaHotel['prefac']."-".$facturaHotel['numfac'];
-
+                
                 if (!isset($ret[$nit]['facturas'][$numfac])) {
                     $ret[$nit]['facturas'][$numfac] = array(
                         'fecha' => $facturaHotel['fecfac'],
@@ -1980,7 +1940,7 @@ class SociosCore extends UserComponent
                 unset($facturaHotel,$numfac);
             }
             unset($facturasDirectasHotel);
-
+                
             $ret[$nit]['total'] += $totalFD;
 
             unset($estadoCuenta);
@@ -2021,7 +1981,7 @@ class SociosCore extends UserComponent
         if (!$tipoDocPos) {
             throw new SociosException("No se ha definido el tipo de documento de consumos de socios");
         }
-
+        
         //Septiembre
         $periodoAntZ = SociosCore::subPeriodo($periodo,1);
         $year3 = substr($periodoAntZ, 0,4);
@@ -2054,7 +2014,7 @@ class SociosCore extends UserComponent
         //Buscamos factura de sostenimiento a descontar para mora
         $conditionsF = "fecha_factura='$fechaY' AND socios_id='$sociosId'";
         //throw new SociosException($conditionsF);
-
+        
         $factura = EntityManager::get('Factura')->findFirst($conditionsF);
         if ($factura) {
             /*$detalleFacturaObj = EntityManager::get('DetalleFactura')->find("factura_id='{$factura->getId()}'");
@@ -2069,14 +2029,14 @@ class SociosCore extends UserComponent
                 }
 
                 $total = $detalleFactura->getValor() + $detalleFactura->getIva();
-                $base -= $total;
+                $base -= $total;    
                 unset($detalleFactura, $total, $desc);
             }
             unset($detalleFacturaObj);*/
 
             $total = $factura->getSalActual();
             $base -= $total;
-
+                
         }
 
         //throw new SociosException($base);
@@ -2107,7 +2067,7 @@ class SociosCore extends UserComponent
         if (!$basePorcentaje) {
             throw new SociosException("No se ha configurado base de procentaje de mora de estado de cuenta");
         }
-
+        
         $socios = BackCacher::getSocios($sociosId);
         if (!$socios) {
             throw new SociosException("getAjusteSostenimiento: El socios con id '$sociosId' no existe");
@@ -2130,7 +2090,7 @@ class SociosCore extends UserComponent
         $ret['total']= LocaleMath::round($total,0);
 
         //throw new SociosException(print_r($ret,true));
-
+        
         return $ret;
     }
 
@@ -2187,9 +2147,9 @@ class SociosCore extends UserComponent
 
         //ABONOS
         $conditionsAbonos = "nit='{$socios->getIdentificacion()}' AND deb_cre='C' AND month(fecha)='$month2' AND year(fecha)='$year2' AND comprob IN('$comprobsPagosAs') AND (cuenta LIKE '$cuentasAjsEstadoCuenta%' OR cuenta = '$cuentaSaldoAFavor')";
-
+        
         //throw new SociosException($conditionsAbonos);
-
+        
         $moviObj = EntityManager::get('Movi')->find(array(
             "conditions" => $conditionsAbonos,
             'columns' => 'deb_cre,comprob,numero,fecha,nit,cuenta,tipo_doc,numero_doc,descripcion,valor'
@@ -2231,67 +2191,37 @@ class SociosCore extends UserComponent
         $date1 = strtotime((string) $fechaSaldo);
         $date2 = strtotime((string) $cartera->getFEmision());
         $dateDiff = $date1 - $date2;
-        $days = floor($dateDiff/(60*60*24));
+        $days = floor($dateDiff/(60*60*24));        
         return $days;
-    }
-
-    /**
-     * Obtiene la edad de un socios  partir de la fecha de nacimiento
-     * @param  string $fechaNacimiento Fecha de nacimiento de socio
-     * @return int $anoDiferencia Años de edad
-     */
-    public static function getEdadSocio($fechaNacimiento)
-    {
-        list($ano,$mes,$dia) = explode("-",$fechaNacimiento);
-        $anoDiferencia  = date("Y") - $ano;
-        $mesDiferencia = date("m") - $mes;
-        $diaDiferencia   = date("d") - $dia;
-        if ($anoDiferencia < 0 || $mesDiferencia < 0)
-            $anoDiferencia--;
-        return $anoDiferencia;
-    }
-
-    /**
-     * De un string de periodo obtenemos el año y el mes
-     * @param string $periodo 201409
-     * @return array [2014, 09]
-     */
-    public static function periodoToArray($periodo = "")
-    {
-        if (!$periodo) {
-            $periodo = SociosCore::getCurrentPeriodo();
-        }
-        $year = substr($periodo, 0, 4);
-        $month = substr($periodo, 4, 2);
-
-        return array($year, $month);
     }
 
     /**
     * Determina de un objeto cartera si esta a 30,60,90,120, o mas de 120 días
     * @param ActiveRecord $cartera
     * @param time $fechaSaldo
-    * @return string
+    * @return string 
     */
     public static function getCarteraTime($cartera, $fechaSaldo)
     {
         $days = SociosCore::getDays($cartera, $fechaSaldo);
-
+        
         $index = '';
-        if ($days<=30) {
-            $index = '30';
-        } else {
-            if ($days<=60) {
-                $index = '60';
+        if ($days) {
+            if ($days<=30) {
+                $index = '30';
             } else {
-                if ($days<=90) {
-                    $index = '90';
+                if ($days<=60) {
+                    $index = '60';
                 } else {
-                    if ($days<=120) {
-                        $index = '120';
+                    if ($days<=90) {
+                        $index = '90';
                     } else {
-                        $index = '120m';
-                    }
+                        if ($days<=120) {
+                            $index = '120';
+                        } else {
+                            $index = '120m';
+                        }    
+                    }        
                 }
             }
         }
@@ -2301,7 +2231,7 @@ class SociosCore extends UserComponent
 
     /**
     * Obtiene un listado de cuentas que usa los cargos fijos para cartera
-    *
+    * 
     * @return array
     */
     public static function getCuentasCargosFijos()
@@ -2309,21 +2239,21 @@ class SociosCore extends UserComponent
         try {
             $cuentas = array();
             $cargosFijosObj = EntityManager::get('CargosFijos')->find(array("columns"=>"cuenta_consolidar","group"=>"cuenta_consolidar"));
-            foreach ($cargosFijosObj as $cargosFijos)
+            foreach ($cargosFijosObj as $cargosFijos) 
             {
                 $cuentas[]= $cargosFijos->getCuentaConsolidar();
             }
-
+            
             return $cuentas;
         }
         catch(Exception $e){
             throw new SociosException($e->getMessage());
         }
-
+        
     }
 
     /**
-    * Obtiene el nombre del los salones que se uso en las ordenes de servicio a un folio
+    * Obtiene el nombre del los salones que se uso en las ordenes de servicio a un folio 
     * @param int $numfol
     * @return array
     */
@@ -2341,14 +2271,14 @@ class SociosCore extends UserComponent
 
         //Buscamos el valcar de hotel para el detalle de  factura
         //throw new SociosException("numfol='$numfol' AND cladoc='ORD'");
-
+        
         $valcarObj = EntityManager::get('Valcar')->find("numfol='$numfol' AND cladoc='ORD'","group: numdoc","columns: numdoc,codcar");
         foreach ($valcarObj as $valcar)
         {
             //Buscamos ambientes que se genero facturas a folio
             $facturasPos = EntityManager::get('FacturaPos')->find("tipo='O' AND tipo_venta='H' AND consecutivo_facturacion='".$valcar->getNumdoc()."' AND cedula='$cedula'","group: salon_nombre","columns: salon_nombre");
 
-            foreach ($facturasPos as $pos)
+            foreach ($facturasPos as $pos) 
             {
                 $ambientes[] = $pos->salon_nombre;
                 unset($pos);
@@ -2361,12 +2291,12 @@ class SociosCore extends UserComponent
                 }
             }
 
-            unset($valcar,$facturasPos);
+            unset($valcar,$facturasPos);    
         }
 
         if (!count($valcarObj)) {
             $valcar = EntityManager::get('Valcar')->findFirst("numfol='$numfol'","group: numdoc","columns: numdoc");
-
+        
         }
 
         unset($valcarObj);
@@ -2382,27 +2312,27 @@ class SociosCore extends UserComponent
         $periodo = $periodo;
         $ano = substr($periodo,0,4);
         $mes = substr($periodo,4,2);
-
+        
         $date = "$ano-$mes-01";
         $newdate = strtotime ( "-$numMonth month" , strtotime ( $date ) ) ;
         $newdate = date ( 'Ym' , $newdate );
-
+        
         return $newdate;
     }
 
     /**
-    * suma meses al periodo
+    * Resta meses al periodo
     */
-    public static function addPeriodo($periodo, $numMonth)
+    public static function addPeriodo($periodo,$numMonth)
     {
         $periodo = $periodo;
         $ano = substr($periodo,0,4);
         $mes = substr($periodo,4,2);
-
+        
         $date = "$ano-$mes-01";
         $newdate = strtotime ( "+$numMonth month" , strtotime ( $date ) ) ;
         $newdate = date ( 'Ym' , $newdate );
-
+        
         return $newdate;
     }
 
@@ -2457,14 +2387,14 @@ class SociosCore extends UserComponent
             $sum28D = EntityManager::get('Movi')->sum('column: valor', "conditions: ".$queryBase28." AND deb_cre='D'");
             $sum28C = EntityManager::get('Movi')->sum('column: valor', "conditions: ".$queryBase28." AND deb_cre='C'");
         }
-
+        
         $diff13 = $sum13D - $sum13C;
         $diff13C = $sum13CD - $sum13CC;
         $diff28 = $sum28D - $sum28C;
 
         $saldoContab = $diff13 + $diff13C + $diff28;
-        //throw new SociosException("$saldoContab = $diff13 + $diff13C + $diff28;<br>".$queryBase13."<br>".$queryBase13C."<br>".$queryBase28);
-
+        //throw new SociosException("$saldoContab = $diff13 + $diff13C - abs($diff28);<br>".$queryBase13."<br>".$queryBase13C."<br>".$queryBase28);
+        
         return $saldoContab;
     }
 
@@ -2486,45 +2416,6 @@ class SociosCore extends UserComponent
         }
 
         return $fieldValue;
-    }
-
-    /**
-     * Lee un archivo excel y devuelve un array multidimencional con los datos del mismo
-     * @param string $file archivo con ruta absoluta
-     * @return array
-     */
-    public static function obtenerDatosDeExcel($file)
-    {
-        Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
-        $arrData = array();
-
-        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-        $objReader->setReadDataOnly(true);
-
-        $objPHPExcel = $objReader->load($file);
-        $totalSheets = $objPHPExcel->getSheetCount(); // here 4
-        $allSheetName = $objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
-        $objWorksheet = $objPHPExcel->setActiveSheetIndex(0); // first sheet
-        $highestRow = $objWorksheet->getHighestRow(); // here 5
-        $highestColumn = $objWorksheet->getHighestColumn(); // here 'E'
-        $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);  // here 5
-        for ($row = 1; $row <= $highestRow; ++$row) {
-            for ($col = 0; $col <= $highestColumnIndex; ++$col) {
-                $value = $objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
-                if (is_array($arrData)) {
-                    $arrData[$row-1][$col] = $value;
-                }
-            }
-        }
-
-        if (!count($arrData)) {
-            throw new SociosException("El archivo esta vacio", 1);
-        }
-
-        unset($objReader);
-
-        return $arrData;
-
     }
 
 }

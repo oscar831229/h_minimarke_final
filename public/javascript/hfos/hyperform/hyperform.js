@@ -686,8 +686,8 @@ var HyperForm = Class.create({
 
 		var subirFrame = this.getElement('subirFrame');
 		subirFrame.hide();
-		window.setTimeout(function(subirFrame) {
-			subirFrame.observe('load', function(subirFrame) {
+		window.setTimeout(function(subirFrame){
+			subirFrame.observe('load', function(subirFrame){
 				this._browseChanged = true;
 				this.getElement('loadButton').enable();
 				this.getElement('subirBar').hide();
@@ -939,19 +939,18 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_loadImport: function(loadButton)
-	{
+	_loadImport: function(loadButton){
 		loadButton.disable();
 		this.getElement('subirBar').hide();
 		var fileInput = this.selectOne('input#archivo');
-		if (fileInput.files.length == 0) {
+		if(fileInput.files.length==0){
 			new HfosModal.alert({
 				title: this._plural,
 				message: 'Seleccione el archivo a importar'
 			});
 			loadButton.enable();
 		} else {
-			if (fileInput.files.length > 1) {
+			if(fileInput.files.length>1){
 				new HfosModal.alert({
 					title: this._plural,
 					message: 'Solo se puede importar un archivo al tiempo'
@@ -965,13 +964,13 @@ var HyperForm = Class.create({
 					'text/x-comma-separated-values'
 				];
 				var validType = false;
-				for (var i = 0; i < validTypes.length; i++) {
-					if (validTypes[i]==fileInput.files[0].type) {
+				for(var i=0;i<validTypes.length;i++){
+					if(validTypes[i]==fileInput.files[0].type){
 						validType = true;
 						break;
 					}
 				};
-				if (validType == false) {
+				if(validType==false){
 					new HfosModal.alert({
 						title: this._plural,
 						message: 'El archivo no es de Microsoft Excel, por favor revise'
@@ -992,9 +991,8 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doEdit: function()
-	{
-		if (this._lastPrimary == null) {
+	_doEdit: function(){
+		if(this._lastPrimary==null){
 			new HfosModal.alert({
 				title: this._plural,
 				message: 'No hay un registro en pantalla'
@@ -1003,14 +1001,14 @@ var HyperForm = Class.create({
 			this._showToolbarSpinner();
 			this._doRequest(this._formName+'/edit', {
 				parameters: this._lastPrimary,
-				onSuccess: function(transport) {
+				onSuccess: function(transport){
 					this._messages.notice('Ingrese los datos en los campos y presione "Guardar"');
 					this._hideControlButtons();
 					this.showControlButton('backButton');
 					this.showControlButton('saveButton');
 					this._renderEdit(transport.responseText);
 				},
-				onComplete: function() {
+				onComplete: function(){
 					this._hideToolbarSpinner();
 				}
 			});
@@ -1022,9 +1020,8 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doDelete: function()
-	{
-		if (this._lastPrimary == null) {
+	_doDelete: function(){
+		if(this._lastPrimary==null){
 			new HfosModal.alert({
 				title: this._plural,
 				message: 'No hay un registro en pantalla'
@@ -1039,9 +1036,8 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doRevision: function()
-	{
-		if (this._lastPrimary == null) {
+	_doRevision: function(){
+		if(this._lastPrimary==null){
 			new HfosModal.alert({
 				title: this._plural,
 				message: 'No hay un registro en pantalla'
@@ -1067,21 +1063,20 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_deleteRecord: function(primary, element)
-	{
+	_deleteRecord: function(primary, element){
 		new HfosModal.confirm({
 			title: this._plural,
-			message: 'Seguro desea eliminar ' + this._single + '?',
+			message: 'Seguro desea eliminar '+this._single+'?',
 			onAccept: function(primary, element){
-				this._doJsonRequest(this._formName + '/delete/?' + primary, {
+				this._doJsonRequest(this._formName+'/delete/?'+primary, {
 					method: 'GET',
 					onSuccess: function(element, response){
-						if (response.status == 'OK') {
+						if(response.status=='OK'){
 							this._messages.success(response.message);
-							if (typeof element != "undefined") {
+							if(typeof element != "undefined"){
 								this._browse.deleteRow(element.ancestors()[1]);
 								var numberResults = this._browse.getNumberResults();
-								if (numberResults == 0) {
+								if(numberResults==0){
 									this._doBack();
 								}
 							} else {
@@ -1116,8 +1111,7 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_showFormPanel: function(panelToShow)
-	{
+	_showFormPanel: function(panelToShow){
 		this._formElement.select('div.hyFormDiv').each(function(panelElement){
 			panelElement.hide();
 		});
@@ -1129,8 +1123,7 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_setReportType: function(reportType)
-	{
+	_setReportType: function(reportType){
 		HfosReportType.changeReportType(reportType)
 	},
 
@@ -1139,8 +1132,7 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doSearch: function()
-	{
+	_doSearch: function(){
 		this._showSpinner();
 		this._browseChanged = false;
 		var hySearchForm = this.getElement('hySearchForm');
@@ -1158,12 +1150,11 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_afterSearch: function(hySearchForm, response)
-	{
-		if (response.status == 'OK') {
-			if (response.type == 'screen') {
+	_afterSearch: function(hySearchForm, response){
+		if(response.status=='OK'){
+			if(response.type=='screen'){
 				this._messages.notice(response.message);
-				if (response.numberResults > 0) {
+				if(response.numberResults>0){
 					this._showFormPanel('hyBrowseDiv');
 					this._renderBrowse(response);
 					this._hideControlButtons();
@@ -1173,7 +1164,7 @@ var HyperForm = Class.create({
 					this.setCurrentState('browse');
 				}
 			} else {
-				if (typeof response.url != "undefined") {
+				if(typeof response.url != "undefined"){
 					window.open(response.url);
 				} else {
 					this._messages.notice(response.message);
@@ -1187,18 +1178,17 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doNew: function()
-	{
+	_doNew: function(){
 		this._showToolbarSpinner();
-		this._doRequest(this._formName + '/new', {
+		this._doRequest(this._formName+'/new', {
 			method: 'GET',
-			onSuccess: function(transport) {
+			onSuccess: function(transport){
 				this._hideControlButtons();
 				this.showControlButton('backButton');
 				this.showControlButton('saveButton');
 				this._renderNew(transport.responseText);
 			},
-			onComplete: function() {
+			onComplete: function(){
 				this._hideToolbarSpinner();
 			}
 		});
@@ -1209,19 +1199,18 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doImport: function()
-	{
+	_doImport: function(){
 		this._browseChanged = false;
 		this._showToolbarSpinner();
-		this._doRequest(this._formName + '/import', {
+		this._doRequest(this._formName+'/import', {
 			method: 'GET',
-			onSuccess: function(transport) {
+			onSuccess: function(transport){
 				this._renderImport(transport.responseText);
 				this._hideControlButtons();
 				this.showControlButton('backButton');
 				this.showControlButton('loadButton');
 			},
-			onComplete: function() {
+			onComplete: function(){
 				this._hideToolbarSpinner();
 			}
 		});
@@ -1232,20 +1221,18 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_doBack: function()
-	{
+	_doBack: function(){
 		try {
-			if (this._currentState == 'index') {
+			if(this._currentState=='index'){
 				return false;
 			};
 			this._hideControlButtons();
-			switch (this._currentState) {
-
+			switch(this._currentState){
 				case 'new':
 					this.showControlButton('newButton');
 					this.getElement('hyNewDiv').update('');
 					var numberResults = this._browse.getNumberResults();
-					if (numberResults == 0) {
+					if(numberResults==0){
 						this._restoreSearchMessage();
 						this._showFormPanel('hySearchDiv');
 						this.showControlButton('importButton');
@@ -1263,7 +1250,6 @@ var HyperForm = Class.create({
 						};
 					};
 					break;
-
 				case 'browse':
 					this._lastResultset = [];
 					this._restoreSearchMessage();
@@ -1273,7 +1259,6 @@ var HyperForm = Class.create({
 					this.getElement('hySearchForm').enable();
 					this.setCurrentState('index');
 					break;
-
 				case 'import':
 					if(this._browseChanged==true){
 						this._setReportType('screen');
@@ -1288,7 +1273,6 @@ var HyperForm = Class.create({
 						this.setCurrentState('index');
 					};
 					break;
-
 				case 'edit':
 				case 'rcs':
 					this._messages.setDefault();
@@ -1305,14 +1289,13 @@ var HyperForm = Class.create({
 						this.fire('beforeRecordPreview', this._lastResponse);
 					};
 					break;
-
 				case 'detail':
-					if (this._browseChanged == true) {
+					if(this._browseChanged==true){
 						this._setReportType('screen');
 						this._doSearch();
 					} else {
 						var numberResults = this._browse.getNumberResults();
-						if (numberResults > 0) {
+						if(numberResults>0){
 							this._messages.setDefault();
 							this.showControlButton('newButton');
 							this.showControlButton('importButton');
@@ -1334,7 +1317,8 @@ var HyperForm = Class.create({
 			};
 			this._notifyContentChange();
 			this.fire('afterBack');
-		} catch (e) {
+		}
+		catch(e){
 			HfosException.show(e);
 		}
 	},
@@ -1344,10 +1328,9 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_restoreSearchMessage: function()
-	{
+	_restoreSearchMessage: function(){
 		var message = 'Ingrese un criterio de búsqueda ó presione "Consultar" para ver';
-		if (this._genre == 'M') {
+		if(this._genre=='M'){
 			this._messages.notice(message+' todos los '+this._plural.toLowerCase());
 		} else {
 			this._messages.notice(message+' todas las '+this._plural.toLowerCase());
@@ -1359,10 +1342,9 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	save: function()
-	{
+	save: function(){
 		var saveButton = this.getElement('saveButton');
-		if (saveButton !== null) {
+		if(saveButton!==null){
 			this._sendForm(saveButton);
 		};
 	},
@@ -1372,8 +1354,7 @@ var HyperForm = Class.create({
 	 *
    	 * @this {HyperForm}
 	 */
-	_sendForm: function(saveButton)
-	{
+	_sendForm: function(saveButton){
 		this._showToolbarSpinner();
 		saveButton.disable();
 		if(this.fire('beforeSendForm')===false){
@@ -1550,7 +1531,6 @@ var HyperForm = Class.create({
 		};
 		options.checkAcl = true;
 		console.log(formElement);
-		console.log(options);
 		return HfosAjax.JsonFormRequest(formElement, options);
 	},
 

@@ -51,13 +51,6 @@ class MagnitudesController extends HyperFormController {
 				'fieldRelation' => 'codigo',
 				'detail' => 'nom_unidad',
 				'filters' => array('alpha')
-			),
-			'divisor' => array(
-				'single' => 'Divisor',
-				'type' => 'text',
-				'size' => 10,
-				'maxlength' => 8,
-				'filters' => array('double')
 			)
 		)
 	);

@@ -16,27 +16,23 @@ Core::importFromLibrary('Hfos', 'Loader/Loader.php');
 
 class ControllerBase {
 
-	public function init()
-	{
+	public function init(){
 		Router::routeTo(array('controller' => 'index'));
 	}
 
-	public function initialize()
-	{
+	public function initialize(){
 		i18n::isUnicodeEnabled();
 		LocaleMath::enableBcMath();
 	}
 
-	public static function getAppModel()
-	{
+	public static function getAppModel(){
 		return EntityManager::get('Empresa')->findFirst();
 	}
 
-	public function beforeFilter()
-	{
+	public function beforeFilter(){
 		$controllerName = Router::getController();
-		if (!Gardien::isAllowed($controllerName, Router::getAction(), null)) {
-			if ($controllerName!='gardien') {
+		if(!Gardien::isAllowed($controllerName, Router::getAction(), null)){
+			if($controllerName!='gardien'){
 				Router::routeTo(array(
 					'controller' => 'gardien',
 					'action' => 'noAccess',
@@ -49,11 +45,4 @@ class ControllerBase {
 		return true;
 	}
 
-	public function notFoundAction()
-	{
-		Router::routeTo(array(
-			'controller' => 'index',
-			'action' => 'index'
-		));
-	}
 }

@@ -133,8 +133,8 @@ class Conceptos_BasicosController extends HyperFormController {
 			'porc_retencion' => array(
 				'single' => 'Porcentaje Retención',
 				'type' => 'text',
-				'size' => 5,
-				'maxlength' => 5,
+				'size' => 3,
+				'maxlength' => 3,
 				'notSearch' => true,
 				'notBrowse' => true,
 				'filters' => array('float')

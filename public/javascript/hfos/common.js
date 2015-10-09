@@ -37,10 +37,6 @@ var HfosCommon = {
 	},
 
 	/**
-	 * CUENTAS
-	 */
-
-	/**
 	 * Agrega un autocompleter para cuentas contables en la ventana actual
 	 *
 	 * @private
@@ -94,70 +90,6 @@ var HfosCommon = {
 			HfosException.show(e);
 		}
 	},
-
-
-	/**
-	 * NIIF
-	 */
-
-	/**
-	 * Agrega un autocompleter para niif contables en la ventana actual
-	 *
-	 * @private
-	 * @this {HfosCommon}
-	 */
-	_queryByNiif: function(niifElement, niifNombreElement){
-		if(niifElement.getValue()!=''){
-			new HfosAjax.JsonRequest('niif/queryByNiif', {
-				method: 'GET',
-				parameters: 'cuenta=' + niifElement.getValue(),
-				onSuccess: function(niifElement, niifNombreElement, response){
-					if(response.status=='OK'){
-						niifNombreElement.setValue(response.nombre);
-					} else {
-						niifNombreElement.setValue(response.message);
-					}
-				}.bind(this, niifElement, niifNombreElement)
-			});
-		} else {
-			cuentaNombreElement.setValue('');
-		}
-	},
-
-	_updateCodigoNiif: function(elementNiif, option){
-		elementNiif.setValue(option.value);
-	},
-
-	/**
-	 * Agrega un autocompleter para niif contables en la ventana actual
-	 *
-	 * @private
-	 * @this {HfosCommon}
-	 */
-	addNiifCompleter: function(name, context){
-		try {
-			context = HfosCommon.getContext(context);
-			var niifElement = context.selectOne('input#'+name);
-			if(niifElement){
-				var niifNombreElement = context.selectOne('input#'+name+'_det');
-				new HfosAutocompleter(niifNombreElement, 'cuentas/queryByName', {
-					paramName: 'nombre',
-					afterUpdateElement: HfosCommon._updateCodigoNiif.bind(this, niifElement)
-				});
-				niifElement.observe('blur', HfosCommon._queryByNiif.bind(this, niifElement, niifNombreElement));
-				if(niifElement.getValue()!='' && niifNombreElement.getValue()==''){
-					HfosCommon._queryByNiif.bind(this, niifElement, niifNombreElement)();
-				}
-			}
-		}
-		catch(e){
-			HfosException.show(e);
-		}
-	},
-
-	/**
-	 * CENTROS
-	 */
 
 	/**
 	 *
@@ -214,10 +146,6 @@ var HfosCommon = {
 	},
 
 	/**
-	 * SOCIOS
-	 */
-
-	/**
 	 *
 	 * @private
 	 * @this {HfosCommon}
@@ -271,10 +199,6 @@ var HfosCommon = {
 		}
 	},
 
-	/**
-	 * TPC
-	 */
-
 	_queryBySocioTc: function(socioElement, socioNombreElement){
 		if(socioElement.getValue()!=''){
 			new HfosAjax.JsonRequest('contratos/queryBySocios', {
@@ -323,10 +247,6 @@ var HfosCommon = {
 			HfosException.show(e);
 		}
 	},
-
-	/**
-	 * COMPROBS
-	 */
 
 	/**
 	 *
@@ -380,9 +300,6 @@ var HfosCommon = {
 		}
 	},
 
-	/**
-	 * NIT
-	 */
 
 	/**
 	 * Consulta un Tercero por Documento
@@ -441,10 +358,6 @@ var HfosCommon = {
 			})
 		}.bind(form, claseElement));
 	},
-
-	/**
-	 * TERCEROS
-	 */
 
 	/**
 	 * Muestra el formulario de crear terceros

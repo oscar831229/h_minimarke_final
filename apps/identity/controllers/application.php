@@ -37,7 +37,7 @@ class ControllerBase
 	{
 		$controllerName = Router::getController();
 		if (!Gardien::isAllowed($controllerName, Router::getAction(), null)) {
-			if ($controllerName!='gardien') {
+			if($controllerName!='gardien'){
 				Router::routeTo(array(
 					'controller' => 'gardien',
 					'action' => 'noAccess',
@@ -50,12 +50,5 @@ class ControllerBase
 		return true;
 	}
 
-	public function notFoundAction()
-	{
-		Router::routeTo(array(
-			'controller' => 'index',
-			'action' => 'index'
-		));
-	}
 }
 

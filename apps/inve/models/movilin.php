@@ -99,13 +99,7 @@ class Movilin extends ActiveRecord {
 	 * @var string
 	 */
 	protected $descuento;
-
 	protected $impo;
-
-	/**
-	 * @var string
-	 */
-	protected $descripcion;
 
 
 	/**
@@ -249,17 +243,9 @@ class Movilin extends ActiveRecord {
 		$this->impo = $impo;
 	}
 
-	public function setDescripcion($descripcion){
-		$this->descripcion = $descripcion;
-	}
-
 
 	public function getImpo(){
 		return $this->impo;
-	}
-
-	public function getDescripcion(){
-		return $this->descripcion;
 	}
 
 	/**

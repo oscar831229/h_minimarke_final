@@ -45,10 +45,10 @@ class Hfos_Application
 	 * @var array
 	 */
 	private static $_versions = array(
-		'IN' => '6.1.12',
-		'CO' => '6.1.12',
+		'IN' => '6.1.10',
+		'CO' => '6.1.10',
 		'NO' => '6.1.10',
-		'IM' => '6.1.12',
+		'IM' => '6.1.10',
 		'FC' => '6.1.10',
 		'CN' => '6.1.10',
 		'PV' => '6.1.10',
@@ -120,10 +120,10 @@ class Hfos_Application
 		),
 		'SO' => array(
 			'socios', 'cambio_accion', 'asignacion_cargos_grupo', 'cargos_socios', 'movimiento_cargos', 'facturar',
-			'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir',
-			'prestamos-socios', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
+			'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir', 'ajuste-saldos', 'ajuste-prestamos',
+			'prestamos-socios', 'ajuste-pagos', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
 			'informe-convenios', 'estado_cuenta', 'estado_cuenta_consolidado', 'pagos-periodo',
-			'estado_cuenta_validacion', 'informe_rc', 'importar-pagos', 'validacion_categorias', 'cumpleanos'
+			'estado_cuenta_validacion'
 		),
 		'TC' => array(
 			'contratos', 'reservas', 'proyeccion', 'abono_contrato', 'abono_reserva',

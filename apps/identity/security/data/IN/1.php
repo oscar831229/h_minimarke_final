@@ -155,7 +155,7 @@
   ),
   'consumos' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'listado_referencias' => 
   array (
@@ -327,7 +327,7 @@
   ),
   'settings' => 
   array (
-    'index' => true,
-    'save' => true,
+    'index' => false,
+    'save' => false,
   ),
 );

@@ -41,7 +41,7 @@ class Interface_SiigoController extends ApplicationController
 			));
 		}
 
-		$this->setParamToView('message', 'Indique los parámetros y haga click en "Generar"');
+		$this->setParamToView('message', 'Indique los parÃ¡metros y haga click en "Generar"');
 	}
 
 	public function generarAction()
@@ -61,7 +61,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobVentas) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ventas no está configurado'
+				'message' => 'El comprobante de ventas no estÃ¡ configurado'
 			);
 		}
 
@@ -69,7 +69,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobIngresos) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ingresos no está configurado'
+				'message' => 'El comprobante de ingresos no estÃ¡ configurado'
 			);
 		}
 
@@ -135,10 +135,11 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%011s', '0'),//tel2
 				sprintf('%011s', '0'),//tel3
 				sprintf('%011s', '0'),//tel4
+				sprintf('%011s', '0'),//FAX
 				sprintf('%06s', substr($tercero->getApAereo(), 0, 6)),
 				sprintf('%- 100s', ''), //email
 				'M', //Sexo
-				'000',
+				'4',
 				$tipoDoc, //tipo documento
 				sprintf('%011s', '0'),//Cupo credito
 				sprintf('%02s', '1'),//Lista de precios
@@ -146,11 +147,11 @@ class Interface_SiigoController extends ApplicationController
 				sprintf('%04s', substr($this->getCodigoCiudad($locciu), 0, 4)),//Codigo de Ciudad
 				sprintf('%011s', '0.00'),//PORCENTAJE DE DESCUENTO
 				sprintf('%03s', '0'),//PERIODO DE PAGO
-				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÓN
-				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÓDIGO DEL PAÍS
+				sprintf('%- 30s', substr($movi->getDescripcion(), 0, 30)),//OBSERVACIÃ“N
+				sprintf('%03s', substr($this->getCodigoPais($locciu), 0, 3)),//CÃ“DIGO DEL PAÃS
 				'0',//DIGITO VERIFICACION
-				'0',//CALIFICACIÓN
-				sprintf('%05s', 0),//ACTIVIDAD ECONÓMICA
+				'000',//CALIFICACIÃ“N
+				sprintf('%05s', 0),//ACTIVIDAD ECONÃ“MICA
 				sprintf('%04s', 0),//FORMA DE PAGO
 				sprintf('%04s', 0),//COBRADOR
 				sprintf('%02s', $this->getTipoPersona($tipoDoc)),//TIPO DE PERSONA
@@ -171,11 +172,11 @@ class Interface_SiigoController extends ApplicationController
 				'000',//RUTA
 				sprintf('%- 10s', ''),//REGISTRO
 				sprintf('%08s', 0),//FECHA VENCIMIENTO
-				sprintf('%08s', 0),//FECHA CUMPLEAÑOS
+				sprintf('%08s', 0),//FECHA CUMPLEAÃ‘OS
 				'N',//TIPO DE SOCIEDAD
 				sprintf('%- 10s', ''),//AUTORIZACION IMPRENTA
 				sprintf('%- 11s', ''),//AUTORIZACION CONTRIBUYENTE
-				sprintf('%04s', 0),//TIPO CONTRIBUYENTE
+				sprintf('%02s', 99),//TIPO CONTRIBUYENTE
 				sprintf('%- 50s', ''),//CONTACTO FACTURA
 				sprintf('%- 90s', ''),//MAIL CONTACTO FACTURA
 			);
@@ -216,7 +217,7 @@ class Interface_SiigoController extends ApplicationController
 
 	private function getCodigoPais($locciu)
 	{
-		return '057';
+		return '001';
 	}
 
 	private function getCodigoCiudad($locciu)
@@ -264,11 +265,11 @@ class Interface_SiigoController extends ApplicationController
 			'ubicacion' => '000',
 			'cantidad' => '000000000000000',
 			'tipdoc' => 'R',
-    		'comcru' => 'R01',
-    		'numcru' => '00000000000',
-    		'seccru' => '000',
-    		'forpag' => '0000',
-    		'codban' => '00'
+    		'comcru' => 'F01',
+    		'numcru' => '0000000000',
+    		'seccru' => '001',
+    		'forpag' => '0001',
+    		'codban' => '30'
 		);
 
 		$numeroDoc = null;
@@ -293,10 +294,19 @@ class Interface_SiigoController extends ApplicationController
 
 		$data['nit'] = sprintf('%013s', substr($movi->getNit(), 0, 13));
 		$data['numero'] = sprintf('%011s', $movi->getNumeroDoc());
-		$data['cuenta'] = sprintf('%010s', substr($movi->getCuenta(), 0, 10));
+		//$data['cuenta'] = sprintf('%010s', substr($movi->getCuenta(), 0, 10));
+		$data['cuenta'] = str_pad($movi->getCuenta(), 10, '0');
 		$data['fecha'] = $fechaMovi;
-		$data['centro'] = '0'.substr($movi->getCentroCosto(), 0, 3);
-		$data['subcentro'] = substr($movi->getCentroCosto(), 3, 2);
+		//$data['centro'] = sprintf('%03s', substr($movi->getCentroCosto(), 0, 3));
+		$data['centro'] = '0100';
+		$data['subcentro'] = sprintf('%03s', $movi->getCentroCosto());
+		$subcentro = '000';
+	        //$factura = $this->Factura->findFirst("numfac='{$movi->getNumeroDoc()}' AND cedula='{$movi->getNit()}'");
+		//if ($factura) {
+			//$detfac = $this->Detfac->findFirst("numfac='' AND ");
+			//$subcentro = $factura->;
+		//}
+		//$data['subcentro'] = $subcentro;
 		$data['desc'] = sprintf('%- 50s', substr($movi->getDescripcion(), 0, 50));
 		$data['debcre'] = $movi->getDebcre();
 		$data['valor'] = sprintf('%013s', (int) $movi->getValor()).'00';
@@ -357,9 +367,28 @@ class Interface_SiigoController extends ApplicationController
 		);
 
 		$row = array();
+		$numcru = "";
+		$seccru = "";
+
 		foreach ($fields as $field) {
+
 			if (isset($data[$field])) {
-				$row[] = $data[$field];
+
+				$numcru = $field == "numero" ? $data[$field] : $data[$field];
+         	                $seccru = $field == "secuencia" ? $data[$field] : $data[$field];
+
+      	                        switch ($field) {
+					case "seccru":
+							$row[] = substr($data["secuencia"], 2);
+						break;
+					case "numcru":
+							$row[] = $data["numero"];
+						break;
+					default:
+							$row[] = $data[$field];
+						break;
+				}
+
 			} else {
 				$row[] = $field;
 			}

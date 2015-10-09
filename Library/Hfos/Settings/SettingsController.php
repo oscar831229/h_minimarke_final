@@ -72,6 +72,16 @@ class SettingsController extends ApplicationController
                 'type'          => 'comprob',
                 'filters'       => array('alpha')
             ),
+            'comprob_proveedores1' => array(
+                'type' => 'comprob',
+                'description' => 'Comprobante Proveedores 1',
+                'filters' => array('comprob')
+            ),
+            'comprob_proveedores2' => array(
+                'type' => 'comprob',
+                'description' => 'Comprobante Proveedores 2',
+                'filters' => array('comprob')
+            ),
         ),
         'IN' => array(
             'd_vence' => array(
@@ -156,13 +166,6 @@ class SettingsController extends ApplicationController
                 'detail'        => 'descripcion',
                 'sort'          => 'descripcion',
                 'filters'       => array('alpha')
-            ),
-            'correo_pedidos' => array(
-                'description' => 'Correo a enviar pedidos',
-                'type' => 'text',
-                'size' => 30,
-                'maxlength' => 240,
-                'filters' => array('email')
             ),
         ),
         'NO' => array(
@@ -283,25 +286,6 @@ class SettingsController extends ApplicationController
                         'size'          => 46,
                         'maxlength'     => 46,
                         'filters'       => array('upper')
-                    ),
-                    'contabilizar_convenio' => array(
-                        'description'   => 'Crear comprobante a convenio?',
-                        'type'          => 'closed-domain',
-                        'values'        => array(
-                            'S' => 'Si',
-                            'N' => 'No'
-                        ),
-                        'filters'       => array('alpha')
-                    ),
-                    'comprob_convenio' => array(
-                        'description'   => 'Comprobante de Convenios',
-                        'type'          => 'comprob',
-                        'filters'       => array('alpha')
-                    ),
-                    'tipo_doc_convenio' => array(
-                        'description'   => 'Tipo Documento Convenio',
-                        'type'          => 'documentos',
-                        'filters'       => array('alpha')
                     ),
                 ),
                 'Calculos' => array(
@@ -462,15 +446,6 @@ class SettingsController extends ApplicationController
                         'rows'          => 3,
                         'filters'       => array('striptags')
                     ),
-                    'show_consumo_minimo_fac' => array(
-                        'description'   => 'Mostrar consumos en Factura?',
-                        'type'          => 'closed-domain',
-                        'values'        => array(
-                            'S' => 'Si',
-                            'N' => 'No'
-                        ),
-                        'filters'       => array('alpha')
-                    ),
                     'resumen_factura_pie' => array(
                         'description'   => 'Resumen Pie de Pagina de Factura ',
                         'type'          => 'textarea',
@@ -579,78 +554,8 @@ class SettingsController extends ApplicationController
                         'type'          => 'int',
                         'filters'       => array('int')
                     ),
-                ),
-                'Importar Pagos' => array(
-                    'importar_pagos_1' => array(
-                        'description'   => '#1 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_2' => array(
-                        'description'   => '#2 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_3' => array(
-                        'description'   => '#3 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_4' => array(
-                        'description'   => '#4 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_5' => array(
-                        'description'   => '#5 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_6' => array(
-                        'description'   => '#6 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_7' => array(
-                        'description'   => '#7 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_8' => array(
-                        'description'   => '#8 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_9' => array(
-                        'description'   => '#9 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'importar_pagos_10' => array(
-                        'description'   => '#10 Pago',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'capital_importar_pagos' => array(
-                        'description'   => 'Cuenta A Capital',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'contrapartida_importar_pagos' => array(
-                        'description'   => 'Cuenta de Cruce',
-                        'type'          => 'cuenta',
-                        'filters'       => array('cuentas')
-                    ),
-                    'forma_pago_importar_pagos' => array(
-                        'description'   => 'Forma Pago Importar Pagos',
-                        'type'          => 'relation',
-                        'table'         => 'FormaPago',
-                        'fieldRelation' => 'codigo',
-                        'detail'        => 'descripcion',
-                        'sort'          => 'descripcion',
-                        'filters'       => array('alpha')
-                    ),
                 )
+
             )
         ),
         'TC' => array(
