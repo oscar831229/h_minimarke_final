@@ -121,6 +121,30 @@ class Cuentas extends RcsRecord {
 	protected $cuenta;
 
 	/**
+	 * Cuentas Niif
+	 * @var  string description
+	 */
+	protected $cuenta_niif;
+
+	/**
+	 * Devuelve el valor del campo cuenta
+	 * @return string
+	 */
+	public function getCuentaNiif(){
+		return $this->cuenta_niif;
+	}
+
+	/**
+	 * Setter of column cuenta_niif
+	 *
+	 * @param string $cuentaNiif
+	 */
+	public function setCuentaNiif($cuentaNiif){
+		$this->cuenta_niif = $cuentaNiif;
+}
+
+
+	/**
 	 * Indica si se deben consultar las cuentas padre
 	 *
 	 * @var boolean
@@ -715,4 +739,3 @@ class Cuentas extends RcsRecord {
 	}
 
 }
-
