@@ -46,4 +46,9 @@ class RcsRecord extends ActiveRecord
 		return Rcs::afterUpdate($this);
 	}
 
+	protected function beforeDelete()
+	{
+		return Rcs::beforeDelete($this);
+	}
+
 }

@@ -284,6 +284,52 @@ class Rcs extends UserComponent
 	}
 
 	/**
+	 * Evento para preparar la revisión antes de borrar un registro
+	 *
+	 * @param ActiveRecordBase $record
+	 * @return boolean
+	 */
+	public static function beforeDelete($record)
+	{
+		$disableEvents = ActiveRecord::getDisableEvents();
+		$refreshPersistance = ActiveRecord::getRefreshPersistance();
+		if(self::$_disabled==false){
+			ActiveRecord::disableEvents(true);
+			ActiveRecord::refreshPersistance(false);
+			$rcsRevision = self::_createRevision($record);
+			if($rcsRevision==false){
+				return false;
+			}
+			$recordsEntity = EntityManager::getEntityInstance('Records');
+			$recordsEntity->setConnection($rcsRevision->getConnection());
+			$recordsEntity->setRevisionsId($rcsRevision->getId());
+			foreach ($record->getAttributes() as $attribute) {
+				$rcsRecord = clone $recordsEntity;
+				$rcsRecord->setConnection($rcsRevision->getConnection());
+				$rcsRecord->setRevisionsId($rcsRevision->getId());
+				$rcsRecord->setFieldName($attribute);
+				$rcsRecord->setValue($record->readAttribute($attribute) . " (DELETED)");
+				$rcsRecord->setChanged('N');
+				if(isset($primaryKeys[$attribute])){
+					$rcsRecord->setIsPrimary('S');
+				} else {
+					$rcsRecord->setIsPrimary('N');
+				}
+				if($rcsRecord->save()==false){
+					foreach($rcsRecord->getMessages() as $message){
+						$this->appendMessage(new ActiveRecordMessage('RCS: '.$message->getMessage(), ''));
+					}
+					return false;
+				}
+			}
+			unset($rcsRevision);
+		}
+		ActiveRecord::disableEvents($disableEvents);
+		ActiveRecord::refreshPersistance($refreshPersistance);
+		return true;
+	}
+
+	/**
 	 * Deshabilita el RCS
 	 *
 	 */

@@ -47,6 +47,13 @@ View::getContent();
 						'S' => 'SIN ORDEN'
 					)) ?></td>
 				</tr>
+				<tr>
+					<td align="right"><label for="reportType">Tipo</label></td>
+					<td align="left"><?php echo Tag::selectStatic('tipo', array(
+						'N' => 'NORMAL',
+						'I' => 'NIIF',
+					)) ?></td>
+				</tr>
 			</table>
 			<?php echo Tag::hiddenField('codigoComprobante', 'value: ' . $codigoComprobante) ?>
 			<?php echo Tag::hiddenField('numero', 'value: ' . $numero) ?>
