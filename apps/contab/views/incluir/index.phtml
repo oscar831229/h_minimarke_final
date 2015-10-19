@@ -28,6 +28,17 @@
 			</div>
 			<table align="center" width="100%">
 				<tr>
+					<td align="left">
+						<b>Seleccione el destino del movimiento:</b>
+					</td>
+					<td align="left">
+						<?php echo Tag::selectStatic('destino', array("M" => "Normal", "N" => "NIIF")) ?>
+					</td>
+				</tr>
+				<tr>
+					<td align="left">
+						<b>Seleccione el archivo con el movimiento:</b>
+					</td>
 					<td align="center">
 						<?php echo Tag::fileField('archivo') ?>
 					</td>
@@ -44,4 +55,3 @@
 	</div>
 
 </div>
-

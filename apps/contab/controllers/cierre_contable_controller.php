@@ -21,10 +21,6 @@
  */
 class Cierre_ContableController extends ApplicationController
 {
-    protected $transaction;
-    protected $fechaCierre;
-    protected $ultimoCierre;
-    protected $periodoCierre;
 
     public function initialize()
     {
@@ -52,6 +48,9 @@ class Cierre_ContableController extends ApplicationController
         $this->setParamToView('message', 'Haga click en "Hacer Cierre" para cerrar el periodo contable actual');
     }
 
+    /**
+     * Cierre de periodo
+     */
     public function cierreAction()
     {
         $this->setResponse('json');
@@ -64,18 +63,16 @@ class Cierre_ContableController extends ApplicationController
 
             $transaction = TransactionManager::getUserTransaction();
             $transaction->setRollbackOnAbort(true);
-            $this->transaction = $transaction;
+
 
             $empresa1 = $this->Empresa->setTransaction($transaction)->findFirst();
             $empresa = $this->Empresa->setTransaction($transaction)->findFirst(array('for_update' => true));
             $ultimoCierre = $empresa->getFCierrec();
-            $this->ultimoCierre = $ultimoCierre;
 
             $ultimoCierre->toLastDayOfMonth();
             $fechaCierre = clone $ultimoCierre;
             $fechaCierre->addDays(1);
             $fechaCierre->toLastDayOfMonth();
-            $this->fechaCierre = $fechaCierre;
 
             if (Date::isEarlier($fechaCierre, $ultimoCierre)) {
                 $transaction->rollback('El periodo ya fue cerrado');
@@ -93,8 +90,15 @@ class Cierre_ContableController extends ApplicationController
             }*/
 
             $periodoCierre = $fechaCierre->getPeriod();
-            $this->periodoCierre = $periodoCierre;
             $periodoUltimoCierre = $ultimoCierre->getPeriod();
+
+            //throw new Exception("ano_mes='$periodoCierre'");
+
+            $this->Saldosc->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
+
+            $this->Saldosn->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
+
+            $this->SaldosNiif->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
 
             $saldospObj = $this->Saldosp->setTransaction($transaction)->find("ano_mes='$periodoCierre'");
             foreach ($saldospObj as $saldosp) {
@@ -110,12 +114,31 @@ class Cierre_ContableController extends ApplicationController
             }
             unset($saldospObj);
 
-            //SALDOSC
-            $this->checkSaldosC();
+            $this->Saldosc->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
+
+            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0)";
+            //throw new Exception($conditions);
+
+            $saldoscObj = $this->Saldosc->setTransaction($transaction)->find($conditions);
+            foreach ($saldoscObj as $saldocAnterior) {
+                $saldoc = new Saldosc();
+                $saldoc->setTransaction($transaction);
+                $saldoc->setCuenta($saldocAnterior->getCuenta());
+                $saldoc->setAnoMes($periodoCierre);
+                $saldoc->setDebe($saldocAnterior->getDebe());
+                $saldoc->setHaber($saldocAnterior->getHaber());
+                $saldoc->setSaldo($saldocAnterior->getSaldo());
+                if ($saldoc->save()==false) {
+                    foreach ($saldoc->getMessages() as $message) {
+                        $transaction->rollback('Saldos por Cuenta: '.$message->getMessage().'. '.$saldoc->inspect());
+                    }
+                }
+                unset($saldocAnterior, $saldoc);
+            }
+            unset($conditions,$saldoscObj);
 
             //SANDOSN
-            $this->Saldosn->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
-            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0 OR base_grab!=0)";
+            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
             $saldosnObj = $this->Saldosn->setTransaction($transaction)->find($conditions);
             foreach ($saldosnObj as $saldonAnterior) {
                 $saldon = new Saldosn();
@@ -132,7 +155,29 @@ class Cierre_ContableController extends ApplicationController
                         $transaction->rollback('Saldos por Nit: '.$message->getMessage().'. '.$saldon->inspect());
                     }
                 }
-                unset($saldon,$saldonAnterior);
+                unset($saldon,$saldonAnterior,$cuenta);
+            }
+            unset($conditions,$saldosnObj);
+
+            //SANDOSNIIF
+            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
+            $saldosNiifObj = $this->SaldosNiif->setTransaction($transaction)->find($conditions);
+            foreach ($saldosNiifObj as $saldonAnterior) {
+                $saldon = new SaldosNiif();
+                $saldon->setTransaction($transaction);
+                $saldon->setCuenta($saldonAnterior->getCuenta());
+                $saldon->setNit(trim($saldonAnterior->getNit()));
+                $saldon->setAnoMes($periodoCierre);
+                $saldon->setDebe($saldonAnterior->getDebe());
+                $saldon->setHaber($saldonAnterior->getHaber());
+                $saldon->setSaldo($saldonAnterior->getSaldo());
+                $saldon->setBaseGrab($saldonAnterior->getBaseGrab());
+                if ($saldon->save()==false) {
+                    foreach ($saldon->getMessages() as $message) {
+                        $transaction->rollback('SaldosNiif por Nit: '.$message->getMessage().'. '.$saldon->inspect());
+                    }
+                }
+                unset($saldon,$saldonAnterior,$cuenta);
             }
             unset($conditions,$saldosnObj);
 
@@ -154,9 +199,6 @@ class Cierre_ContableController extends ApplicationController
 
                     $saldoscTemp = $this->Saldosc->setTransaction($transaction)->findFirst($conditionsSaldosc);
                     if ($saldoscTemp) {
-                        if ($comcier->getCuentaf()=='135518005005') {
-                            //throw new Exception($saldoscTemp->getSaldo());
-                        }
                         $saldon = new Saldosn();
                         $saldon->setTransaction($transaction);
                         $saldon->setCuenta($comcier->getCuentaf());
@@ -178,8 +220,11 @@ class Cierre_ContableController extends ApplicationController
 
             $conditions = "ano_mes='$periodoUltimoCierre'";
             $saldospObj = $this->Saldosp->setTransaction($transaction)->find($conditions);
+
             foreach ($saldospObj as $saldopAnterior) {
+
                 $saldop = $this->Saldosp->findFirst("cuenta='{$saldopAnterior->getCuenta()}' AND centro_costo='{$saldopAnterior->getCentroCosto()}' AND ano_mes='$periodoCierre'");
+
                 if ($saldop==false) {
                     $saldop = new Saldosp();
                     $saldop->setCuenta($saldopAnterior->getCuenta());
@@ -189,6 +234,7 @@ class Cierre_ContableController extends ApplicationController
                 } else {
                     $saldop->setPres($saldopAnterior->getPres());
                 }
+
                 $saldop->setTransaction($transaction);
                 $saldop->setDebe($saldopAnterior->getDebe());
                 $saldop->setHaber($saldopAnterior->getHaber());
@@ -353,43 +399,5 @@ class Cierre_ContableController extends ApplicationController
             );
         }
 
-    }
-
-    private function checkSaldosC()
-    {
-        $this->Saldosc->setTransaction($this->transaction)->deleteAll("ano_mes='" . $this->periodoCierre . "'");
-
-        $conditions = "fecha>'" . $this->ultimoCierre . "' AND fecha<='" . $this->fechaCierre . "'";
-
-        $cuentas = $this->Cuentas->setTransaction($this->transaction)->find(array("columns" => 'cuenta'));
-
-        foreach ($cuentas as $cuenta) {
-            $cuentaContable = $cuenta->getCuenta();
-            $conditionMovi = $conditions . " AND cuenta LIKE '" . $cuentaContable . "%'";
-            $conditionMoviD = $conditionMovi . " AND deb_cre='D'";
-            $conditionMoviC = $conditionMovi . " AND deb_cre='C'";
-
-            $saldoc = new Saldosc();
-            $saldoc->setTransaction($this->transaction);
-            $saldoc->setCuenta($cuentaContable);
-            $saldoc->setAnoMes($this->periodoCierre);
-
-            $debitos  = $this->Movi->setTransaction($this->transaction)->sum("valor",  "conditions: $conditionMoviD");
-            $creditos = $this->Movi->setTransaction($this->transaction)->sum("valor", "conditions: $conditionMoviC");
-            $saldo = $debitos - $creditos;
-            //throw new Exception("debitos: $debitos, creditos: $creditos, conditionMoviD: $conditionMoviD", 1);
-
-            $saldoc->setDebe($debitos);
-            $saldoc->setHaber($creditos);
-            $saldoc->setSaldo($saldo);
-
-            if ($saldoc->save()==false) {
-                foreach ($saldoc->getMessages() as $message) {
-                    $this->transaction->rollback('Saldos por Cuenta: '.$message->getMessage().'. '.$saldoc->inspect());
-                }
-            }
-            unset($saldocAnterior, $saldoc);
-        }
-        unset($conditions,$saldoscObj);
     }
 }

@@ -14,9 +14,17 @@
  */
 class ControllerBase {
 
-	public function init(){
+	public function init()
+	{
 		Router::routeTo(array('controller' => 'index'));
 	}
 
-}
+	public function notFoundAction()
+	{
+		Router::routeTo(array(
+			'controller' => 'index',
+			'action' => 'index'
+		));
+	}
 
+}

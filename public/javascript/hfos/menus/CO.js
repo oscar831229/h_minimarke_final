@@ -1037,6 +1037,40 @@ Hfos.getApplication().getMenu().setOptions([
 		'icon': 'wrench-screwdriver.png',
 		'options': [
 			{
+				'title': 'NIIF',
+				'icon': 'product.png',
+				'options': [
+					{
+						'title': 'Plan de Cuentas NIIF',
+						'icon': 'product.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-cuentas-niif-contab',
+								icon: 'product.png',
+								title: "Plan de Cuentas NIIF",
+								action: "niif",
+								width: '800px',
+								height: '520px'
+							});
+						}
+					},
+					{
+						'title': 'NIC',
+						'icon': 'box-label.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-nic-contab',
+								icon: 'box-label.png',
+								title: "NIC",
+								action: "nic",
+								width: '700px',
+								height: '420px'
+							});
+						}
+					}
+				]
+			},
+			{
 				'title': 'Cuentas Contables',
 				'icon': 'featured.png',
 				'options': [

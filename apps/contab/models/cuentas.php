@@ -127,24 +127,6 @@ class Cuentas extends RcsRecord {
 	protected $cuenta_niif;
 
 	/**
-	 * Devuelve el valor del campo cuenta
-	 * @return string
-	 */
-	public function getCuentaNiif(){
-		return $this->cuenta_niif;
-	}
-
-	/**
-	 * Setter of column cuenta_niif
-	 *
-	 * @param string $cuentaNiif
-	 */
-	public function setCuentaNiif($cuentaNiif){
-		$this->cuenta_niif = $cuentaNiif;
-}
-
-
-	/**
 	 * Indica si se deben consultar las cuentas padre
 	 *
 	 * @var boolean
@@ -497,6 +479,23 @@ class Cuentas extends RcsRecord {
 		return $this->cuenta;
 	}
 
+	/**
+	 * Devuelve el valor del campo cuenta
+	 * @return string
+	 */
+	public function getCuentaNiif(){
+		return $this->cuenta_niif;
+	}
+
+	/**
+	 * Setter of column cuenta_niif
+	 *
+	 * @param string $cuentaNiif
+	 */
+	public function setCuentaNiif($cuentaNiif){
+		$this->cuenta_niif = $cuentaNiif;
+	}
+
 	protected function validation(){
 
 		$this->validate('InclusionIn', array(
@@ -634,7 +633,7 @@ class Cuentas extends RcsRecord {
 				return false;
 			}
 		}
-		if($this->cta_iva!=''){
+		if($this->cta_iva){
 			if($Cuentas->count("cuenta='{$this->cta_iva}' AND es_auxiliar='S'")==0){
 				$this->appendMessage(new ActiveRecordMessage('La cuenta de IVA no existe o no es auxiliar', 'cuenta'));
 				return false;

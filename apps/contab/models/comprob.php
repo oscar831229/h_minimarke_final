@@ -75,6 +75,15 @@ class Comprob extends RcsRecord {
 	 */
 	protected $comprob_contab;
 
+	/**
+	 * @var int
+	 */
+	protected $consecutivo_niif;
+
+	/**
+	 * @var enum('N', 'I')
+	 */
+	protected $tipo_movi_niif;
 
 	/**
 	 * Metodo para establecer el valor del campo codigo
@@ -269,6 +278,42 @@ class Comprob extends RcsRecord {
 		return $this->comprob_contab;
 	}
 
+	/**
+	 * Metodo para establecer el valor del campo consecutivo_niif
+	 * @param int $consecutivoNiif
+	 */
+	public function setConsecutivoNiif($consecutivoNiif)
+	{
+		$this->consecutivo_niif = $consecutivoNiif;
+	}
+
+	/**
+	 * Devuelve el valor del campo consecutivo_niif
+	 * @return int
+	 */
+	public function getConsecutivoNiif()
+	{
+		return $this->consecutivo_niif;
+	}
+
+	/**
+	 * Metodo para establecer el valor del campo tipo_movi_niif
+	 * @param string $tipoMoviNiif
+	 */
+	public function setTipoMoviNiif($tipoMoviNiif)
+	{
+		$this->tipo_movi_niif = $tipoMoviNiif;
+	}
+
+	/**
+	 * Devuelve el valor del campo tipo_movi_niif
+	 * @return string
+	 */
+	public function getTipoMoviNiif()
+	{
+		return $this->tipo_movi_niif;
+	}
+
 	public function beforeDelete(){
 		if($this->countMovi()){
 			$this->appendMessage(new ActiveRecordMessage('No se puede eliminar el comprobante porque tiene movimiento asociado', 'codigo'));
@@ -320,4 +365,3 @@ class Comprob extends RcsRecord {
 	}
 
 }
-

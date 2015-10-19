@@ -46,4 +46,12 @@ class ControllerBase {
 		return true;
 	}
 
+	public function notFoundAction()
+	{
+		Router::routeTo(array(
+			'controller' => 'index',
+			'action' => 'index'
+		));
+}
+
 }

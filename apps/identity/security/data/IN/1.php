@@ -155,7 +155,7 @@
   ),
   'consumos' => 
   array (
-    'index' => false,
+    'index' => true,
   ),
   'listado_referencias' => 
   array (
@@ -300,34 +300,34 @@
   ),
   'regimen_cuentas' => 
   array (
-    'index' => false,
-    'new' => false,
-    'edit' => false,
-    'delete' => false,
-    'search' => false,
-    'report' => false,
-    'import' => false,
+    'index' => true,
+    'new' => true,
+    'edit' => true,
+    'delete' => true,
+    'search' => true,
+    'report' => true,
+    'import' => true,
   ),
   'consumos_internos' => 
   array (
-    'index' => false,
-    'new' => false,
-    'edit' => false,
-    'delete' => false,
-    'search' => false,
-    'report' => false,
+    'index' => true,
+    'new' => true,
+    'edit' => true,
+    'delete' => true,
+    'search' => true,
+    'report' => true,
   ),
   'retecompras' => 
   array (
-    'index' => false,
-    'save' => false,
-    'delete' => false,
-    'search' => false,
-    'rcs' => false,
+    'index' => true,
+    'save' => true,
+    'delete' => true,
+    'search' => true,
+    'rcs' => true,
   ),
   'settings' => 
   array (
-    'index' => false,
-    'save' => false,
+    'index' => true,
+    'save' => true,
   ),
 );
