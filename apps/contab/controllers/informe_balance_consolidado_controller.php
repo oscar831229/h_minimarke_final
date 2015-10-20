@@ -91,11 +91,20 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 		$report->setDocumentTitle('Balance Consolidado Anual');
 
 		$headers = array(
-			'PERIODO',
 			'CÓDIGO',
-			'DEBITOS',
-			'CRÉDITOS',
-			'NUEVO SALDO'
+			'SALDO ANTERIOR',
+			'ENERO',
+			'FEBRERO',
+			'MARZO',
+			'ABRIL',
+			'MAYO',
+			'JUNIO',
+			'JULIO',
+			'AGOSTO',
+			'SEPTIEMBRE',
+			'OCTUBRE',
+			'NOVIEMBRE',
+			'DICIEMBRE'
 		);
 
 		$report->setColumnHeaders($headers);
@@ -110,7 +119,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			'fontSize' => 11
 		)));
 
-		$report->setColumnStyle(array(2, 3, 4), new ReportStyle(array(
+		$report->setColumnStyle(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13), new ReportStyle(array(
 			'textAlign' => 'right',
 			'fontSize' => 11,
 		)));
@@ -119,7 +128,7 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			'type' => 'Number',
 			'decimals' => 2
 		));
-		$report->setColumnFormat(array(2, 3, 4), $numberFormat);
+		$report->setColumnFormat(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13), $numberFormat);
 
 		$leftColumn = new ReportStyle(array(
 			'textAlign' => 'left',
@@ -131,45 +140,52 @@ class Informe_Balance_ConsolidadoController extends ApplicationController
 			'fontSize' => 11,
 		));
 
-		$report->setTotalizeColumns(array(2, 3, 4));
+		//$report->setTotalizeColumns(array(2, 3, 4));
 
 		$report->start(true);
 
-	  $totalDebitos = 0;
-		$totalCreditos = 0;
-		$totalSaldo = 0;
-
 		$saldoscs = $this->Saldosc->find(array(
-			"condition" => "ano_mes >= ".$year."01 AND ano_mes <= ".$year."12",
-			"order" => "ano_mes, cuenta ASC"
+			"condition" => "ano_mes >= '" . $year . "01' AND ano_mes <= '" . $year . "12'",
+			"order" => "cuenta,ano_mes ASC"
 		));
+
 		if (!count($saldoscs)) {
 			throw new Exception("No se encontro saldos en el a&ntilde;o '$year'");
 		}
 
-		foreach ($saldoscs as $saldosc) {
-			$debe  = $saldosc->getDebe();
-			$haber = $saldosc->getHaber();
-			$saldo = $saldosc->getSaldo();
-
-			$report->addRow(array(
-				$saldosc->getAnoMes(),
-				$saldosc->getCuenta(),
-				$debe,
-				$haber,
-				$saldo
-			));
-
-			$totalDebitos += $debe;
-			$totalCreditos += $haber;
-			$totalSaldo += $saldo;
+		$default = array();
+		for ($i = $year."01"; $i <= $year."12"; $i++) {
+			$default[$i] = 0;
 		}
 
-		$report->setTotalizeValues(array(
-			2 => $totalDebitos,
-			3 => $totalCreditos,
-			4 => $totalSaldo
-		));
+		$data = array();
+		foreach ($saldoscs as $saldosc) {
+			$cuenta = $saldosc->getCuenta();
+			$anoMes = $saldosc->getAnoMes();
+			if (!isset($data[$cuenta])) {
+				$data[$cuenta] = $default;
+			}
+			$data[$cuenta][$anoMes] = $saldosc->getNeto();
+		}
+
+		foreach ($data as $cuenta => $row) {
+			$report->addRow(array(
+				$cuenta,
+				0,
+				$row[$year."01"],
+				$row[$year."02"],
+				$row[$year."03"],
+				$row[$year."04"],
+				$row[$year."05"],
+				$row[$year."06"],
+				$row[$year."07"],
+				$row[$year."08"],
+				$row[$year."09"],
+				$row[$year."10"],
+				$row[$year."11"],
+				$row[$year."12"]
+			));
+		}
 
 		$report->finish();
 		$fileName = $report->outputToFile('public/temp/informe_balance_consolidado');

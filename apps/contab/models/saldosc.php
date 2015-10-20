@@ -21,22 +21,27 @@ class Saldosc extends ActiveRecord {
 	protected $cuenta;
 
 	/**
-	 * @var string
+	 * @var integer
 	 */
 	protected $ano_mes;
 
 	/**
-	 * @var string
+	 * @var decimal
 	 */
 	protected $debe;
 
 	/**
-	 * @var string
+	 * @var decimal
 	 */
 	protected $haber;
 
 	/**
-	 * @var string
+	 * @var decimal
+	 */
+	protected $neto;
+
+	/**
+	 * @var decimal
 	 */
 	protected $saldo;
 
@@ -71,6 +76,14 @@ class Saldosc extends ActiveRecord {
 	 */
 	public function setHaber($haber){
 		$this->haber = $haber;
+	}
+
+	/**
+	 * Metodo para establecer el valor del campo neto
+	 * @param string $neto
+	 */
+	public function setNeto($neto){
+		$this->neto = $neto;
 	}
 
 	/**
@@ -115,6 +128,14 @@ class Saldosc extends ActiveRecord {
 	}
 
 	/**
+	 * Devuelve el valor del campo neto
+	 * @return string
+	 */
+	public function getNeto(){
+		return $this->neto;
+	}
+
+	/**
 	 * Devuelve el valor del campo saldo
 	 * @return string
 	 */
@@ -123,4 +144,3 @@ class Saldosc extends ActiveRecord {
 	}
 
 }
-
