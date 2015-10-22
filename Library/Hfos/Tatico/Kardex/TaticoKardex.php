@@ -61,6 +61,9 @@ class TaticoKardex extends UserComponent
 					$saldos = EntityManager::get("Saldos")->findFirst("ano_mes='$periodo' AND item='{$movilin->getItem()}' AND almacen='{$movilin->getAlmacen()}'");
 					if ($saldos) {
 						$costoTotalAnterior = $saldos->getCosto();
+						if (!$nuevoSaldo) {
+							$nuevoSaldo = 1;
+						}
 						$costoPromedioAnterior = $costoTotalAnterior / $nuevoSaldo;
 					}
 				}
@@ -103,7 +106,7 @@ class TaticoKardex extends UserComponent
 			}
 
 			$cantidad = (double) $movilin->getCantidad();
-			if ($cantidad!=0) {
+			if ($cantidad) {
 			 	$costo = $movilin->getValor() / $cantidad;
 			} else {
 				$costo = 0;
@@ -112,6 +115,9 @@ class TaticoKardex extends UserComponent
 			$nuevoCostoPromedio = $movilin->getValor();
 			//Nuevos campos
 			if ($lastSaldoAnterior > 0) {
+				if (!$nuevoSaldo) {
+					$nuevoSaldo = 1;
+				}
 				$nuevoCostoPromedio = $nuevoCostoTotal / $nuevoSaldo;
 				//$contents .=  "<br>".$movilin->getComprob()."-".$movilin->getNumero().">$nuevoCostoPromedio = $nuevoCostoTotal / $nuevoSaldo<br>";
 			}

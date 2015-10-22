@@ -167,6 +167,11 @@ class SettingsController extends ApplicationController
                 'sort'          => 'descripcion',
                 'filters'       => array('alpha')
             ),
+            'centro_costo_borrado' => array(
+                'description'   => 'Centro de Costo al borrar',
+                'type'          => 'centros',
+                'filters'       => array('alpha')
+            ),
         ),
         'NO' => array(
             'valor_transporte' => array(

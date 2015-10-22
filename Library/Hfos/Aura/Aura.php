@@ -261,6 +261,13 @@ class Aura extends UserComponent
 	private $_movements = array();
 
 	/**
+	 * Indica si debe crear Niif
+	 *
+	 * @var boolean
+	 */
+	private $_useNiif = true;
+
+	/**
 	 * Constructor de Aura
 	 *
 	 * @param string $codigoComprobante
@@ -305,6 +312,16 @@ class Aura extends UserComponent
 	public function setDebug($debug)
 	{
 		$this->_debug = $debug;
+	}
+
+	/**
+	 * Establece la aplicación si debe usar niif
+	 *
+	 * @param boolean $niif
+	 */
+	public function setUseNiif($useNiif)
+	{
+		$this->_useNiif = $useNiif;
 	}
 
 	/**
@@ -1497,9 +1514,11 @@ class Aura extends UserComponent
 			}
 		}
 		//Create Movi Niif
-		$auraNiif = new AuraNiif;
-		$auraNiif->setTransaction($this->_transaction);
-		$auraNiif->createMoviNiifByMovi($grab->getComprob(), $grab->getNumero());
+		if ($this->_useNiif) {
+			$auraNiif = new AuraNiif;
+			$auraNiif->setTransaction($this->_transaction);
+			$auraNiif->createMoviNiifByMovi($grab->getComprob(), $grab->getNumero());
+		}
 	}
 
 	/**

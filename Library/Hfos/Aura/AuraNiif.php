@@ -1265,7 +1265,7 @@ class AuraNiif extends UserComponent
 
             unset($movis);
         } else {
-            throw new AuraNiifException("Movimiento '$comprob-$numero' no existe");
+            throw new AuraNiifException("Movimiento '$comprob-$numero' no existe" . print_r(debug_backtrace(), true));
         }
 
     }

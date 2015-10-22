@@ -458,6 +458,9 @@ class Tatico extends UserComponent
 		catch (AuraException $e) {
 			throw new TaticoException('Contabilidad: '.$e->getMessage());
 		}
+		catch (AuraNiifException $e) {
+			throw new TaticoException('Contabilidad: '.$e->getMessage());
+		}
 		catch (GardienException $e) {
 			throw new TaticoException('Seguridad: '.$e->getMessage());
 		}
@@ -466,6 +469,9 @@ class Tatico extends UserComponent
 		}
 		catch (TransactionFailed $e) {
 			throw new TaticoException($e->getMessage(), $e->getCode());
+		}
+		catch (Exception $e) {
+			throw new TaticoException('Contabilidad: '.$e->getMessage());
 		}
 	}
 
@@ -2472,9 +2478,62 @@ class Tatico extends UserComponent
 			throw new TaticoException('El movimiento no puede eliminarse por ser anterior a la hora de cierre');
 		}
 		if ($movihead->getEstado()=='C') {
-			throw new TaticoException('El movimiento no puede eliminarse por estar cerrado');
+			//throw new TaticoException('El movimiento no puede eliminarse por estar cerrado');
+		}
+		$this->verificarAntesDeBorrar($movihead);
+
+		$fecha = $movihead->getFecha();
+		$almacen = $movihead->getAlmacen();
+		$comprob = $movihead->getComprob();
+
+		switch ($tipoComprob) {
+			case 'E':
+				//Hace salida si el comprobnate a borrar es entrada
+				$comprob = sprintf('C%02s', $almacen);
+				break;
+			case 'S':
+				//Hace entrada si el comprobnate a borrar es salida
+				$comprob = sprintf('E%02s', $almacen);
+				break;
+
+			default:
+				throw new TaticoException("Comprobante no soportado para borrar '$tipoComprob'", 1);
+				break;
 		}
 
+		$newMovihead = clone $movihead;
+		$newMovihead->setComprob($comprob);
+		$max = $this->Movihead->maximum(array('numero', "conditions" => "comprob='$comprob'")) + 1;
+		$newMovihead->setNumero($max);
+		$newMovihead->setEstado('A');
+		$newMovihead->setDescription("Se elimino el movimiento '{$movihead->getComprob()} / {$movihead->getNumero()}'");
+		$newMovihead->save();
+
+		$movihead->setEstado('A');
+		$movihead->save();
+
+
+		$movilins = $this->Movilin->find("comprob='{$movihead->getComprob()}' AND numero='{$movihead->getNumero()}' AND almacen='{$movihead->getAlmacen()}'");
+		foreach ($movilins as $movilin) {
+			$newMovilin= clone $movilin;
+			$newMovilin->setId(null);
+			$newMovilin->setComprob($comprob);
+			$newMovilin->save();
+		}
+	}
+
+	private function verificarAntesDeBorrar($movihead)
+	{
+		if ($movihead->getEstado()=='A') {
+			throw new TaticoException('El movimiento ya esta anulado');
+		}
+
+		$fecha = $movihead->getFecha();
+		//throw new TaticoException("fecha > '$fecha' AND comprob NOT LIKE 'O%' AND estado = 'C'");
+		$moviFuturo = $this->Movihead->findFirst("fecha > '$fecha' AND comprob NOT LIKE 'O%' AND estado != 'A'");
+		if ($moviFuturo) {
+			throw new TaticoException("Existen otros movimientos de inventario con fecha mayor a '$fecha'. Antes debe borrar esos movimentos para borrar este.");
+		}
 	}
 
 	/**
@@ -3191,7 +3250,7 @@ class Tatico extends UserComponent
 		if ($almacen==false) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'No existe el almacén indicado'
+				'message' => 'No existe el almacén indicado ' . $codigoAlmacen
 			);
 		}
 

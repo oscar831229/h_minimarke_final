@@ -96,12 +96,12 @@
   ),
   'salidas_buffet' => 
   array (
-    'index' => false,
-    'new' => false,
-    'edit' => false,
-    'delete' => false,
-    'search' => false,
-    'report' => false,
+    'index' => true,
+    'new' => true,
+    'edit' => true,
+    'delete' => true,
+    'search' => true,
+    'report' => true,
   ),
   'pedidos' => 
   array (
