@@ -170,7 +170,7 @@ class AuraUtils extends UserComponent
 					}
 				}
 			}
-			
+
 			//reclaculamos Cartera
 			$this->recalculaCarteraAll();
 
@@ -371,7 +371,7 @@ class AuraUtils extends UserComponent
 	{
         set_time_limit(0);
 
-		try 
+		try
 		{
 
 			$transaction = TransactionManager::getUserTransaction();
@@ -557,6 +557,105 @@ class AuraUtils extends UserComponent
 
             $transaction->commit();
 			unset($saldosn);
+		}
+		catch(TransactionFailed $e) {
+			Flash::error($e->getMessage());
+		}
+	}
+
+	/**
+	 * Recalcula la tabla cartera por el nit
+	 *
+	 * @param  string $nit [description]
+	 * @return boolean
+	 */
+    public function recalculateCarteraByNit($nit)
+	{
+        set_time_limit(0);
+
+		try
+		{
+
+			$transaction = TransactionManager::getUserTransaction();
+			$this->Saldosn->setTransaction($transaction)->deleteAll();
+			//$transaction->getConnection()->setDebug(true);
+
+			/**
+			 * Obtenemos las cuentas que piden documento
+			 */
+			$cuentasCartera = array();
+			$cuentas = $this->Cuentas->find("pide_documento", "columns: cuenta");
+			foreach ($cuentas as $cuenta) {
+				$cuentasCartera[$cuenta->getCuenta()] = array();
+			}
+
+			/**
+			 * Buscamos los movimientos de ese nit con esas cuentas y sumamos debitos y creditos
+			 */
+			$cuentasIn = implode("','", array_values($cuentasCartera));
+			$movis = $this->Movi->find("nit='$nit' AND cuenta IN ('$cuentasIn')", "order: fecha ASC");
+			foreach ($movis as $movi) {
+
+				$fecha = $movi->getFecha();
+				$valor = $movi->getValor();
+				$cuenta = $movi->getCuenta();
+				$debcre = $movi->getDebCre();
+				$tipoDoc = $movi->getTipoDoc();
+				$numeroDoc = $movi->getNumeroDoc();
+				$centroCosto = $movi->getCentroCosto();
+
+				if ($debcre == 'D') {
+					$valor = $valor * -1;
+				}
+
+				if (!isset($cuentasCartera[$cuenta][$tipoDoc][$numeroDoc])) {
+					$cuentasCartera[$cuenta][$tipoDoc][$numeroDoc] = array(
+						"fecha" => $fecha,
+						"valor" => $valor,
+						"saldo" => $valor,
+						"centroCosto" => $centroCosto
+					);
+				} else {
+					$cuentasCartera[$cuenta][$tipoDoc][$numeroDoc]["saldo"] += $valor;
+				}
+			}
+
+			/**
+			 * Recorremos los resultados y los grabamos en la tabla cartera
+			 */
+			foreach ($cuentasCartera as $cuentaNum => $array1) {
+				foreach ($array1 as $tipoDoc => $array2) {
+					foreach ($array2 as $numeroDoc => $data) {
+
+						$condition = "nit='$nit' AND cuenta='$cuenta' AND tipo_doc='$tipoDoc' AND numero_doc='$numeroDoc'";
+						$cartera = $this
+							->Cartera
+							->setTransaction($transaction)
+							->findFirst($condition);
+
+						if (!$cartera) {
+							$cartera = new Cartera;
+							$cartera->setNit($nit);
+							$cartera->setCuenta($cuenta);
+							$cartera->setTipoDoc($tipoDoc);
+							$cartera->setNumeroDoc($numeroDoc);
+						}
+
+						$cartera->setVendedor("");
+						$cartera->setValor($data["valor"]);
+						$cartera->setSaldo($data["saldo"]);
+						$cartera->setFEmision($data["fecha"]);
+						$cartera->setFVence($data["fecha"]);
+						$cartera->setCentroCosto($data["centroCosto"]);
+
+						$cartera->save();
+  					}
+				}
+			}
+
+			$transaction->rollback(print_r($cuentasCartera,true));
+
+            //$transaction->commit();
 		}
 		catch(TransactionFailed $e) {
 			Flash::error($e->getMessage());
