@@ -584,7 +584,7 @@ class AuraUtils extends UserComponent
 			 * Obtenemos las cuentas que piden documento
 			 */
 			$cuentasCartera = array();
-			$cuentas = $this->Cuentas->find("pide_documento", "columns: cuenta");
+			$cuentas = $this->Cuentas->find("pide_fact", "columns: cuenta");
 			foreach ($cuentas as $cuenta) {
 				$cuentasCartera[$cuenta->getCuenta()] = array();
 			}
