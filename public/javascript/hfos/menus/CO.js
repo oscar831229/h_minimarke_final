@@ -467,7 +467,21 @@ Hfos.getApplication().getMenu().setOptions([
 								height: '400px'
 							});
 						}
-					}
+					},
+					{
+						'title': 'Corregir Cartera',
+						'icon': 'cartera.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-corregir-cartera',
+								icon: 'cartera.png',
+								title: "Corregir Cartera",
+								action: "corregir_cartera",
+								width: '750px',
+								height: '270px'
+							});
+						}
+					},
 				]
 			}
 		]

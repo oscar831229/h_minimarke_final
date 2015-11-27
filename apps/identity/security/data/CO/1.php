@@ -172,6 +172,10 @@
   array (
     'index' => true,
   ),
+  'corregir_cartera' => 
+  array (
+    'index' => true,
+  ),
   'activos' => 
   array (
     'index' => true,

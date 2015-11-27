@@ -107,7 +107,7 @@ class Hfos_Application
 			'comprobante-cierre', 'ordenes-servicio', 'pyg', 'ejecucion-pres',
 			'cierre-cuentas', 'reabrir-cuentas', 'caratulas', 'balance-general', 'certificado-retencion',
 			'certificado-ica', 'cierre-anual', 'reabrir-ano', 'recibo-caja', 'listado-comprob',
-			'interfase-siigo', 'cuentas-selector2', 'informe-balance-consolidado'
+			'interfase-siigo', 'cuentas-selector2', 'informe-balance-consolidado', 'corregir-cartera'
 		),
 		'NO' => array(
 			'liquidacion'

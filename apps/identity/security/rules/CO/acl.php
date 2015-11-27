@@ -77,7 +77,8 @@ $menuDisposition = array(
 		'description' => 'Informes de cuentas por pagar y cobrar',
 		'options' => array(
 			'movimiento_documentos',
-			'cartera_edades'
+			'cartera_edades',
+			'corregir_cartera'
 		)
 	),
 	array(
@@ -812,6 +813,16 @@ $accessList = array(
 	'cartera_edades' => array(
 		'elevation' => true,
 		'description' => 'Cartera por Edades',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a'
+			)
+		)
+	),
+
+	'corregir_cartera' => array(
+		'elevation' => true,
+		'description' => 'Corregir Cartera',
 		'actions' => array(
 			'index' => array(
 				'description' => 'Ingreso a'

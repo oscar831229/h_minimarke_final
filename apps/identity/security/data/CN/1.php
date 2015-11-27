@@ -38,4 +38,12 @@
     'getConsecutivo' => true,
     'getAumentarConsecutivo' => true,
   ),
+  'consecutivo' => 
+  array (
+    'index' => true,
+    'save' => true,
+    'delete' => true,
+    'search' => true,
+    'rcs' => true,
+  ),
 );
