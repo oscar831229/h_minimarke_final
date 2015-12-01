@@ -584,7 +584,7 @@ class AuraUtils extends UserComponent
 		$cuentasCartera = array();
 		$cuentas = $this->Cuentas->find("pide_fact='S'", "columns: cuenta");
 		foreach ($cuentas as $cuenta) {
-			$cuentaCode = (string) $cuenta->getCuenta();
+			$cuentaCode = $cuenta->getCuenta();
 			$cuentasCartera[$cuentaCode] = array();
 		}
 
@@ -592,7 +592,7 @@ class AuraUtils extends UserComponent
 		 * Buscamos los movimientos de ese nit con esas cuentas y sumamos debitos y creditos
 		 */
 		$cuentasIn = implode("','", array_keys($cuentasCartera));
-		$movis = $this->Movi->find("nit='$nit' AND cuenta IN ('$cuentasIn')", "order: fecha ASC");
+		$movis = $this->Movi->setTransaction($transaction)->find("nit='$nit' AND cuenta IN ('$cuentasIn')", "order: fecha ASC");
 		foreach ($movis as $movi) {
 
 			$fecha = $movi->getFecha();
@@ -603,7 +603,7 @@ class AuraUtils extends UserComponent
 			$numeroDoc = $movi->getNumeroDoc();
 			$centroCosto = $movi->getCentroCosto();
 
-			if ($debcre == 'D') {
+			if ($debcre == 'C') {
 				$valor = $valor * -1;
 			}
 
@@ -633,13 +633,13 @@ class AuraUtils extends UserComponent
 
 				foreach ($array2 as $numeroDoc => $data) {
 
-					$condition = "nit='$nit' AND cuenta='$cuenta' AND tipo_doc='$tipoDoc' AND numero_doc='$numeroDoc'";
+					$condition = "nit='$nit' AND cuenta='$cuentaNum' AND tipo_doc='$tipoDoc' AND numero_doc='$numeroDoc'";
 					$cartera = $this->Cartera->setTransaction($transaction)->findFirst($condition);
 
 					if (!$cartera) {
 						$cartera = new Cartera;
 						$cartera->setNit($nit);
-						$cartera->setCuenta($cuenta);
+						$cartera->setCuenta($cuentaNum);
 						$cartera->setTipoDoc($tipoDoc);
 						$cartera->setNumeroDoc($numeroDoc);
 					}
@@ -662,7 +662,6 @@ class AuraUtils extends UserComponent
 			}
 		}
 
-		file_put_contents("/tmp/e.txt", print_r($cuentasCartera, true));
 		//$transaction->rollback(print_r($cuentasCartera, true));
 
         $transaction->commit();
