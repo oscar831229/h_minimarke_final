@@ -20,8 +20,8 @@
 
 <?php
 
-if(stripos($_SERVER['SERVER_SOFTWARE'], "Apache")!==false){
-	if(!in_array('mod_rewrite', apache_get_modules())){
+if (stripos($_SERVER['SERVER_SOFTWARE'], "Apache")!==false) {
+	if (!in_array('mod_rewrite', apache_get_modules())) {
 		echo "
 		<div style='background:#ccdeff'>
 		<h2>Kumbia Enterprise Framework: No tiene Mod-ReWrite de Apache instalado</h2>

@@ -1,0 +1,14 @@
+[application]
+mode = development
+name = Root
+dbdate = YYYY-MM-DD
+debug = Off
+
+[entities]
+autoInitialize = Off
+
+[collector]
+probability = 75
+
+[hfos]
+identity = ijockey

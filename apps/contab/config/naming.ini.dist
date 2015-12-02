@@ -1,0 +1,34 @@
+[contab.session]
+host = 127.0.0.1
+uri = contab/session
+protocol = Flux
+
+[contab.aura]
+host = 127.0.0.1
+uri = contab/aura
+protocol = Flux
+
+[invoicer.invoicing]
+host = 127.0.0.1
+uri = invoicer/invoicing
+protocol = Flux
+
+[invoicer.session]
+host = 127.0.0.1
+uri = invoicer/session
+protocol = Flux
+
+[sequences.sequences]
+host = 127.0.0.1
+uri = sequences/sequences
+protocol = Flux
+
+[sequences.session]
+host = 127.0.0.1
+uri = sequences/session
+protocol = Flux
+
+[identity.auth]
+host = 127.0.0.1
+uri = identity/auth
+protocol = Flux

@@ -622,16 +622,16 @@ class AuraUtils extends UserComponent
 		/**
 		 * Recorremos los resultados y los grabamos en la tabla cartera
 		 */
-		foreach ($cuentasCartera as $cuentaNum => $array1) {
+		foreach ($cuentasCartera as $cuentaNum => $datosCuentas) {
 
-			if (!count($array1)) {
+			if (!count($datosCuentas)) {
 				unset($cuentasCartera[$cuentaNum]);
 				continue;
 			}
 
-			foreach ($array1 as $tipoDoc => $array2) {
+			foreach ($datosCuentas as $tipoDoc => $datosTipoDoc) {
 
-				foreach ($array2 as $numeroDoc => $data) {
+				foreach ($datosTipoDoc as $numeroDoc => $data) {
 
 					$condition = "nit='$nit' AND cuenta='$cuentaNum' AND tipo_doc='$tipoDoc' AND numero_doc='$numeroDoc'";
 					$cartera = $this->Cartera->setTransaction($transaction)->findFirst($condition);

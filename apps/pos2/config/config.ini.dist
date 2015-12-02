@@ -1,0 +1,16 @@
+[application]
+mode = production
+name = "PUNTO DE VENTA"
+dbdate = YYYY-MM-DD
+debug = Off
+
+[collector]
+probability = 75
+
+[entities]
+autoInitialize = Off
+charset = utf8
+collate = utf8_spanish_ci
+
+[hfos]
+identity = hfos_identity

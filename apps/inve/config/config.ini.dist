@@ -1,0 +1,23 @@
+[application]
+mode = development
+name = Inventarios
+code = IN
+icon = shipping.png
+dbdate = YYYY-MM-DD
+debug = Off
+
+[collector]
+probability = 75
+
+[entities]
+autoInitialize = Off
+charset = utf8
+collate = utf8_spanish_ci
+
+[hfos]
+uniqueid = hfos
+hostname = hfos
+back_db = rjockey
+front_db = hjockey
+pos_db = pjockey
+identity = ijockey
