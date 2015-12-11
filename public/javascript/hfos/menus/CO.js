@@ -1271,7 +1271,7 @@ Hfos.getApplication().getMenu().setOptions([
 						icon: 'gear.png',
 						title: "Configuración",
 						width: '700px',
-						height: '550px',
+						height: '650px',
 						action: 'settings'
 					});
 				}

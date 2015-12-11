@@ -2939,34 +2939,81 @@ class Tatico extends UserComponent
 			self::getModel('Recetap')->setTransaction($transaction);
 		}
 		if ($tipo=='I') {
-			$saldo = self::getModel('Saldos')->findFirst("almacen='$almacen' AND ano_mes='0' AND item='$codigoItem'");
-			if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
-				$comprobEntrada = 'E'.sprintf('%02s', $almacen);
-				$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobEntrada' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+			$tipoValor = Settings::get("valor_orden_compra", 'IN');
+			if ($tipoValor == 'U') {
+				$costo = self::getCostoUnitario($almacen, $codigoItem);
+			} else {
+				$costo = self::getCostoPromedio($almacen, $codigoItem);
+			}
+		} else {
+			$costo = self::getModel('Recetap')->maximum('precio_costo', 'conditions: almacen="1" AND numero_rec="' . $codigoItem . '"');
+		}
+		if ($costo<=0) {
+			return false;
+		}
+		return $costo;
+	}
+
+	/**
+	 * Obtiene el costo promedio del item
+	 *
+	 * @param  integer $almacen
+	 * @param  string $codigoItem
+	 * @return double
+	 */
+	private static function getCostoUnitario($almacen, $codigoItem)
+	{
+		$comprobEntrada = 'E'.sprintf('%02s', $almacen);
+
+		$movilin = self::getModel('Movilin')->findFirst(
+			"almacen='$almacen' AND item='$codigoItem' AND comprob='$comprobEntrada'",
+			"order: id DESC",
+			"limit: 1"
+		);
+
+		if ($movilin) {
+			return $movilin->getValor() / $movilin->getCantidad();
+		} else {
+			return self::getCostoPromedio($almacen, $codigoItem);
+		}
+
+	}
+
+	/**
+	 * Obtiene el costo promedio del item
+	 *
+	 * @param  integer $almacen
+	 * @param  string $codigoItem
+	 * @return double
+	 */
+	private static function getCostoPromedio($almacen, $codigoItem)
+	{
+		$costo = 0;
+		$saldo = self::getModel('Saldos')->findFirst("almacen='$almacen' AND ano_mes='0' AND item='$codigoItem'");
+		if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
+			$comprobEntrada = 'E'.sprintf('%02s', $almacen);
+			$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobEntrada' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+			if ($movilin==false) {
+				$comprobTraslado = 'T'.sprintf('%02s', $almacen);
+				$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTraslado' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
 				if ($movilin==false) {
-					$comprobTraslado = 'T'.sprintf('%02s', $almacen);
-					$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTraslado' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+					$comprobTransformacion = 'R'.sprintf('%02s', $almacen);
+					$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTransformacion' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
 					if ($movilin==false) {
-						$comprobTransformacion = 'R'.sprintf('%02s', $almacen);
-						$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTransformacion' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
-						if ($movilin==false) {
-							if ($almacen<>1) {
-								$saldo = self::getModel('Saldos')->findFirst("almacen='1' AND ano_mes='0' AND item='$codigoItem'");
-								if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
-									$movilin = self::getModel('Movilin')->findFirst("comprob='E01' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
-									if ($movilin==false) {
-										$costo = 0;
-									} else {
-										$costo = $movilin->getValor()/$movilin->getCantidad();
-										self::_addCostosWarning($codigoItem);
-									}
+						if ($almacen<>1) {
+							$saldo = self::getModel('Saldos')->findFirst("almacen='1' AND ano_mes='0' AND item='$codigoItem'");
+							if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
+								$movilin = self::getModel('Movilin')->findFirst("comprob='E01' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+								if ($movilin==false) {
+									$costo = 0;
 								} else {
-									$costo = $saldo->getCosto()/$saldo->getSaldo();
+									$costo = $movilin->getValor()/$movilin->getCantidad();
 									self::_addCostosWarning($codigoItem);
 								}
+							} else {
+								$costo = $saldo->getCosto()/$saldo->getSaldo();
+								self::_addCostosWarning($codigoItem);
 							}
-						} else {
-							$costo = $movilin->getValor()/$movilin->getCantidad();
 						}
 					} else {
 						$costo = $movilin->getValor()/$movilin->getCantidad();
@@ -2975,14 +3022,12 @@ class Tatico extends UserComponent
 					$costo = $movilin->getValor()/$movilin->getCantidad();
 				}
 			} else {
-				$costo = $saldo->getCosto()/$saldo->getSaldo();
+				$costo = $movilin->getValor()/$movilin->getCantidad();
 			}
 		} else {
-			$costo = self::getModel('Recetap')->maximum('precio_costo', 'conditions: almacen="1" AND numero_rec="' . $codigoItem . '"');
+			$costo = $saldo->getCosto()/$saldo->getSaldo();
 		}
-		if ($costo<=0) {
-			return false;
-		}
+
 		return $costo;
 	}
 

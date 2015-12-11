@@ -182,6 +182,15 @@ class SettingsController extends ApplicationController
                 'type'          => 'centros',
                 'filters'       => array('alpha')
             ),
+            'valor_orden_compra' => array(
+                'description' => 'Valor Orden de Compra',
+                'type' => 'closed-domain',
+                'values' => array(
+                    'P' => 'Tomar de costo promedio',
+                    'U' => 'Tomar de costo unitario'
+                ),
+                'filters' => array('alpha')
+            ),
         ),
         'NO' => array(
             'valor_transporte' => array(
