@@ -44,8 +44,9 @@ var Fisico = Class.create(HfosProcessContainer, {
 		var buscarButton = this.getElement('consultarButton');
 		if (buscarButton !== null) {
 			buscarButton.observe('click', function(buscarButton){
+				this.getElement("formSpinner").show();
 				this.go('fisico/consultar', {
-					parameters: buscarButton.form.serialize(),
+					parameters: buscarButton.form.serialize(true),
 					onSuccess: this._setQueryCallbacks.bind(this)
 				});
 			}.bind(this, buscarButton));
@@ -54,13 +55,17 @@ var Fisico = Class.create(HfosProcessContainer, {
 
 	_setQueryCallbacks: function()
 	{
-		var backButton = this.getElement('backSearchButton');
-		var saveButton = this.getElement('saveButton');
+		var backButton  = this.getElement('backSearchButton');
+		var printButton = this.getElement('printButton');
+		var saveButton  = this.getElement('saveButton');
 		if (this.getElement('hyBrowseTab') !== null) {
 			var cantidadInput = this.getElement('hyBrowseTab').selectOne('.cantidadesFisicas');
 			if(cantidadInput!==null){
 				cantidadInput.activate();
 			}
+		}
+		if (printButton!==null) {
+			printButton.observe('click', this._printFisico.bind(this, saveButton));
 		}
 		if (saveButton!==null) {
 			saveButton.observe('click', this._saveFisico.bind(this, saveButton));
@@ -80,6 +85,33 @@ var Fisico = Class.create(HfosProcessContainer, {
 	},
 
 	/**
+	 * Imprime los datos del conteo físico vs conteo actual
+	 */
+	_printFisico: function(printButton)
+	{
+		printButton.disable();
+		this.getElement("headerSpinner").show();
+		var form = this.getElement('saveForm');
+		console.log($(form).serialize());
+		new HfosAjax.JsonRequest('fisico/print', {
+			parameters: $(form).serialize(true),
+			checkAcl: true,
+			onSuccess: function(printButton, response){
+				if(response.status=='OK'){
+					this.getMessages().success(response.message);
+				} else {
+					this.getMessages().error(response.message);
+					printButton.enable();
+				};
+			}.bind(this, printButton),
+			onComplete: function(printButton){
+				this.getElement("headerSpinner").hide();
+				printButton.enable();
+			}.bind(this, printButton)
+		});
+	},
+
+	/**
 	 * Guarda los datos del conteo físico
 	 */
 	_saveFisico: function(saveButton)
@@ -88,7 +120,7 @@ var Fisico = Class.create(HfosProcessContainer, {
 		this.getElement("headerSpinner").show();
 		var form = this.getElement('saveForm');
 		new HfosAjax.JsonRequest('fisico/guardar', {
-			parameters: form.serialize(),
+			parameters: form.serialize(true),
 			checkAcl: true,
 			onSuccess: function(saveButton, response){
 				if(response.status=='OK'){
