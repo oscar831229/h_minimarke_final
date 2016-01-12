@@ -17,7 +17,7 @@ var Tatico = {
 	/**
 	 * Obtiene el costo y saldo actual de una receta
 	 */
-	getReferenciaOrReceta: function(codigoAlmacen, codigoItem, tipoDetalle, onSuccessProcedure)
+	getReferenciaOrReceta: function(codigoAlmacen, codigoItem, tipoDetalle, onSuccessProcedure, type)
 	{
 		new HfosAjax.JsonRequest('tatico/getReferenciaOrReceta', {
 			method: 'GET',
@@ -25,7 +25,8 @@ var Tatico = {
 			parameters: {
 				'almacen': codigoAlmacen,
 				'codigoItem': codigoItem,
-                'tipoDetalle': tipoDetalle
+                'tipoDetalle': tipoDetalle,
+				'type': type
 			},
 			onSuccess: onSuccessProcedure
 		});
@@ -34,7 +35,7 @@ var Tatico = {
 	/**
 	 * Metodo que usa tatico controllar para obtener informacion de una referencia y si se desea se filtra por almacen
 	 */
-	getReferencia: function(codigoItem, onSuccessProcedure,almacen)
+	getReferencia: function(codigoItem, onSuccessProcedure, almacen, type)
 	{
 		if (!almacen) {
 			almacen = '';
@@ -44,7 +45,8 @@ var Tatico = {
 			checkAcl: true,
 			parameters: {
 				'codigoItem': codigoItem,
-				'almacen': almacen
+				'almacen'   : almacen,
+				'type'      : type
 			},
 			onSuccess: onSuccessProcedure
 		});

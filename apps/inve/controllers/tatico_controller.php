@@ -32,7 +32,8 @@ class TaticoController extends WebServiceController
 		$codigoItem = $this->getQueryParam('codigoItem', 'alpha');
 		$almacen = $this->getQueryParam('almacen', 'int');
         $tipoDetalle = $this->getQueryParam('tipoDetalle', 'alpha');
-		return Tatico::getReferenciaOrReceta($codigoItem, $almacen, $tipoDetalle);
+		$type = $this->getQueryParam('type', 'alpha');
+		return Tatico::getReferenciaOrReceta($codigoItem, $almacen, $tipoDetalle, $type);
 	}
 
 	/**
@@ -44,7 +45,8 @@ class TaticoController extends WebServiceController
 	{
 		$codigoItem = $this->getQueryParam('codigoItem', 'alpha');
 		$almacen = $this->getQueryParam('almacen', 'int');
-		return Tatico::getReferencia($codigoItem, $almacen);
+		$type = $this->getQueryParam('type', 'alpha');
+		return Tatico::getReferencia($codigoItem, $almacen, $type);
 	}
 
 	/**

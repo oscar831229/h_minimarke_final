@@ -546,22 +546,28 @@ var TransaccionInve = Class.create({
 	 */
 	_getTransformacionCosto: function(itemElement, unidadElement, cantidadElement, vTotalElement){
 		var almacenElement = this._form.selectOne('#almacen');
-		new Tatico.getReferencia(itemElement.getValue(), function(unidadElement, cantidadElement, vTotalElement, response){
-			if(response.status=='FAILED'){
-				this._hyperForm.getMessages().error(response.message);
-			} else {
-				this._showDefaultMessage();
-				unidadElement.setValue(response.data.unidad);
-				if(cantidadElement.getValue()!=''){
-					var cantidad = parseFloat(cantidadElement.getValue(), 10);
-					vTotalElement.setValue(Utils.round(cantidad*response.data.costo, 2));
+		new Tatico.getReferencia(
+			itemElement.getValue(),
+			function(unidadElement, cantidadElement, vTotalElement, response)
+			{
+				if(response.status=='FAILED'){
+					this._hyperForm.getMessages().error(response.message);
 				} else {
-					vTotalElement.setValue(response.data.costo);
+					this._showDefaultMessage();
+					unidadElement.setValue(response.data.unidad);
+					if(cantidadElement.getValue()!=''){
+						var cantidad = parseFloat(cantidadElement.getValue(), 10);
+						vTotalElement.setValue(Utils.round(cantidad*response.data.costo, 2));
+					} else {
+						vTotalElement.setValue(response.data.costo);
+					};
 				};
-			};
-			unidadElement.disable();
-			vTotalElement.disable();
-		}.bind(this, unidadElement, cantidadElement, vTotalElement), almacenElement.getValue());
+				unidadElement.disable();
+				vTotalElement.disable();
+			}.bind(this, unidadElement, cantidadElement, vTotalElement),
+			almacenElement.getValue(),
+			this._type
+		);
 	},
 
 	/**
@@ -581,32 +587,39 @@ var TransaccionInve = Class.create({
 		};
         this._form.disable();
 		var almacenElement = this._form.selectOne('#almacen');
-		Tatico.getReferenciaOrReceta(almacenElement.getValue(), itemElement.getValue(), tipoDet, function(response){
-			this._form.enable();
-			if(response.status=='OK'){
-				this._showData(response.data);
-				this._showDefaultMessage();
-			} else {
-				this._hyperForm.getMessages().error(response.message);
-				var fields = ['item', 'item_det', 'unidad', 'iva'];
-				for(var i=0;i<fields.length;i++){
-					var field = this._hyperGrid.getField(fields[i]);
-					if(field!==null){
-						field.setValue('');
-					}
-				};
-				//fields = ['cantidad', 'cantidad_rec', 'valor'];
-				fields = ['cantidad', 'valor'];
-				for(var i=0;i<fields.length;i++){
-					var field = this._hyperGrid.getField(fields[i]);
-					if(field!==null){
-						if(field.getValue()!=''){
+		Tatico.getReferenciaOrReceta(
+			almacenElement.getValue(),
+			itemElement.getValue(),
+			tipoDet,
+			function(response)
+			{
+				this._form.enable();
+				if(response.status=='OK'){
+					this._showData(response.data);
+					this._showDefaultMessage();
+				} else {
+					this._hyperForm.getMessages().error(response.message);
+					var fields = ['item', 'item_det', 'unidad', 'iva'];
+					for(var i=0;i<fields.length;i++){
+						var field = this._hyperGrid.getField(fields[i]);
+						if(field!==null){
 							field.setValue('');
 						}
-					}
+					};
+					//fields = ['cantidad', 'cantidad_rec', 'valor'];
+					fields = ['cantidad', 'valor'];
+					for(var i=0;i<fields.length;i++){
+						var field = this._hyperGrid.getField(fields[i]);
+						if(field!==null){
+							if(field.getValue()!=''){
+								field.setValue('');
+							}
+						}
+					};
 				};
-			};
-		}.bind(this));
+			}.bind(this),
+			this._type
+		);
 	},
 
 	/**

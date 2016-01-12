@@ -2759,10 +2759,14 @@ class Tatico extends UserComponent
 	 * Retorna un arreglo asociativo con los campos de la referencia o de la receta
 	 *
 	 * @param	int $codigoItem
+	 * @param   int $codigoAlmacen
+	 * @param   string $tipoDetalle
+	 * @param   string $type //Orden de compra, Entrada, salida
 	 * @return	mixed
 	 */
-	public static function getReferenciaOrReceta($codigoItem, $codigoAlmacen=0, $tipoDetalle='I')
+	public static function getReferenciaOrReceta($codigoItem, $codigoAlmacen=0, $tipoDetalle='I', $type=null)
 	{
+
         //Buscamos Receta
 		if ($tipoDetalle=='R') {
 			$recetap = self::getModel('Recetap')->findFirst('almacen="1" AND numero_rec="' . $codigoItem . '"');
@@ -2788,6 +2792,7 @@ class Tatico extends UserComponent
 				);
 			}
 		} else {
+
             //Buscamos Referencia
             $inve = BackCacher::getInve($codigoItem);
             if ($inve===false) {
@@ -2836,6 +2841,7 @@ class Tatico extends UserComponent
                             'status' => 'UNDEFINED'
                         );
                     }
+
                     return array(
                         'status' => 'OK',
                         'data' => array(
@@ -2845,7 +2851,7 @@ class Tatico extends UserComponent
                             'unidad' => $inve->getUnidad(),
                             'existencias' => $inve->getSaldoActual(),
                             'num_personas' => 1,
-                            'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $codigoAlmacen), 2),
+                            'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $codigoAlmacen, null, $type), 2),
                             'saldo' => $saldo,
                             'iva' => (int) $inve->getIva(),
                             'estado' => $inve->getEstado(),
@@ -2859,10 +2865,12 @@ class Tatico extends UserComponent
 	/**
 	 * Retorna un arreglo asociativo con los campos de la referencia
 	 *
-	 * @param int $codigoItem
+	 * @param int 	 $codigoItem
+	 * @param int 	 $almacen
+	 * @param string $controllerName
 	 * @return mixed
 	 */
-	public static function getReferencia($codigoItem, $almacen=1)
+	public static function getReferencia($codigoItem, $almacen=1, $type = null)
     {
 		$inve = BackCacher::getInve($codigoItem);
 		if ($inve===false) {
@@ -2882,7 +2890,7 @@ class Tatico extends UserComponent
 					'peso' => $inve->getPeso(),
 					'existencias' => $inve->getSaldoActual(),
 					'num_personas' => 1,
-					'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $almacen), 2),
+					'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $almacen, null, $type), 2),
 					'iva' => $inve->getIva(),
 					'estado' => $inve->getEstado()
 				)
@@ -2926,9 +2934,10 @@ class Tatico extends UserComponent
 	 * @param	string $tipo
 	 * @param 	int $almacen
 	 * @param 	Tatico $tatico
+	 * @param   String $controllerName
 	 * @return	mixed
 	 */
-	public static function getCosto($codigoItem, $tipo='I', $almacen=1, $tatico=null)
+	public static function getCosto($codigoItem, $tipo='I', $almacen=1, $tatico=null, $type=null)
     {
 		$costo = 0;
 		$hasTransaction = TransactionManager::hasUserTransaction();
@@ -2938,9 +2947,11 @@ class Tatico extends UserComponent
 			self::getModel('Movilin')->setTransaction($transaction);
 			self::getModel('Recetap')->setTransaction($transaction);
 		}
+
 		if ($tipo=='I') {
 			$tipoValor = Settings::get("valor_orden_compra", 'IN');
-			if ($tipoValor == 'U') {
+			//Solo para ordenes de compra (HUGO THINGS)
+			if ($tipoValor == 'U' && $type == 'O') {
 				$costo = self::getCostoUnitario($almacen, $codigoItem);
 			} else {
 				$costo = self::getCostoPromedio($almacen, $codigoItem);
