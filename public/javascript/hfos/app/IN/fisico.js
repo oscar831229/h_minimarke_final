@@ -99,6 +99,7 @@ var Fisico = Class.create(HfosProcessContainer, {
 			onSuccess: function(printButton, response){
 				if(response.status=='OK'){
 					this.getMessages().success(response.message);
+					window.open(Utils.getURL(response.file));
 				} else {
 					this.getMessages().error(response.message);
 					printButton.enable();

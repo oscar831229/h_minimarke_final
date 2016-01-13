@@ -154,11 +154,14 @@ class FisicoController extends ApplicationController
 				}
 			}
 
-			$addDetail[] = array(
+			$addDetail[$item[$i]] = array(
 				'Item' 	   => $item[$i],
+				'Offset'   => $i,
+				'Nombre'   => $inve->getDescripcion(),
 				'Cantidad' => abs($cantidad),
 				'Valor'    => abs($costo*$cantidad),
-				'Tipo' 	   => $tipo
+				'Tipo' 	   => $tipo,
+				'costo'    => $costo
 			);
 			$numeroAjustes++;
 		}
@@ -271,9 +274,125 @@ class FisicoController extends ApplicationController
 	{
 		$this->setResponse('json');
 
-		return array(
-			'status'  => 'OK',
-			'message' => 'Se genero el reporte correctamente '
-		);
+		$item = $this->getPostParam('i', 'item');
+		$cantidades = $this->getPostParam('c', 'double');
+		$codigoAlmacen = $this->getPostParam('a', 'alpha');
+
+		try {
+			$addDetail = $this->getDetails($codigoAlmacen, $item, $cantidades);
+
+			$reportType = $this->getPostParam('reportType', 'alpha');
+			$report = ReportBase::factory('html');
+
+			$titulo = new ReportText('DIFERENCIAS DE CONTEO FISICO', array(
+				'fontSize' => 16,
+	   			'fontWeight' => 'bold',
+	   			'textAlign' => 'center'
+	  		));
+
+			$nombre = $this->Almacenes->findFirst("codigo='{$codigoAlmacen}'")->getNomAlmacen();
+	 		$titulo2 = new ReportText($codigoAlmacen.' - '.$nombre, array(
+				'fontSize' => 13,
+				'fontWeight' => 'bold',
+				'textAlign' => 'center'
+	 		));
+
+	 		$report->setHeader(array($titulo, $titulo2));
+	  		$report->setDocumentTitle('Diferencias de conteo fisico');
+	  		$report->setColumnHeaders(array(
+	  			'REFERENCIA',
+	  			'DESCRIPCIÓN',
+	  			'CANTIDAD ACTUAL',
+				'CANTIDAD NUEVA',
+				'DIFF'
+	  		));
+
+			$leftColumnBold = new ReportStyle(array(
+	  			'textAlign' => 'left',
+	  			'fontSize' => 11,
+				'fontWeight' => 'bold'
+	  		));
+
+			$centerColumnBold = new ReportStyle(array(
+	  			'textAlign' => 'center',
+	  			'fontSize' => 11,
+				'fontWeight' => 'bold'
+	  		));
+
+			$numberFormat = new ReportFormat(array(
+				'type' => 'Number',
+				'decimals' => 2
+			));
+
+	  		$report->setCellHeaderStyle(new ReportStyle(array(
+				'textAlign' => 'center',
+				'backgroundColor' => '#eaeaea'
+			)));
+
+			$report->setColumnStyle(array(0, 1), new ReportStyle(array(
+				'textAlign' => 'left',
+				'fontSize' => 11
+			)));
+
+			$report->setColumnStyle(array(4), new ReportStyle(array(
+				'textAlign'  => 'center',
+				'fontWeight' => 'bold',
+				'fontSize'   => 11
+			)));
+
+	  		$report->setColumnStyle(range(2, 3), new ReportStyle(array(
+	  			'textAlign' => 'right',
+	  			'fontSize' => 11,
+	  		)));
+
+			$report->setColumnFormat(range(2, 3), $numberFormat);
+
+			$report->start(true);
+
+			$saldos = $this->Saldos->find("almacen='$codigoAlmacen' AND ano_mes='0'");
+
+			foreach($saldos as $saldo) {
+
+				$codigoItem = $saldo->getItem();
+				$inve = BackCacher::getInve($codigoItem);
+
+				if (!$inve) {
+					continue;
+				}
+
+				$diff = '';
+				$cantidadActual = $saldo->getSaldo();
+				$cantidadNueva = $saldo->getSaldo();
+				if (isset($addDetail[$codigoItem])) {
+					$diff = '<--';
+					$offset = $addDetail[$codigoItem]['Offset'];
+					$cantidadNueva = $cantidades[$offset];
+				}
+
+				$report->addRow(array(
+					$codigoItem,
+					$inve->getDescripcion(),
+					$cantidadActual,
+					$cantidadNueva,
+					$diff
+				));
+			}
+
+			$report->finish();
+			$fileName = $report->outputToFile('public/temp/fisicoReporte');
+
+			return array(
+				'status'  => 'OK',
+				'file' 	  => 'temp/'.$fileName,
+				'message' => 'Se genero el reporte correctamente '
+			);
+
+		}
+		catch(Exception $te){
+			return array(
+				'status'  => 'FAILED',
+				'message' => $te->getMessage()
+			);
+		}
 	}
 }
