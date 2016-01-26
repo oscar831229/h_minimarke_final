@@ -1219,11 +1219,14 @@ class AuraNiif extends UserComponent
      */
     public function createMoviNiifByMovi($comprob, $numero)
     {
+        $condition = "comprob = '$comprob' AND numero= '$numero'";
         $movis = $this->Movi->setTransaction($this->_transaction)->find(array(
-            "conditions" => "comprob = '$comprob' AND numero= '$numero'"
+            "conditions" => $condition
         ));
 
         if ($movis && count($movis)) {
+
+            $this->MoviNiif->setTransaction($this->_transaction)->deleteAll($condition);
 
             foreach ($movis as $movi) {
 
