@@ -1831,8 +1831,6 @@ class Tatico extends UserComponent
 			$options['Nit'] = $this->_empresa->getNit();
 			$options['CentroCosto'] = $almacen->getCentroCosto();
 
-			file_put_contents('a.txt', print_r($lineas, true));
-
 			if (isset($lineas['Entrada']) || isset($lineas['Salida'])) {
 				$cuentasDebito = array();
 				$cuentasCredito = array();

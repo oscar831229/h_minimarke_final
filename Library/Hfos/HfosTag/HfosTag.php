@@ -165,7 +165,7 @@ class HfosTag extends Tag {
 		}
 		$code = '<table cellspacing="0" class="itemCompleter">
 			<tr>
-				<td>'.Tag::numericField(array($params[0], 'size' => '7', 'maxlength' => 12, 'value' => $value)).'</td>
+				<td>'.Tag::textField(array($params[0], 'size' => '7', 'maxlength' => 12, 'value' => $value)).'</td>
 				<td>'.Tag::textField(array($params[0].'_det', 'size' => 35, 'class' => 'itemDetalle', 'value' => $nombreItem, 'placeholder' => 'Buscar por nombre')).'</td>
 			</tr>
 		</table>
@@ -349,19 +349,19 @@ class HfosTag extends Tag {
 									if (is_array($options)) {
 										if (isset($options['showHtml']) && $options['showHtml']) {
 											$code.='<option value="html">HTML</option>';
-										}										
+										}
 										if (isset($options['showExcel']) && $options['showExcel']) {
 											$code.='<option value="excel">Excel</option>';
-										}										
+										}
 										if (isset($options['showPdf']) && $options['showPdf']) {
 											$code.='<option value="pdf">PDF</option>';
-										}										
+										}
 										if (isset($options['showText']) && $options['showText']) {
 											$code.='<option value="text">Texto</option>';
 										}
 										if (isset($options['showCsv']) && $options['showCsv']) {
 											$code.='<option value="csv">CSV</option>';
-										}										
+										}
 									}
 								}
 								$code.='

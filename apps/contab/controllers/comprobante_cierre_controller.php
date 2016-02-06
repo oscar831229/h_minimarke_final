@@ -204,8 +204,6 @@ class Comprobante_CierreController extends ApplicationController
 					unset($cuenta);
 				}
 
-				file_put_contents('a.txt', print_r($cierreAnual, true));
-
 				$nitEmpresa = $empresa->getNit();
 				ksort($cierreAnual, SORT_STRING);
 				foreach($cierreAnual as $codigoCuenta => $cierreCuentas){

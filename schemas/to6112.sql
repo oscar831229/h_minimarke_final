@@ -52,6 +52,8 @@ create table grabniif like grab;
 
 alter table movi_niif drop column nic;
 alter table movi_niif drop column nota_nic;
+alter table movi_niif drop column comprob_movi;
+alter table movi_niif drop column numero_movi;
 
 alter table movi_niif change cuenta_movi cuenta_movi varchar(20) null;
 alter table movi_niif change numero_movi numero_movi varchar(20) null;

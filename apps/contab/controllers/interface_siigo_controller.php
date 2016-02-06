@@ -61,7 +61,7 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobVentas) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ventas no estÃ¡ configurado'
+				'message' => 'El comprobante de ventas no esta configurado'
 			);
 		}
 
@@ -69,27 +69,48 @@ class Interface_SiigoController extends ApplicationController
 		if (!$comprobIngresos) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'El comprobante de ingresos no estÃ¡ configurado'
+				'message' => 'El comprobante de ingresos no esta configurado'
+			);
+		}
+
+		$comprobProveedores = Settings::get('comprob_proveedores1');
+		if (!$comprobIngresos) {
+			return array(
+				'status' => 'FAILED',
+				'message' => 'El comprobante de proveedores 1 no esta configurado'
 			);
 		}
 
 		$tipo = $this->getPostParam('tipo', 'onechar');
 
-		if ($tipo == 'F') {
-			return $this->_processFacturacion($fecha, $comprobVentas, $comprobIngresos);
-		} else {
-			return $this->_processTerceros($fecha, $comprobVentas, $comprobIngresos);
+		switch ($tipo) {
+			case 'P':
+				return $this->_processProveedores($fecha, $comprobProveedores);
+
+			case 'F':
+				return $this->_processFacturacion($fecha, $comprobVentas, $comprobIngresos);
+
+			default:
+				return $this->_processTerceros($fecha, $comprobVentas, $comprobIngresos);
 		}
 	}
 
+	/**
+	 * Proceso de solo terceros
+	 *
+	 * @param  [type] $fecha           [description]
+	 * @param  [type] $comprobVentas   [description]
+	 * @param  [type] $comprobIngresos [description]
+	 * @return [type]                  [description]
+	 */
 	protected function _processTerceros($fecha, $comprobVentas, $comprobIngresos)
 	{
 
-		$fechaMovi = substr($fecha, 0, 4).substr($fecha, 5, 2).substr($fecha, 8, 2);
-		$fechaFile = substr($fecha, 2, 2).substr($fecha, 5, 2).substr($fecha, 8, 2);
+		$fechaMovi = substr($fecha, 0, 4) . substr($fecha, 5, 2) . substr($fecha, 8, 2);
+		$fechaFile = substr($fecha, 2, 2) . substr($fecha, 5, 2) . substr($fecha, 8, 2);
 
-		$fileName = 'temp/TD'.$fechaFile.'.txt';
-		$fp = fopen('public/'.$fileName, 'w');
+		$fileName = 'temp/TD' . $fechaFile.'.txt';
+		$fp = fopen('public/' . $fileName, 'w');
 
 		$contacto = str_repeat(' ', 50);
 
@@ -244,6 +265,14 @@ class Interface_SiigoController extends ApplicationController
 		return $clase;
 	}
 
+	/**
+	 * Proceso de facturacion
+	 *
+	 * @param  [type] $fecha           [description]
+	 * @param  [type] $comprobVentas   [description]
+	 * @param  [type] $comprobIngresos [description]
+	 * @return [type]                  [description]
+	 */
 	protected function _processFacturacion($fecha, $comprobVentas, $comprobIngresos)
 	{
 
@@ -286,6 +315,67 @@ class Interface_SiigoController extends ApplicationController
 		);
 	}
 
+	/**
+	 * Proceso de proveedores
+	 *
+	 * @param  [type] $fecha           [description]
+	 * @param  [type] $comprobVentas   [description]
+	 * @param  [type] $comprobIngresos [description]
+	 * @return [type]                  [description]
+	 */
+	protected function _processProveedores($fecha, $comprobProveedores)
+	{
+
+		$fechaMovi = substr($fecha, 0, 4) . substr($fecha, 5, 2) . substr($fecha, 8, 2);
+		$fechaFile = substr($fecha, 2, 2) . substr($fecha, 5, 2) . substr($fecha, 8, 2);
+
+		$fileName = 'temp/LD'.$fechaFile.'.txt';
+		$fp = fopen('public/'.$fileName, 'w');
+
+		$data = array(
+			'tipo' => 'L',
+			'codigo' => '003',
+			'sucursal' => '000',
+			'producto' => '0000000000000',
+			'codven' => '0001',
+			'ciudad' => '0011',
+			'zona' => '000',
+			'bodega' => '0000',
+			'ubicacion' => '000',
+			'cantidad' => '000000000000000',
+			'tipdoc' => 'R',
+    		'comcru' => 'F01',
+    		'numcru' => '0000000000',
+    		'seccru' => '001',
+    		'forpag' => '0001',
+    		'codban' => '30'
+		);
+
+		$numeroDoc = null;
+		$secuencia = null;
+
+		$conditions = "comprob = '$comprobProveedores' AND fecha = '$fecha'";
+		foreach ($this->Movi->find(array($conditions, 'order' => 'numero_doc,comprob')) as $movi) {
+			$this->_processRow($fp, $numeroDoc, $secuencia, $fechaMovi, $data, $movi);
+		}
+
+		return array(
+			'status' => 'OK',
+			'file' => $fileName
+		);
+	}
+
+	/**
+	 * Row format
+	 *
+	 * @param  [type] $fp        [description]
+	 * @param  [type] $numeroDoc [description]
+	 * @param  [type] $secuencia [description]
+	 * @param  [type] $fechaMovi [description]
+	 * @param  [type] $data      [description]
+	 * @param  [type] $movi      [description]
+	 * @return [type]            [description]
+	 */
 	protected function _processRow($fp, &$numeroDoc, &$secuencia, $fechaMovi, $data, $movi)
 	{
 		if ($movi->getCuenta() == '13050502') {

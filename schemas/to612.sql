@@ -27,3 +27,10 @@ update inve set unidad_porcion = unidad where unidad_porcion not in (select codi
 update nits set nombre = trim(nombre);
 update nits set nombre = 'SIN NOMBRE' where nombre = '';
 alter table nits modify locciu int unsigned default 0;
+
+
+/**
+ * INVE
+ */
+
+alter table recetap change numero_rec numero_rec varchar(10) not null;
