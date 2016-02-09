@@ -16,7 +16,8 @@ update cuentas set cuenta_niif = cuenta;
 create table niif like cuentas;
 insert into niif select * from cuentas;
 alter table niif drop column cuenta_niif;
-alter table niif drop column usa_revelacion;
+alter table niif add column usa_revelacion char(1) null;
+update niif set usa_revelacion = 'S';
 
 create table saldos_niif like saldosn;
 

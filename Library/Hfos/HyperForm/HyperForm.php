@@ -801,10 +801,10 @@ class HyperForm extends UserComponent
 			if ($request->isSetPostParam('n')) {
 				$number = $request->getParamPost('n', 'int');
 				return array(
-					'status' => 'OK',
-					'number' => $number,
+					'status'  => 'OK',
+					'number'  => $number,
 					'message' => 'Visualizando '.$linguistics->the($config['single']).' '.($number+1).' de ',
-					'data' => $data
+					'data' 	  => $data
 				);
 			} else {
 				return array(

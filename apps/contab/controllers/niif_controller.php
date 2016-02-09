@@ -23,11 +23,11 @@ class NiifController extends HyperFormController
 {
 
 	static protected $_config = array(
-		'model' => 'Niif',
+		'model'  => 'Niif',
 		'plural' => 'Niifs',
 		'single' => 'Niif',
-		'genre' => 'M',
-		'icon' => 'product.png',
+		'genre'  => 'M',
+		'icon'   => 'product.png',
 		'preferedOrder' => 'cuenta',
 		'fields' => array(
 			'cuenta' => array(

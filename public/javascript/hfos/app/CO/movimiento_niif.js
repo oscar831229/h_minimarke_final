@@ -22,7 +22,7 @@ var MovimientosNiif = {
 		Hfos.getApplication().run({
 			id: 'win-movimiento-niif',
 			icon: 'document-library.png',
-			title: "Movimiento Contable",
+			title: "Movimiento Contable Niif",
 			action: "movimiento_niif",
 			height: '570px',
 			onStartup: MovimientosNiif._openDocument.bind(this, key)
@@ -150,7 +150,7 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 			};
 			if (changed){
 				new HfosModal.confirm({
-					title: 'Movimiento Contable',
+					title: 'Movimiento Contable Niif',
 					message: 'Hay movimiento sin guardar. ¿Desea continuar?',
 					onAccept: function(){
 						this.__destruct();
