@@ -52,6 +52,7 @@ class Certificado_RetencionController extends ApplicationController {
 	 */
 	public function generarAction()
     {
+		ini_set('memory_limit', '2024M');
 
 		$this->setResponse('json');
 
@@ -250,7 +251,7 @@ class Certificado_RetencionController extends ApplicationController {
 		$html.='</body></html>';
 
 		if (count($cuentaBases)>0) {
-			$pdf->writeHTML($html);
+			$pdf->writeHTML(trim($html));
 			$fileName = 'certificados.'.mt_rand(1, 9999).'.pdf';
 			$pdf->Output('public/temp/'.$fileName);
 

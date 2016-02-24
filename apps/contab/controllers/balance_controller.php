@@ -321,6 +321,12 @@ class BalanceController extends ApplicationController
 								$balance[$parte]['debitos']+=$balanceCuenta['debitos'];
 								$balance[$parte]['creditos']+=$balanceCuenta['creditos'];
 							}
+
+							//si existe un saldosc mejorado usar ese
+							$saldosc = $this->Saldosc->findFirst("cuenta='$parte' AND ano_mes='$periodoAnterior'");
+						    if ($saldosc && $saldosc->getNeto()) {
+								$balance[$parte]['saldoAnterior'] = $saldosc->getSaldo();
+						    }
 						}
 						unset($parte);
 					}
