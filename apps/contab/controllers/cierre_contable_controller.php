@@ -61,8 +61,7 @@ class Cierre_ContableController extends ApplicationController
     {
         $this->setResponse('json');
 
-        try
-        {
+        try {
 
             set_time_limit(0);
             $allMessages = array();
@@ -106,7 +105,6 @@ class Cierre_ContableController extends ApplicationController
             //throw new Exception("ano_mes='$periodoCierre'");
 
             $this->Saldosn->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
-
             $this->SaldosNiif->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
 
             $saldospObj = $this->Saldosp->setTransaction($transaction)->find("ano_mes='$periodoCierre'");
@@ -124,7 +122,7 @@ class Cierre_ContableController extends ApplicationController
             unset($saldospObj);
 
             //SALDOSC
-            $this->rebuildSaldosc();
+            $this->rebuildSaldosc($transaction);
 
             //SANDOSN
             $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
@@ -259,11 +257,10 @@ class Cierre_ContableController extends ApplicationController
             }
             unset($conditions,$saldoscaObj);
 
-            $conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
+            /*$conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
             $movis = $this->Movi->setTransaction($transaction)->findForUpdate(array($conditions, 'group' => 'comprob,numero', 'columns' => 'comprob,numero'));
             foreach ($movis as $movi) {
-                try
-                {
+                try {
                     $messages = Aura::saveOnPeriod($movi->getComprob(), $movi->getNumero(), $periodoCierre);
                     if (count($messages)) {
                         $allMessages[] = array(
@@ -273,13 +270,12 @@ class Cierre_ContableController extends ApplicationController
                         );
                     }
                     unset($messages,$movi);
-                }
-                catch (AuraException $e) {
+                } catch (AuraException $e) {
                     $transaction->rollback($e->getMessage());
                 }
                 unset($movi);
             }
-            unset($movis);
+            unset($movis);*/
 
             if (count($allMessages)==0) {
                 $empresa->setFCierrec((string)$fechaCierre);
@@ -304,8 +300,7 @@ class Cierre_ContableController extends ApplicationController
             } else {
                 $transaction->rollback('El movimiento del periodo a cerrar tiene inconsistencias');
             }
-        }
-        catch (TransactionFailed $e) {
+        } catch (TransactionFailed $e) {
 
             if (count($allMessages)>0) {
 
@@ -380,8 +375,7 @@ class Cierre_ContableController extends ApplicationController
                     'message' => $e->getMessage()
                 );
             }
-        }
-        catch(Exception $e) {
+        }   catch(Exception $e) {
             return array(
                 'status' => 'FAILED',
                 'message' => $e->getMessage()
@@ -394,13 +388,10 @@ class Cierre_ContableController extends ApplicationController
      * Recalcula saldosc con todas las cuentas del plan contable
      *
      */
-    private function rebuildSaldosc()
+    private function rebuildSaldosc($transaction)
     {
-        $this->Saldosc->setTransaction($this->transaction)->deleteAll("ano_mes='{$this->periodoCierre}'");
-
+        $cuentas = $this->Cuentas->find("group: cuenta");
         $conditionBase = "fecha>'{$this->ultimoCierre}' AND fecha<='{$this->fechaCierre}'";
-
-        $cuentas = $this->Cuentas->find();
         foreach ($cuentas as $cuenta) {
 
             $codigoCuenta = $cuenta->getCuenta();
@@ -408,26 +399,40 @@ class Cierre_ContableController extends ApplicationController
             $conditionD = $condition . " AND deb_cre = 'D'";
             $conditionC = $condition . " AND deb_cre = 'C'";
 
-            $saldoc = new Saldosc();
-            $saldoc->setTransaction($this->transaction);
-            $saldoc->setCuenta($codigoCuenta);
-            $saldoc->setAnoMes($this->periodoCierre);
+            $saldosc = $this->Saldosc
+                ->setTransaction($transaction)
+                ->findFirst("ano_mes='{$this->periodoCierre}' AND cuenta='$codigoCuenta'");
+
+            if (!$saldosc) {
+                $saldosc = new Saldosc();
+                $saldosc->setCuenta($codigoCuenta);
+                $saldosc->setAnoMes($this->periodoCierre);
+                $saldosc->setTransaction($transaction);
+            }
 
             $saldoAnt = $this->getSaldocAnterior($codigoCuenta);
             $debe  = $this->Movi->sum("valor", "conditions: $conditionD");
             $haber = $this->Movi->sum("valor", "conditions: $conditionC");
             $neto  = $debe - $haber;
-            $saldo = $saldoAnt + $debe - $haber;
+            $saldo = $saldoAnt + $neto;
 
-            $saldoc->setDebe($debe);
-            $saldoc->setHaber($haber);
-            $saldoc->setNeto($neto);
-            $saldoc->setSaldo($saldo);
+            if ($codigoCuenta == '110505001') {
+                //throw new Exception("saldoAnt: $saldoAnt, debe: $debe, haber: $haber, neto: $neto, saldo: $saldo, conditionD: $conditionD", 1);
+            }
 
-            if ($saldoc->save()==false) {
-                foreach ($saldoc->getMessages() as $message) {
-                    $transaction->rollback('Saldos por Cuenta: '.$message->getMessage().'. '.$saldoc->inspect());
+            $saldosc->setDebe($debe);
+            $saldosc->setHaber($haber);
+            $saldosc->setSaldo($saldo);
+            $saldosc->setNeto($neto);
+
+            if (!$saldosc->save()) {
+                foreach ($saldosc->getMessages() as $message) {
+                    $transaction->rollback('Saldos por Cuenta: ' . $message->getMessage());
                 }
+            }
+
+            if ($codigoCuenta == '110505001') {
+                //throw new Exception(print_r($saldosc, true));
             }
         }
     }
@@ -440,7 +445,13 @@ class Cierre_ContableController extends ApplicationController
      */
     private function getSaldocAnterior($codigoCuenta)
     {
-        $condition  = "fecha<='{$this->ultimoCierre}' AND cuenta LIKE '$codigoCuenta%'";
+        /*$fecha = new Date($this->ultimoCierre);
+        $saldosc = $this->Saldosc->findFirst("cuenta='$codigoCuenta' AND ano_mes='{$fecha->getPeriod()}'");
+        if ($saldosc) {
+            return $saldosc->getSaldo();
+        }*/
+
+        $condition  = "fecha<='$this->ultimoCierre' AND cuenta LIKE '$codigoCuenta%'";
         $conditionD = $condition . " AND deb_cre = 'D'";
         $conditionC = $condition . " AND deb_cre = 'C'";
 
