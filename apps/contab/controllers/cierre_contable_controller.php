@@ -445,11 +445,11 @@ class Cierre_ContableController extends ApplicationController
      */
     private function getSaldocAnterior($codigoCuenta)
     {
-        /*$fecha = new Date($this->ultimoCierre);
+        $fecha = new Date($this->ultimoCierre);
         $saldosc = $this->Saldosc->findFirst("cuenta='$codigoCuenta' AND ano_mes='{$fecha->getPeriod()}'");
         if ($saldosc) {
             return $saldosc->getSaldo();
-        }*/
+        }
 
         $condition  = "fecha<='$this->ultimoCierre' AND cuenta LIKE '$codigoCuenta%'";
         $conditionD = $condition . " AND deb_cre = 'D'";
