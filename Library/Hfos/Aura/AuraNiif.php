@@ -1269,7 +1269,8 @@ class AuraNiif extends UserComponent
 
             unset($movis);
         } else {
-            throw new AuraNiifException("Movimiento '$comprob-$numero' no existe" . print_r(debug_backtrace(), true));
+            //throw new AuraNiifException("Movimiento '$comprob-$numero' no existe" . print_r(debug_backtrace(), true));
+            $this->removeNiif($comprob, $numero);
         }
 
     }
@@ -1278,4 +1279,17 @@ class AuraNiif extends UserComponent
 	{
 		$this->_transaction = $transaction;
 	}
+
+
+    /**
+     * Remove comprob in movi_niif if Movi does not exists
+     * 
+     * @param  string $comprob
+     * @param  integer $numero
+     * @return boolean
+     */
+    public function removeNiif($comprob, $numero)
+    {
+        return $this->MoviNiif->setTransaction($this->_transaction)->deleteAll("comprob='$comprob' AND numero='$numero'");
+    }
 }
