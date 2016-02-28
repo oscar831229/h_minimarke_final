@@ -13,6 +13,8 @@
  * @version     $Id$
  */
 
+require_once 'Actions/Cierre/SaldoscProcess.php';
+
 /**
  * Cierre_ContableController
  *
@@ -22,11 +24,11 @@
 class Cierre_ContableController extends ApplicationController
 {
 
-    protected $transaction;
-    protected $fechaCierre;
-    protected $ultimoCierre;
-    protected $periodoCierre;
-    protected $periodoUltimoCierre;
+    public $transaction;
+    public $fechaCierre;
+    public $ultimoCierre;
+    public $periodoCierre;
+    public $periodoUltimoCierre;
 
     public function initialize()
     {
@@ -121,8 +123,9 @@ class Cierre_ContableController extends ApplicationController
             }
             unset($saldospObj);
 
-            //SALDOSC
-            $this->rebuildSaldosc($transaction);
+            //Caclular Saldosc del periodo
+            $saldoscProcess = new SaldoscProcess($this, $transaction);
+            $saldoscProcess->rebuildSaldosc();
 
             //SANDOSN
             $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
@@ -382,82 +385,5 @@ class Cierre_ContableController extends ApplicationController
             );
         }
 
-    }
-
-    /**
-     * Recalcula saldosc con todas las cuentas del plan contable
-     *
-     */
-    private function rebuildSaldosc($transaction)
-    {
-        $cuentas = $this->Cuentas->find("group: cuenta");
-        $conditionBase = "fecha>'{$this->ultimoCierre}' AND fecha<='{$this->fechaCierre}'";
-        foreach ($cuentas as $cuenta) {
-
-            $codigoCuenta = $cuenta->getCuenta();
-            $condition = $conditionBase . " AND cuenta LIKE '$codigoCuenta%'";
-            $conditionD = $condition . " AND deb_cre = 'D'";
-            $conditionC = $condition . " AND deb_cre = 'C'";
-
-            $saldosc = $this->Saldosc
-                ->setTransaction($transaction)
-                ->findFirst("ano_mes='{$this->periodoCierre}' AND cuenta='$codigoCuenta'");
-
-            if (!$saldosc) {
-                $saldosc = new Saldosc();
-                $saldosc->setCuenta($codigoCuenta);
-                $saldosc->setAnoMes($this->periodoCierre);
-                $saldosc->setTransaction($transaction);
-            }
-
-            $saldoAnt = $this->getSaldocAnterior($codigoCuenta);
-            $debe  = $this->Movi->sum("valor", "conditions: $conditionD");
-            $haber = $this->Movi->sum("valor", "conditions: $conditionC");
-            $neto  = $debe - $haber;
-            $saldo = $saldoAnt + $neto;
-
-            if ($codigoCuenta == '110505001') {
-                //throw new Exception("saldoAnt: $saldoAnt, debe: $debe, haber: $haber, neto: $neto, saldo: $saldo, conditionD: $conditionD", 1);
-            }
-
-            $saldosc->setDebe($debe);
-            $saldosc->setHaber($haber);
-            $saldosc->setSaldo($saldo);
-            $saldosc->setNeto($neto);
-
-            if (!$saldosc->save()) {
-                foreach ($saldosc->getMessages() as $message) {
-                    $transaction->rollback('Saldos por Cuenta: ' . $message->getMessage());
-                }
-            }
-
-            if ($codigoCuenta == '110505001') {
-                //throw new Exception(print_r($saldosc, true));
-            }
-        }
-    }
-
-    /**
-     * retorna le saldo anterior de debitos y creditos
-     *
-     * @param  string $codigoCuenta
-     * @return decimal
-     */
-    private function getSaldocAnterior($codigoCuenta)
-    {
-        $fecha = new Date($this->ultimoCierre);
-        $saldosc = $this->Saldosc->findFirst("cuenta='$codigoCuenta' AND ano_mes='{$fecha->getPeriod()}'");
-        if ($saldosc) {
-            return $saldosc->getSaldo();
-        }
-
-        $condition  = "fecha<='$this->ultimoCierre' AND cuenta LIKE '$codigoCuenta%'";
-        $conditionD = $condition . " AND deb_cre = 'D'";
-        $conditionC = $condition . " AND deb_cre = 'C'";
-
-        $debe  = $this->Movi->sum("valor", "conditions: $conditionD");
-        $haber = $this->Movi->sum("valor", "conditions: $conditionC");
-
-        return ($debe - $haber);
     }
 }
