@@ -13,7 +13,13 @@
  * @version     $Id$
  */
 
+require_once 'Actions/Cierre/AuraProcess.php';
 require_once 'Actions/Cierre/SaldoscProcess.php';
+require_once 'Actions/Cierre/SaldospProcess.php';
+require_once 'Actions/Cierre/SaldosnProcess.php';
+require_once 'Actions/Cierre/SaldoscaProcess.php';
+require_once 'Actions/Cierre/SaldosnNiifProcess.php';
+
 
 /**
  * Cierre_ContableController
@@ -48,9 +54,9 @@ class Cierre_ContableController extends ApplicationController
         $nuevoCierre = clone $fechaCierre;
         $nuevoCierre->addDays(1);
         $nuevoCierre->toLastDayOfMonth();
-        $this->setParamToView('proximoCierre', $nuevoCierre);
 
         $this->setParamToView('fechaCierre', $fechaCierre);
+        $this->setParamToView('proximoCierre', $nuevoCierre);
         $this->setParamToView('anoCierre', $empresa1->getAnoc());
 
         $this->setParamToView('message', 'Haga click en "Hacer Cierre" para cerrar el periodo contable actual');
@@ -61,12 +67,13 @@ class Cierre_ContableController extends ApplicationController
      */
     public function cierreAction()
     {
+        set_time_limit(0);
+
         $this->setResponse('json');
 
-        try {
+        $allMessages = array();
 
-            set_time_limit(0);
-            $allMessages = array();
+        try {
 
             $transaction = TransactionManager::getUserTransaction();
             $transaction->setRollbackOnAbort(true);
@@ -95,192 +102,47 @@ class Cierre_ContableController extends ApplicationController
                 if (Date::isLater($fechaCierre, Date::getCurrentDate())) {
                     $transaction->rollback('Solo se puede hacer el cierre hasta que acabe el mes');
                 } else {
-                    if (Date::isLater($fechaCierre, $empresa->getFCierrei())&&$empresa->getContabiliza()=='S') {
+                    if (Date::isLater($fechaCierre, $empresa->getFCierrei()) && $empresa->getContabiliza()=='S') {
                         $transaction->rollback('Debe hacer primero el cierre del periodo de inventarios');
                     }
                 }
             }
-            /*if ($fechaCierre->getYear()>$ultimoCierre->getYear()) {
-                $transaction->rollback('Debe hacer el cierre anual primero '.$fechaCierre->getYear().' '.$ultimoCierre->getYear());
-            }*/
 
-            //throw new Exception("ano_mes='$periodoCierre'");
-
-            $this->Saldosn->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
-            $this->SaldosNiif->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
-
-            $saldospObj = $this->Saldosp->setTransaction($transaction)->find("ano_mes='$periodoCierre'");
-            foreach ($saldospObj as $saldosp) {
-                $saldosp->setDebe(0);
-                $saldosp->setHaber(0);
-                $saldosp->setSaldo(0);
-                if ($saldosp->save()==false) {
-                    foreach ($saldosp->getMessages() as $message) {
-                        $transaction->rollback($message->getMessage());
-                    }
-                }
-                unset($saldosp);
-            }
-            unset($saldospObj);
-
-            //Caclular Saldosc del periodo
-            $saldoscProcess = new SaldoscProcess($this, $transaction);
-            $saldoscProcess->rebuildSaldosc();
-
-            //SANDOSN
-            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
-            $saldosnObj = $this->Saldosn->setTransaction($transaction)->find($conditions);
-            foreach ($saldosnObj as $saldonAnterior) {
-                $saldon = new Saldosn();
-                $saldon->setTransaction($transaction);
-                $saldon->setCuenta($saldonAnterior->getCuenta());
-                $saldon->setNit(trim($saldonAnterior->getNit()));
-                $saldon->setAnoMes($periodoCierre);
-                $saldon->setDebe($saldonAnterior->getDebe());
-                $saldon->setHaber($saldonAnterior->getHaber());
-                $saldon->setSaldo($saldonAnterior->getSaldo());
-                $saldon->setBaseGrab($saldonAnterior->getBaseGrab());
-                if ($saldon->save()==false) {
-                    foreach ($saldon->getMessages() as $message) {
-                        $transaction->rollback('Saldos por Nit: '.$message->getMessage().'. '.$saldon->inspect());
-                    }
-                }
-                unset($saldon,$saldonAnterior,$cuenta);
-            }
-            unset($conditions,$saldosnObj);
-
-            //SANDOSNIIF
-            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
-            $saldosNiifObj = $this->SaldosNiif->setTransaction($transaction)->find($conditions);
-            foreach ($saldosNiifObj as $saldonAnterior) {
-                $saldon = new SaldosNiif();
-                $saldon->setTransaction($transaction);
-                $saldon->setCuenta($saldonAnterior->getCuenta());
-                $saldon->setNit(trim($saldonAnterior->getNit()));
-                $saldon->setAnoMes($periodoCierre);
-                $saldon->setDebe($saldonAnterior->getDebe());
-                $saldon->setHaber($saldonAnterior->getHaber());
-                $saldon->setSaldo($saldonAnterior->getSaldo());
-                $saldon->setBaseGrab($saldonAnterior->getBaseGrab());
-                if ($saldon->save()==false) {
-                    foreach ($saldon->getMessages() as $message) {
-                        $transaction->rollback('SaldosNiif por Nit: '.$message->getMessage().'. '.$saldon->inspect());
-                    }
-                }
-                unset($saldon,$saldonAnterior,$cuenta);
-            }
-            unset($conditions,$saldosnObj);
-
-            //SALDOSN de COMCIER (solo para cerrar enero)
-            $anno = substr($periodoUltimoCierre, 0, 4);
-            $mes = substr($periodoUltimoCierre, 4, 2);
-            if ($mes==12) {
-                foreach ($this->Comcier->find("group: cuentaf,nit") as $comcier) {
-
-                    /**
-                     * Aqui se corrigo problema de arraste de saldos de cierre anual
-                     * a cuentas con nit que al cerrar el ano paso a ese nit
-                     * debe tomar el saldo de saldosc del anopasado en diciembre siempre no el del mes anterior
-                     * este caso se presento por el nit 17 en la cuenta 135517*** no debia aprecer porque en saldosc en
-                     * 201302 estaba con saldo 0. Por favor no cambiar
-                    */
-                    $conditionsSaldosc = "ano_mes='{$anno}12' AND cuenta='{$comcier->getCuentaf()}'";
-                    //throw new Exception($conditionsSaldosc);
-
-                    $saldoscTemp = $this->Saldosc->setTransaction($transaction)->findFirst($conditionsSaldosc);
-                    if ($saldoscTemp) {
-                        $saldon = new Saldosn();
-                        $saldon->setTransaction($transaction);
-                        $saldon->setCuenta($comcier->getCuentaf());
-                        $saldon->setNit(trim($comcier->getNit()));
-                        $saldon->setAnoMes($periodoCierre);
-                        $saldon->setDebe($saldoscTemp->getDebe());
-                        $saldon->setHaber($saldoscTemp->getHaber());
-                        $saldon->setSaldo($saldoscTemp->getSaldo());
-                        $saldon->setBaseGrab(0);
-                        if ($saldon->save()==false) {
-                            foreach ($saldon->getMessages() as $message) {
-                                $transaction->rollback('Saldos por Nit: '.$message->getMessage().'. '.$saldon->inspect());
-                            }
-                        }
-                    }
-                    unset($saldoscTemp, $comcier);
-                }
+            if (intval($fechaCierre->getYear()) < intval($ultimoCierre->getYear())) {
+                $transaction->rollback(
+                    'Debe hacer el cierre anual primero.' .
+                    ' FechaCierre: ' . $fechaCierre->getYear() .
+                    ', ultimoCierre:' . $ultimoCierre->getYear()
+                );
             }
 
-            $conditions = "ano_mes='$periodoUltimoCierre'";
-            $saldospObj = $this->Saldosp->setTransaction($transaction)->find($conditions);
+            //Calcular Saldosp del periodo
+            $saldospProcess = new SaldospProcess($this);
+            $saldospProcess->rebuild();
 
-            foreach ($saldospObj as $saldopAnterior) {
+            //Calcular Saldosc del periodo
+            $saldoscProcess = new SaldoscProcess($this);
+            $saldoscProcess->rebuild();
 
-                $saldop = $this->Saldosp->findFirst("cuenta='{$saldopAnterior->getCuenta()}' AND centro_costo='{$saldopAnterior->getCentroCosto()}' AND ano_mes='$periodoCierre'");
+            //Calcular Saldosn del periodo
+            $saldosnProcess = new SaldosnProcess($this);
+            $saldosnProcess->rebuild();
 
-                if ($saldop==false) {
-                    $saldop = new Saldosp();
-                    $saldop->setCuenta($saldopAnterior->getCuenta());
-                    $saldop->setCentroCosto($saldopAnterior->getCentroCosto());
-                    $saldop->setAnoMes($periodoCierre);
-                    $saldop->setPres(0);
-                } else {
-                    $saldop->setPres($saldopAnterior->getPres());
-                }
+            //Calcular SaldosnNiif del periodo
+            $saldosnNiifProcess = new SaldosnNiifProcess($this);
+            $saldosnNiifProcess->rebuild();
 
-                $saldop->setTransaction($transaction);
-                $saldop->setDebe($saldopAnterior->getDebe());
-                $saldop->setHaber($saldopAnterior->getHaber());
-                $saldop->setSaldo($saldopAnterior->getSaldo());
-                if ($saldop->save()==false) {
-                    foreach ($saldop->getMessages() as $message) {
-                        $transaction->rollback('Saldos Presupuesto: '.$message->getMessage());
-                    }
-                }
-                unset($saldopAnterior,$saldop);
-            }
-            unset($conditions,$saldospObj);
+            //Calcular Saldosca del periodo
+            $saldosncaProcess = new SaldoscaProcess($this);
+            $saldosncaProcess->rebuild();
 
-            $conditions = "ano_mes='$periodoUltimoCierre'";
-            $saldoscaObj = $this->Saldosca->setTransaction($transaction)->find($conditions);
-            foreach ($saldoscaObj as $saldocaAnterior) {
-                $saldoca = new Saldosca();
-                $saldoca->setTransaction($transaction);
-                $saldoca->setCuenta($saldocaAnterior->getCuenta());
-                $saldoca->setNit(trim($saldocaAnterior->getNit()));
-                $saldoca->setTipoDoc($saldocaAnterior->getTipoDoc());
-                $saldoca->setNumeroDoc($saldocaAnterior->getNumeroDoc());
-                $saldoca->setAnoMes($periodoCierre);
-                $saldoca->setDebe($saldocaAnterior->getDebe());
-                $saldoca->setHaber($saldocaAnterior->getHaber());
-                $saldoca->setSaldo($saldocaAnterior->getSaldo());
-                if ($saldoca->save()==false) {
-                    foreach ($saldoca->getMessages() as $message) {
-                        $transaction->rollback('Saldos de Cartera: '.$message->getMessage());
-                    }
-                }
-                unset($saldoca,$saldocaAnterior);
-            }
-            unset($conditions,$saldoscaObj);
+            //procesa Aura del periodo
+            //$auraProcess = new AuraProcess($this);
+            //$allMessages = $auraProcess->rebuild();
 
-            /*$conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
-            $movis = $this->Movi->setTransaction($transaction)->findForUpdate(array($conditions, 'group' => 'comprob,numero', 'columns' => 'comprob,numero'));
-            foreach ($movis as $movi) {
-                try {
-                    $messages = Aura::saveOnPeriod($movi->getComprob(), $movi->getNumero(), $periodoCierre);
-                    if (count($messages)) {
-                        $allMessages[] = array(
-                            'comprob' => $movi->getComprob(),
-                            'numero' => $movi->getNumero(),
-                            'messages' => $messages
-                        );
-                    }
-                    unset($messages,$movi);
-                } catch (AuraException $e) {
-                    $transaction->rollback($e->getMessage());
-                }
-                unset($movi);
-            }
-            unset($movis);*/
+            $allMessages = array();
+            if (isset($allMessages) && !count($allMessages)) {
 
-            if (count($allMessages)==0) {
                 $empresa->setFCierrec((string)$fechaCierre);
                 if ($empresa->save()==false) {
                     foreach ($empresa->getMessages() as $message) {
@@ -303,6 +165,7 @@ class Cierre_ContableController extends ApplicationController
             } else {
                 $transaction->rollback('El movimiento del periodo a cerrar tiene inconsistencias');
             }
+
         } catch (TransactionFailed $e) {
 
             if (count($allMessages)>0) {

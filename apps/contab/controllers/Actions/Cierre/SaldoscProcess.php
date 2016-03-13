@@ -24,72 +24,70 @@ class SaldoscProcess
     private $controller;
 
     /**
-     * @var Transaction
-     */
-    private $transaction;
-
-    /**
      * Contructor de la clase
      *
      * @param ControllerBase $controller
      * @param Transaction $transaction
      */
-    public function __construct($controller, $transaction)
+    public function __construct($controller)
     {
         $this->controller = $controller;
-        $this->transaction = $transaction;
     }
 
     /**
      * Recalcula saldosc con todas las cuentas del plan contable
      *
      */
-    public function rebuildSaldosc()
+    public function rebuild()
     {
+        $transaction = $this->controller->transaction;
+        $fechaCierre = $this->controller->fechaCierre;
+        $ultimoCierre = $this->controller->ultimoCierre;
+        $periodoCierre = $this->controller->periodoCierre;
+
         $cuentas = $this->controller->Cuentas->find("group: cuenta");
-        $conditionBase = "fecha>'{$this->controller->ultimoCierre}' AND fecha<='{$this->controller->fechaCierre}'";
+        $conditionBase = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
+
+        $moviModel = $this->controller->Movi->setTransaction($transaction);
+        $saldoscModel  = $this->controller->Saldosc->setTransaction($transaction);
+
+        //clean all records in period
+        $saldoscModel->deleteAll("ano_mes='$periodoCierre'");
+
         foreach ($cuentas as $cuenta) {
 
             $codigoCuenta = $cuenta->getCuenta();
-            $condition = $conditionBase . " AND cuenta LIKE '$codigoCuenta%'";
+
+            $condition  = $conditionBase . " AND cuenta LIKE '$codigoCuenta%'";
             $conditionD = $condition . " AND deb_cre = 'D'";
             $conditionC = $condition . " AND deb_cre = 'C'";
 
-            $saldosc = $this->controller->Saldosc
-                ->setTransaction($this->controller->transaction)
-                ->findFirst("ano_mes='{$this->controller->periodoCierre}' AND cuenta='$codigoCuenta'");
+            $saldosc = $saldoscModel->findFirst("ano_mes='$periodoCierre' AND cuenta='$codigoCuenta'");
 
             if (!$saldosc) {
                 $saldosc = new Saldosc();
                 $saldosc->setCuenta($codigoCuenta);
-                $saldosc->setAnoMes($this->controller->periodoCierre);
-                $saldosc->setTransaction($this->transaction);
+                $saldosc->setAnoMes($periodoCierre);
+                $saldosc->setTransaction($transaction);
             }
 
-            $saldoAnt = $this->getSaldocAnterior($codigoCuenta);
-            $moviModel = $this->controller->Movi->setTransaction($this->transaction);
+            $saldoAnt = $this->getSaldocAnterior($codigoCuenta, $saldoscModel);
+
             $debe  = $moviModel->sum("valor", "conditions: $conditionD");
             $haber = $moviModel->sum("valor", "conditions: $conditionC");
-            $neto  = $debe - $haber;
-            $saldo = $saldoAnt + $neto;
 
-            if ($codigoCuenta == '110505001') {
-                //throw new Exception("saldoAnt: $saldoAnt, debe: $debe, haber: $haber, neto: $neto, saldo: $saldo, conditionD: $conditionD", 1);
-            }
+            $saldo = $debe - $haber;
+            $neto  = $saldoAnt + $saldo;
 
+            $saldosc->setNeto($neto);
             $saldosc->setDebe($debe);
             $saldosc->setHaber($haber);
             $saldosc->setSaldo($saldo);
-            $saldosc->setNeto($neto);
 
             if (!$saldosc->save()) {
                 foreach ($saldosc->getMessages() as $message) {
-                    $this->transaction->rollback('Saldos por Cuenta: ' . $message->getMessage());
+                    $transaction->rollback('Saldos por Cuenta: ' . $message->getMessage());
                 }
-            }
-
-            if ($codigoCuenta == '110505001') {
-                //throw new Exception(print_r($saldosc, true));
             }
         }
     }
@@ -100,13 +98,13 @@ class SaldoscProcess
      * @param  string $codigoCuenta
      * @return decimal
      */
-    private function getSaldocAnterior($codigoCuenta)
+    private function getSaldocAnterior($codigoCuenta, $saldoscModel)
     {
         $ultimoCierre = $this->controller->ultimoCierre;
 
         //Trata de obtener el saldosc del mes anterior
         $fecha = new Date($ultimoCierre);
-        $saldosc = $this->controller->Saldosc->findFirst(
+        $saldosc = $saldoscModel->findFirst(
             "cuenta='$codigoCuenta' AND ano_mes<='{$fecha->getPeriod()}'",
             "order: ano_mes DESC"
         );
