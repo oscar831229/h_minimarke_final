@@ -44,85 +44,31 @@ class SaldoscProcess
         $fechaCierre = $this->controller->fechaCierre;
         $ultimoCierre = $this->controller->ultimoCierre;
         $periodoCierre = $this->controller->periodoCierre;
+        $periodoUltimoCierre = $this->controller->periodoUltimoCierre;
 
-        $cuentas = $this->controller->Cuentas->find("group: cuenta");
-        $conditionBase = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
-
-        $moviModel = $this->controller->Movi->setTransaction($transaction);
-        $saldoscModel  = $this->controller->Saldosc->setTransaction($transaction);
-
-        //clean all records in period
+        $saldoscModel = $this->controller->Saldosc->setTransaction($transaction);
         $saldoscModel->deleteAll("ano_mes='$periodoCierre'");
 
-        foreach ($cuentas as $cuenta) {
+        $conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0)";
+        $saldoscObj = $saldoscModel->find($conditions);
+        foreach ($saldoscObj as $saldocAnterior) {
 
-            $codigoCuenta = $cuenta->getCuenta();
+            $saldoc = new Saldosc();
+            $saldoc->setAnoMes($periodoCierre);
+            $saldoc->setTransaction($transaction);
+            $saldoc->setDebe($saldocAnterior->getDebe());
+            $saldoc->setHaber($saldocAnterior->getHaber());
+            $saldoc->setSaldo($saldocAnterior->getSaldo());
+            $saldoc->setCuenta($saldocAnterior->getCuenta());
 
-            $condition  = $conditionBase . " AND cuenta LIKE '$codigoCuenta%'";
-            $conditionD = $condition . " AND deb_cre = 'D'";
-            $conditionC = $condition . " AND deb_cre = 'C'";
-
-            $saldosc = $saldoscModel->findFirst("ano_mes='$periodoCierre' AND cuenta='$codigoCuenta'");
-
-            if (!$saldosc) {
-                $saldosc = new Saldosc();
-                $saldosc->setCuenta($codigoCuenta);
-                $saldosc->setAnoMes($periodoCierre);
-                $saldosc->setTransaction($transaction);
-            }
-
-            $saldoAnt = $this->getSaldocAnterior($codigoCuenta, $saldoscModel);
-
-            $debe  = $moviModel->sum("valor", "conditions: $conditionD");
-            $haber = $moviModel->sum("valor", "conditions: $conditionC");
-
-            $saldo = $debe - $haber;
-            $neto  = $saldoAnt + $saldo;
-
-            $saldosc->setNeto($neto);
-            $saldosc->setDebe($debe);
-            $saldosc->setHaber($haber);
-            $saldosc->setSaldo($saldo);
-
-            if (!$saldosc->save()) {
-                foreach ($saldosc->getMessages() as $message) {
-                    $transaction->rollback('Saldos por Cuenta: ' . $message->getMessage());
+            if ($saldoc->save()==false) {
+                foreach ($saldoc->getMessages() as $message) {
+                    $transaction->rollback(
+                        'Saldos por Cuenta: ' . $message->getMessage() . '. ' .
+                        $saldoc->inspect()
+                    );
                 }
             }
         }
-    }
-
-    /**
-     * retorna le saldo anterior de debitos y creditos
-     *
-     * @param  string $codigoCuenta
-     * @return decimal
-     */
-    private function getSaldocAnterior($codigoCuenta, $saldoscModel)
-    {
-        $ultimoCierre = $this->controller->ultimoCierre;
-
-        //Trata de obtener el saldosc del mes anterior
-        $fecha = new Date($ultimoCierre);
-        $saldosc = $saldoscModel->findFirst(
-            "cuenta='$codigoCuenta' AND ano_mes<='{$fecha->getPeriod()}'",
-            "order: ano_mes DESC"
-        );
-        if ($saldosc) {
-            return $saldosc->getSaldo();
-        }
-
-        return 0;
-
-        //Retorna el valor debitos y credito de todo el movimineto si no existe
-        //un saldosc en el mes anterior
-        /*$condition  = "fecha<='$ultimoCierre' AND cuenta LIKE '$codigoCuenta%'";
-        $conditionD = $condition . " AND deb_cre = 'D'";
-        $conditionC = $condition . " AND deb_cre = 'C'";
-
-        $debe  = $this->controller->Movi->sum("valor", "conditions: $conditionD");
-        $haber = $this->controller->Movi->sum("valor", "conditions: $conditionC");
-
-        return ($debe - $haber);*/
     }
 }

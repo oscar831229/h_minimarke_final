@@ -137,10 +137,10 @@ class Cierre_ContableController extends ApplicationController
             $saldosncaProcess->rebuild();
 
             //procesa Aura del periodo
-            //$auraProcess = new AuraProcess($this);
-            //$allMessages = $auraProcess->rebuild();
+            $auraProcess = new AuraProcess($this);
+            $allMessages = $auraProcess->rebuild();
 
-            $allMessages = array();
+            //$allMessages = array();
             if (isset($allMessages) && !count($allMessages)) {
 
                 $empresa->setFCierrec((string)$fechaCierre);
