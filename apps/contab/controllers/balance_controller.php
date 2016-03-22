@@ -127,17 +127,17 @@ class BalanceController extends ApplicationController
 
 			$report->setColumnStyle(0, new ReportStyle(array(
 				'textAlign' => 'left',
-				'fontSize' => 11
+				'fontSize'  => 11
 			)));
 
 			$report->setColumnStyle(1, new ReportStyle(array(
 				'textAlign' => 'left',
-				'fontSize' => 11
+				'fontSize'  => 11
 			)));
 
 			$report->setColumnStyle(array(2, 3, 4, 5, 6), new ReportStyle(array(
 				'textAlign' => 'right',
-				'fontSize' => 11,
+				'fontSize'  => 11,
 			)));
 
 			$numberFormat = new ReportFormat(array(
@@ -148,12 +148,12 @@ class BalanceController extends ApplicationController
 
 			$leftColumn = new ReportStyle(array(
 				'textAlign' => 'left',
-				'fontSize' => 11
+				'fontSize'  => 11
 			));
 
 			$rightColumn = new ReportStyle(array(
 				'textAlign' => 'right',
-				'fontSize' => 11,
+				'fontSize'  => 11,
 			));
 
 			$report->setTotalizeColumns(array(2, 5, 6));
@@ -184,7 +184,7 @@ class BalanceController extends ApplicationController
 			$totalCreditos = 0;
 			$totalDiferencia = 0;
 			$totalNuevoSaldo = 0;
-			if ($cuentaInicial=='' && $cuentaFinal=='') {
+			if ($cuentaInicial == '' && $cuentaFinal == '') {
 				$cuentas = $this->Cuentas->find("es_auxiliar='S'");
 			} else {
 				list($cuentaInicial, $cuentaFinal) = Utils::sortRange($cuentaInicial, $cuentaFinal);
