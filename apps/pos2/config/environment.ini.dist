@@ -3,7 +3,7 @@ database.type = mysql
 database.host = localhost
 database.username = root
 database.password = hea101
-database.name = pos
+database.name = pjockey
 database.charset = utf8
 database.collate = utf8_spanish_ci
 
@@ -12,4 +12,4 @@ database.type = mysql
 database.host = localhost
 database.username = root
 database.password = hea101
-database.name = pos
+database.name = pjockey

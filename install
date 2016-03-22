@@ -1,0 +1,37 @@
+#!/bin/bash
+
+echo "configurando instancia $1"
+
+instance=$1
+dirPath=`pwd`
+newPath="/opt/local/apache2/htdocs/h/"
+
+cd public
+mkdir temp
+chmod 777 temp
+cp index.config.php.dist index.config.php
+echo $dirPath
+echo $newPath
+sed -i 's/$newPath/$dirPath/g' index.config.php
+
+function setIni {
+        cd $dirPath
+        cd apps/$1/config/
+
+        cp app.ini.dist app.ini
+        sed -i 's/jockey/'$instance'/g' app.ini
+
+        cp config.ini.dist config.ini
+        sed -i 's/jockey/'$instance'/g' config.ini
+
+        cp environment.ini.dist environment.ini
+        sed -i 's/jockey/'$instance'/g' environment.ini
+
+        cp naming.ini.dist naming.ini
+}
+
+setIni inve
+setIni default
+setIni contab
+setIni identity
+setIni pos2
