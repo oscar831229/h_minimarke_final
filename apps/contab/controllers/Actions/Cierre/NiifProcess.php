@@ -66,8 +66,8 @@ class NiifProcess
             if (count($saldos)) {
 
                 $a = "";
+                $movements = array();
                 foreach ($saldos as $saldo) {
-                    //throw new Exception(print_r($saldo, true), 1);
 
                     $anoMes = $saldo->getAnoMes();
                     if (!$anoMes) {
@@ -78,8 +78,31 @@ class NiifProcess
                     $a .= PHP_EOL . "<br>$periodoCierre - {$saldo->getAnoMes()}: $diff > $porceMesesNiif";
 
                     if ($diff > $porceMesesNiif) {
-                        
+                        /*
+                        $movements[] = array(
+                               'Fecha' => $moviTemp->getFecha(),
+                               'FechaVence' => $moviTemp->getFVence(),
+                               'Cuenta' => $moviTemp->getCuenta(),
+                               'Nit' => $moviTemp->getNit(),
+                               'CentroCosto' => $moviTemp->getCentroCosto(),
+                               'Valor' => $moviTemp->getValor(),
+                               'Descripcion' => $moviTemp->getDescripcion(),
+                               'TipoDocumento' => $moviTemp->getTipoDoc(),
+                               'NumeroDocumento' => $moviTemp->getNumeroDoc(),
+                               'BaseGrab' => $moviTemp->getBaseGrab(),
+                               'Folio' => $moviTemp->getNumfol(),
+                               'DebCre' => $moviTemp->getDebCre()
+                        );
+                       */
                     }
+                }
+
+                if (count($movements)) {
+                    $aura = new Aura($codigoComprobante, $numeroComprob);
+                    foreach ($movements as $movement) {
+                        $aura->addMovement($movement);
+                    }
+                    $aura->save();
                 }
                 throw new Exception($a, 1);
             }
