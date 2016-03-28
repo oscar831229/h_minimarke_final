@@ -760,7 +760,8 @@ class AuraNiif extends UserComponent
 					$saldosNiif = $this->SaldosNiif->findFirst("cuenta='{$cuenta->getCuentaNiif ()}' AND nit='{$movement['Nit']}' AND ano_mes=".$this->_period);
 
 					if ($saldosNiif == false) {
-						$saldosNiif = new SaldosNiif ();
+						$saldosNiif = new SaldosNiif();
+                        $saldosNiif->setDepre('N');
 						$saldosNiif->setTransaction($this->_transaction);
 						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
 						$saldosNiif->setNit($movement['Nit']);
@@ -1283,7 +1284,7 @@ class AuraNiif extends UserComponent
 
     /**
      * Remove comprob in movi_niif if Movi does not exists
-     * 
+     *
      * @param  string $comprob
      * @param  integer $numero
      * @return boolean

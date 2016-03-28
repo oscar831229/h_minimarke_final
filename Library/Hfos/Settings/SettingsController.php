@@ -82,12 +82,12 @@ class SettingsController extends ApplicationController
                 'description' => 'Comprobante Proveedores 2',
                 'filters' => array('comprob')
             ),
-            'porce_depre' => array(
+            'porce_depre_niif' => array(
                 'type' => 'int',
                 'description' => 'Porcentaje Depreciación Cartera NIIF',
                 'filters' => array('int')
             ),
-            'porce_meses' => array(
+            'porce_meses_niif' => array(
                 'type' => 'int',
                 'description' => 'Meses para depreciar Cartera NIIF',
                 'filters' => array('int')

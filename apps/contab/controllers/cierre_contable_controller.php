@@ -13,6 +13,7 @@
  * @version     $Id$
  */
 
+require_once 'Actions/Cierre/NiifProcess.php';
 require_once 'Actions/Cierre/AuraProcess.php';
 require_once 'Actions/Cierre/SaldoscProcess.php';
 require_once 'Actions/Cierre/SaldospProcess.php';
@@ -140,6 +141,14 @@ class Cierre_ContableController extends ApplicationController
             $auraProcess = new AuraProcess($this);
             $allMessages = $auraProcess->rebuild();
 
+            //procesa Niif del periodo
+            $niifProcess = new NiifProcess($this);
+            $a = $niifProcess->rebuild();
+
+            $allMessages = array_merge_recursive($allMessages, $a);
+            //throw new Exception(print_r($allMessages, true), 1);
+
+
             //$allMessages = array();
             if (isset($allMessages) && !count($allMessages)) {
 
@@ -244,7 +253,7 @@ class Cierre_ContableController extends ApplicationController
         }   catch(Exception $e) {
             return array(
                 'status' => 'FAILED',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage() . $e->getTraceAsString()
             );
         }
 

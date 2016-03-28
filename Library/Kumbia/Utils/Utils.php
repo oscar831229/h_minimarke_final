@@ -380,4 +380,19 @@ abstract class Utils {
 		return $params;
 	}
 
+	/**
+    * Resta meses al periodo
+    */
+    public static function subPeriodo($periodo, $numMonth)
+    {
+        $periodo = $periodo;
+        $ano = substr($periodo, 0, 4);
+        $mes = substr($periodo, 4, 2);
+
+        $date = "$ano-$mes-01";
+        $newdate = strtotime("-$numMonth month", strtotime($date));
+        $newdate = date('Ym', $newdate);
+
+        return $newdate;
+    }
 }

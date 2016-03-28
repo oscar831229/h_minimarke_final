@@ -954,6 +954,7 @@ class Aura extends UserComponent
 
 					if ($saldosNiif == false) {
 						$saldosNiif = new SaldosNiif ();
+						$saldosNiif->setDepre('N');
 						$saldosNiif->setTransaction($this->_transaction);
 						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
 						$saldosNiif->setNit($movement['Nit']);
@@ -985,11 +986,11 @@ class Aura extends UserComponent
 					if ($saldosNiif->save() == false) {
 						if ($this->_externalTransaction == true) {
 							foreach ($saldosNiif->getMessages() as $message) {
-								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
+								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
 							}
 						} else {
 							foreach ($saldosNiif->getMessages() as $message) {
-								throw new AuraException('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
+								throw new AuraException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
 							}
 						}
 					}
