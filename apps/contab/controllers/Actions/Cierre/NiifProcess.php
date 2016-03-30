@@ -58,8 +58,8 @@ class NiifProcess
                 throw new Exception("Setting: Meses de depreciación niif aun no se ha asignado un valor", 1);
             }
 
-            $saldosNiifModel = $this->controller->SaldosNiif->setTransaction($transaction);
-
+            $saldosNiifModel = $this->controller->CarteraNiif->setTransaction($transaction);
+            $descripcion = "Depreciación de cartera niif";
             $saldos = $saldosNiifModel->find("ano_mes<'$periodoCierre' AND ano_mes != 0 AND depre='N'");
 
             //throw new Exception(count($saldos), 1);
@@ -77,15 +77,18 @@ class NiifProcess
                     $diff = $periodoCierre - $anoMes;
                     $a .= PHP_EOL . "<br>$periodoCierre - {$saldo->getAnoMes()}: $diff > $porceMesesNiif";
 
-                    if ($diff > $porceMesesNiif) {
-                        /*
+                    $saldoVal = $saldo->getSaldo();
+                    #if ($diff > $porceMesesNiif) {
+                    if ($diff >= 1 && $saldoVal > 0) {
+                        $saldoDepre = $saldoVal * $porceDepreNiif / 100;
+
                         $movements[] = array(
-                               'Fecha' => $moviTemp->getFecha(),
-                               'FechaVence' => $moviTemp->getFVence(),
-                               'Cuenta' => $moviTemp->getCuenta(),
-                               'Nit' => $moviTemp->getNit(),
-                               'CentroCosto' => $moviTemp->getCentroCosto(),
-                               'Valor' => $moviTemp->getValor(),
+                               'Fecha' => $saldo->getFecha(),
+                               'FechaVence' => $saldo->getFVence(),
+                               'Cuenta' => $saldo->getCuenta(),
+                               'Nit' => $saldo->getNit(),
+                               'CentroCosto' => $saldo->getCentroCosto(),
+                               'Valor' => $saldoDepre,
                                'Descripcion' => $moviTemp->getDescripcion(),
                                'TipoDocumento' => $moviTemp->getTipoDoc(),
                                'NumeroDocumento' => $moviTemp->getNumeroDoc(),
