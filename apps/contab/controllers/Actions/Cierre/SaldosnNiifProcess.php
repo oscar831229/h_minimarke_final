@@ -52,7 +52,6 @@ class SaldosnNiifProcess
         foreach ($saldosnNiifs as $saldosnNiif) {
 
             $saldon = new SaldosNiif();
-            $saldon->setDepre('N');
             $saldon->setAnoMes($periodoCierre);
             $saldon->setTransaction($transaction);
             $saldon->setNit($saldosnNiif->getNit());

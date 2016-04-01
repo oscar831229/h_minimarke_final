@@ -761,8 +761,7 @@ class AuraNiif extends UserComponent
 
 					if ($saldosNiif == false) {
 						$saldosNiif = new SaldosNiif();
-                        $saldosNiif->setDepre('N');
-						$saldosNiif->setTransaction($this->_transaction);
+                        $saldosNiif->setTransaction($this->_transaction);
 						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
 						$saldosNiif->setNit($movement['Nit']);
 						$saldosNiif->setAnoMes($this->_period);

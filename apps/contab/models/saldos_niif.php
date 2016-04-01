@@ -38,11 +38,6 @@ class SaldosNiif extends ActiveRecord {
 	protected $base_grab;
 
 	/**
-	 * @var string
-	 */
-	protected $depre;
-
-	/**
 	 * Metodo para establecer el valor del campo cuenta
 	 * @param string $cuenta
 	 */
@@ -154,20 +149,5 @@ class SaldosNiif extends ActiveRecord {
 	public function getBaseGrab(){
 		return $this->base_grab;
 	}
-
-	/**
-	 * Asigna el valor del campo depre
-	 * @param string $depre
-	 */
-	public function setDepre($depre){
-		$this->depre = $depre;
-	}
-
-	/**
-	 * Devuelve el valor del campo depre
-	 * @return string
-	 */
-	public function getDepre(){
-		return $this->depre;
-	}
+	
 }
