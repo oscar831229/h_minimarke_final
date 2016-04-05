@@ -80,7 +80,6 @@ class Cierre_ContableController extends ApplicationController
             $transaction->setRollbackOnAbort(true);
             $this->transaction = $transaction;
 
-            $empresa1 = $this->Empresa->setTransaction($transaction)->findFirst();
             $empresa = $this->Empresa->setTransaction($transaction)->findFirst(array('for_update' => true));
             $ultimoCierre = $empresa->getFCierrec();
 
@@ -144,12 +143,9 @@ class Cierre_ContableController extends ApplicationController
             //procesa Niif del periodo
             $niifProcess = new NiifProcess($this);
             $a = $niifProcess->rebuild();
+            //$a = array();
 
             $allMessages = array_merge_recursive($allMessages, $a);
-            //throw new Exception(print_r($allMessages, true), 1);
-
-
-            //$allMessages = array();
             if (isset($allMessages) && !count($allMessages)) {
 
                 $empresa->setFCierrec((string)$fechaCierre);
@@ -167,8 +163,8 @@ class Cierre_ContableController extends ApplicationController
 
                 return array(
                     'status' => 'OK',
-                    'proximoCierre' => $proximoCierre->getLocaleDate('long'),
-                    'cierreActual' => $fechaCierre->getLocaleDate('short')
+                    'cierreActual' => $fechaCierre->getLocaleDate('short'),
+                    'proximoCierre' => $proximoCierre->getLocaleDate('long')
                 );
 
             } else {

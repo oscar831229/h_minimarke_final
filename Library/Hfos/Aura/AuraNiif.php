@@ -312,7 +312,7 @@ class AuraNiif extends UserComponent
 	public static function validateFecha($fecha)
 	{
 		if (self::$_empresa === null) {
-			self::$_empresa = $this->Empresa->findFirst();
+			self::$_empresa = self::getModel('Empresa')->findFirst();
 		}
 
 		if (self::$_fechaLimite === null) {
@@ -500,8 +500,10 @@ class AuraNiif extends UserComponent
 		}
 		$movement = $this->validate($movement);
 		$this->_storeMovement($movement);
-		++$this->_linea;
-		++$this->_activeNumberStored;
+		//++$this->_linea;
+		$this->_linea++;
+		//++$this->_activeNumberStored;
+		$this->_activeNumberStored++;
 		unset($movement);
 	}
 
@@ -509,6 +511,8 @@ class AuraNiif extends UserComponent
 	 * Agrega un movimiento a comprobante manteniendo el movimiento previo
 	 *
 	 * @param array $movement
+	 * @throws ActiveRecordException
+	 * @throws AuraNiifException
 	 */
 	public function appendMovement($movement) {
 		if ($this->_loaded == false) {
@@ -792,11 +796,11 @@ class AuraNiif extends UserComponent
 					if ($saldosNiif->save() == false) {
 						if ($this->_externalTransaction == true) {
 							foreach ($saldosNiif->getMessages() as $message) {
-								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
+								$this->_transaction->rollback("SaldosNiif: " . $message->getMessage() . '. ' . $saldosNiif->inspect() . '. ' . print_r($movement, true), $message->getCode());
 							}
 						} else {
 							foreach ($saldosNiif->getMessages() as $message) {
-								throw new AuraNiifException('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
+								throw new AuraNiifException('SaldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . '. ' . print_r($movement, true), $message->getCode());
 							}
 						}
 					}
@@ -1013,7 +1017,7 @@ class AuraNiif extends UserComponent
 			throw new AuraNiifException("El comprobante está descuadrado Créditos=".Currency::number($this->_totalCreditos)." y Débitos=".Currency::number($this->_totalDebitos));
 		}
 		if ($this->_activeNumberStored<2) {
-			throw new AuraNiifException('El comprobante debe tener al menos 2 movimientos');
+			throw new AuraNiifException('El comprobante debe tener al menos 2 movimientos ' . $this->_activeNumberStored);
 		}
 	}
 

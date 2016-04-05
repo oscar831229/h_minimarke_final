@@ -131,13 +131,12 @@ class NiifProcess
                         'NumeroDocumento' => $cartera->getNumeroDoc()
                     );
 
-                    $aura = new Aura($comprobDepreNiif, $fechaCierre);
+                    $auraNiif = new AuraNiif($comprobDepreNiif, $fechaCierre);
                     foreach ($movements as $movement) {
-                        $aura->addMovement($movement);
+                        $auraNiif->addMovement($movement);
                     }
-                    $aura->save();
+                    $auraNiif->save();
                 }
-                throw new Exception($a, 1);
             }
 
 

@@ -332,7 +332,7 @@ class Aura extends UserComponent
 	public static function validateFecha($fecha)
 	{
 		if (self::$_empresa === null) {
-			self::$_empresa = $this->Empresa->findFirst();
+			self::$_empresa = self::getModel('Empresa')->findFirst();
 		}
 
 		if (self::$_fechaLimite === null) {
@@ -867,7 +867,6 @@ class Aura extends UserComponent
 			$auraNiif = new AuraNiif;
 			$auraNiif->setTransaction($this->_transaction);
 			$auraNiif->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
-			$auraNiif->save();
 
 			unset($movi);
 
@@ -1729,10 +1728,13 @@ class Aura extends UserComponent
 			if (count($messages) == 0) {
 				$aura->save();
 
-				//Create Movi Niif
-				$auraNiif = new AuraNiif;
-				$auraNiif->createMoviNiifByMovi($comprob, $numero);
-				$auraNiif->save();
+				$comprobRecord = BackCacher::getComprob($comprob);
+                if ($comprobRecord->getTipoMoviNiif() == 'I') {
+
+                    //Create Movi Niif
+                    $auraNiif = new AuraNiif();
+                    //$auraNiif->createMoviNiifByMovi($comprob, $numero);
+                }
 			}
 		}
 		catch(AuraException $e) {
