@@ -492,18 +492,20 @@ class AuraNiif extends UserComponent
 	 * @param array $movement
 	 */
 	public function addMovement($movement) {
+		$this->_checkEquals();
+
 		if ($this->_exists) {
 			if ($this->_cleaned == false) {
 				$this->_delete();
 				$this->_cleaned = true;
 			}
 		}
+
 		$movement = $this->validate($movement);
 		$this->_storeMovement($movement);
-		//++$this->_linea;
-		$this->_linea++;
-		//++$this->_activeNumberStored;
-		$this->_activeNumberStored++;
+		++$this->_linea;
+		++$this->_activeNumberStored;
+
 		unset($movement);
 	}
 
@@ -514,7 +516,8 @@ class AuraNiif extends UserComponent
 	 * @throws ActiveRecordException
 	 * @throws AuraNiifException
 	 */
-	public function appendMovement($movement) {
+	public function appendMovement($movement)
+	{
 		if ($this->_loaded == false) {
 			if ($this->_exists) {
 				$consecutivo = 0;
@@ -753,7 +756,6 @@ class AuraNiif extends UserComponent
 					}
 				}
 			}
-			unset($movi);
 
 			$cuenta = $this->_getCuenta($movement['Cuenta']);
 			if ($cuenta->getPideNit() == 'S') {
@@ -808,7 +810,86 @@ class AuraNiif extends UserComponent
 				}
 
 			}
-		}
+
+            if ($cuenta->getPideFact() == 'S') {
+
+                $tipo = substr($movement['Cuenta'], 0, 1);
+                $conditions = "cuenta='{$movement['Cuenta']}' AND nit='{$movement['Nit']}' AND tipo_doc='{$movement['TipoDocumento']}' AND numero_doc='{$movement['NumeroDocumento']}'";
+                $cartera = $this->CarteraNiif->findFirst(array($conditions, 'for_update' => true));
+
+                if ($cartera == false) {
+
+                    if ($movement['TipoDocumento'] !== '' && $movement['NumeroDocumento'] !== '') {
+
+                        $cartera = new CarteraNiif();
+                        $cartera->setDepre('N');
+                        $cartera->setTransaction($this->_transaction);
+                        $cartera->setCuenta($movement['Cuenta']);
+                        $cartera->setNit($movement['Nit']);
+                        $cartera->setTipoDoc($movement['TipoDocumento']);
+                        $cartera->setNumeroDoc($movement['NumeroDocumento']);
+                        $cartera->setVendedor(0);
+                        $cartera->setCentroCosto($movement['CentroCosto']);
+                        $cartera->setFEmision((string)$movement['Fecha']);
+                        if ($movement['DebCre'] == 'D') {
+                            if ($tipo == '1') {
+                                $cartera->setValor($movement['Valor']);
+                            } else {
+                                $cartera->setValor(0);
+                            }
+                            $cartera->setSaldo($movement['Valor']);
+                        } else {
+                            if ($tipo == '2') {
+                                $cartera->setValor($movement['Valor']);
+                            } else {
+                                $cartera->setValor(0);
+                            }
+                            $cartera->setSaldo(-$movement['Valor']);
+                        }
+                        if (isset($movement['FechaVence'])) {
+                            $cartera->setFVence((string)$movement['FechaVence']);
+                        } else {
+                            $cartera->setFVence((string)$movement['Fecha']);
+                        }
+                    }
+                } else {
+                    if ($movement['DebCre'] == 'D') {
+                        if ($tipo == '1') {
+                            $cartera->setValor($cartera->getValor() + $movement['Valor']);
+                            if (Date::isLater($cartera->getFEmision(), $movement['Fecha'])) {
+                                $cartera->setFEmision((string)$movement['Fecha']);
+                            }
+                        }
+                        $cartera->setSaldo($cartera->getSaldo() + $movement['Valor']);
+                    } else {
+                        if ($tipo == '2') {
+                            $cartera->setValor($cartera->getValor() + $movement['Valor']);
+                            if (Date::isLater($cartera->getFEmision(), $movement['Fecha'])) {
+                                $cartera->setFEmision((string)$movement['Fecha']);
+                            }
+                        }
+                        $cartera->setSaldo($cartera->getSaldo() - $movement['Valor']);
+                    }
+                }
+                
+                if ($cartera->save() == false) {
+                    if ($this->_externalTransaction == true) {
+                        foreach ($cartera->getMessages() as $message) {
+                            $this->_transaction->rollback('Cartera: ' . $message->getMessage(), $message->getCode());
+                        }
+                    } else {
+                        foreach ($cartera->getMessages() as $message) {
+                            throw new AuraException('Cartera: ' . $message->getMessage(), $message->getCode());
+                        }
+                    }
+                }
+
+                unset($cartera);
+            }
+
+            unset($movi);
+
+        }
 		catch(DbLockAdquisitionException $e) {
 			$message = 'La base de datos está bloqueada mientras otro usuario termina un proceso de grabación. Intente grabar nuevamente en un momento';
 			if ($this->_externalTransaction == true) {

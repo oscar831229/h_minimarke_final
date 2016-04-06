@@ -73,7 +73,8 @@ class NiifProcess
             $descripcion = "Depreciación de cartera niif";
             $carteras = $carteraNiifModel->find("f_emision<='$fechaCierre' AND depre='N'");
 
-            //throw new Exception("f_emision<='$fechaCierre' AND depre='N' - ".count($carteras), 1);
+            throw new Exception("f_emision<='$fechaCierre' AND depre='N' - " . count($carteras), 1);
+
             if (count($carteras)) {
 
                 $total = 0;
@@ -130,12 +131,41 @@ class NiifProcess
                         'CentroCosto' => $cartera->getCentroCosto(),
                         'NumeroDocumento' => $cartera->getNumeroDoc()
                     );
+                    
+                    $fechaCierreDate = new Date($fechaCierre);
+                    $periodo = $fechaCierreDate->getPeriod();
 
-                    $auraNiif = new AuraNiif($comprobDepreNiif, $fechaCierre);
+                    $depreNiif = $this->DepreNiif->setTransaction($transaction)->findFirst("periodo='$periodo'");
+                    if (!$depreNiif) {
+
+                        $numero = null;
+                        $comprob = $comprobDepreNiif;
+
+                        $depreNiif = new DepreNiif();
+                        $depreNiif->setPeriodo($periodo);
+                    } else {
+                        $comprob = $depreNiif->getComprob();
+                        $numero  = $depreNiif->getNumero();
+                    }
+
+                    //save aura movi niif
+                    $auraNiif = new AuraNiif($comprob, $numero, $fechaCierre);
+                    $auraNiif->setTransaction($transaction);
+
                     foreach ($movements as $movement) {
                         $auraNiif->addMovement($movement);
                     }
+
                     $auraNiif->save();
+
+
+                    $depreNiif->setComprob($comprobDepreNiif);
+                    $depreNiif->setNumero($auraNiif->getDefaultNumero());
+
+                    $identity = IdentityManager::getActive();
+                    $depreNiif->setUsuarioId($identity["id"]);
+
+                    $depreNiif->save();
                 }
             }
 

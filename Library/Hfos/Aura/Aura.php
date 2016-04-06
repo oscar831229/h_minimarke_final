@@ -863,10 +863,12 @@ class Aura extends UserComponent
 				}
 			}
 
-			//Create Movi Niif
-			$auraNiif = new AuraNiif;
-			$auraNiif->setTransaction($this->_transaction);
-			$auraNiif->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
+			//Crea movimiento niif si el comprobante es de tipo NIIF
+			if ($comprob->getTipoMoviNiif() == 'I') {
+				$auraNiif = new AuraNiif;
+				$auraNiif->setTransaction($this->_transaction);
+				$auraNiif->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
+			}
 
 			unset($movi);
 
@@ -954,56 +956,6 @@ class Aura extends UserComponent
 					}
 				}
 				unset($saldosn);
-
-				//SALDOS NIIF
-				if ($cuenta->getCuentaNiif() && $comprob->getTipoMoviNiif() == 'I') {
-
-					$saldosNiif = $this->SaldosNiif->findFirst("cuenta='{$cuenta->getCuentaNiif ()}' AND nit='{$movement['Nit']}' AND ano_mes=".$this->_period);
-
-					if ($saldosNiif == false) {
-						$saldosNiif = new SaldosNiif ();
-						$saldosNiif->setTransaction($this->_transaction);
-						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
-						$saldosNiif->setNit($movement['Nit']);
-						$saldosNiif->setAnoMes($this->_period);
-
-						if ($movement['DebCre'] == 'C') {
-							$saldosNiif->setDebe(0);
-							$saldosNiif->setHaber($movement['Valor']);
-							$saldosNiif->setSaldo(-$movement['Valor']);
-						} else {
-							$saldosNiif->setDebe($movement['Valor']);
-							$saldosNiif->setHaber(0);
-							$saldosNiif->setSaldo($movement['Valor']);
-						}
-					} else {
-						$saldosNiif->setTransaction($this->_transaction);
-						if ($movement['DebCre'] == 'C') {
-							$haber = $saldosNiif->getHaber() + $movement['Valor'];
-							$saldosNiif->setHaber($haber);
-							$saldosNiif->setSaldo($saldosNiif->getDebe() - $haber);
-							unset($haber);
-						} else {
-							$debe = $saldosNiif->getDebe() + $movement['Valor'];
-							$saldosNiif->setDebe($debe);
-							$saldosNiif->setSaldo($debe - $saldosNiif->getHaber());
-							unset($debe);
-						}
-					}
-					if ($saldosNiif->save() == false) {
-						if ($this->_externalTransaction == true) {
-							foreach ($saldosNiif->getMessages() as $message) {
-								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
-							}
-						} else {
-							foreach ($saldosNiif->getMessages() as $message) {
-								throw new AuraException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
-							}
-						}
-					}
-					unset($saldosNiif);
-				}
-
 			}
 
 			if ($cuenta->getPideCentro() == 'S') {
@@ -1125,11 +1077,6 @@ class Aura extends UserComponent
 
 				unset($cartera);
 				unset($tipo);
-
-				//Create niif cartera
-				if ($comprob->getTipoMoviNiif() == 'I') {
-					$this->carteraNiifProcess($movement, $cuenta);
-				}
 			}
 		}
 		catch(DbLockAdquisitionException $e) {
@@ -1143,82 +1090,6 @@ class Aura extends UserComponent
 		unset($cuenta);
 		unset($movement);
 
-	}
-
-	private function carteraNiifProcess($movement, $cuenta)
-	{
-		$cuentaNiif = $cuenta->getCuentaNiif();
-		$tipo = substr($cuentaNiif, 0, 1);
-		$conditions = "cuenta='$cuentaNiif' AND nit='{$movement['Nit']}' AND tipo_doc='{$movement['TipoDocumento']}' AND numero_doc='{$movement['NumeroDocumento']}'";
-		$cartera = $this->CarteraNiif->findFirst(array($conditions, 'for_update' => true));
-
-		if ($cartera == false) {
-
-			if ($movement['TipoDocumento']!== ''&&$movement['NumeroDocumento']!== '') {
-
-				$cartera = new CarteraNiif();
-				$cartera->setTransaction($this->_transaction);
-				$cartera->setCuenta($cuentaNiif);
-				$cartera->setNit($movement['Nit']);
-				$cartera->setTipoDoc($movement['TipoDocumento']);
-				$cartera->setNumeroDoc($movement['NumeroDocumento']);
-				$cartera->setVendedor(0);
-				$cartera->setCentroCosto($movement['CentroCosto']);
-				$cartera->setFEmision((string)$movement['Fecha']);
-				if ($movement['DebCre'] == 'D') {
-					if ($tipo == '1') {
-						$cartera->setValor($movement['Valor']);
-					} else {
-						$cartera->setValor(0);
-					}
-					$cartera->setSaldo($movement['Valor']);
-				} else {
-					if ($tipo == '2') {
-						$cartera->setValor($movement['Valor']);
-					} else {
-						$cartera->setValor(0);
-					}
-					$cartera->setSaldo(-$movement['Valor']);
-				}
-				if (isset($movement['FechaVence'])) {
-					$cartera->setFVence((string)$movement['FechaVence']);
-				} else {
-					$cartera->setFVence((string)$movement['Fecha']);
-				}
-			}
-		} else {
-			if ($movement['DebCre'] == 'D') {
-				if ($tipo == '1') {
-					$cartera->setValor($cartera->getValor()+$movement['Valor']);
-					if (Date::isLater($cartera->getFEmision(), $movement['Fecha'])) {
-						$cartera->setFEmision((string)$movement['Fecha']);
-					}
-				}
-				$cartera->setSaldo($cartera->getSaldo()+$movement['Valor']);
-			} else {
-				if ($tipo == '2') {
-					$cartera->setValor($cartera->getValor()+$movement['Valor']);
-					if (Date::isLater($cartera->getFEmision(), $movement['Fecha'])) {
-						$cartera->setFEmision((string)$movement['Fecha']);
-					}
-				}
-				$cartera->setSaldo($cartera->getSaldo()-$movement['Valor']);
-			}
-		}
-		if ($cartera->save() == false) {
-			if ($this->_externalTransaction == true) {
-				foreach ($cartera->getMessages() as $message) {
-					$this->_transaction->rollback('Cartera: '.$message->getMessage(), $message->getCode());
-				}
-			} else {
-				foreach ($cartera->getMessages() as $message) {
-					throw new AuraException('Cartera: '.$message->getMessage(), $message->getCode());
-				}
-			}
-		}
-
-		unset($cartera);
-		unset($tipo);
 	}
 
 	/**
@@ -1563,6 +1434,9 @@ class Aura extends UserComponent
 				unset($this->_comprobs[$tipoComprob]);
 			}
 		}
+
+
+
 		//Rcs::enable();
 		if ($this->_externalTransaction == false) {
 			$this->_transaction->commit();
