@@ -50,16 +50,30 @@ class SaldoscProcess
         $saldoscModel->deleteAll("ano_mes='$periodoCierre'");
 
         $conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0)";
+
+        $conditionNeto = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
+
         $saldoscObj = $saldoscModel->find($conditions);
         foreach ($saldoscObj as $saldocAnterior) {
+
+            $cuenta = $saldocAnterior->getCuenta();
+            $debeAnterior = $saldocAnterior->getDebe();
+            $haberAnterior = $saldocAnterior->getHaber();
+
+            $debeActual  = $this->controller->Movi->sum('valor', "conditions: $conditionNeto AND cuenta='$cuenta' AND deb_cre='D'");
+            $haberActual = $this->controller->Movi->sum('valor', "conditions: $conditionNeto AND cuenta='$cuenta' AND deb_cre='C'");
+
+            $debeNuevo = $debeAnterior + $debeActual;
+            $haberNuevo = $haberAnterior + $haberActual;
+            $saldoNuevo = $debeNuevo - $haberNuevo;
 
             $saldoc = new Saldosc();
             $saldoc->setAnoMes($periodoCierre);
             $saldoc->setTransaction($transaction);
-            $saldoc->setDebe($saldocAnterior->getDebe());
-            $saldoc->setHaber($saldocAnterior->getHaber());
-            $saldoc->setSaldo($saldocAnterior->getSaldo());
-            $saldoc->setCuenta($saldocAnterior->getCuenta());
+            $saldoc->setDebe($debeNuevo);
+            $saldoc->setHaber($haberNuevo);
+            $saldoc->setSaldo($saldoNuevo);
+            $saldoc->setCuenta($cuenta);
 
             if ($saldoc->save()==false) {
                 foreach ($saldoc->getMessages() as $message) {

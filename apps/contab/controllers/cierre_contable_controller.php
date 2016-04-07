@@ -140,10 +140,11 @@ class Cierre_ContableController extends ApplicationController
             $auraProcess = new AuraProcess($this);
             $allMessages = $auraProcess->rebuild();
 
-            //procesa Niif del periodo
-            $niifProcess = new NiifProcess($this);
-            $a = $niifProcess->rebuild();
-            //$a = array();
+                //procesa Niif del periodo
+            //$niifProcess = new NiifProcess($this);
+            //$a = $niifProcess->rebuild();
+
+            $a = array();
 
             $allMessages = array_merge_recursive($allMessages, $a);
             if (isset($allMessages) && !count($allMessages)) {
