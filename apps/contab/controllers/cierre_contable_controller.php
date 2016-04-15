@@ -62,7 +62,6 @@ class Cierre_ContableController extends ApplicationController
             $transaction->setRollbackOnAbort(true);
 
 
-            $empresa1 = $this->Empresa->setTransaction($transaction)->findFirst();
             $empresa = $this->Empresa->setTransaction($transaction)->findFirst(array('for_update' => true));
             $ultimoCierre = $empresa->getFCierrec();
 
@@ -95,6 +94,7 @@ class Cierre_ContableController extends ApplicationController
 
             $this->Saldosn->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
 
+<<<<<<< HEAD
             $saldospObj = $this->Saldosp->setTransaction($transaction)->find("ano_mes='$periodoCierre'");
             foreach ($saldospObj as $saldosp) {
                 $saldosp->setDebe(0);
@@ -272,6 +272,16 @@ class Cierre_ContableController extends ApplicationController
                 unset($movi);
             }
             unset($movis);
+=======
+                //procesa Niif del periodo
+            //$niifProcess = new NiifProcess($this);
+            //$a = $niifProcess->rebuild();
+
+            $a = array();
+
+            $allMessages = array_merge_recursive($allMessages, $a);
+            if (isset($allMessages) && !count($allMessages)) {
+>>>>>>> b4b585d95185e2aa4cce50d26854bd21aada6b59
 
             if (count($allMessages)==0) {
                 $empresa->setFCierrec((string)$fechaCierre);
@@ -289,8 +299,8 @@ class Cierre_ContableController extends ApplicationController
 
                 return array(
                     'status' => 'OK',
-                    'proximoCierre' => $proximoCierre->getLocaleDate('long'),
-                    'cierreActual' => $fechaCierre->getLocaleDate('short')
+                    'cierreActual' => $fechaCierre->getLocaleDate('short'),
+                    'proximoCierre' => $proximoCierre->getLocaleDate('long')
                 );
 
             } else {

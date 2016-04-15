@@ -500,8 +500,10 @@ class AuraNiif extends UserComponent
 		}
 		$movement = $this->validate($movement);
 		$this->_storeMovement($movement);
-		++$this->_linea;
-		++$this->_activeNumberStored;
+		//++$this->_linea;
+		$this->_linea++;
+		//++$this->_activeNumberStored;
+		$this->_activeNumberStored++;
 		unset($movement);
 	}
 
@@ -509,6 +511,8 @@ class AuraNiif extends UserComponent
 	 * Agrega un movimiento a comprobante manteniendo el movimiento previo
 	 *
 	 * @param array $movement
+	 * @throws ActiveRecordException
+	 * @throws AuraNiifException
 	 */
 	public function appendMovement($movement) {
 		if ($this->_loaded == false) {
@@ -768,9 +772,14 @@ class AuraNiif extends UserComponent
 
 					if ($saldosNiif == false) {
 						$saldosNiif = new SaldosNiif();
+<<<<<<< HEAD
                         $saldosNiif->setDepre('N');
 						$saldosNiif->setTransaction($this->_transaction);
 						$saldosNiif->setCuenta($cuentaCode);
+=======
+                        $saldosNiif->setTransaction($this->_transaction);
+						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
+>>>>>>> b4b585d95185e2aa4cce50d26854bd21aada6b59
 						$saldosNiif->setNit($movement['Nit']);
 						$saldosNiif->setAnoMes($this->_period);
 
@@ -800,11 +809,19 @@ class AuraNiif extends UserComponent
 					if ($saldosNiif->save() == false) {
 						if ($this->_externalTransaction == true) {
 							foreach ($saldosNiif->getMessages() as $message) {
+<<<<<<< HEAD
 								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
 							}
 						} else {
 							foreach ($saldosNiif->getMessages() as $message) {
 								throw new AuraNiifException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
+=======
+								$this->_transaction->rollback("SaldosNiif: " . $message->getMessage() . '. ' . $saldosNiif->inspect() . '. ' . print_r($movement, true), $message->getCode());
+							}
+						} else {
+							foreach ($saldosNiif->getMessages() as $message) {
+								throw new AuraNiifException('SaldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . '. ' . print_r($movement, true), $message->getCode());
+>>>>>>> b4b585d95185e2aa4cce50d26854bd21aada6b59
 							}
 						}
 					}
@@ -1096,7 +1113,7 @@ class AuraNiif extends UserComponent
 			throw new AuraNiifException("El comprobante está descuadrado Créditos=".Currency::number($this->_totalCreditos)." y Débitos=".Currency::number($this->_totalDebitos));
 		}
 		if ($this->_activeNumberStored<2) {
-			throw new AuraNiifException('El comprobante debe tener al menos 2 movimientos');
+			throw new AuraNiifException('El comprobante debe tener al menos 2 movimientos ' . $this->_activeNumberStored);
 		}
 	}
 

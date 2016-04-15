@@ -48,6 +48,17 @@ class NiifProcess
         $periodoCierre = $this->controller->periodoCierre;
 
         try {
+            $comprobDepreNiif = Settings::get('comprob_depre_niif', 'CO');
+            if (!$comprobDepreNiif) {
+                throw new Exception("Setting: Comprobante de depreciación niif aun no se ha asignado un valor", 1);
+            }
+
+
+            $cuentaDepreNiif = Settings::get('cuenta_depre_niif', 'CO');
+            if (!$cuentaDepreNiif) {
+                throw new Exception("Setting: Cuenta de cruce de depreciación niif aun no se ha asignado un valor", 1);
+            }
+
             $porceDepreNiif = Settings::get('porce_depre_niif', 'CO');
             if (!$porceDepreNiif) {
                 throw new Exception("Setting: Porcentaje de depreciación niif aun no se ha asignado un valor", 1);
@@ -58,53 +69,74 @@ class NiifProcess
                 throw new Exception("Setting: Meses de depreciación niif aun no se ha asignado un valor", 1);
             }
 
-            $saldosNiifModel = $this->controller->SaldosNiif->setTransaction($transaction);
+            $carteraNiifModel = $this->controller->CarteraNiif->setTransaction($transaction);
+            $descripcion = "Depreciación de cartera niif";
+            $carteras = $carteraNiifModel->find("f_emision<='$fechaCierre' AND depre='N'");
 
-            $saldos = $saldosNiifModel->find("ano_mes<'$periodoCierre' AND ano_mes != 0 AND depre='N'");
+            //throw new Exception("f_emision<='$fechaCierre' AND depre='N' - ".count($carteras), 1);
+            if (count($carteras)) {
 
-            //throw new Exception(count($saldos), 1);
-            if (count($saldos)) {
-
-                $a = "";
+                $total = 0;
                 $movements = array();
-                foreach ($saldos as $saldo) {
+                $decription = "Depreciación de cartera NIIF del $porceDepreNiif% cada $porceMesesNiif meses";
+                foreach ($carteras as $cartera) {
 
-                    $anoMes = $saldo->getAnoMes();
+                    $fechaEmision = new Date($cartera->getFEmision());
+
+                    $anoMes = $fechaEmision->getPeriod();
                     if (!$anoMes) {
                         $anoMes = $periodoCierre;
                     }
 
                     $diff = $periodoCierre - $anoMes;
-                    $a .= PHP_EOL . "<br>$periodoCierre - {$saldo->getAnoMes()}: $diff > $porceMesesNiif";
+                    $saldoVal = $cartera->getSaldo();
+                    #if ($diff > $porceMesesNiif) {
+                    if ($diff >= 1 && $saldoVal > 0) {
 
-                    if ($diff > $porceMesesNiif) {
-                        /*
+                        $saldoDepre = $saldoVal * $porceDepreNiif / 100;
+
                         $movements[] = array(
-                               'Fecha' => $moviTemp->getFecha(),
-                               'FechaVence' => $moviTemp->getFVence(),
-                               'Cuenta' => $moviTemp->getCuenta(),
-                               'Nit' => $moviTemp->getNit(),
-                               'CentroCosto' => $moviTemp->getCentroCosto(),
-                               'Valor' => $moviTemp->getValor(),
-                               'Descripcion' => $moviTemp->getDescripcion(),
-                               'TipoDocumento' => $moviTemp->getTipoDoc(),
-                               'NumeroDocumento' => $moviTemp->getNumeroDoc(),
-                               'BaseGrab' => $moviTemp->getBaseGrab(),
-                               'Folio' => $moviTemp->getNumfol(),
-                               'DebCre' => $moviTemp->getDebCre()
+                            'Folio' => '',
+                            'DebCre' => 'C',
+                            'BaseGrab' => 0,
+                            'Valor' => $saldoDepre,
+                            'Nit' => $cartera->getNit(),
+                            'Descripcion' => $decription,
+                            'Cuenta' => $cartera->getCuenta(),
+                            'Fecha' => $cartera->getFEmision(),
+                            'FechaVence' => $cartera->getFVence(),
+                            'TipoDocumento' => $cartera->getTipoDoc(),
+                            'CentroCosto' => $cartera->getCentroCosto(),
+                            'NumeroDocumento' => $cartera->getNumeroDoc()
                         );
-                       */
+
+                        $total += $saldoDepre;
                     }
                 }
 
                 if (count($movements)) {
-                    $aura = new Aura($codigoComprobante, $numeroComprob);
+
+                    $movements[] = array(
+                        'Folio' => '',
+                        'DebCre' => 'D',
+                        'BaseGrab' => 0,
+                        'Valor' => $total,
+                        'Nit' => '',
+                        'Descripcion' => $decription,
+                        'Cuenta' => $cuentaDepreNiif,
+                        'Fecha' => $cartera->getFEmision(),
+                        'FechaVence' => $cartera->getFVence(),
+                        'TipoDocumento' => $cartera->getTipoDoc(),
+                        'CentroCosto' => $cartera->getCentroCosto(),
+                        'NumeroDocumento' => $cartera->getNumeroDoc()
+                    );
+
+                    $auraNiif = new AuraNiif($comprobDepreNiif, $fechaCierre);
                     foreach ($movements as $movement) {
-                        $aura->addMovement($movement);
+                        $auraNiif->addMovement($movement);
                     }
-                    $aura->save();
+                    $auraNiif->save();
                 }
-                throw new Exception($a, 1);
             }
 
 

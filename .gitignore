@@ -1,6 +1,10 @@
 apps/identity/security/data/*
 apps/*/config/*.ini
-public/temp/*.pdf
-public/temp/*.html
-public/temp/*.xlsx
-public/temp/*.txt
+public/temp
+.idea/deployment.xml
+.idea/h.iml
+.idea/modules.xml
+.idea/php.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/copyright/profiles_settings.xml
