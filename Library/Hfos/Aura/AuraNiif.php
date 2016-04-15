@@ -312,7 +312,7 @@ class AuraNiif extends UserComponent
 	public static function validateFecha($fecha)
 	{
 		if (self::$_empresa === null) {
-			self::$_empresa = $this->Empresa->findFirst();
+			self::$_empresa = self::getModel('Empresa')->findFirst();
 		}
 
 		if (self::$_fechaLimite === null) {
@@ -579,6 +579,12 @@ class AuraNiif extends UserComponent
 		} else {
 			$this->_addComprobante($movement['Comprobante']);
 		}
+
+        $comprob = BackCacher::getComprob($movement['Comprobante']);
+        if (!$comprob || $comprob->getTipoMoviNiif() != 'I') {
+            throw new AuraNiifException("El comprobante '{$movement['Comprobante']}' no soporta NIIF");
+        }
+
 		if (!isset($movement['Numero'])) {
 			if (isset($movement['Comprobante'])&&$movement['Comprobante']) {
 				$movement['Numero'] = $this->_consecutivos[$movement['Comprobante']];
@@ -751,7 +757,8 @@ class AuraNiif extends UserComponent
 			}
 			unset($movi);
 
-			$cuenta = $this->_getCuenta($movement['Cuenta']);
+			$cuentaCode = $movement['Cuenta'];
+			$cuenta = $this->_getCuenta($cuentaCode);
 			if ($cuenta->getPideNit() == 'S') {
 
 				//SALDOS NIIF
@@ -763,7 +770,7 @@ class AuraNiif extends UserComponent
 						$saldosNiif = new SaldosNiif();
                         $saldosNiif->setDepre('N');
 						$saldosNiif->setTransaction($this->_transaction);
-						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
+						$saldosNiif->setCuenta($cuentaCode);
 						$saldosNiif->setNit($movement['Nit']);
 						$saldosNiif->setAnoMes($this->_period);
 
@@ -793,17 +800,92 @@ class AuraNiif extends UserComponent
 					if ($saldosNiif->save() == false) {
 						if ($this->_externalTransaction == true) {
 							foreach ($saldosNiif->getMessages() as $message) {
-								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
+								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
 							}
 						} else {
 							foreach ($saldosNiif->getMessages() as $message) {
-								throw new AuraNiifException('SaldosNiif: '.$message->getMessage().'. '.$saldosn->inspect().'. '.print_r($movement, true), $message->getCode());
+								throw new AuraNiifException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
 							}
 						}
 					}
 					unset($saldosNiif);
 				}
 
+			}
+
+            //CARTERA NIIF
+			if($cuenta->getPideFact()=='S'){
+				$tipo = substr($cuentaCode, 0, 1);
+				$conditions = "cuenta='$cuentaCode' AND nit='{$movement['Nit']}' AND " .
+					"tipo_doc='{$movement['TipoDocumento']}' AND " .
+					"numero_doc='{$movement['NumeroDocumento']}'";
+
+				$cartera = $this->CarteraNiif->findFirst(array($conditions, 'for_update' => true));
+				if($cartera==false){
+					if($movement['TipoDocumento']!==''&&$movement['NumeroDocumento']!==''){
+						$cartera = new CarteraNiif();
+						$cartera->setTransaction($this->_transaction);
+						$cartera->setCuenta($cuentaCode);
+						$cartera->setNit($movement['Nit']);
+						$cartera->setTipoDoc($movement['TipoDocumento']);
+						$cartera->setNumeroDoc($movement['NumeroDocumento']);
+						$cartera->setVendedor(0);
+						$cartera->setCentroCosto($movement['CentroCosto']);
+						$cartera->setFEmision((string)$movement['Fecha']);
+						if($movement['DebCre']=='D'){
+							if($tipo=='1'){
+								$cartera->setValor($movement['Valor']);
+							} else {
+								$cartera->setValor(0);
+							}
+							$cartera->setSaldo($movement['Valor']);
+						} else {
+							if($tipo=='2'){
+								$cartera->setValor($movement['Valor']);
+							} else {
+								$cartera->setValor(0);
+							}
+							$cartera->setSaldo(-$movement['Valor']);
+						}
+						if(isset($movement['FechaVence'])){
+							$cartera->setFVence((string)$movement['FechaVence']);
+						} else {
+							$cartera->setFVence((string)$movement['Fecha']);
+						}
+					}
+				} else {
+					if($movement['DebCre']=='D'){
+						if($tipo=='1'){
+							$cartera->setValor($cartera->getValor()+$movement['Valor']);
+							if(Date::isLater($cartera->getFEmision(), $movement['Fecha'])){
+								$cartera->setFEmision((string)$movement['Fecha']);
+							}
+						}
+						$cartera->setSaldo($cartera->getSaldo()+$movement['Valor']);
+					} else {
+						if($tipo=='2'){
+							$cartera->setValor($cartera->getValor()+$movement['Valor']);
+							if(Date::isLater($cartera->getFEmision(), $movement['Fecha'])){
+								$cartera->setFEmision((string)$movement['Fecha']);
+							}
+						}
+						$cartera->setSaldo($cartera->getSaldo()-$movement['Valor']);
+					}
+				}
+				if($cartera->save()==false){
+					if($this->_externalTransaction==true){
+						foreach($cartera->getMessages() as $message){
+							$this->_transaction->rollback('Cartera Niif: '.$message->getMessage(), $message->getCode());
+						}
+					} else {
+						foreach($cartera->getMessages() as $message){
+							throw new AuraException('Cartera Niif: '.$message->getMessage(), $message->getCode());
+						}
+					}
+				}
+
+				unset($cartera);
+				unset($tipo);
 			}
 		}
 		catch(DbLockAdquisitionException $e) {
@@ -939,7 +1021,7 @@ class AuraNiif extends UserComponent
 	}
 
 	/**
-	 * Consulta una cuenta y cachea el resultado
+	 * Consulta una cuenta niif y cachea el resultado
 	 *
 	 * @param  string $codigoCuenta
 	 * @return Cuentas

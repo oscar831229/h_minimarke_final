@@ -61,7 +61,7 @@ class BalanceController extends ApplicationController
 			$fechaInicial = $this->getPostParam('fechaInicial', 'date');
 			$fechaFinal = $this->getPostParam('fechaFinal', 'date');
 
-			if ($fechaInicial==''||$fechaFinal=='') {
+			if ($fechaInicial == '' || $fechaFinal == '') {
 				return array(
 					'status' => 'FAILED',
 					'message' => 'Indique las fechas inicial y final del balance'
@@ -127,17 +127,17 @@ class BalanceController extends ApplicationController
 
 			$report->setColumnStyle(0, new ReportStyle(array(
 				'textAlign' => 'left',
-				'fontSize'  => 11
+				'fontSize' => 11
 			)));
 
 			$report->setColumnStyle(1, new ReportStyle(array(
 				'textAlign' => 'left',
-				'fontSize'  => 11
+				'fontSize' => 11
 			)));
 
 			$report->setColumnStyle(array(2, 3, 4, 5, 6), new ReportStyle(array(
 				'textAlign' => 'right',
-				'fontSize'  => 11,
+				'fontSize' => 11,
 			)));
 
 			$numberFormat = new ReportFormat(array(
@@ -148,12 +148,12 @@ class BalanceController extends ApplicationController
 
 			$leftColumn = new ReportStyle(array(
 				'textAlign' => 'left',
-				'fontSize'  => 11
+				'fontSize' => 11
 			));
 
 			$rightColumn = new ReportStyle(array(
 				'textAlign' => 'right',
-				'fontSize'  => 11,
+				'fontSize' => 11,
 			));
 
 			$report->setTotalizeColumns(array(2, 5, 6));
@@ -184,7 +184,7 @@ class BalanceController extends ApplicationController
 			$totalCreditos = 0;
 			$totalDiferencia = 0;
 			$totalNuevoSaldo = 0;
-			if ($cuentaInicial == '' && $cuentaFinal == '') {
+			if ($cuentaInicial=='' && $cuentaFinal=='') {
 				$cuentas = $this->Cuentas->find("es_auxiliar='S'");
 			} else {
 				list($cuentaInicial, $cuentaFinal) = Utils::sortRange($cuentaInicial, $cuentaFinal);
@@ -381,7 +381,7 @@ class BalanceController extends ApplicationController
 											 * debe tomar el saldo de saldosc del anopasado en diciembre siempre no el del mes anterior
 											 * este caso se presento por el nit 17 en la cuenta 135517*** no debia aprecer porque en saldosc en
 											 * 201302 estaba con saldo 0. Por favor no cambiar
-											*/
+											 */
 											$saldoscTemp = $this->Saldosc->findFirst("ano_mes='{$empresa1->getAnoc()}12' AND cuenta='$codigoCuenta'");
 											if ($saldoscTemp) {
 												$saldoAnterior = $saldoscTemp->getSaldo();
@@ -500,7 +500,7 @@ class BalanceController extends ApplicationController
 
 												if ($tercero) {
 													$direccion = $tercero->getDireccion();
-													$ciudad = i18n::strtooupper($tercero->getLocation()->getName());
+													$ciudad = i18n::strtoupper($tercero->getLocation()->getName());
 													$telefono = $tercero->getTelefono();
 												} else {
 													$direccion = '-';
@@ -570,8 +570,8 @@ class BalanceController extends ApplicationController
 	}
 
 	/**
-	* Valida si una cuenta esta en un rango de cuentas
-	*/
+	 * Valida si una cuenta esta en un rango de cuentas
+	 */
 	private function _inRangeOfAccounts($codigoCuenta, $cuentaInicial, $cuentaFinal)
 	{
 		$l1 = strlen($codigoCuenta);
