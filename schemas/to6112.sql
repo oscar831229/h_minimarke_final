@@ -20,6 +20,7 @@ alter table niif add column usa_revelacion char(1) null;
 update niif set usa_revelacion = 'S';
 
 create table saldos_niif like saldosn;
+alter table saldos_niif add column depre char(1) not null default 'N';
 
 CREATE TABLE `movibackup` (
   `comprob` char(3) NOT NULL,
@@ -61,7 +62,6 @@ alter table movi_niif change numero_movi numero_movi varchar(20) null;
 
 alter table saldosc add column neto decimal(20,2) null;
 
-create table cartera_niif like cartera;    
-alter table cartera_niif add column depre char(1) not null default 'N';
+create table cartera_niif like cartera;
 alter table cartera_niif add column depre_porce int null;
 alter table cartera_niif add column depre_meses int null;

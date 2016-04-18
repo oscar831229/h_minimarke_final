@@ -1,23 +1,17 @@
 #!/bin/bash
 
 echo "configurando instancia $1"
-echo "configurando naming $2"
 
 instance=$1
-naming=$2
 dirPath=`pwd`
 gitPath="/opt/local/apache2/htdocs/h/"
 
 cd public
 #mkdir temp
 #chmod 777 temp
-
 ln -s /tmp temp
 
 cp index.config.php.dist index.config.php
-
-
-
 echo $dirPath
 echo $gitPath
 sed -i "s|$gitPath|$dirPath/|" index.config.php
@@ -36,9 +30,6 @@ function setIni {
         sed -i "s|jockey|$instance|" environment.ini
 
         cp naming.ini.dist naming.ini
-        if [ -n "${naming}" ]; then
-                sed -i "s|127.0.0.1|$naming|" naming.ini
-        fi
 }
 
 setIni inve

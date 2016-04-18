@@ -53,11 +53,6 @@ class CarteraNiif extends ActiveRecord {
 	protected $f_vence;
 
 	/**
-	 * @var string
-	 */
-	protected $depre;
-
-	/**
 	 * @var integer
 	 */
 	protected $depre_porc;
@@ -267,22 +262,6 @@ class CarteraNiif extends ActiveRecord {
 	}
 
 	/**
-	 * Asigna el valor del campo depre
-	 * @param string $depre
-	 */
-	public function setDepre($depre){
-		$this->depre = $depre;
-	}
-
-	/**
-	 * Devuelve el valor del campo depre
-	 * @return string
-	 */
-	public function getDepre(){
-		return $this->depre;
-	}
-
-	/**
 	 * Devuelve el valor del campo depre_porc
 	 * @return integer
 	 */
@@ -307,3 +286,4 @@ class CarteraNiif extends ActiveRecord {
 	}
 
 }
+
