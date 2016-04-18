@@ -785,7 +785,9 @@ class Aura extends UserComponent
 	private function _storeMovement($movement)
 	{
 
-		if ($this->_debug==true) {
+		$comprob = $this->Comprob->findFirst("codigo='{$this->_defaultComprob}'");
+
+		if ($this->_debug == true) {
 			$this->_movements[] = $movement;
 		}
 
@@ -926,6 +928,56 @@ class Aura extends UserComponent
 					}
 				}
 				unset($saldosn);
+
+				//SALDOS NIIF
+				if ($cuenta->getCuentaNiif() && $comprob->getTipoMoviNiif() == 'I') {
+
+					$saldosNiif = $this->SaldosNiif->findFirst("cuenta='{$cuenta->getCuentaNiif ()}' AND nit='{$movement['Nit']}' AND ano_mes=".$this->_period);
+
+					if ($saldosNiif == false) {
+						$saldosNiif = new SaldosNiif ();
+						$saldosNiif->setTransaction($this->_transaction);
+						$saldosNiif->setCuenta($cuenta->getCuentaNiif ());
+						$saldosNiif->setNit($movement['Nit']);
+						$saldosNiif->setAnoMes($this->_period);
+
+						if ($movement['DebCre'] == 'C') {
+							$saldosNiif->setDebe(0);
+							$saldosNiif->setHaber($movement['Valor']);
+							$saldosNiif->setSaldo(-$movement['Valor']);
+						} else {
+							$saldosNiif->setDebe($movement['Valor']);
+							$saldosNiif->setHaber(0);
+							$saldosNiif->setSaldo($movement['Valor']);
+						}
+					} else {
+						$saldosNiif->setTransaction($this->_transaction);
+						if ($movement['DebCre'] == 'C') {
+							$haber = $saldosNiif->getHaber() + $movement['Valor'];
+							$saldosNiif->setHaber($haber);
+							$saldosNiif->setSaldo($saldosNiif->getDebe() - $haber);
+							unset($haber);
+						} else {
+							$debe = $saldosNiif->getDebe() + $movement['Valor'];
+							$saldosNiif->setDebe($debe);
+							$saldosNiif->setSaldo($debe - $saldosNiif->getHaber());
+							unset($debe);
+						}
+					}
+					if ($saldosNiif->save() == false) {
+						if ($this->_externalTransaction == true) {
+							foreach ($saldosNiif->getMessages() as $message) {
+								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
+							}
+						} else {
+							foreach ($saldosNiif->getMessages() as $message) {
+								throw new AuraException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
+							}
+						}
+					}
+					unset($saldosNiif);
+				}
+
 			}
 
 			if($cuenta->getPideCentro()=='S'){
@@ -1434,7 +1486,6 @@ class Aura extends UserComponent
 				}
 			}
 		}
-
 	}
 
 	/**
