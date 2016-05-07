@@ -10,7 +10,7 @@
  *
  * @package 	Back-Office
  * @copyright 	BH-TECK Inc. 2009-2010
- * @version		$Id$
+ * @version		$Id: pedidos_controller.php,v 099ab17e3be7 2014/06/07 16:46:41 eduar $
  */
 
 /**
@@ -536,57 +536,4 @@ class PedidosController extends HyperFormController {
 		}
 	}
 
-	/**
-	 * Enviar por correo irden de compra
-	 */
-	public function sendAction() 
-	{
-		$this->setResponse('json');
-		try 
-		{
-			Core::importFromLibrary('Hfos/Delivery', 'Delivery.php');	
-			
-			$reportType = "pdf";
-			$almacen = $this->getPostParam('almacen', 'int');
-			$numero = $this->getPostParam('numero', 'int');
-
-			$comprob = sprintf('P%02s', $almacen);
-			$movihead = $this->Movihead->findFirst("comprob='$comprob' AND numero='$numero'");
-			if ($movihead==false) {
-				return array(
-					'status' => 'FAILED',
-					'message' => 'No existe la orden de compra'
-				);
-			}
-			//Correo de Pedidos
-			$email = Settings::get('correo_pedidos', 'IN');
-			if (!$email) {
-				throw new Exception("El correo a enviar pedidos no se ha definido en configuración", 1);
-			}
-			//Encargado de Almacen
-			$nombre = "Encargado de Almacen";
-			$usuarios = $movihead->getAlmacenes()->getUsuarios();
-			if (!$usuarios) {
-				$nombre = $usuarios->getNombre();
-			}
-			//File Name
-			$fileUri = Tatico::getPrintUrl($reportType, $movihead->getComprob(), $almacen, $numero);
-			//Enviamos correo
-			$extra = array($fileUri => KEF_ABS_PATH . "public/" . $fileUri);
-			if (!HfosDelivery::sendInvoice($email, $comprob, $comprob, $nombre, $extra, 'pedidosAlmacen')) {
-				$error = HfosDelivery::getLastError();
-				throw new Exception($error, 1);
-			}	
-			return array(
-				'status' => 'OK',
-				'message' => 'Se ha enviado el pedido al correo'
-			);
-		}
-		catch(TaticoException $e) {
-			return array(
-				'status' => 'FAILED',
-				'message' => $e->getMessage()
-			);
-		}
-	}
 }

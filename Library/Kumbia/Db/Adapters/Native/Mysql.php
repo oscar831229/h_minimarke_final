@@ -136,9 +136,9 @@ class DbMySQL extends DbBase
 		}
 
 		if ($persistent == false) {
-			$this->_idConnection = mysql_connect($dbstring, $username, $password, true, $clientFlags);
+			$this->_idConnection = @mysql_connect($dbstring, $username, $password, true, $clientFlags);
 		} else {
-			$this->_idConnection = mysql_pconnect($dbstring, $username, $password, $clientFlags);
+			$this->_idConnection = @mysql_pconnect($dbstring, $username, $password, $clientFlags);
 		}
 
 		if ($this->_idConnection) {

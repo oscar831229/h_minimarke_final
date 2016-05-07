@@ -55,17 +55,15 @@ class RefeController extends HyperFormController
 		)
 	);
 
-	public function initialize()
-	{
+	public function initialize(){
 		parent::setConfig(self::$_config);
 		parent::initialize();
 	}
 
-	public function getItemAction()
-	{
+	public function getItemAction(){
 		$this->setResponse('json');
 		$item = $this->getPostParam('item');
-		if ($item > 0) {
+		if($item>0){
 			$refe = $this->Refe->findFirst($item);
 			if($refe==false){
 				return array(
@@ -86,8 +84,7 @@ class RefeController extends HyperFormController
 		}
 	}
 
-	public function queryByDescriptionAction()
-	{
+	public function queryByDescriptionAction(){
 		$this->setResponse('json');
 		$response = array();
 		$descripcion = $this->getPostParam('descripcion', 'extraspaces');

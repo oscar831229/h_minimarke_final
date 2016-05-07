@@ -16,7 +16,7 @@
 echo Tag::form('fisico/guardar', 'class: saveForm', 'autocomplete: off'), '<table align="center">
 	<tr>
 		<td align="right"><label>Almacén</label></td>
-		<td>', $almacen->getCodigo(), Tag::hiddenField('almacen', "value: {$almacen->getCodigo()}"), '</td>
+		<td>', $almacen->getCodigo(), Tag::hiddenField('a', "value: {$almacen->getCodigo()}"), '</td>
 		<td align="right"><label>Nombre</label></td>
 		<td>', $almacen->getNomAlmacen(), '</td>
 	</tr>
@@ -25,7 +25,7 @@ echo Tag::form('fisico/guardar', 'class: saveForm', 'autocomplete: off'), '<tabl
 
 echo '<table class="hyBrowseTab zebraSt sortable" cellspacing="0" align="center" width="85%">
 <thead>
-	<th class="sortcol sortdesc"></th>
+	<th class="sortcol sortdesc">'.count($saldos).'</th>
 	<th class="sortcol">Referencia</th>
 	<th class="sortcol">Descripción</th>
 	<th class="sortcol">Saldo Actual</th>
@@ -36,12 +36,18 @@ echo '<table class="hyBrowseTab zebraSt sortable" cellspacing="0" align="center"
 $n = 1;
 foreach($saldos as $saldo){
 	echo '<tr><td>', $n, '</td>';
-	echo '<td>', $saldo->getItem(), Tag::hiddenField('item[]', "value: {$saldo->getItem()}"), '</td>';
+	echo '<td>', $saldo->getItem(), Tag::hiddenField('i[]', "value: {$saldo->getItem()}"), '</td>';
 	echo '<td>', $saldo->getDescripcion(), '</td>';
 	echo '<td align="right">', Currency::number($saldo->getSaldoActual()), '</td>';
 	echo '<td align="right">', Currency::number($saldo->getCosto()), '</td>';
 	echo '<td align="right">', Currency::number($saldo->getSaldo()), '</td>';
-	echo '<td align="right">', Tag::numericField('cantidad[]','size: 10','maxlength: 10','class: cantidadesFisicas','style: text-align:right', 'value: '.LocaleMath::round($saldo->getSaldo(), 2)), '</td>';
+	echo '<td align="right">',
+		Tag::numericField(
+			'c[]','size: 10','maxlength: 10','class: cantidadesFisicas',
+			'style: text-align:right', 'value: '.LocaleMath::round($saldo->getSaldo(), 2),
+			'count: ' . $n
+		), '</td>';
+
 	echo '</tr>';
 	$n++;
 }

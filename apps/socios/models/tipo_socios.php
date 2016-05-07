@@ -1,6 +1,6 @@
 <?php
 
-class TipoSocios extends ActiveRecord {
+class TipoSocios extends RcsRecord {
 
 	/**
 	 * @var integer
@@ -26,16 +26,6 @@ class TipoSocios extends ActiveRecord {
 	 * @var string
 	 */
 	protected $estado;
-
-	/**
-	 * @var integer
-	 */
-	protected $edad_ini;
-
-	/**
-	 * @var integer
-	 */
-	protected $edad_fin;
 
 
 	/**
@@ -78,22 +68,6 @@ class TipoSocios extends ActiveRecord {
 		$this->estado = $estado;
 	}
 
-	/**
-	 * Metodo para establecer el valor del campo edad_ini
-	 * @param integer $edad_ini
-	 */
-	public function setEdadIni($edad_ini){
-		$this->edad_ini = $edad_ini;
-	}
-
-	/**
-	 * Metodo para establecer el valor del campo edad_fin
-	 * @param integer $edad_fin
-	 */
-	public function setEdadFin($edad_fin){
-		$this->edad_fin = $edad_fin;
-	}
-
 
 	/**
 	 * Devuelve el valor del campo id
@@ -133,22 +107,6 @@ class TipoSocios extends ActiveRecord {
 	 */
 	public function getEstado(){
 		return $this->estado;
-	}
-
-	/**
-	 * Devuelve el valor del campo edad_ini
-	 * @return integer
-	 */
-	public function getEdadIni(){
-		return $this->edad_ini;
-	}
-
-	/**
-	 * Devuelve el valor del campo edad_fin
-	 * @return integer
-	 */
-	public function getEdadFin(){
-		return $this->edad_fin;
 	}
 
 }

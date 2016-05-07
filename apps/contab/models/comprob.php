@@ -365,4 +365,3 @@ class Comprob extends RcsRecord {
 	}
 
 }
-

@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('issue.png', 'Balance Consolidado Anual') ?>
+
+<?php echo Tag::form('informe_balance_consolidado/generar', 'class: informeBalanceConsolidadoForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="year">A&ntilde;o</label></td>
+					<td>
+						<?php
+						 	$years = array();
+							for ($i=date("Y");$i>1990;$i--) {
+								$years[$i] = $i;
+							}
+							echo Tag::selectStatic('year', $years);
+						?>
+					</td>
+				</tr>
+
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<td valign="top">
+			<div class="cuadro-cierre">
+				<table>
+					<tr>
+						<td align="right"><b>Último Cierre</b></td>
+						<td><?php echo $fechaCierre->getLocaleDate('short') ?></td>
+					</tr>
+					<tr>
+						<td align="right"><b>Año Cierre</b></td>
+						<td><?php echo $anoCierre ?></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<?php echo HfosTag::reportTypeTag(true, false) ?>
+<?php echo Tag::endForm() ?>

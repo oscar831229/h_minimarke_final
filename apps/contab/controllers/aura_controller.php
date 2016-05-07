@@ -160,13 +160,4 @@ class AuraController extends WebServiceController implements Transactionable {
 		$auraUtils->corrigeUnaLinea();
 	}
 
-    /**
-     * Recalcula saldosn de todo el movimiento
-     */
-    public function recalculateSaldosnAction()
-    {
-        $auraUtils = new AuraUtils();
-        $auraUtils->recalculateSaldosnAll();
-    }
-
 }

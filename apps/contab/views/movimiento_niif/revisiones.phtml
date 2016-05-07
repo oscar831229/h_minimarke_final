@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+<div align="center">
+	<div class="formExternal">
+		<div class="externalHeader">
+			<table width="95%" align="center" cellpadding="0" cellspacing="0">
+				<tr>
+					<td><h1>Revisiones<h1></td>
+					<td align="right"><div class="window-close"></div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="messages"></div>
+		<?php echo Tag::form('movimiento_niif/revisiones', 'onbeforesubmit: return false', 'autocomplete: off'); ?>
+			<table class="hyBrowseTab zebraSt sortable" cellspacing="0" cellpadding="0" align="center">
+			<?php
+				if (isset($grabObj)) {
+					$acciones = array('A' => 'Crear', 'M' => 'Modificar', 'D' => 'Borro');
+					echo '<tr>',
+							'<th class="sortcol">Acción</th>',
+							'<th class="sortcol">Fecha</th>',
+							'<th class="sortcol">Hora</th>',
+							'<th class="sortcol">Usuario</th>',
+						'</tr>';
+
+					foreach ($grabObj as $grab)
+					{
+						$accion = "?? ({$grab->getAccion()})";
+						if (isset($acciones[$grab->getAccion()])) {
+							$accion = $acciones[$grab->getAccion()];
+						}
+						echo '<tr>',
+							'<td>',$accion,'</td>',
+							'<td>',$grab->getFechaGrab(),'</td>',
+							'<td>',$grab->getHoraGrab(),'</td>',
+							'<td>',$grab->getCodigoGrab(),'</td>',
+						'</tr>';
+					}
+				}
+			?>
+			</table>
+		<?php echo Tag::endForm() ?>
+	</div>
+</div>

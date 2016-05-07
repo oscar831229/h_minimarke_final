@@ -61,6 +61,9 @@ class TaticoKardex extends UserComponent
 					$saldos = EntityManager::get("Saldos")->findFirst("ano_mes='$periodo' AND item='{$movilin->getItem()}' AND almacen='{$movilin->getAlmacen()}'");
 					if ($saldos) {
 						$costoTotalAnterior = $saldos->getCosto();
+						if (!$nuevoSaldo) {
+							$nuevoSaldo = 1;
+						}
 						$costoPromedioAnterior = $costoTotalAnterior / $nuevoSaldo;
 					}
 				}
@@ -103,16 +106,24 @@ class TaticoKardex extends UserComponent
 			}
 
 			$cantidad = (double) $movilin->getCantidad();
-			if ($cantidad!=0) {
-			 	$costo = $movilin->getValor()/$cantidad;
+			if ($cantidad) {
+			 	$costo = $movilin->getValor() / $cantidad;
 			} else {
 				$costo = 0;
 			}
 
 			$nuevoCostoPromedio = $movilin->getValor();
 			//Nuevos campos
-			if ($nuevoSaldo>0) {
+			if ($lastSaldoAnterior > 0) {
+				if (!$nuevoSaldo) {
+					$nuevoSaldo = 1;
+				}
 				$nuevoCostoPromedio = $nuevoCostoTotal / $nuevoSaldo;
+				//$contents .=  "<br>".$movilin->getComprob()."-".$movilin->getNumero().">$nuevoCostoPromedio = $nuevoCostoTotal / $nuevoSaldo<br>";
+			}
+
+			if (LocaleMath::round($nuevoSaldo, 2) <= 0) {
+				$nuevoCostoPromedio = $costo;
 			}
 
 			$contents.= '<tr>
@@ -225,7 +236,7 @@ class TaticoKardex extends UserComponent
 			}
 
 			$lastSaldoAnterior = 0;
-			$movilins = $Movilin->find(array("item='{$inve->getItem()}' AND fecha<='$proximoCierre'", "order" => "id,fecha ASC"));
+			$movilins = $Movilin->find(array("item='{$inve->getItem()}' AND fecha<='$proximoCierre'", "order" => "fecha,almacen,prioridad"));
 			foreach ($movilins as $movilin) {
 
 				$tipoComprob = substr($movilin->getComprob(), 0, 1);

@@ -655,7 +655,9 @@ class PdfReport extends ReportAdapter implements ReportInterface {
 	 * @return	boolean
 	 */
 	protected function _moveOutputTo($path){
+		set_time_limit(0);
 		error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+		
 		try {
 			require 'Library/Mpdf/mpdf.php';
 			$pdf = new mPDF();
@@ -672,7 +674,6 @@ class PdfReport extends ReportAdapter implements ReportInterface {
 		catch(mPDFException $e){
 			throw new ReportException($e->getMessage());
 		}
-
 	}
 
 	/**

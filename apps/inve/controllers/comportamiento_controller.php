@@ -50,7 +50,7 @@ class ComportamientoController extends ApplicationController {
 		}
 		$this->setParamToView('periodos', $periodos);
 
-		$this->setParamToView('message', 'Agregue referencias y haga en click en "Ver" para consultar sus comportamientos');
+		$this->setParamToView('message', 'Agregue referencias y haga en click en "Ver" para consultar sus comportamientos');z
 	}
 
 }

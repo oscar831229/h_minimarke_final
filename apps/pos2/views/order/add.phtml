@@ -14,7 +14,7 @@
  */
 
 $mode = CoreConfig::getAppSetting('mode');
-if ($mode == 'development') {
+if($mode=='development'){
 
 	Tag::stylesheetLink('pos2/numero');
 	Tag::stylesheetLink('pos2/order');
@@ -26,11 +26,11 @@ if ($mode == 'development') {
 	echo Tag::javascriptInclude('pos2/keyboard');
 
 } else {
-	Tag::stylesheetLink('pos2/production/order', false, 'v=' . ControllerBase::APP_VERSION);
-	echo Tag::javascriptInclude('pos2/production/order', true, 'v=' . ControllerBase::APP_VERSION);
+	Tag::stylesheetLink('pos2/production/order', false, 'v='.ControllerBase::APP_VERSION);
+	echo Tag::javascriptInclude('pos2/production/order', true, 'v='.ControllerBase::APP_VERSION);
 }
 
-if ($salon->venta_a == 'H') {
+if($salon->venta_a=='H'){
 	$text_venta = "Habitación";
 } else {
 	$text_venta = "Mesa";
@@ -40,8 +40,8 @@ if ($salon->venta_a == 'H') {
 
 <div id='messages'><?php
 
-if (Flash::hasMessages()) {
-	foreach (Flash::getMessages() as $message) {
+if(Flash::hasMessages()){
+	foreach(Flash::getMessages() as $message){
 		Flash::show($message);
 	}
 }
@@ -55,16 +55,16 @@ View::getContent()
 <?php
 
 $salonNombre = $salon->nombre;
-if ($salon->venta_a != 'A') {
+if($salon->venta_a!='A'){
 	echo "Tomar Pedido - $text_venta #$numero_mesa en $salonNombre";
-	if ($salon->venta_a == 'H') {
-		echo "<span id='who_user'>Está haciendo este pedido: " . Session::get("usuarios_nombre")."</span>";
+	if($salon->venta_a=='H'){
+		echo "<span id='who_user'>Está haciendo este pedido: ".Session::get("usuarios_nombre")."</span>";
 	} else {
-		echo "<span id='who_user'>Está atendiendo esta mesa: " . Session::get("usuarios_nombre")."</span>";
+		echo "<span id='who_user'>Está atendiendo esta mesa: ".Session::get("usuarios_nombre")."</span>";
 	}
 } else {
 	echo "Tomar Pedido - $salonNombre";
-	echo "<span id='who_user'>Está haciendo el pedido: " . Session::get("usuarios_nombre")."</span>";
+	echo "<span id='who_user'>Está haciendo el pedido: ".Session::get("usuarios_nombre")."</span>";
 }
 
 ?>
@@ -75,7 +75,6 @@ if ($salon->venta_a != 'A') {
  <table cellspacing='0'>
  <tr>
  <?php
-
  	$hotkeys = array();
  	$menu_hotkeys = array();
  	$query = new ActiveRecordJoin(array(
@@ -83,25 +82,21 @@ if ($salon->venta_a != 'A') {
  		'entities' => array('Menus', 'MenusItems', 'SalonMenusItems'),
  		'conditions' => "{#SalonMenusItems}.salon_id='{$salon->id}' AND {#Menus}.estado='A' AND {#SalonMenusItems}.estado='A' AND {#MenusItems}.estado='A'",
  	));
-
- 	$number = 2;
- 	$menus = $query->getResultSet();
-
- 	foreach ($menus as $menu) {
+ 	foreach($query->getResultSet() as $menu){
  		$m = i18n::strtolower($menu->nombre_pedido);
  		$length = i18n::strlen($m);
- 		for ($i = 0; $i < $length; $i++){
+ 		for($i=0;$i<$length;$i++){
  			$ch = i18n::substr($m, $i, 1);
- 			if (!in_array($ch, $hotkeys)) {
+ 			if(!in_array($ch, $hotkeys)){
  				$menu->nombre = i18n::substr($menu->nombre_pedido, 0, $i).
  				'<u>'.i18n::substr($menu->nombre_pedido, $i, 1).'</u>'.
- 				i18n::substr($menu->nombre_pedido, $i + 1);
+ 				i18n::substr($menu->nombre_pedido, $i+1);
  				$hotkeys[] = $ch;
  				break;
  			}
  		}
  		echo "<td><button class='menuButton' lang='{$menu->id}'>", $menu->nombre_pedido, "</button></td>";
- 		Tag::trBreak($number);
+ 		Tag::trBreak(2);
  		$menu_hotkeys[] = $menu->id;
  	}
  ?>
@@ -124,25 +119,25 @@ if ($salon->venta_a != 'A') {
 			 	 	<tr>
 			 	 		<td>
 							<button class='commandButton' id="showInvoice">
-								<i class="fa fa-print"></i><br>
+								<?php echo Tag::image("pos2/print-p.png", "width: 23") ?><br>
 					 			<b><span id="gendoc">Imprimir<br>Orden</span></b><br>
 					 		</button>
 			 	 		</td>
 					 	<td>
 					 		<button class='commandButton' id="goToNotes">
-					 			<i class="fa fa-pencil"></i><br>
+					 			<?php echo Tag::image("pos2/p-notes.png", "width: 23") ?><br>
 					 			<b>Agregar<br/><span class="itemsButton">Notas</span></b><br>
 					 		</button>
 					 	</td>
 					 	<td>
 					 		<button class='commandButton' id="customerName">
-					 			<i class="fa fa-user"></i><br>
+					 			<?php echo Tag::image("pos2/user-p.png", "width: 23") ?><br>
 					 			<b>Nombre<br>Cliente</b><br>
 					 		</button>
 					 	</td>
 					 	<td>
 					 		<button class='commandButton' id="payAccount">
-					 			<span class="fa fa-usd fa-4"></span><br>
+					 			<?php echo Tag::image("pos2/dollar-p.png", "width: 23") ?><br>
 					 			<b>Liquidar<br>Cuenta</b><br>
 					 		</button>
 					 	</td>
@@ -184,7 +179,7 @@ if ($salon->venta_a != 'A') {
 						</td>
 						<td align="center">
 							<button class='commandButton' id="backToTables">
-								<i class="fa fa-reply"></i><br>
+								<?php echo Tag::image("pos2/arrow_left-p.png", "width: 23") ?><br>
 								<b>Volver a Mesas</b>
 							</button>
 						</td>
@@ -198,13 +193,13 @@ if ($salon->venta_a != 'A') {
 				 		</td>
 				 		<td align="center">
 				 			<button class='commandButton' id="changeTable">
-				 				<i class="fa fa-undo"></i><br>
+				 				<?php echo Tag::image("pos2/repeat-p.png", "width: 23") ?><br>
 				 				<b>Cambiar de Mesa</b>
 				 			</button>
 				 		</td>
 				 		<td align="center">
 				 			<button class='commandButton' id="showStatement">
-				 				<i class="fa fa-file-text"></i><br>
+				 				<?php echo Tag::image("pos2/page-p.png", "width: 23") ?><br>
 								<b>Estado Cuenta</b>
 							</button>
 				 		</td>
@@ -212,21 +207,6 @@ if ($salon->venta_a != 'A') {
 				 			<button class='commandButton' id="joinOrders">
 				 				<?php echo Tag::image("pos2/wired.png", "width: 23") ?><br>
 				 				<b>Unir Pedido</b>
-				 			</button>
-				 		</td>
-				 	</tr>
-				 	<tr>
-				 		<td></td>
-				 		<td align="center">
-				 			<button class='commandButton' xid="deleteItems" onclick="window.open('/hotel5/index.php?action=regfac&option=5')">
-				 				<i class="fa fa-file"></i><br>
-				 				<b>Crear F. Directa</b>
-				 			</button>
-				 		</td>
-						<td align="center">
-				 			<button class='commandButton' xid="deleteItems" onclick="window.open('/hotel5/index.php?action=cargohab&option=5')">
-				 				<i class="fa fa-credit-card"></i><br>
-				 				<b>Facturar Front</b>
 				 			</button>
 				 		</td>
 				 	</tr>
@@ -243,8 +223,7 @@ if ($salon->venta_a != 'A') {
  </td>
 
  <!--<div id="virtualkb-button" onclick="new VirtualKeyBoard(this); return false">
- 	<?php //echo Tag::image('pos2/keyboard.png')
- 	?>
+ 	<?php echo Tag::image('pos2/keyboard.png') ?>
  </div>-->
 
 <?php
@@ -253,17 +232,17 @@ echo '
 <script type="text/javascript">
 // <![CDATA[
 new Event.observe(document, "dom:loaded", function(){
-	var HotKeys = [' . join(", ", array_map(array("Helpers", "comillas"), $hotkeys)) . '];
-	var MenuHotKeys = [' . join(", ", $menu_hotkeys) . '];
+	var HotKeys = ['.join(", ", array_map(array("Helpers", "comillas"), $hotkeys)).'];
+	var MenuHotKeys = ['.join(", ", $menu_hotkeys).'];
 	var iHotKeys = [];
 	var MenuItemsHotKeys = [];
 	window.pedido = new Pedido({
 		"title": "'.$text_venta.' #'.$numero_mesa.' en '.$salonNombre.'",
 		"tipoComanda": "'.$salon->tipo_comanda.'",
-		"ventaA": "'.$salon->venta_a . '",
-		"pedirPersonas": "' . $salon->pide_personas . '",
-		"pedirAsientos": "' . $salon->pide_asientos . '",
-		"numeroAsientos": "' . $numero_asientos . '",
+		"ventaA": "'.$salon->venta_a.'",
+		"pedirPersonas": "'.$salon->pide_personas.'",
+		"pedirAsientos": "'.$salon->pide_asientos.'",
+		"numeroAsientos": "'.$numero_asientos.'",
 		"id": "'.$id.'",
 		"salonId": "'.$salon_id.'",
 		"accountMasterId": "'.$current_master.'",

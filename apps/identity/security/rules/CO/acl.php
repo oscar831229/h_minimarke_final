@@ -19,6 +19,7 @@ $menuDisposition = array(
 		'description' => 'Opciones para mantener movimiento contable',
 		'options' => array(
 			'movimiento',
+			'movimiento_niif',
 			'consultas',
 			'cambio_nit',
 			'incluir',
@@ -31,6 +32,7 @@ $menuDisposition = array(
 		'description' => 'Informes de comprobación y balances',
 		'options' => array(
 			'balance',
+			'informe_balance_consolidado',
 			'libro_auxiliar',
 			'consecutivos',
 			'movimiento_terceros',
@@ -75,7 +77,8 @@ $menuDisposition = array(
 		'description' => 'Informes de cuentas por pagar y cobrar',
 		'options' => array(
 			'movimiento_documentos',
-			'cartera_edades'
+			'cartera_edades',
+			'corregir_cartera'
 		)
 	),
 	array(
@@ -166,8 +169,8 @@ $menuDisposition = array(
 		'title' => 'Básicas',
 		'description' => 'Administrar parametrización de la aplicación',
 		'options' => array(
-            'niif',
-            'nic',
+			'niif',
+			'nic',
 			'cuentas',
 			'terceros',
 			'tipodoc',
@@ -265,6 +268,50 @@ $accessList = array(
 			)
 		)
 	),
+
+	'movimiento_niif' => array(
+		'elevation' => true,
+		'description' => 'Movimiento Niif',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingresar a'
+			),
+			'buscar' => array(
+				'description' => 'Buscar en'
+			),
+			'guardar' => array(
+				'description' => 'Crear ó Actualizar en'
+			),
+			'eliminar' => array(
+				'description' => 'Eliminar en'
+			),
+			'cambiarFecha' => array(
+				'description' => 'Cambiar Fecha de'
+			),
+			'copiar' => array(
+				'description' => 'Copiar en'
+			),
+			'nuevo' => array(
+				'sameAs' => 'guardar'
+			),
+			'editar' => array(
+				'sameAs' => 'guardar'
+			),
+			'guardarLinea' => array(
+				'sameAs' => 'guardar'
+			),
+			'validarFecha' => array(
+				'sameAs' => 'guardar'
+			),
+			'borrarLineas' => array(
+				'sameAs' => 'guardar'
+			),
+			'getDetalles' => array(
+				'sameAs' => 'buscar'
+			)
+		)
+	),
+
 	'consultas' => array(
 		'elevation' => true,
 		'description' => 'Consultas de Movimiento Contable',
@@ -314,6 +361,17 @@ $accessList = array(
 			)
 		)
 	),
+
+	'informe_balance_consolidado' => array(
+		'elevation' => true,
+		'description' => 'Balance Consolidado Anual',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a'
+			)
+		)
+	),
+
 	'libro_auxiliar' => array(
 		'elevation' => true,
 		'description' => 'Libro Auxiliar',
@@ -762,6 +820,16 @@ $accessList = array(
 		)
 	),
 
+	'corregir_cartera' => array(
+		'elevation' => true,
+		'description' => 'Corregir Cartera',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a'
+			)
+		)
+	),
+
 	//Tesoreria
 	'cheque' => array(
 		'elevation' => true,
@@ -1120,66 +1188,66 @@ $accessList = array(
 	),
 
 	//Básicas
-    'niif' => array(
-        'elevation' => true,
-        'description' => 'Cuentas NIIF',
-        'actions' => array(
-            'index' => array(
-                'description' => 'Ingreso a',
-            ),
-            'new' => array(
-                'sameAs' => 'save'
-            ),
-            'edit' => array(
-                'sameAs' => 'save'
-            ),
-            'save' => array(
-                'description' => 'Adicionar ó Modificar en'
-            ),
-            'delete' => array(
-                'description' => 'Eliminar en'
-            ),
-            'search' => array(
-                'description' => 'Consultar ó Reporte en',
-            ),
-            'queryByNit' => array(
-                'sameAs' => 'search'
-            ),
-            'rcs' => array(
-                'description' => 'Consultar revisiones en'
-            )
-        )
-    ),
-    'nic' => array(
-        'elevation' => true,
-        'description' => 'NIC',
-        'actions' => array(
-            'index' => array(
-                'description' => 'Ingreso a',
-            ),
-            'new' => array(
-                'sameAs' => 'save'
-            ),
-            'edit' => array(
-                'sameAs' => 'save'
-            ),
-            'save' => array(
-                'description' => 'Adicionar ó Modificar en'
-            ),
-            'delete' => array(
-                'description' => 'Eliminar en'
-            ),
-            'search' => array(
-                'description' => 'Consultar ó Reporte en',
-            ),
-            'queryByNit' => array(
-                'sameAs' => 'search'
-            ),
-            'rcs' => array(
-                'description' => 'Consultar revisiones en'
-            )
-        )
-    ),
+	'niif' => array(
+		'elevation' => true,
+		'description' => 'Cuentas NIIF',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+			'new' => array(
+				'sameAs' => 'save'
+			),
+			'edit' => array(
+				'sameAs' => 'save'
+			),
+			'save' => array(
+				'description' => 'Adicionar ó Modificar en'
+			),
+			'delete' => array(
+				'description' => 'Eliminar en'
+			),
+			'search' => array(
+				'description' => 'Consultar ó Reporte en',
+			),
+			'queryByNit' => array(
+				'sameAs' => 'search'
+			),
+			'rcs' => array(
+				'description' => 'Consultar revisiones en'
+			)
+		)
+	),
+	'nic' => array(
+		'elevation' => true,
+		'description' => 'NIC',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+			'new' => array(
+				'sameAs' => 'save'
+			),
+			'edit' => array(
+				'sameAs' => 'save'
+			),
+			'save' => array(
+				'description' => 'Adicionar ó Modificar en'
+			),
+			'delete' => array(
+				'description' => 'Eliminar en'
+			),
+			'search' => array(
+				'description' => 'Consultar ó Reporte en',
+			),
+			'queryByNit' => array(
+				'sameAs' => 'search'
+			),
+			'rcs' => array(
+				'description' => 'Consultar revisiones en'
+			)
+		)
+	),
 	'cuentas' => array(
 		'elevation' => true,
 		'description' => 'Plan de Cuentas',

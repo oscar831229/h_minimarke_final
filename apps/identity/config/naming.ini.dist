@@ -1,0 +1,24 @@
+[contab.session]
+host = 127.0.0.1
+uri = contab/session
+protocol = Flux
+
+[contab.aura]
+host = 127.0.0.1
+uri = contab/aura
+protocol = Flux
+
+[identity.auth]
+host = 127.0.0.1
+uri = identity/auth
+protocol = Flux
+
+[inve.session]
+host = 127.0.0.1
+uri = inve/session
+protocol = Flux
+
+[inve.tatico]
+host = 127.0.0.1
+uri = inve/tatico
+protocol = Flux

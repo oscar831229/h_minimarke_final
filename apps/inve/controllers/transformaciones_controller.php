@@ -14,71 +14,66 @@
  */
 
 /**
- * Class TransformacionesController
+ * TransformacionesController
  *
  * Controlador de las ajustes al almacén
+ *
  */
-class TransformacionesController extends HyperFormController
-{
+class TransformacionesController extends HyperFormController {
 
-	/**
-	 * Estrcutura de formulario
-	 *
-	 * @var array
-	 */
 	static protected $_config = array(
-		'model' 		=> 'Movihead',
-		'plural' 		=> 'transformaciones',
-		'single' 		=> 'transformación',
-		'genre' 		=> 'F',
-		'tabName' 		=> 'Transformación',
+		'model' => 'Movihead',
+		'plural' => 'transformaciones',
+		'single' => 'transformación',
+		'genre' => 'F',
+		'tabName' => 'Transformación',
 		'preferedOrder' => 'numero DESC',
-		'icon' 			=> 'sitemap.png',
+		'icon' => 'sitemap.png',
 		'ignoreButtons' => array(
 			'import'
 		),
 		'fields' => array(
 			'almacen' => array(
-				'primary' 		=> true,
-				'single' 		=> 'Almacén',
-				'type' 			=> 'relation',
-				'relation' 		=> 'Almacenes',
+				'primary' => true,
+				'single' => 'Almacén',
+				'type' => 'relation',
+				'relation' => 'Almacenes',
 				'fieldRelation' => 'codigo',
-				'detail' 		=> 'nom_almacen',
-				'filters' 		=> array('int')
+				'detail' => 'nom_almacen',
+				'filters' => array('int')
 			),
 			'numero' => array(
-				'single' 	=> 'Número',
-				'type' 		=> 'text',
-				'size' 		=> 10,
+				'single' => 'Número',
+				'type' => 'text',
+				'size' => 10,
 				'maxlength' => 10,
-				'primary' 	=> true,
-				'readOnly' 	=> true,
-				'filters' 	=> array('int')
+				'primary' => true,
+				'readOnly' => true,
+				'filters' => array('int')
 			),
 			'fecha' => array(
-				'single' 	=> 'Fecha',
-				'type' 		=> 'date',
-				'default' 	=> '',
-				'filters' 	=> array('date')
+				'single' => 'Fecha',
+				'type' => 'date',
+				'default' => '',
+				'filters' => array('date')
 			),
 			'nota' => array(
-				'single' 	=> 'Tipo de Trasformación',
-				'type' 		=> 'closed-domain',
-				'values' 	=> array(
+				'single' => 'Tipo de Trasformación',
+				'type' => 'closed-domain',
+				'values' => array(
 					'1N' => 'UNO A MUCHOS',
 					'N1' => 'MUCHOS A UNO'
 				),
-				'filters' 	=> array('alpha')
+				'filters' => array('alpha')
 			),
 			'item_objetivo' => array(
-				'single' 	 => 'Referencia Base/Destino',
-				'type' 		 => 'item',
-				'notNull' 	 => true,
+				'single' => 'Referencia Base/Destino',
+				'type' => 'item',
+				'notNull' => true,
 				'extraField' => true,
-				'size' 		 => 7,
-				'maxlength'  => 15,
-				'filters' 	 => array('item')
+				'size' => 7,
+				'maxlength' => 15,
+				'filters' => array('item')
 			),
 			'unidad_objetivo' => array(
 				'single' 		=> 'Unidad',
@@ -93,64 +88,64 @@ class TransformacionesController extends HyperFormController
 				'filters' 		=> array('alpha')
 			),
 			'cantidad_objetivo' => array(
-				'single' 	 => 'Cantidad',
-				'notNull' 	 => true,
-				'type' 		 => 'decimal',
-				'size' 		 => 10,
-				'maxlength'  => 15,
-				'notSearch'  => true,
+				'single' => 'Cantidad',
+				'notNull' => true,
+				'type' => 'decimal',
+				'size' => 10,
+				'maxlength' => 15,
+				'notSearch' => true,
 				'extraField' => true,
-				'filters' 	 => array('float')
+				'filters' => array('float')
 			),
 			'v_total' => array(
-				'single' 	 => 'Valor Total',
-				'type' 	 	 => 'decimal',
-				'size' 		 => 10,
-				'maxlength'  => 10,
-				'notSearch'  => true,
-				'showOnly'   => true,
-				'filters' 	 => array('float')
+				'single' => 'Valor Total',
+				'type' => 'decimal',
+				'size' => 10,
+				'maxlength' => 10,
+				'notSearch' => true,
+				'showOnly' => true,
+				'filters' => array('float')
 			),
 		),
 		'detail' => array(
-			'relation' 	=> array('comprob', 'numero'),
-			'model' 	=> 'Movilin',
-			'tabName' 	=> 'Detalle',
-			'fields' 	=> array(
+			'relation' => array('comprob', 'numero'),
+			'model' => 'Movilin',
+			'tabName' => 'Detalle',
+			'fields' => array(
 				'item' => array(
-					'single'	=> 'Referencia',
-					'type' 		=> 'item',
-					'notNull' 	=> true,
-					'size' 		=> 8,
+					'single' => 'Referencia',
+					'type' => 'item',
+					'notNull' => true,
+					'size' => 8,
 					'maxlength' => 15,
-					'filters' 	=> array('item')
+					'filters' => array('item')
 				),
 				'unidad' => array(
-					'single' 		=> 'Unidad',
-					'type' 			=> 'relation',
-					'relation' 		=> 'Unidad',
+					'single' => 'Unidad',
+					'type' => 'relation',
+					'relation' => 'Unidad',
 					'fieldRelation' => 'codigo',
-					'detail' 		=> 'nom_unidad',
-					'size' 			=> 8,
-					'maxlength' 	=> 15,
-					'filters' 		=> array('alpha')
+					'detail' => 'nom_unidad',
+					'size' => 8,
+					'maxlength' => 15,
+					'filters' => array('alpha')
 				),
 				'cantidad' => array(
-					'single' 	=> 'Cantidad',
-					'notNull' 	=> true,
-					'type' 		=> 'decimal',
-					'size' 		=> 10,
+					'single' => 'Cantidad',
+					'notNull' => true,
+					'type' => 'decimal',
+					'size' => 10,
 					'maxlength' => 15,
-					'filters' 	=> array('float')
+					'filters' => array('float')
 				),
 				'valor' => array(
-					'single' 	=> 'Valor',
-					'notNull' 	=> true,
-					'type' 		=> 'decimal',
-					'size' 		=> 12,
+					'single' => 'Valor',
+					'notNull' => true,
+					'type' => 'decimal',
+					'size' => 12,
 					'maxlength' => 15,
-					//'readonly' 	=> true,
-					'filters' 	=> array('float')
+					'readonly' => true,
+					'filters' => array('float')
 				)
 			),
 			'keys' => array(
@@ -161,19 +156,16 @@ class TransformacionesController extends HyperFormController
 		)
 	);
 
-	public function initialize()
-	{
+	public function initialize(){
 		parent::setConfig(self::$_config);
 		parent::initialize();
 	}
 
-	protected function beforeIndex()
-	{
+	protected function beforeIndex(){
 		Tag::displayTo('almacen', '1');
 	}
 
-	protected function beforeNew()
-	{
+	protected function beforeNew(){
 		Tag::displayTo('almacen', '1');
 
 		//Fecha por defecto ultimo día hábil del periodo activo
@@ -192,33 +184,29 @@ class TransformacionesController extends HyperFormController
 	 * Metodo que guarda una trasformación
 	 *
 	 * @see HyperFormController::saveAction()
-	 * @return array
-	 * @throws ControllerException
 	 */
-	public function saveAction()
-	{
+	public function saveAction(){
+		//sprint_r($_REQUEST);
 		$this->setResponse('json');
-
 		$request = $this->getRequestInstance();
 		$almacen = $request->getParamPost('almacen');
-		$numero  = $request->getParamPost('numero','int');
-		$fecha   = $request->getParamPost('fecha','date');
-		$nota    = $request->getParamPost('nota');
-
+		$numero = $request->getParamPost('numero','int');
+		$fecha = $request->getParamPost('fecha','date');
+		$nota = $request->getParamPost('nota');
 		try {
 
-			$comprob  = sprintf('R%02s',$almacen);
-			$tatico   = new Tatico($comprob, $numero, $fecha);
+			$comprob = sprintf('R%02s',$almacen);
+			$tatico = new Tatico($comprob, $numero, $fecha);
 
 			$movement = array(
-				'Comprobante' 	 => $comprob,
-				'Fecha' 		 => $fecha,
-				'Almacen' 		 => $almacen,
-				'Tipo' 			 => $request->getParamPost('nota', 'alpha'),
-				'ItemTarget' 	 => $request->getParamPost('item_objetivo'),
+				'Comprobante' => $comprob,
+				'Fecha' => $fecha,
+				'Almacen' => $almacen,
+				'Tipo' => $request->getParamPost('nota', 'alpha'),
+				'ItemTarget' => $request->getParamPost('item_objetivo'),
 				'CantidadTarget' => $request->getParamPost('cantidad_objetivo'),
-				'VTotal' 		 => $request->getParamPost('v_total','float'),
-				'Estado' 		 => 'C'
+				'VTotal' => $request->getParamPost('v_total','float'),
+				'Estado' => 'C'
 			);
 			//print_r($movement);
 			if($request->isSetRequestParam('item')){
@@ -247,37 +235,37 @@ class TransformacionesController extends HyperFormController
 				$action = array();
 			}
 
-			$valorBase 		  = $request->getParamPost('v_total', 'double');
-			$itemObjetivo 	  = $request->getParamPost('item_objetivo');
+			$valorBase = $request->getParamPost('v_total', 'double');
+			$itemObjetivo = $request->getParamPost('item_objetivo');
 			$cantidadObjetivo = $request->getParamPost('cantidad_objetivo');
 
 			//calculamos los valores de transformaciones
 			$calculos = Tatico::getCalcularTransformacion(array(
-				'itemBase' 			=> $itemObjetivo,
+				'itemBase' => $itemObjetivo,
 				'cantidad_objetivo' => $cantidadObjetivo,
-				'items' 			=> $item,
-				'cantidades' 		=> $cantidad,
-				'valorTotal' 		=> $valorBase,
-				'nota' 				=> $nota,
-				'debug' 			=> false
+				'items' => $item,
+				'cantidades' => $cantidad,
+				'valorTotal' => $valorBase,
+				'nota' => $nota,
+				'debug' => false
 			));
 
-			$addDetail 	  = array();
+			$addDetail = array();
 			$removeDetail = array();
-			for ($i = 0;$i < count($item);$i++) {
+			for($i=0;$i<count($item);$i++){
 
-				if (!isset($action[$i])) {
+				if(!isset($action[$i])){
 					continue;
 				}
 
-				if (isset($calculos[$item[$i]]) && isset($calculos[$item[$i]]['valorUnitario'])) {
+				if(isset($calculos[$item[$i]]) && isset($calculos[$item[$i]]['valorUnitario'])){
 					//Si solo hay una referencia se deja el valor base
-					if (count($item) > 1) {
-					  if (isset($calculos[$item[$i]]['valorTotalPeso'])) {
+					if(count($item) > 1){
+					  if(isset($calculos[$item[$i]]['valorTotalPeso'])){
 					    $valorTotal = $calculos[$item[$i]]['valorTotalPeso'];
 					  } else {
 					      return array(
-			                'status'  => 'FAILED',
+			                'status' => 'FAILED',
 			                'message' => "Al parecer sucedio algo con el calculo de la transformación >".print_r($calculos,1)
 			              );
 					  }
@@ -288,25 +276,25 @@ class TransformacionesController extends HyperFormController
 					$valorTotal = $valor[$i];
 				}
 
-				if ($action[$i] == 'add') {
+				if($action[$i]=='add'){
 					$addDetail[] = array(
-						'Item' 		=> $item[$i],
-						'Cantidad' 	=> $cantidad[$i],
-						'Unidad' 	=> $unidad[$i],
-						'Valor' 	=> $valorTotal
+						'Item' => $item[$i],
+						'Cantidad' => $cantidad[$i],
+						'Unidad' => $unidad[$i],
+						'Valor' => $valorTotal
 					);
 				} else {
-					if ($action[$i] == 'del') {
+					if($action[$i]=='del'){
 						$removeDetail[] = array(
-							'Item' 		=> $item[$i],
-							'Cantidad' 	=> $cantidad[$i],
-							'Unidad' 	=> $unidad[$i],
-							'Valor' 	=> $valor[$i],
+							'Item' => $item[$i],
+							'Cantidad' => $cantidad[$i],
+							'Unidad' => $unidad[$i],
+							'Valor' => $valor[$i],
 						);
 					}
 				}
 			}
-			$movement['Detail'] 	  = $addDetail;
+			$movement['Detail'] = $addDetail;
 			$movement['removeDetail'] = $removeDetail;
 
 		      //print_r($calculos);
@@ -336,24 +324,19 @@ class TransformacionesController extends HyperFormController
 	}
 
 	/**
-	 * Metodo que borra una transformación
-	 *
-	 * @return array
-	 * @throws ControllerException
-	 */
-	public function deleteAction()
-	{
+	* Metodo que borra una transformación
+	*/
+	public function deleteAction(){
 		$this->setResponse('json');
-
 		$movement = array();
 		$request = ControllerRequest::getInstance();
-		if ($request->isSetQueryParam('almacen')) {
+		if($request->isSetQueryParam('almacen')){
 			$movement['Almacen'] = $request->getParamQuery('almacen', 'alpha');
 		} else {
 			$movement['Almacen'] = 1;
 		}
 		$movement['Comprobante'] = sprintf("R%02s", $movement['Almacen']);
-		if ($request->isSetQueryParam('numero')) {
+		if($request->isSetQueryParam('numero')){
 			$movement['Numero'] = $request->getParamQuery('numero', 'int');
 		} else {
 			$movement['Numero'] = 0;
@@ -361,29 +344,26 @@ class TransformacionesController extends HyperFormController
 		try {
 			$tatico = new Tatico($movement['Comprobante'], $movement['Numero']);
 			$tatico->delMovement($movement);
-		} catch(TaticoException $te) {
+		}
+		catch(TaticoException $te){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => $te->getMessage()
 			);
 		}
 		return array(
-			'status'  => 'OK',
+			'status' => 'OK',
 			'message' => 'La trasformación fue eliminada correctamente'
 		);
 	}
 
 	/**
 	 * Metodo que se ejecuta antes de buscar registros pero agrega condiciones si hay previas
-	 *
-	 * @param array $conditions
-	 * @return array
 	 */
-	protected function beforeSearch($conditions=array())
-	{
+	protected function beforeSearch($conditions=array()){
 		$request = ControllerRequest::getInstance();
 		$almacen = $request->getParamRequest('almacen', 'int');
-		if (count($conditions)>0) {
+		if(count($conditions)>0){
 			$conditions[]= "comprob = 'R".sprintf('%02s',$almacen)."'";
 		}
 		$conditions[]= "comprob like 'R%'";
@@ -397,82 +377,62 @@ class TransformacionesController extends HyperFormController
 	 * @param	string $detail
 	 * @return	array
 	 */
-	public function describeDetail($detail)
-	{
+	public function describeDetail($detail){
 		$inve = BackCacher::getInve($detail->getItem());
-		if ($inve==false) {
+		if($inve==false){
 			$descripcion = '';
-			$unidad 	 = '';
+			$unidad = '';
 		} else {
 			$descripcion = $inve->getDescripcion();
-			$unidad 	 = $inve->getUnidad();
+			$unidad = $inve->getUnidad();
 		}
 		return array(
-			'id' 		=> $detail->getId(),
-			'item' 		=> $detail->getItem(),
-			'item_det' 	=> $descripcion,
-			'unidad' 	=> $unidad,
-			'cantidad' 	=> LocaleMath::round($detail->getCantidad(), 2),
-			'valor' 	=> LocaleMath::round($detail->getValor(), 2)
+			'id' => $detail->getId(),
+			'item' => $detail->getItem(),
+			'item_det' => $descripcion,
+			'unidad' => $unidad,
+			'cantidad' => LocaleMath::round($detail->getCantidad(), 2),
+			'valor' => LocaleMath::round($detail->getValor(), 2)
 		);
 	}
 
-	/**
-	 * Obtiene el un campo extra
-	 *
-	 * @param $field
-	 * @param $record
-	 * @return number|string
-	 */
-	public function getExtraField($field, $record)
-	{
+	public function getExtraField($field, $record){
 		$value = '';
 		$details = Tatico::getMovementDetail($record->getComprob(), $record->getAlmacen(), $record->getNumero());
-		foreach ($details as $detail) {
-			if ($detail->getNumLinea()==1) {
+		foreach($details as $detail){
+			if($detail->getNumLinea()==1){
 				break;
 			}
 		}
 		$inve = $this->Inve->findFirst("item='{$detail->getItem()}'");
-		switch ($field) {
-			case 'item_objetivo':
-				$value = $detail->getItem();
-				break;
-			case 'unidad_objetivo':
-				$value = $inve->getUnidad();
-				break;
-			case 'cantidad_objetivo':
-				$value = abs($detail->getCantidad());
-				break;
+		switch($field){
+			case 'item_objetivo': $value = $detail->getItem();break;
+			case 'unidad_objetivo': $value = $inve->getUnidad();break;
+			case 'cantidad_objetivo': $value = abs($detail->getCantidad());break;
 		}
 		return $value;
 	}
 
-	/**
-	 * Generar reporte
-	 *
-	 * @return array
-	 * @throws ControllerException
-	 */
-	public function doReportAction()
-	{
+	public function doReportAction(){
 		$this->setResponse('json');
 		try {
-			$reportType 		= $this->getPostParam('reportType', 'alpha');
-			$codigoComprobante 	= $this->getPostParam('codigoComprobante', 'comprob');
-			$codigoAlmacen 		= $this->getPostParam('codigoAlmacen', 'int');
-			$numero 			= $this->getPostParam('numero', 'int');
+			$reportType = $this->getPostParam('reportType', 'alpha');
+			$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
+			$codigoAlmacen = $this->getPostParam('codigoAlmacen', 'int');
+			$numero = $this->getPostParam('numero', 'int');
 
 			$fileUri = Tatico::getPrintUrl($reportType, $codigoComprobante, $codigoAlmacen, $numero);
 			return array(
 				'status' => 'OK',
-				'file' 	 => $fileUri
+				'file' => $fileUri
 			);
-		} catch(TaticoException $e) {
+		}
+		catch(TaticoException $e){
 			return array(
-				'status'  => 'FAILED',
+				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
 	}
+
 }

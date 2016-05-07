@@ -31,6 +31,19 @@ Hfos.getApplication().getMenu().setOptions([
 				}
 			},
 			{
+				'title': 'Movimiento Niif',
+				'icon': 'document-library.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-movimiento-niif',
+						icon: 'document-library.png',
+						title: "Movimiento Niif",
+						action: "movimiento_niif",
+						height: '570px'
+					});
+				}
+			},
+			{
 				'title': 'Consultas de Movimiento',
 				'icon': 'publish.png',
 				'click': function(){
@@ -120,6 +133,20 @@ Hfos.getApplication().getMenu().setOptions([
 								action: "balance",
 								width: '730px',
 								height: '470px'
+							});
+						}
+					},
+					{
+						'title': 'Balance Consolidado Anual',
+						'icon': 'issue.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-balance-consolidado',
+								icon: 'issue.png',
+								title: "Balance Consolidado Anual",
+								action: "informe_balance_consolidado",
+								width: '530px',
+								height: '270px'
 							});
 						}
 					},
@@ -440,7 +467,21 @@ Hfos.getApplication().getMenu().setOptions([
 								height: '400px'
 							});
 						}
-					}
+					},
+					{
+						'title': 'Corregir Cartera',
+						'icon': 'cartera.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-corregir-cartera',
+								icon: 'cartera.png',
+								title: "Corregir Cartera",
+								action: "corregir_cartera",
+								width: '750px',
+								height: '270px'
+							});
+						}
+					},
 				]
 			}
 		]
@@ -870,14 +911,28 @@ Hfos.getApplication().getMenu().setOptions([
 				'icon': 'limited-edition.png',
 				'options': [
 					{
-						'title': 'SIIGO',
+						'title': 'SIIGO Facturación',
 						'icon': 'limited-edition.png',
 						'click': function(){
 							Hfos.getApplication().run({
 								id: 'win-interface-siigo',
 								icon: 'limited-edition.png',
-								title: "Interface SIIGO",
+								title: "Interface SIIGO Facturación",
 								action: "interface_siigo",
+								width: '550px',
+								height: '300px'
+							});
+						},
+					},
+					{
+						'title': 'SIIGO Proveedores',
+						'icon': 'limited-edition.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-interface-siigo',
+								icon: 'limited-edition.png',
+								title: "Interface SIIGO Proveedores",
+								action: "interface_siigo_pro",
 								width: '550px',
 								height: '300px'
 							});
@@ -995,40 +1050,40 @@ Hfos.getApplication().getMenu().setOptions([
 		'title': 'Básicas',
 		'icon': 'wrench-screwdriver.png',
 		'options': [
-            {
-                'title': 'NIIF',
-                'icon': 'product.png',
-                'options': [
-                    {
-                        'title': 'Plan de Cuentas NIIF',
-                        'icon': 'product.png',
-                        'click': function(){
-                            Hfos.getApplication().run({
-                                id: 'win-cuentas-niif-contab',
-                                icon: 'product.png',
-                                title: "Plan de Cuentas NIIF",
-                                action: "niif",
-                                width: '800px',
-                                height: '520px'
-                            });
-                        }
-                    },
-                    {
-                        'title': 'NIC',
-                        'icon': 'box-label.png',
-                        'click': function(){
-                            Hfos.getApplication().run({
-                                id: 'win-nic-contab',
-                                icon: 'box-label.png',
-                                title: "NIC",
-                                action: "nic",
-                                width: '700px',
-                                height: '420px'
-                            });
-                        }
-                    }
-                ]
-            },
+			{
+				'title': 'NIIF',
+				'icon': 'product.png',
+				'options': [
+					{
+						'title': 'Plan de Cuentas NIIF',
+						'icon': 'product.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-cuentas-niif-contab',
+								icon: 'product.png',
+								title: "Plan de Cuentas NIIF",
+								action: "niif",
+								width: '800px',
+								height: '520px'
+							});
+						}
+					},
+					{
+						'title': 'NIC',
+						'icon': 'box-label.png',
+						'click': function(){
+							Hfos.getApplication().run({
+								id: 'win-nic-contab',
+								icon: 'box-label.png',
+								title: "NIC",
+								action: "nic",
+								width: '700px',
+								height: '420px'
+							});
+						}
+					}
+				]
+			},
 			{
 				'title': 'Cuentas Contables',
 				'icon': 'featured.png',
@@ -1216,7 +1271,7 @@ Hfos.getApplication().getMenu().setOptions([
 						icon: 'gear.png',
 						title: "Configuración",
 						width: '700px',
-						height: '350px',
+						height: '650px',
 						action: 'settings'
 					});
 				}

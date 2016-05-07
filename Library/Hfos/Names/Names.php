@@ -18,7 +18,8 @@
  * El objetivo es partir nombres a apellidos - nombres
  *
  */
-class Names extends UserComponent {
+class Names extends UserComponent
+{
 
 	private static $_allNames = array(
 		//A
@@ -752,18 +753,18 @@ class Names extends UserComponent {
 
 					unset($nombre[$i]);
 					$tNombre = array();
-					
+
 					$k = 0;
 					foreach ($nombre as $nom)
 					{
 						$tNombre[$k] = $nom;
 						++$k;
 					}
-					
+
 					unset($nombre);
 					$nombre = $tNombre;
 				}
-				
+
 			} else {
 				$i--;
 			}

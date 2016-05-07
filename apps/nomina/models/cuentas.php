@@ -120,26 +120,6 @@ class Cuentas extends ActiveRecord {
 	 */
 	protected $cuenta;
 
-	/**
-	 * Cuentas Niif
-	 * @var  string description
-	 */
-	private static $cuenta_niif;
-
-	/**
-	 * Devuelve el valor del campo cuenta
-	 * @return string
-	 */
-	public function getCuentaNiif(){
-		return $this->cuenta_niif;
-	}
-
-	/**
-	 *
-	 */
-	public function setCuentaNiif($cuentaNiif){
-		return $this->cuenta_niif = $cuentaNiif;
-	}
 
 	/**
 	 * Metodo para establecer el valor del campo tipo

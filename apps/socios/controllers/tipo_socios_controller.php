@@ -63,20 +63,6 @@ class Tipo_SociosController extends HyperFormController {
 				'maxlength' => 11,
 				'filters' => array('double')
 			),
-			'edad_ini' => array(
-				'single' => 'Edad en que inicia',
-				'type' => 'int',
-				'size' => 5,
-				'maxlength' => 2,
-				'filters' => array('int')
-			),
-			'edad_fin' => array(
-				'single' => 'Edad en que termina',
-				'type' => 'int',
-				'size' => 5,
-				'maxlength' => 2,
-				'filters' => array('int')
-			),
 			'estado' => array(
 				'single' => 'Estado',
 				'type' => 'closed-domain',

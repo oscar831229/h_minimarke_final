@@ -1,0 +1,5227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv='Content-type' content='text/html; charset=UTF-8' />
+		<meta http-equiv='Pragma' CONTENT='no-cache' />
+		<meta http-equiv='Cache-Control' CONTENT='no-cache' />
+		<title>Balance de Comprobación</title>
+		<style type='text/css'>
+			body, div, td, th { font-family: "Arial"; font-size: 12px; }
+			table { border-right: 1px solid #969696;border-top: 1px solid #969696;}
+			th, td { border-left: 1px solid #969696;border-bottom: 1px solid #969696;height:15px;}
+			body { margin: 0px; padding: 0px; }
+			.page { padding: 20px; max-width: 850px; height: 700px; border: 1px solid #fafafa; background: #ffffff; }
+			th { text-align:center;background-color:#eaeaea; }
+			.c0 { text-align:left;font-size:11px; }
+			.c1 { text-align:left;font-size:11px; }
+			.c2 { text-align:right;font-size:11px; }
+			.c3 { text-align:right;font-size:11px; }
+			.c4 { text-align:right;font-size:11px; }
+			.c5 { text-align:right;font-size:11px; }
+			.c6 { text-align:right;font-size:11px; }
+		</style>
+	</head>
+	<body>
+			<div style='font-size:9px;text-align:right'>1</div>
+			<div style='font-size:16px;font-weight:bold;text-align:center'>JOCKEY CLUB</div>
+			<div style='font-size:16px;font-weight:bold;text-align:center'>NIT No : 860.006.302</div>
+			<div style='font-size:16px;font-weight:bold;text-align:center'>BALANCE DE COMPROBACIÓN</div>
+			<div style='font-size:11px;font-weight:bold;text-align:center'>Desde: 2015-10-01 - 2015-10-01</div>
+	<p><table cellspacing='0' align='center'>
+			<thead><tr>
+				<th>CÓDIGO</th>
+				<th>DESCRIPCIÓN</th>
+				<th>SALDO ANTERIOR</th>
+				<th>DEBITOS</th>
+				<th>CRÉDITOS</th>
+				<th>NETO MES</th>
+				<th>NUEVO SALDO</th>
+			</tr></thead>
+			<tr>
+				<td class='c0'>1</td>
+				<td class='c1'>ACTIVO</td>
+				<td class='c2'>22.329.366.241,68</td>
+				<td class='c3'>23.748.127,17</td>
+				<td class='c4'>8.335.452,21</td>
+				<td class='c5'>15.412.674,96</td>
+				<td class='c6'>22.344.778.916,64</td>
+			</tr>
+			<tr>
+				<td class='c0'>11</td>
+				<td class='c1'>ACTIVO CORRIENTE</td>
+				<td class='c2'>445.572.572,01</td>
+				<td class='c3'>4.190.455,00</td>
+				<td class='c4'>1.915.238,00</td>
+				<td class='c5'>2.275.217,00</td>
+				<td class='c6'>447.847.789,01</td>
+			</tr>
+			<tr>
+				<td class='c0'>1105</td>
+				<td class='c1'>CAJA</td>
+				<td class='c2'>3.671.150,00</td>
+				<td class='c3'>2.075.403,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>2.075.403,00</td>
+				<td class='c6'>5.746.553,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>110505</td>
+				<td class='c1'>CAJA GENERAL</td>
+				<td class='c2'>1.071.150,00</td>
+				<td class='c3'>2.075.403,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>2.075.403,00</td>
+				<td class='c6'>3.146.553,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>110505001</td>
+				<td class='c1'>CAJA GENERAL</td>
+				<td class='c2'>1.071.150,00</td>
+				<td class='c3'>713.918,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>713.918,00</td>
+				<td class='c6'>1.785.068,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>110505003</td>
+				<td class='c1'>TARJETAS DE CREDITO</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>1.361.485,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>1.361.485,00</td>
+				<td class='c6'>1.361.485,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>110510</td>
+				<td class='c1'>CAJAS MENORES</td>
+				<td class='c2'>2.600.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.600.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>110510002</td>
+				<td class='c1'>CAJA MENOR ADMINISTRADORA</td>
+				<td class='c2'>2.500.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.500.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>110510003</td>
+				<td class='c1'>CAJA MENOR TESORERIA NORTE</td>
+				<td class='c2'>100.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>100.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1110</td>
+				<td class='c1'>BANCOS</td>
+				<td class='c2'>51.102.216,98</td>
+				<td class='c3'>16.632,00</td>
+				<td class='c4'>20.800,00</td>
+				<td class='c5'>-4.168,00</td>
+				<td class='c6'>51.098.048,98</td>
+			</tr>
+			<tr>
+				<td class='c0'>111005</td>
+				<td class='c1'>MONEDA NACIONAL</td>
+				<td class='c2'>51.102.216,98</td>
+				<td class='c3'>16.632,00</td>
+				<td class='c4'>20.800,00</td>
+				<td class='c5'>-4.168,00</td>
+				<td class='c6'>51.098.048,98</td>
+			</tr>
+			<tr>
+				<td class='c0'>111005001</td>
+				<td class='c1'>BANCO DE BOGOTA - PRINCIPAL</td>
+				<td class='c2'>4.629.561,15</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.629.561,15</td>
+			</tr>
+			<tr>
+				<td class='c0'>111005002</td>
+				<td class='c1'>DAVIVIENDA- BANCAFE - SUC. BOGOTA</td>
+				<td class='c2'>62,01</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>62,01</td>
+			</tr>
+			<tr>
+				<td class='c0'>111005003</td>
+				<td class='c1'>BANCO DE COLOMBIA</td>
+				<td class='c2'>9.992.418,51</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>9.992.418,51</td>
+			</tr>
+			<tr>
+				<td class='c0'>111005004</td>
+				<td class='c1'>BANCO DE OCCIDENTE</td>
+				<td class='c2'>13.083.970,03</td>
+				<td class='c3'>16.632,00</td>
+				<td class='c4'>20.800,00</td>
+				<td class='c5'>-4.168,00</td>
+				<td class='c6'>13.079.802,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>111005005</td>
+				<td class='c1'>DAVIVIENDA</td>
+				<td class='c2'>23.396.205,28</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>23.396.205,28</td>
+			</tr>
+			<tr>
+				<td class='c0'>1120</td>
+				<td class='c1'>CUENTAS DE AHORRO</td>
+				<td class='c2'>390.799.205,03</td>
+				<td class='c3'>2.098.420,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>203.982,00</td>
+				<td class='c6'>391.003.187,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>112005</td>
+				<td class='c1'>BANCOS</td>
+				<td class='c2'>294.193.302,69</td>
+				<td class='c3'>2.098.420,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>203.982,00</td>
+				<td class='c6'>294.397.284,69</td>
+			</tr>
+			<tr>
+				<td class='c0'>112005001</td>
+				<td class='c1'>BANCOLOMBIA</td>
+				<td class='c2'>183.301.753,15</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>183.301.753,15</td>
+			</tr>
+			<tr>
+				<td class='c0'>112005002</td>
+				<td class='c1'>BANCO DAVIVIENDA SUPERIOR</td>
+				<td class='c2'>265,03</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>265,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>112005003</td>
+				<td class='c1'>BCO OCCIDENTE AHRR 29380028-0</td>
+				<td class='c2'>6.001.575,51</td>
+				<td class='c3'>2.098.420,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>2.098.420,00</td>
+				<td class='c6'>8.099.995,51</td>
+			</tr>
+			<tr>
+				<td class='c0'>112005004</td>
+				<td class='c1'>BCO DAVIVIENDA CTA AHRR 007400421512</td>
+				<td class='c2'>104.889.709,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>-1.894.438,00</td>
+				<td class='c6'>102.995.271,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>112010</td>
+				<td class='c1'>CORPORACIONES DE AHORRO Y VIVIENDA</td>
+				<td class='c2'>96.605.902,34</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>96.605.902,34</td>
+			</tr>
+			<tr>
+				<td class='c0'>112010001</td>
+				<td class='c1'>COLPATRIA AHRR 0110553427-5</td>
+				<td class='c2'>96.605.902,34</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>96.605.902,34</td>
+			</tr>
+			<tr>
+				<td class='c0'>12</td>
+				<td class='c1'>INVERSIONES</td>
+				<td class='c2'>4.007.577,73</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.007.577,73</td>
+			</tr>
+			<tr>
+				<td class='c0'>1245</td>
+				<td class='c1'>DERECHOS FIDUCIARIOS</td>
+				<td class='c2'>4.007.577,73</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.007.577,73</td>
+			</tr>
+			<tr>
+				<td class='c0'>124505</td>
+				<td class='c1'>FIDEICOMISOS DE INVERSION MONEDA NACIONAL</td>
+				<td class='c2'>4.007.577,73</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.007.577,73</td>
+			</tr>
+			<tr>
+				<td class='c0'>124505001</td>
+				<td class='c1'>FIDEICOMISOS DE INVERSION MONEDA NACIONAL</td>
+				<td class='c2'>4.007.577,73</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.007.577,73</td>
+			</tr>
+			<tr>
+				<td class='c0'>13</td>
+				<td class='c1'>DEUDORES</td>
+				<td class='c2'>316.790.973,10</td>
+				<td class='c3'>4.134.052,00</td>
+				<td class='c4'>5.658.258,00</td>
+				<td class='c5'>-1.524.206,00</td>
+				<td class='c6'>315.266.767,10</td>
+			</tr>
+			<tr>
+				<td class='c0'>1325</td>
+				<td class='c1'>CUENTAS POR COBRAR A SOCIOS Y ACCIONISTAS</td>
+				<td class='c2'>365.646.163,03</td>
+				<td class='c3'>4.096.317,00</td>
+				<td class='c4'>5.658.258,00</td>
+				<td class='c5'>-1.561.941,00</td>
+				<td class='c6'>364.084.222,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505</td>
+				<td class='c1'>A SOCIOS</td>
+				<td class='c2'>365.646.163,03</td>
+				<td class='c3'>4.096.317,00</td>
+				<td class='c4'>5.658.258,00</td>
+				<td class='c5'>-1.561.941,00</td>
+				<td class='c6'>364.084.222,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505001</td>
+				<td class='c1'>CUOTAS DE SOSTENIMIENTO</td>
+				<td class='c2'>234.777.536,03</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>1.590.613,00</td>
+				<td class='c5'>-1.590.613,00</td>
+				<td class='c6'>233.186.923,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505002</td>
+				<td class='c1'>POR CONSUMO MINIMO</td>
+				<td class='c2'>28.273.084,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>455.319,00</td>
+				<td class='c5'>-455.319,00</td>
+				<td class='c6'>27.817.765,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505003</td>
+				<td class='c1'>POR CONSUMOS</td>
+				<td class='c2'>68.700.309,27</td>
+				<td class='c3'>1.573.800,00</td>
+				<td class='c4'>990.268,00</td>
+				<td class='c5'>583.532,00</td>
+				<td class='c6'>69.283.841,27</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505005</td>
+				<td class='c1'>CUENTAS X COBRAR INT. DE MORA</td>
+				<td class='c2'>27.238.413,73</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>29.541,00</td>
+				<td class='c5'>-29.541,00</td>
+				<td class='c6'>27.208.872,73</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505010</td>
+				<td class='c1'>CONTADOS</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>2.522.517,00</td>
+				<td class='c4'>2.522.517,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>0,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>132505011</td>
+				<td class='c1'>CUOTA REGALO DE NAVIDAD</td>
+				<td class='c2'>6.656.820,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>70.000,00</td>
+				<td class='c5'>-70.000,00</td>
+				<td class='c6'>6.586.820,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1330</td>
+				<td class='c1'>ANTICIPOS Y AVANCES</td>
+				<td class='c2'>33.300.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>33.300.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>133010</td>
+				<td class='c1'>A CONTRATISTAS</td>
+				<td class='c2'>33.100.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>33.100.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>133010001</td>
+				<td class='c1'>A CONTRATISTAS</td>
+				<td class='c2'>33.100.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>33.100.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>133095</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>200.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>200.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>133095001</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>200.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>200.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1335</td>
+				<td class='c1'>DEPOSITOS</td>
+				<td class='c2'>1.272.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.272.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>133525</td>
+				<td class='c1'>PARA JUICIOS EJECUTIVOS</td>
+				<td class='c2'>1.272.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.272.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>133525001</td>
+				<td class='c1'>PARA JUICIOS EJECUTIVOS</td>
+				<td class='c2'>1.272.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.272.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1355</td>
+				<td class='c1'>ANTIC IMPTOS Y CONTRIB.O SALDOS A FAVOR</td>
+				<td class='c2'>27.029.791,07</td>
+				<td class='c3'>16.935,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>16.935,00</td>
+				<td class='c6'>27.046.726,07</td>
+			</tr>
+			<tr>
+				<td class='c0'>135515</td>
+				<td class='c1'>RETENCION EN LA FUENTE</td>
+				<td class='c2'>114.613,87</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>114.613,87</td>
+			</tr>
+			<tr>
+				<td class='c0'>135515002</td>
+				<td class='c1'>INGRESOS FINANCIEROS</td>
+				<td class='c2'>114.613,87</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>114.613,87</td>
+			</tr>
+			<tr>
+				<td class='c0'>135517</td>
+				<td class='c1'>IMPUESTO A LA VENTAS RETENIDO</td>
+				<td class='c2'>756.659,46</td>
+				<td class='c3'>16.935,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>16.935,00</td>
+				<td class='c6'>773.594,46</td>
+			</tr>
+			<tr>
+				<td class='c0'>135517001</td>
+				<td class='c1'>IMPUESTO A LAS VENTAS RETENIDO</td>
+				<td class='c2'>756.659,46</td>
+				<td class='c3'>16.935,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>16.935,00</td>
+				<td class='c6'>773.594,46</td>
+			</tr>
+			<tr>
+				<td class='c0'>135518</td>
+				<td class='c1'>IMPUESTO DE INDUSTRIA Y CIO. RETENIDO</td>
+				<td class='c2'>24.517,74</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.517,74</td>
+			</tr>
+			<tr>
+				<td class='c0'>135518001</td>
+				<td class='c1'>IMPUESTO DE INDUSTRIA Y CIO. RETENIDO</td>
+				<td class='c2'>24.517,74</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.517,74</td>
+			</tr>
+			<tr>
+				<td class='c0'>135520</td>
+				<td class='c1'>SOBRANTES LIQ. PRIVADA IMPTOS.</td>
+				<td class='c2'>26.134.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>26.134.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>135520001</td>
+				<td class='c1'>SOBRANTES LIQ. PRIVADA IMPTOS.</td>
+				<td class='c2'>26.134.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>26.134.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1380</td>
+				<td class='c1'>DEUDORES VARIOS</td>
+				<td class='c2'>20.819.600,00</td>
+				<td class='c3'>20.800,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>20.800,00</td>
+				<td class='c6'>20.840.400,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>138095</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>20.819.600,00</td>
+				<td class='c3'>20.800,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>20.800,00</td>
+				<td class='c6'>20.840.400,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>138095001</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>20.423.807,00</td>
+				<td class='c3'>20.800,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>20.800,00</td>
+				<td class='c6'>20.444.607,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>138095002</td>
+				<td class='c1'>INCAPACIDADES EPS</td>
+				<td class='c2'>395.793,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>395.793,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1399</td>
+				<td class='c1'>PROVISIONES</td>
+				<td class='c2'>-131.276.581,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-131.276.581,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>139910</td>
+				<td class='c1'>CUENTAS COMERCIALES</td>
+				<td class='c2'>-131.276.581,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-131.276.581,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>139910001</td>
+				<td class='c1'>CUENTAS COMERCIALES</td>
+				<td class='c2'>-131.276.581,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-131.276.581,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>14</td>
+				<td class='c1'>INVENTARIOS</td>
+				<td class='c2'>51.426.416,84</td>
+				<td class='c3'>15.423.620,17</td>
+				<td class='c4'>761.956,21</td>
+				<td class='c5'>14.661.663,96</td>
+				<td class='c6'>66.088.080,80</td>
+			</tr>
+			<tr>
+				<td class='c0'>1405</td>
+				<td class='c1'>MATERIAS PRIMAS</td>
+				<td class='c2'>13.040.162,19</td>
+				<td class='c3'>12.532.714,47</td>
+				<td class='c4'>604.785,54</td>
+				<td class='c5'>11.927.928,93</td>
+				<td class='c6'>24.968.091,12</td>
+			</tr>
+			<tr>
+				<td class='c0'>140501</td>
+				<td class='c1'>COMESTIBLES</td>
+				<td class='c2'>13.040.162,19</td>
+				<td class='c3'>12.532.714,47</td>
+				<td class='c4'>604.785,54</td>
+				<td class='c5'>11.927.928,93</td>
+				<td class='c6'>24.968.091,12</td>
+			</tr>
+			<tr>
+				<td class='c0'>140501001</td>
+				<td class='c1'>COMESTIBLES</td>
+				<td class='c2'>13.040.162,19</td>
+				<td class='c3'>12.532.714,47</td>
+				<td class='c4'>604.785,54</td>
+				<td class='c5'>11.927.928,93</td>
+				<td class='c6'>24.968.091,12</td>
+			</tr>
+			<tr>
+				<td class='c0'>1435</td>
+				<td class='c1'>MERCANCIAS NO FABRICADAS POR LA EMPRESA</td>
+				<td class='c2'>38.386.254,65</td>
+				<td class='c3'>2.890.905,70</td>
+				<td class='c4'>157.170,67</td>
+				<td class='c5'>2.733.735,03</td>
+				<td class='c6'>41.119.989,68</td>
+			</tr>
+			<tr>
+				<td class='c0'>143505</td>
+				<td class='c1'>MERCANCIAS NACIONALES</td>
+				<td class='c2'>38.386.254,65</td>
+				<td class='c3'>2.890.905,70</td>
+				<td class='c4'>157.170,67</td>
+				<td class='c5'>2.733.735,03</td>
+				<td class='c6'>41.119.989,68</td>
+			</tr>
+			<tr>
+				<td class='c0'>143505001</td>
+				<td class='c1'>LICORES</td>
+				<td class='c2'>36.265.110,75</td>
+				<td class='c3'>1.787.200,00</td>
+				<td class='c4'>149.476,39</td>
+				<td class='c5'>1.637.723,61</td>
+				<td class='c6'>37.902.834,36</td>
+			</tr>
+			<tr>
+				<td class='c0'>143505002</td>
+				<td class='c1'>CIGARRILLOS</td>
+				<td class='c2'>136.444,92</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>7.694,28</td>
+				<td class='c5'>-7.694,28</td>
+				<td class='c6'>128.750,64</td>
+			</tr>
+			<tr>
+				<td class='c0'>143505003</td>
+				<td class='c1'>SUMINISTROS</td>
+				<td class='c2'>357.938,93</td>
+				<td class='c3'>94.470,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>94.470,00</td>
+				<td class='c6'>452.408,93</td>
+			</tr>
+			<tr>
+				<td class='c0'>143505004</td>
+				<td class='c1'>MEDICAMENTOS</td>
+				<td class='c2'>93.114,13</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>93.114,13</td>
+			</tr>
+			<tr>
+				<td class='c0'>143505005</td>
+				<td class='c1'>SUMINISTROS DE ASEO Y LIMPIEZA</td>
+				<td class='c2'>1.533.645,92</td>
+				<td class='c3'>1.009.235,70</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>1.009.235,70</td>
+				<td class='c6'>2.542.881,62</td>
+			</tr>
+			<tr>
+				<td class='c0'>15</td>
+				<td class='c1'>PROPIEDADES PLANTA Y EQUIPO</td>
+				<td class='c2'>2.123.388.403,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.123.388.403,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1504</td>
+				<td class='c1'>TERRENOS</td>
+				<td class='c2'>1.190.063.727,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.190.063.727,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>150405</td>
+				<td class='c1'>URBANOS</td>
+				<td class='c2'>1.190.063.727,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.190.063.727,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>150405001</td>
+				<td class='c1'>URBANOS</td>
+				<td class='c2'>1.190.063.727,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.190.063.727,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1516</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>1.437.693.189,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.437.693.189,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>151605</td>
+				<td class='c1'>EDIFICIOS</td>
+				<td class='c2'>1.226.981.504,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.226.981.504,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>151605001</td>
+				<td class='c1'>EDIFICIOS</td>
+				<td class='c2'>1.226.981.504,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.226.981.504,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>151699</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>210.711.685,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>210.711.685,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>151699001</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>210.711.685,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>210.711.685,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1520</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>204.238.749,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>204.238.749,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152005</td>
+				<td class='c1'>MAQUINARIA</td>
+				<td class='c2'>86.991.929,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>86.991.929,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152005001</td>
+				<td class='c1'>MAQUINARIA</td>
+				<td class='c2'>86.991.929,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>86.991.929,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152099</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>117.246.820,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>117.246.820,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152099001</td>
+				<td class='c1'>MAQUINARIA</td>
+				<td class='c2'>105.009.784,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>105.009.784,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152099002</td>
+				<td class='c1'>EQUIPO</td>
+				<td class='c2'>12.237.036,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>12.237.036,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1524</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>105.775.570,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>105.775.570,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152405</td>
+				<td class='c1'>MUEBLES Y ENSERES</td>
+				<td class='c2'>33.501.577,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>33.501.577,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152405001</td>
+				<td class='c1'>MUEBLES Y ENSERES</td>
+				<td class='c2'>33.501.577,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>33.501.577,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152410</td>
+				<td class='c1'>EQUIPOS</td>
+				<td class='c2'>24.830.134,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.830.134,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152410001</td>
+				<td class='c1'>EQUIPOS</td>
+				<td class='c2'>24.830.134,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.830.134,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152499</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>47.443.859,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>47.443.859,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152499001</td>
+				<td class='c1'>MUEBLES Y ENSERES</td>
+				<td class='c2'>37.802.580,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>37.802.580,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152499002</td>
+				<td class='c1'>EQUIPOS</td>
+				<td class='c2'>9.641.279,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>9.641.279,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1528</td>
+				<td class='c1'>EQUIPOS DE COMPUTACION Y COMUNICACIONES</td>
+				<td class='c2'>276.501.960,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>276.501.960,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152805</td>
+				<td class='c1'>EQUIPOS PROCESAMIENTO DE DATOS</td>
+				<td class='c2'>73.483.061,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>73.483.061,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152805001</td>
+				<td class='c1'>EQUIPOS PROCESAMIENTO DE DATOS</td>
+				<td class='c2'>73.483.061,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>73.483.061,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152810</td>
+				<td class='c1'>EQUIPOS DE TELECOMUNICACIONES</td>
+				<td class='c2'>69.595.468,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>69.595.468,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152810001</td>
+				<td class='c1'>EQUIPOS DE TELECOMUNICACIONES</td>
+				<td class='c2'>69.595.468,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>69.595.468,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152899</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>133.423.431,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>133.423.431,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152899001</td>
+				<td class='c1'>EQUIPO PROCESAMIENTO DE DATOS</td>
+				<td class='c2'>38.102.081,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>38.102.081,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>152899002</td>
+				<td class='c1'>EQUIPO DE TELECOMUNICACION</td>
+				<td class='c2'>95.321.350,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>95.321.350,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1532</td>
+				<td class='c1'>EQUIPO MEDICO - CIENTIFICO</td>
+				<td class='c2'>5.901.243,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>5.901.243,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153220</td>
+				<td class='c1'>INSTRUMENTAL</td>
+				<td class='c2'>1.556.989,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.556.989,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153220001</td>
+				<td class='c1'>INSTRUMENTAL</td>
+				<td class='c2'>1.556.989,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.556.989,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153225</td>
+				<td class='c1'>EQUIPO DE GIMNASIA</td>
+				<td class='c2'>1.408.900,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.408.900,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153225001</td>
+				<td class='c1'>EQUIPO DE GIMNASIA</td>
+				<td class='c2'>1.408.900,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.408.900,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153295</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>420.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>420.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153295001</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>420.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>420.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153299</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>2.515.354,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.515.354,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153299001</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>2.515.354,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.515.354,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1536</td>
+				<td class='c1'>EQUIPO HOTELES Y RESTAURANTES</td>
+				<td class='c2'>282.601.396,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>282.601.396,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153610</td>
+				<td class='c1'>DE COMESTIBLES Y BEBIDAS</td>
+				<td class='c2'>149.009.231,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>149.009.231,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153610001</td>
+				<td class='c1'>DE COMESTIBLES Y BEBIDAS</td>
+				<td class='c2'>149.009.231,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>149.009.231,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153699</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>133.592.165,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>133.592.165,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>153699001</td>
+				<td class='c1'>DE COMESTIBLES Y BEBIDAS</td>
+				<td class='c2'>133.592.165,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>133.592.165,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1592</td>
+				<td class='c1'>DEPRECIACION ACUMULADA</td>
+				<td class='c2'>-1.379.387.431,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.379.387.431,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159205</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-479.684.943,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-479.684.943,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159205001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-479.684.943,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-479.684.943,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159210</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>-120.386.365,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-120.386.365,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159210001</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>-120.386.365,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-120.386.365,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159215</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>-61.298.236,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-61.298.236,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159215001</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>-61.298.236,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-61.298.236,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159220</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACI</td>
+				<td class='c2'>-172.496.368,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-172.496.368,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159220001</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACI</td>
+				<td class='c2'>-172.496.368,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-172.496.368,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159225</td>
+				<td class='c1'>EQUIPO MEDICO CIENTIFICO</td>
+				<td class='c2'>-4.194.656,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.194.656,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159225001</td>
+				<td class='c1'>EQUIPO MEDICO CIENTIFICO</td>
+				<td class='c2'>-4.194.656,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.194.656,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159230</td>
+				<td class='c1'>EQUIPO DE HOTELES Y RESTAURANTES</td>
+				<td class='c2'>-144.024.533,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-144.024.533,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159230001</td>
+				<td class='c1'>EQUIPO DE HOTELES Y RESTAURANTES</td>
+				<td class='c2'>-144.024.533,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-144.024.533,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>-397.302.330,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-397.302.330,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-93.725.414,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-93.725.414,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299002</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>-74.333.118,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-74.333.118,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299003</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>-30.473.366,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-30.473.366,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299004</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACIO</td>
+				<td class='c2'>-101.485.921,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-101.485.921,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299005</td>
+				<td class='c1'>EQUIPO MEDICO Y CIENTIFICO</td>
+				<td class='c2'>-1.706.587,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.706.587,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>159299006</td>
+				<td class='c1'>EQUIPO HOTELES Y RESTAURANTE</td>
+				<td class='c2'>-95.577.924,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-95.577.924,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>16</td>
+				<td class='c1'>INTANGIBLES</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>0,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1625</td>
+				<td class='c1'>DERECHOS</td>
+				<td class='c2'>1.200.398,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.200.398,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>162505</td>
+				<td class='c1'>DERECHOS DE AUTOR</td>
+				<td class='c2'>1.200.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.200.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>162505001</td>
+				<td class='c1'>DERECHOS DE AUTOR</td>
+				<td class='c2'>1.200.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.200.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>162599</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>398,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>398,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>162599001</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>398,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>398,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1698</td>
+				<td class='c1'>AMORTIZACION ACUMULADA</td>
+				<td class='c2'>-1.200.398,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.200.398,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>169830</td>
+				<td class='c1'>DERECHOS</td>
+				<td class='c2'>-1.200.355,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.200.355,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>169830001</td>
+				<td class='c1'>DERECHOS</td>
+				<td class='c2'>-1.200.355,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.200.355,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>169899</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>-43,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-43,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>169899001</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>-43,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-43,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>17</td>
+				<td class='c1'>DIFERIDOS</td>
+				<td class='c2'>20.755.109,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>20.755.109,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1705</td>
+				<td class='c1'>GASTOS PAGADOS POR ANTICIPADO</td>
+				<td class='c2'>20.428.859,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>20.428.859,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>170520</td>
+				<td class='c1'>SEGUROS Y FIANZAS</td>
+				<td class='c2'>19.102.019,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>19.102.019,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>170520001</td>
+				<td class='c1'>SEGUROS Y FIANZAS</td>
+				<td class='c2'>19.102.019,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>19.102.019,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>170595</td>
+				<td class='c1'>MANTENIMIENTO HOSTING</td>
+				<td class='c2'>1.326.840,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.326.840,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>170595001</td>
+				<td class='c1'>MANTENIMIENTO HOSTING</td>
+				<td class='c2'>1.326.840,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.326.840,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1710</td>
+				<td class='c1'>CARGOS DIFERIDOS</td>
+				<td class='c2'>326.250,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>326.250,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>171060</td>
+				<td class='c1'>DOTACION Y SUMINISTRO A TRABAJADORES</td>
+				<td class='c2'>326.250,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>326.250,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>171060001</td>
+				<td class='c1'>DOTACION Y SUMINISTRO A TRABAJADORES</td>
+				<td class='c2'>326.250,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>326.250,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>18</td>
+				<td class='c1'>OTROS ACTIVOS</td>
+				<td class='c2'>213.609.245,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>213.609.245,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1805</td>
+				<td class='c1'>BIENES DE ARTE Y CULTURA</td>
+				<td class='c2'>213.609.245,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>213.609.245,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180505</td>
+				<td class='c1'>OBRAS DE ARTE</td>
+				<td class='c2'>29.835.150,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>29.835.150,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180505001</td>
+				<td class='c1'>OBRAS DE ARTE</td>
+				<td class='c2'>29.835.150,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>29.835.150,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180510</td>
+				<td class='c1'>BIBLIOTECAS</td>
+				<td class='c2'>18.115.783,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>18.115.783,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180510001</td>
+				<td class='c1'>BIBLIOTECAS</td>
+				<td class='c2'>18.115.783,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>18.115.783,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180595</td>
+				<td class='c1'>OBJETOS DECORATIVOS</td>
+				<td class='c2'>8.982.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>8.982.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180595001</td>
+				<td class='c1'>OBJETOS DECORATIVOS</td>
+				<td class='c2'>8.982.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>8.982.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180599</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>156.676.312,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>156.676.312,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180599001</td>
+				<td class='c1'>OBRAS DE ARTE</td>
+				<td class='c2'>76.627.982,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>76.627.982,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180599002</td>
+				<td class='c1'>BIBLIOTECAS</td>
+				<td class='c2'>52.095.655,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>52.095.655,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>180599003</td>
+				<td class='c1'>OBJETOS DECORATIVOS</td>
+				<td class='c2'>27.952.675,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>27.952.675,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>19</td>
+				<td class='c1'>VALORIZACIONES</td>
+				<td class='c2'>19.153.815.945,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>19.153.815.945,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1910</td>
+				<td class='c1'>DE PROPIEDADES PLANTA Y EQUIPO</td>
+				<td class='c2'>16.764.901.252,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>16.764.901.252,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>191008</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>16.764.901.252,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>16.764.901.252,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>191008001</td>
+				<td class='c1'>EDIFICIO CR 5 15 37</td>
+				<td class='c2'>2.089.832.128,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.089.832.128,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>191008002</td>
+				<td class='c1'>EDIFICO CR 6 15 18</td>
+				<td class='c2'>12.233.294.250,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>12.233.294.250,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>191008003</td>
+				<td class='c1'>PROPIEDAD HORIZONTAL</td>
+				<td class='c2'>157.912.588,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>157.912.588,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>191008004</td>
+				<td class='c1'>SEDE CULTURAL CLL 72</td>
+				<td class='c2'>2.283.862.286,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.283.862.286,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>1995</td>
+				<td class='c1'>DE OTROS ACTIVOS</td>
+				<td class='c2'>2.388.914.693,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.388.914.693,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>199505</td>
+				<td class='c1'>BIENES DE ARTE Y CULTURA</td>
+				<td class='c2'>2.388.914.693,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.388.914.693,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>199505001</td>
+				<td class='c1'>BIENES DE ARTE Y CULTURA</td>
+				<td class='c2'>2.388.914.693,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.388.914.693,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2</td>
+				<td class='c1'>PASIVO</td>
+				<td class='c2'>-3.764.618.968,60</td>
+				<td class='c3'>5.004.806,00</td>
+				<td class='c4'>21.194.886,00</td>
+				<td class='c5'>-16.190.080,00</td>
+				<td class='c6'>-3.780.809.048,60</td>
+			</tr>
+			<tr>
+				<td class='c0'>22</td>
+				<td class='c1'>PROVEEDORES</td>
+				<td class='c2'>-16.793.716,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>15.281.225,00</td>
+				<td class='c5'>-15.281.225,00</td>
+				<td class='c6'>-32.074.941,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2205</td>
+				<td class='c1'>NACIONALES</td>
+				<td class='c2'>-16.793.716,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>15.281.225,00</td>
+				<td class='c5'>-15.281.225,00</td>
+				<td class='c6'>-32.074.941,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>220505</td>
+				<td class='c1'>PROVEEDORES</td>
+				<td class='c2'>-16.793.716,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>15.281.225,00</td>
+				<td class='c5'>-15.281.225,00</td>
+				<td class='c6'>-32.074.941,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>220505001</td>
+				<td class='c1'>PROVEEDORES NACIONALES</td>
+				<td class='c2'>-16.793.716,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>15.281.225,00</td>
+				<td class='c5'>-15.281.225,00</td>
+				<td class='c6'>-32.074.941,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>23</td>
+				<td class='c1'>CUENTAS POR PAGAR</td>
+				<td class='c2'>-410.103.380,14</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>3.607.771,00</td>
+				<td class='c5'>-3.607.771,00</td>
+				<td class='c6'>-413.711.151,14</td>
+			</tr>
+			<tr>
+				<td class='c0'>2335</td>
+				<td class='c1'>COSTOS Y GASTOS POR PAGAR</td>
+				<td class='c2'>-4.527.284,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.671.891,00</td>
+				<td class='c5'>-2.671.891,00</td>
+				<td class='c6'>-7.199.175,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233530</td>
+				<td class='c1'>SERVICIOS TECNICOS</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>175.546,00</td>
+				<td class='c5'>-175.546,00</td>
+				<td class='c6'>-175.546,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233530001</td>
+				<td class='c1'>SERVICIOS TECNICOS</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>175.546,00</td>
+				<td class='c5'>-175.546,00</td>
+				<td class='c6'>-175.546,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233550</td>
+				<td class='c1'>SERVICIOS PUBLICOS</td>
+				<td class='c2'>-877.760,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>319.800,00</td>
+				<td class='c5'>-319.800,00</td>
+				<td class='c6'>-1.197.560,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233550003</td>
+				<td class='c1'>GAS</td>
+				<td class='c2'>-723.190,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-723.190,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233550004</td>
+				<td class='c1'>TELEFONIA</td>
+				<td class='c2'>-154.570,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>319.800,00</td>
+				<td class='c5'>-319.800,00</td>
+				<td class='c6'>-474.370,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233595</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>-3.649.524,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.176.545,00</td>
+				<td class='c5'>-2.176.545,00</td>
+				<td class='c6'>-5.826.069,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>233595001</td>
+				<td class='c1'>OTROS COSTOS Y GASTOS</td>
+				<td class='c2'>-3.649.524,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.176.545,00</td>
+				<td class='c5'>-2.176.545,00</td>
+				<td class='c6'>-5.826.069,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2365</td>
+				<td class='c1'>RETENCION EN LA FUENTE</td>
+				<td class='c2'>-4.209.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>67.852,00</td>
+				<td class='c5'>-67.852,00</td>
+				<td class='c6'>-4.276.852,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236505</td>
+				<td class='c1'>SALARIOS Y PAGOS LABORALES</td>
+				<td class='c2'>-105.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-105.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236505001</td>
+				<td class='c1'>SALARIOS Y PAGOS LABORALES</td>
+				<td class='c2'>-105.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-105.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236515</td>
+				<td class='c1'>HONORARIOS</td>
+				<td class='c2'>-2.385.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.385.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236515001</td>
+				<td class='c1'>HONORARIOS 11% .</td>
+				<td class='c2'>-1.838.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.838.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236515002</td>
+				<td class='c1'>HONORARIOS 10% .</td>
+				<td class='c2'>-250.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-250.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236515003</td>
+				<td class='c1'>EMPLEADOS SUJETOS RTE ART.383 ET</td>
+				<td class='c2'>-297.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-297.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236525</td>
+				<td class='c1'>SERVICIOS</td>
+				<td class='c2'>-696.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-696.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236525001</td>
+				<td class='c1'>SERVICIOS 6%</td>
+				<td class='c2'>-404.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-404.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236525002</td>
+				<td class='c1'>SERVICIOS 4%</td>
+				<td class='c2'>-76.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-76.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236525003</td>
+				<td class='c1'>TPTE DE CARGA 1%</td>
+				<td class='c2'>-23.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-23.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236525004</td>
+				<td class='c1'>ASEO Y VIGILANCIA 2%</td>
+				<td class='c2'>-5.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-5.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236525009</td>
+				<td class='c1'>HOTELES Y RESTAURANTES</td>
+				<td class='c2'>-188.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-188.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236530</td>
+				<td class='c1'>ARRENDAMIENTOS</td>
+				<td class='c2'>-235.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-235.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236530001</td>
+				<td class='c1'>ARRENDAMIENTOS 4%</td>
+				<td class='c2'>-28.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-28.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236530002</td>
+				<td class='c1'>ARRENDAMIENTOS 3.5%</td>
+				<td class='c2'>-207.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-207.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236535</td>
+				<td class='c1'>RENDIMIENTOS FINANCIEROS</td>
+				<td class='c2'>-226.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-226.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236535001</td>
+				<td class='c1'>RENDIMIENTOS FINANCIEROS 7%</td>
+				<td class='c2'>-226.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-226.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236540</td>
+				<td class='c1'>COMPRAS</td>
+				<td class='c2'>-562.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>67.852,00</td>
+				<td class='c5'>-67.852,00</td>
+				<td class='c6'>-629.852,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236540003</td>
+				<td class='c1'>COMPRAS 1,5%</td>
+				<td class='c2'>-44.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>67.852,00</td>
+				<td class='c5'>-67.852,00</td>
+				<td class='c6'>-111.852,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236540005</td>
+				<td class='c1'>COMPRAS DECLARANTES 2.5%</td>
+				<td class='c2'>-483.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-483.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236540006</td>
+				<td class='c1'>COMPRAS NO DECLARANTE 3.5%</td>
+				<td class='c2'>-35.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-35.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2367</td>
+				<td class='c1'>IMPUESTO A LAS VENTAS RETENIDO</td>
+				<td class='c2'>-594.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-594.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236705</td>
+				<td class='c1'>IMPUESTO A LAS VENTAS RETENIDO</td>
+				<td class='c2'>-594.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-594.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236705002</td>
+				<td class='c1'>RTE IVA COMPRAS R.S. 2.4%</td>
+				<td class='c2'>-24.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-24.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236705003</td>
+				<td class='c1'>RTE IVA SERVICIOS R.S. 2.4%</td>
+				<td class='c2'>-570.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-570.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2368</td>
+				<td class='c1'>IMPTO. DE INDUSTRIA Y COMERCIO RETENIDO</td>
+				<td class='c2'>-261.277,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-261.277,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236805</td>
+				<td class='c1'>IMPTO. DE INDUSTRIA Y COMERCIO RETENIDO</td>
+				<td class='c2'>-261.277,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-261.277,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236805002</td>
+				<td class='c1'>RTE ICA SERVICIOS 0.966 %</td>
+				<td class='c2'>-174.928,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-174.928,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236805003</td>
+				<td class='c1'>RTE ICA COMPRAS 1.104 %</td>
+				<td class='c2'>-12.392,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-12.392,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>236805007</td>
+				<td class='c1'>RTE ICA COMPRAS 1.38%</td>
+				<td class='c2'>-73.957,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-73.957,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2370</td>
+				<td class='c1'>RETENCIONES Y APORTES DE NOMINA</td>
+				<td class='c2'>-191.118.431,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>757.530,00</td>
+				<td class='c5'>-757.530,00</td>
+				<td class='c6'>-191.875.961,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237005</td>
+				<td class='c1'>APORTES A ENT. PROMOTORAS DE SALUD</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>110.498,00</td>
+				<td class='c5'>-110.498,00</td>
+				<td class='c6'>-110.498,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237005014</td>
+				<td class='c1'>EPS</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>110.498,00</td>
+				<td class='c5'>-110.498,00</td>
+				<td class='c6'>-110.498,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237035</td>
+				<td class='c1'>SINDICATOS</td>
+				<td class='c2'>-1.063.845,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>56.505,00</td>
+				<td class='c5'>-56.505,00</td>
+				<td class='c6'>-1.120.350,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237035001</td>
+				<td class='c1'>SINDICATO NACIONAL HOCAR</td>
+				<td class='c2'>-1.063.845,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>56.505,00</td>
+				<td class='c5'>-56.505,00</td>
+				<td class='c6'>-1.120.350,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237040</td>
+				<td class='c1'>COOPERATIVAS </td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>590.527,00</td>
+				<td class='c5'>-590.527,00</td>
+				<td class='c6'>-590.527,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237040004</td>
+				<td class='c1'>COOPERATIVA COHTRAG</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>60.000,00</td>
+				<td class='c5'>-60.000,00</td>
+				<td class='c6'>-60.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237040005</td>
+				<td class='c1'>DESCUENTO COMPENSAR</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>530.527,00</td>
+				<td class='c5'>-530.527,00</td>
+				<td class='c6'>-530.527,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237095</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>-190.054.586,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-190.054.586,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237095001</td>
+				<td class='c1'>FUND JOCKEY CLUB - DESCUENTOS POR NOMINA</td>
+				<td class='c2'>-55.252.593,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-55.252.593,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237095002</td>
+				<td class='c1'>FUND JOCKEY CLUB - PARTIC. CUOTAS SOSTENIMIENTO</td>
+				<td class='c2'>-97.680.755,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-97.680.755,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>237095003</td>
+				<td class='c1'>FUND JOCKEY CLUB - MEDICINA PREPAGADA</td>
+				<td class='c2'>-37.121.238,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-37.121.238,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2380</td>
+				<td class='c1'>ACREEDORES VARIOS</td>
+				<td class='c2'>-209.393.388,14</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>110.498,00</td>
+				<td class='c5'>-110.498,00</td>
+				<td class='c6'>-209.503.886,14</td>
+			</tr>
+			<tr>
+				<td class='c0'>238030</td>
+				<td class='c1'>FONDOS DE CESANTIAS Y/O PENSIONES</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>110.498,00</td>
+				<td class='c5'>-110.498,00</td>
+				<td class='c6'>-110.498,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>238030006</td>
+				<td class='c1'>FONDO DE PENSION</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>110.498,00</td>
+				<td class='c5'>-110.498,00</td>
+				<td class='c6'>-110.498,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>238095</td>
+				<td class='c1'>OTROS ACREEDORES VARIOS</td>
+				<td class='c2'>-209.393.388,14</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-209.393.388,14</td>
+			</tr>
+			<tr>
+				<td class='c0'>238095001</td>
+				<td class='c1'>VARIOS</td>
+				<td class='c2'>-209.393.388,14</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-209.393.388,14</td>
+			</tr>
+			<tr>
+				<td class='c0'>24</td>
+				<td class='c1'>IMPUESTOS GRAVAMENES Y TASAS</td>
+				<td class='c2'>-23.001.916,60</td>
+				<td class='c3'>347.902,00</td>
+				<td class='c4'>206.852,00</td>
+				<td class='c5'>141.050,00</td>
+				<td class='c6'>-22.860.866,60</td>
+			</tr>
+			<tr>
+				<td class='c0'>2408</td>
+				<td class='c1'>IMPUESTO SOBRE LAS VENTAS POR PAGAR</td>
+				<td class='c2'>-18.057.350,60</td>
+				<td class='c3'>347.902,00</td>
+				<td class='c4'>56.267,00</td>
+				<td class='c5'>291.635,00</td>
+				<td class='c6'>-17.765.715,60</td>
+			</tr>
+			<tr>
+				<td class='c0'>240805</td>
+				<td class='c1'>IVA GENERADO</td>
+				<td class='c2'>-24.048.953,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>56.267,00</td>
+				<td class='c5'>-56.267,00</td>
+				<td class='c6'>-24.105.220,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>240805001</td>
+				<td class='c1'>IVA 16%</td>
+				<td class='c2'>-24.048.953,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>56.267,00</td>
+				<td class='c5'>-56.267,00</td>
+				<td class='c6'>-24.105.220,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>240810</td>
+				<td class='c1'>IVA DESCONTABLE</td>
+				<td class='c2'>5.991.602,40</td>
+				<td class='c3'>347.902,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>347.902,00</td>
+				<td class='c6'>6.339.504,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>240810001</td>
+				<td class='c1'>COMPRAS 16%</td>
+				<td class='c2'>736.923,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>736.923,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>240810002</td>
+				<td class='c1'>SERVICIOS 16%</td>
+				<td class='c2'>4.684.569,40</td>
+				<td class='c3'>347.902,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>347.902,00</td>
+				<td class='c6'>5.032.471,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>240810004</td>
+				<td class='c1'>COMPRAS REG. SIMPLIFICADO</td>
+				<td class='c2'>3.360,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.360,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>240810005</td>
+				<td class='c1'>SERVICIOS REG SIMPLIFICADO</td>
+				<td class='c2'>566.750,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>566.750,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2412</td>
+				<td class='c1'>DE INDUSTRIA Y COMERCIO</td>
+				<td class='c2'>-45.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-45.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>241205</td>
+				<td class='c1'>VIGENCIA FISCAL CORRIENTE</td>
+				<td class='c2'>-45.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-45.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>241205001</td>
+				<td class='c1'>IMPUESTO CAUSADO</td>
+				<td class='c2'>-45.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-45.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2495</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>-4.899.566,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>150.585,00</td>
+				<td class='c5'>-150.585,00</td>
+				<td class='c6'>-5.050.151,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>249505</td>
+				<td class='c1'>IMPUESTO NACIONAL AL CONSUMO</td>
+				<td class='c2'>-4.899.566,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>150.585,00</td>
+				<td class='c5'>-150.585,00</td>
+				<td class='c6'>-5.050.151,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>249505001</td>
+				<td class='c1'>IMPUESTO AL CONSUMO 8%</td>
+				<td class='c2'>-4.899.566,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>150.585,00</td>
+				<td class='c5'>-150.585,00</td>
+				<td class='c6'>-5.050.151,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>25</td>
+				<td class='c1'>OBLIGACIONES LABORALES</td>
+				<td class='c2'>-1.016.424.134,00</td>
+				<td class='c3'>4.656.904,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>2.762.466,00</td>
+				<td class='c6'>-1.013.661.668,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2505</td>
+				<td class='c1'>SALARIOS POR PAGAR</td>
+				<td class='c2'>-22.174.751,00</td>
+				<td class='c3'>1.894.438,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-22.174.751,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>250505</td>
+				<td class='c1'>NOMINA POR PAGAR</td>
+				<td class='c2'>-22.174.751,00</td>
+				<td class='c3'>1.894.438,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-22.174.751,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>250505001</td>
+				<td class='c1'>NOMINA POR PAGAR</td>
+				<td class='c2'>-22.174.751,00</td>
+				<td class='c3'>1.894.438,00</td>
+				<td class='c4'>1.894.438,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-22.174.751,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2525</td>
+				<td class='c1'>VACACIONES CONSOLIDADAS</td>
+				<td class='c2'>-17.253.589,00</td>
+				<td class='c3'>2.762.466,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>2.762.466,00</td>
+				<td class='c6'>-14.491.123,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>252505</td>
+				<td class='c1'>VACACIONES LEGALES</td>
+				<td class='c2'>-1.564.714,00</td>
+				<td class='c3'>2.762.466,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>2.762.466,00</td>
+				<td class='c6'>1.197.752,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>252505001</td>
+				<td class='c1'>VACACIONES LEGALES</td>
+				<td class='c2'>-1.564.714,00</td>
+				<td class='c3'>2.762.466,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>2.762.466,00</td>
+				<td class='c6'>1.197.752,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>252510</td>
+				<td class='c1'>VACACIONES EXTRALEGALES</td>
+				<td class='c2'>-15.688.875,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-15.688.875,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>252510001</td>
+				<td class='c1'>VACACIONES EXTRALEGALES</td>
+				<td class='c2'>-15.688.875,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-15.688.875,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2530</td>
+				<td class='c1'>PRESTACIONES EXTRALEGALES</td>
+				<td class='c2'>-844.094.001,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-844.094.001,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253005</td>
+				<td class='c1'>PRIMAS</td>
+				<td class='c2'>-844.094.001,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-844.094.001,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253005002</td>
+				<td class='c1'>PRIMA SERVICIOS JUNIO</td>
+				<td class='c2'>-6.850.739,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-6.850.739,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253005003</td>
+				<td class='c1'>PRIMA EXTRA NAVIDAD</td>
+				<td class='c2'>-5.216.880,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-5.216.880,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253005004</td>
+				<td class='c1'>BONO POR RETIRO</td>
+				<td class='c2'>-168.803.007,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-168.803.007,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253005005</td>
+				<td class='c1'>BONO RETIRO RECONOCIMIENTO PENSION</td>
+				<td class='c2'>-2.670.230,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.670.230,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253005006</td>
+				<td class='c1'>INDEMNIZACIONES</td>
+				<td class='c2'>-660.553.145,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-660.553.145,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2532</td>
+				<td class='c1'>PENSIONES POR PAGAR</td>
+				<td class='c2'>-132.901.793,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-132.901.793,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253205</td>
+				<td class='c1'>PENSIONES POR PAGAR</td>
+				<td class='c2'>-132.901.793,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-132.901.793,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>253205001</td>
+				<td class='c1'>PENSIONADOS JOCKEY CLUB</td>
+				<td class='c2'>-132.901.793,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-132.901.793,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>26</td>
+				<td class='c1'>PASIVOS ESTIMADOS Y PROVISIONES</td>
+				<td class='c2'>-58.642.680,40</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-58.642.680,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>2605</td>
+				<td class='c1'>PARA COSTOS Y GASTOS</td>
+				<td class='c2'>-4.090.619,40</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.090.619,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>260535</td>
+				<td class='c1'>SERVICIOS PUBLICOS</td>
+				<td class='c2'>-4.090.619,40</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.090.619,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>260535001</td>
+				<td class='c1'>ACUEDUCTO Y ALCANTARILLADO</td>
+				<td class='c2'>-1.898.617,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.898.617,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>260535002</td>
+				<td class='c1'>ENERGIA</td>
+				<td class='c2'>-1.452.600,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.452.600,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>260535003</td>
+				<td class='c1'>GAS</td>
+				<td class='c2'>-335.770,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-335.770,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>260535004</td>
+				<td class='c1'>TELEFONIA</td>
+				<td class='c2'>-403.632,40</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-403.632,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>2610</td>
+				<td class='c1'>PARA OBLIGACIONES LABORALES</td>
+				<td class='c2'>-54.552.061,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-54.552.061,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261005</td>
+				<td class='c1'>CESANTIAS</td>
+				<td class='c2'>-35.004.383,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-35.004.383,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261005001</td>
+				<td class='c1'>CESANTIAS</td>
+				<td class='c2'>-35.004.383,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-35.004.383,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261010</td>
+				<td class='c1'>INTERESES SOBRE CESANTIAS</td>
+				<td class='c2'>-4.202.208,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.202.208,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261010001</td>
+				<td class='c1'>INTERESES SOBRE CESANTIAS</td>
+				<td class='c2'>-4.202.208,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.202.208,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261015</td>
+				<td class='c1'>VACACIONES</td>
+				<td class='c2'>-3.785.513,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-3.785.513,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261015001</td>
+				<td class='c1'>VACACIONES LEGALES</td>
+				<td class='c2'>-3.785.513,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-3.785.513,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261020</td>
+				<td class='c1'>PRIMA DE SERVICIOS</td>
+				<td class='c2'>-11.559.957,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-11.559.957,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>261020001</td>
+				<td class='c1'>PRIMA SERVICIOS EMPLEADOS</td>
+				<td class='c2'>-11.559.957,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-11.559.957,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>28</td>
+				<td class='c1'>OTROS PASIVOS</td>
+				<td class='c2'>-2.239.653.141,46</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>204.600,00</td>
+				<td class='c5'>-204.600,00</td>
+				<td class='c6'>-2.239.857.741,46</td>
+			</tr>
+			<tr>
+				<td class='c0'>2805</td>
+				<td class='c1'>ANTICIPOS Y AVANCES RECIBIDOS</td>
+				<td class='c2'>-858.683.230,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-858.683.230,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>280505</td>
+				<td class='c1'>DE CLIENTES</td>
+				<td class='c2'>-4.438.936,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.438.936,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>280505001</td>
+				<td class='c1'>DE CLIENTES</td>
+				<td class='c2'>-4.300.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.300.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>280505002</td>
+				<td class='c1'>ANTICIPOS OTROS</td>
+				<td class='c2'>-138.936,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-138.936,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>280510</td>
+				<td class='c1'>SOBRE CONTRATOS</td>
+				<td class='c2'>-854.244.294,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-854.244.294,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>280510001</td>
+				<td class='c1'>SOBRE CONTRATOS</td>
+				<td class='c2'>-854.244.294,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-854.244.294,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>2810</td>
+				<td class='c1'>DEPOSITOS RECIBIDOS</td>
+				<td class='c2'>-1.344.265.281,46</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.344.265.281,46</td>
+			</tr>
+			<tr>
+				<td class='c0'>281030</td>
+				<td class='c1'>DE MANEJO DE BIENES</td>
+				<td class='c2'>-1.344.265.281,46</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.344.265.281,46</td>
+			</tr>
+			<tr>
+				<td class='c0'>281030001</td>
+				<td class='c1'>DE MANEJO DE BIENES</td>
+				<td class='c2'>-1.231.054.853,63</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.231.054.853,63</td>
+			</tr>
+			<tr>
+				<td class='c0'>281030002</td>
+				<td class='c1'>MANEJO DE BIENES II</td>
+				<td class='c2'>-113.210.427,83</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-113.210.427,83</td>
+			</tr>
+			<tr>
+				<td class='c0'>2815</td>
+				<td class='c1'>INGRESOS RECIBIDOS PARA TERCEROS</td>
+				<td class='c2'>-36.704.630,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>204.600,00</td>
+				<td class='c5'>-204.600,00</td>
+				<td class='c6'>-36.909.230,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>281505</td>
+				<td class='c1'>VALORES RECIBIDOS PARA TERCEROS</td>
+				<td class='c2'>-36.704.630,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>204.600,00</td>
+				<td class='c5'>-204.600,00</td>
+				<td class='c6'>-36.909.230,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>281505001</td>
+				<td class='c1'>PROPINAS RECAUDADAS</td>
+				<td class='c2'>-6.504.630,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>204.600,00</td>
+				<td class='c5'>-204.600,00</td>
+				<td class='c6'>-6.709.230,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>281505004</td>
+				<td class='c1'>INGRESOS PARA TERCEROS - REGALO DE NAVIDAD</td>
+				<td class='c2'>-30.200.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-30.200.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>3</td>
+				<td class='c1'>PATRIMONIO</td>
+				<td class='c2'>-18.503.780.627,20</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-18.503.780.627,20</td>
+			</tr>
+			<tr>
+				<td class='c0'>31</td>
+				<td class='c1'>CAPITAL SOCIAL</td>
+				<td class='c2'>-4.746.648.868,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.746.648.868,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>3140</td>
+				<td class='c1'>FONDO SOCIAL</td>
+				<td class='c2'>-4.746.648.868,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.746.648.868,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>314005</td>
+				<td class='c1'>FONDO SOCIAL</td>
+				<td class='c2'>-4.516.648.868,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.516.648.868,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>314005001</td>
+				<td class='c1'>FONDO SOCIAL</td>
+				<td class='c2'>-373.162.676,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-373.162.676,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>314005002</td>
+				<td class='c1'>DERECHO INGRESO SOCIOS EJERC. ANTER</td>
+				<td class='c2'>-2.041.997.151,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.041.997.151,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>314005003</td>
+				<td class='c1'>CONTRIBUCION FONDO SOCIAL</td>
+				<td class='c2'>-2.101.489.041,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.101.489.041,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>314010</td>
+				<td class='c1'>INGRESO SOCIOS PRESENTE EJERC.</td>
+				<td class='c2'>-230.000.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-230.000.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>314010001</td>
+				<td class='c1'>INGRESO SOCIOS PRESENTE EJERC.</td>
+				<td class='c2'>-230.000.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-230.000.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>34</td>
+				<td class='c1'>REVALORIZACION DEL PATRIMONIO</td>
+				<td class='c2'>-1.313.242.722,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.313.242.722,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>3405</td>
+				<td class='c1'>AJUSTES POR INFLACION</td>
+				<td class='c2'>-1.313.242.722,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.313.242.722,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>340505</td>
+				<td class='c1'>DE CAPITAL SOCIAL</td>
+				<td class='c2'>-3.342.546.550,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-3.342.546.550,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>340505001</td>
+				<td class='c1'>DE CAPITAL SOCIAL</td>
+				<td class='c2'>-3.342.546.550,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-3.342.546.550,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>340520</td>
+				<td class='c1'>DE RESULTADOS DE EJERC. ANTERIOR</td>
+				<td class='c2'>2.029.303.828,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.029.303.828,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>340520001</td>
+				<td class='c1'>DE RESULTADOS DE EJERC. ANTERIOR</td>
+				<td class='c2'>2.029.303.828,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.029.303.828,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>37</td>
+				<td class='c1'>RESUL. EJER. ANTERIOR</td>
+				<td class='c2'>6.709.926.907,80</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.709.926.907,80</td>
+			</tr>
+			<tr>
+				<td class='c0'>3705</td>
+				<td class='c1'>UTILIDADES ACUMULADAS</td>
+				<td class='c2'>-909.290.440,65</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-909.290.440,65</td>
+			</tr>
+			<tr>
+				<td class='c0'>370505</td>
+				<td class='c1'>RESULT. EJERC ANTERIORES</td>
+				<td class='c2'>-909.290.440,65</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-909.290.440,65</td>
+			</tr>
+			<tr>
+				<td class='c0'>370505001</td>
+				<td class='c1'>UTILIDAD EJERC ANTERIORES</td>
+				<td class='c2'>-909.290.440,65</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-909.290.440,65</td>
+			</tr>
+			<tr>
+				<td class='c0'>3710</td>
+				<td class='c1'>PERDIDAS ACUMULADAS</td>
+				<td class='c2'>7.619.217.348,45</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.619.217.348,45</td>
+			</tr>
+			<tr>
+				<td class='c0'>371020</td>
+				<td class='c1'>ACUMULADA EJERC.ANTERIORES</td>
+				<td class='c2'>7.619.217.348,45</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.619.217.348,45</td>
+			</tr>
+			<tr>
+				<td class='c0'>371020001</td>
+				<td class='c1'>ACUMULADA EJERC.ANTERIORES</td>
+				<td class='c2'>7.619.217.348,45</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.619.217.348,45</td>
+			</tr>
+			<tr>
+				<td class='c0'>38</td>
+				<td class='c1'>SUPERAVIT POR VALORIZACIONES</td>
+				<td class='c2'>-19.153.815.945,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-19.153.815.945,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>3810</td>
+				<td class='c1'>DE PROPIEDADES PLANTA Y EQUIPO</td>
+				<td class='c2'>-16.764.901.252,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.764.901.252,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>381008</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-16.764.901.252,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.764.901.252,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>381008001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-16.764.901.252,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.764.901.252,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>3895</td>
+				<td class='c1'>DE OTROS ACTIVOS</td>
+				<td class='c2'>-2.388.914.693,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.388.914.693,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>389505</td>
+				<td class='c1'>BIENES DE ARTE Y CULTURA</td>
+				<td class='c2'>-2.388.914.693,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.388.914.693,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>389505001</td>
+				<td class='c1'>BIENES DE ARTE Y CULTURA</td>
+				<td class='c2'>-2.388.914.693,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.388.914.693,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>4</td>
+				<td class='c1'>INGRESOS</td>
+				<td class='c2'>-1.914.811.854,33</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.233.997,00</td>
+				<td class='c5'>-2.233.997,00</td>
+				<td class='c6'>-1.917.045.851,33</td>
+			</tr>
+			<tr>
+				<td class='c0'>41</td>
+				<td class='c1'>OPERACIONALES</td>
+				<td class='c2'>-1.486.329.256,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.233.997,00</td>
+				<td class='c5'>-2.233.997,00</td>
+				<td class='c6'>-1.488.563.253,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>4170</td>
+				<td class='c1'>OTRAS ACTIVIDADES SERV. SOCIAL</td>
+				<td class='c2'>-1.486.329.256,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.233.997,00</td>
+				<td class='c5'>-2.233.997,00</td>
+				<td class='c6'>-1.488.563.253,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040</td>
+				<td class='c1'>ENTRETENIMIENTO Y ESPARCIMIENTO</td>
+				<td class='c2'>-1.462.153.321,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>2.233.997,00</td>
+				<td class='c5'>-2.233.997,00</td>
+				<td class='c6'>-1.464.387.318,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040001</td>
+				<td class='c1'>COMEDORES - ALIMENTOS</td>
+				<td class='c2'>-350.027.155,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>1.567.323,00</td>
+				<td class='c5'>-1.567.323,00</td>
+				<td class='c6'>-351.594.478,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040002</td>
+				<td class='c1'>BARES - BEBIDAS</td>
+				<td class='c2'>-172.338.160,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>303.000,00</td>
+				<td class='c5'>-303.000,00</td>
+				<td class='c6'>-172.641.160,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040003</td>
+				<td class='c1'>PARQUEADEROS</td>
+				<td class='c2'>-21.923.804,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>103.449,00</td>
+				<td class='c5'>-103.449,00</td>
+				<td class='c6'>-22.027.253,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040005</td>
+				<td class='c1'>DERECHO DE CLUB Y SEDE CULTURAL</td>
+				<td class='c2'>-22.080.667,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>78.225,00</td>
+				<td class='c5'>-78.225,00</td>
+				<td class='c6'>-22.158.892,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040006</td>
+				<td class='c1'>ALQUILER MENAJE</td>
+				<td class='c2'>-3.708.808,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-3.708.808,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040007</td>
+				<td class='c1'>ALQUILER SALONES</td>
+				<td class='c2'>-9.743.103,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>100.000,00</td>
+				<td class='c5'>-100.000,00</td>
+				<td class='c6'>-9.843.103,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040008</td>
+				<td class='c1'>FLORES Y DECORACION</td>
+				<td class='c2'>-1.375.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.375.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040009</td>
+				<td class='c1'>TRANSPORTE</td>
+				<td class='c2'>-2.610.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.610.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040010</td>
+				<td class='c1'>CUOTAS DE SOSTENIMIENTO</td>
+				<td class='c2'>-742.971.200,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-742.971.200,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040012</td>
+				<td class='c1'>CONSUMO MINIMO</td>
+				<td class='c2'>-103.702.567,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-103.702.567,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040013</td>
+				<td class='c1'>ALQUILERES, AUDIOVISUALES Y DEPOSITO</td>
+				<td class='c2'>-6.670.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>70.000,00</td>
+				<td class='c5'>-70.000,00</td>
+				<td class='c6'>-6.740.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040014</td>
+				<td class='c1'>SERVICIO DE MESEROS</td>
+				<td class='c2'>-4.000.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-4.000.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040015</td>
+				<td class='c1'>CATERING ALIMENTOS</td>
+				<td class='c2'>-16.350.987,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.350.987,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040016</td>
+				<td class='c1'>CATERING BEBIDAS</td>
+				<td class='c2'>-208.950,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-208.950,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040018</td>
+				<td class='c1'>CIGARRILLOS</td>
+				<td class='c2'>-2.326.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>12.000,00</td>
+				<td class='c5'>-12.000,00</td>
+				<td class='c6'>-2.338.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417040020</td>
+				<td class='c1'>DESCORCHE</td>
+				<td class='c2'>-2.116.920,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.116.920,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417095</td>
+				<td class='c1'>ACTIVIDADES CONEXAS</td>
+				<td class='c2'>-24.175.935,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-24.175.935,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>417095001</td>
+				<td class='c1'>INTERESES SOBRE CARTERA</td>
+				<td class='c2'>-24.175.935,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-24.175.935,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>42</td>
+				<td class='c1'>NO OPERACIONALES</td>
+				<td class='c2'>-428.482.598,33</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-428.482.598,33</td>
+			</tr>
+			<tr>
+				<td class='c0'>4210</td>
+				<td class='c1'>FINANCIEROS</td>
+				<td class='c2'>-1.544.151,69</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.544.151,69</td>
+			</tr>
+			<tr>
+				<td class='c0'>421005</td>
+				<td class='c1'>INTERESES</td>
+				<td class='c2'>-1.544.151,69</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.544.151,69</td>
+			</tr>
+			<tr>
+				<td class='c0'>421005001</td>
+				<td class='c1'>INTERESES</td>
+				<td class='c2'>-1.544.151,69</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-1.544.151,69</td>
+			</tr>
+			<tr>
+				<td class='c0'>4220</td>
+				<td class='c1'>ARRENDAMIENTOS</td>
+				<td class='c2'>-379.310.344,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-379.310.344,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>422010</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-379.310.344,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-379.310.344,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>422010001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>-379.310.344,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-379.310.344,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>4250</td>
+				<td class='c1'>RECUPERACIONES</td>
+				<td class='c2'>-16.048.029,17</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.048.029,17</td>
+			</tr>
+			<tr>
+				<td class='c0'>425050</td>
+				<td class='c1'>REINTEGRO OTROS COSTOS  Y GASTOS</td>
+				<td class='c2'>-16.048.029,17</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.048.029,17</td>
+			</tr>
+			<tr>
+				<td class='c0'>425050001</td>
+				<td class='c1'>REINTEGRO OTROS COSTOS Y GASTOS</td>
+				<td class='c2'>-16.048.029,17</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-16.048.029,17</td>
+			</tr>
+			<tr>
+				<td class='c0'>4265</td>
+				<td class='c1'>INGRESOS DE EJERCICIOS ANTERIORES</td>
+				<td class='c2'>-5.527.348,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-5.527.348,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>426505</td>
+				<td class='c1'>INGRESOS DE  EJERCICIOS ANTERIORES</td>
+				<td class='c2'>-5.527.348,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-5.527.348,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>426505001</td>
+				<td class='c1'>INGRESOS DE EJERCICIOS ANTERIORES</td>
+				<td class='c2'>-5.527.348,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-5.527.348,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>4295</td>
+				<td class='c1'>DIVERSOS</td>
+				<td class='c2'>-26.052.725,47</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-26.052.725,47</td>
+			</tr>
+			<tr>
+				<td class='c0'>429505</td>
+				<td class='c1'>APROVECHAMIENTOS</td>
+				<td class='c2'>-295.676,91</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-295.676,91</td>
+			</tr>
+			<tr>
+				<td class='c0'>429505001</td>
+				<td class='c1'>APROVECHAMIENTOS</td>
+				<td class='c2'>-295.676,91</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-295.676,91</td>
+			</tr>
+			<tr>
+				<td class='c0'>429509</td>
+				<td class='c1'>SUBVENCIONES</td>
+				<td class='c2'>-25.881.782,71</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-25.881.782,71</td>
+			</tr>
+			<tr>
+				<td class='c0'>429509002</td>
+				<td class='c1'>DONACIONES</td>
+				<td class='c2'>-19.110.782,71</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-19.110.782,71</td>
+			</tr>
+			<tr>
+				<td class='c0'>429509003</td>
+				<td class='c1'>APORTE VOLUNTARIO I</td>
+				<td class='c2'>-6.375.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-6.375.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>429509004</td>
+				<td class='c1'>APORTE VOLUNTARIO II</td>
+				<td class='c2'>-396.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-396.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>429510</td>
+				<td class='c1'>AJUSTE AL PESO</td>
+				<td class='c2'>-32.755,49</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-32.755,49</td>
+			</tr>
+			<tr>
+				<td class='c0'>429510001</td>
+				<td class='c1'>AJUSTE AL PESO</td>
+				<td class='c2'>-32.755,49</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-32.755,49</td>
+			</tr>
+			<tr>
+				<td class='c0'>429581</td>
+				<td class='c1'>AJUSTE AL PESO</td>
+				<td class='c2'>157.489,64</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>157.489,64</td>
+			</tr>
+			<tr>
+				<td class='c0'>429581001</td>
+				<td class='c1'>AJUSTE A MILES RETEFTE</td>
+				<td class='c2'>77.926,82</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>77.926,82</td>
+			</tr>
+			<tr>
+				<td class='c0'>429581002</td>
+				<td class='c1'>AJUSTE A MILES IVA</td>
+				<td class='c2'>-2.664,36</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-2.664,36</td>
+			</tr>
+			<tr>
+				<td class='c0'>429581003</td>
+				<td class='c1'>AJUSTE A MILES ICA</td>
+				<td class='c2'>20.408,18</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>20.408,18</td>
+			</tr>
+			<tr>
+				<td class='c0'>429581004</td>
+				<td class='c1'>AJUSTE A MILES ICO</td>
+				<td class='c2'>61.819,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>61.819,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5</td>
+				<td class='c1'>GASTOS</td>
+				<td class='c2'>1.611.076.762,71</td>
+				<td class='c3'>2.323.989,00</td>
+				<td class='c4'>55.683,70</td>
+				<td class='c5'>2.268.305,30</td>
+				<td class='c6'>1.613.345.068,01</td>
+			</tr>
+			<tr>
+				<td class='c0'>51</td>
+				<td class='c1'>OPERACIONALES DE ADMINISTRACION</td>
+				<td class='c2'>1.458.106.658,68</td>
+				<td class='c3'>447.657,00</td>
+				<td class='c4'>55.683,70</td>
+				<td class='c5'>391.973,30</td>
+				<td class='c6'>1.458.498.631,98</td>
+			</tr>
+			<tr>
+				<td class='c0'>5105</td>
+				<td class='c1'>GASTOS DE PERSONAL</td>
+				<td class='c2'>736.953.936,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>736.953.936,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510506</td>
+				<td class='c1'>SUELDOS</td>
+				<td class='c2'>396.315.572,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>396.315.572,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510506001</td>
+				<td class='c1'>SUELDOS</td>
+				<td class='c2'>396.315.572,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>396.315.572,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510515</td>
+				<td class='c1'>HORAS EXTRAS Y RECARGOS</td>
+				<td class='c2'>21.351.619,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>21.351.619,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510515001</td>
+				<td class='c1'>EXTRAS</td>
+				<td class='c2'>21.351.619,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>21.351.619,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510524</td>
+				<td class='c1'>INCAPACIDADES</td>
+				<td class='c2'>3.446.521,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.446.521,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510524001</td>
+				<td class='c1'>INCAPACIDADES</td>
+				<td class='c2'>3.446.521,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.446.521,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510527</td>
+				<td class='c1'>AUXILIO DE TRANSPORTE</td>
+				<td class='c2'>9.264.800,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>9.264.800,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510527001</td>
+				<td class='c1'>TRANSPORTE LEGAL</td>
+				<td class='c2'>9.264.800,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>9.264.800,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510530</td>
+				<td class='c1'>CESANTIAS</td>
+				<td class='c2'>35.660.931,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>35.660.931,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510530001</td>
+				<td class='c1'>CESANTIAS</td>
+				<td class='c2'>35.660.931,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>35.660.931,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510533</td>
+				<td class='c1'>INTERESES SOBRE CESANTIAS</td>
+				<td class='c2'>4.211.998,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.211.998,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510533001</td>
+				<td class='c1'>INTERESES SOBRE CESANTIAS</td>
+				<td class='c2'>4.211.998,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.211.998,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510536</td>
+				<td class='c1'>PRIMA SERVICIOS</td>
+				<td class='c2'>41.853.097,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>41.853.097,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510536001</td>
+				<td class='c1'>PRIMA SERVICIO LEGAL</td>
+				<td class='c2'>37.066.045,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>37.066.045,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510536002</td>
+				<td class='c1'>PENSIONADOS</td>
+				<td class='c2'>4.787.052,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.787.052,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510539</td>
+				<td class='c1'>VACACIONES</td>
+				<td class='c2'>18.430.931,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>18.430.931,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510539001</td>
+				<td class='c1'>VACACIONES LEGALES</td>
+				<td class='c2'>18.430.931,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>18.430.931,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510551</td>
+				<td class='c1'>DOTACION Y SUMINISTRO TRABAJADOR</td>
+				<td class='c2'>2.345.733,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.345.733,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510551001</td>
+				<td class='c1'>DOTACION Y SUMINISTRO TRABAJADOR</td>
+				<td class='c2'>2.345.733,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.345.733,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510559</td>
+				<td class='c1'>PENSIONES DE JUBILACION</td>
+				<td class='c2'>43.083.468,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>43.083.468,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510559001</td>
+				<td class='c1'>PENSIONES DE JUBILACION</td>
+				<td class='c2'>43.083.468,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>43.083.468,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510560</td>
+				<td class='c1'>INDEMNIZACIONES LABORALES</td>
+				<td class='c2'>32.405.017,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>32.405.017,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510560001</td>
+				<td class='c1'>INDEMNIZACIONES LABORALES</td>
+				<td class='c2'>32.405.017,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>32.405.017,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510563</td>
+				<td class='c1'>CAPACITACION AL PERSONAL</td>
+				<td class='c2'>308.400,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>308.400,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510563001</td>
+				<td class='c1'>CAPACITACION AL PERSONAL</td>
+				<td class='c2'>308.400,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>308.400,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510568</td>
+				<td class='c1'>APORTES A ADMINIS RIESGOS PROFESION</td>
+				<td class='c2'>2.239.106,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.239.106,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510568001</td>
+				<td class='c1'>APORTES A ADMINIS RIESGOS PROFESION</td>
+				<td class='c2'>2.239.106,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.239.106,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510569</td>
+				<td class='c1'>APORT. A ENTIDADES PROMOT. DE SALUD</td>
+				<td class='c2'>39.250.190,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>39.250.190,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510569001</td>
+				<td class='c1'>APORT. A ENTIDADES PROMOT. DE SALUD</td>
+				<td class='c2'>39.250.190,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>39.250.190,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510570</td>
+				<td class='c1'>APORTES A FONDOS DE PENS. Y CESANTI</td>
+				<td class='c2'>46.869.182,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>46.869.182,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510570001</td>
+				<td class='c1'>APORTES A FONDOS DE PENS. Y CESANTI</td>
+				<td class='c2'>46.869.182,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>46.869.182,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510572</td>
+				<td class='c1'>APORTES CAJAS DE COMPENS. FAMILIAR</td>
+				<td class='c2'>17.730.809,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>17.730.809,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510572001</td>
+				<td class='c1'>APORTES CAJAS DE COMPENS. FAMILIAR</td>
+				<td class='c2'>17.730.809,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>17.730.809,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510575</td>
+				<td class='c1'>APORTES AL I.C.B.F.</td>
+				<td class='c2'>13.297.258,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.297.258,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510575001</td>
+				<td class='c1'>APORTES AL I.C.B.F.</td>
+				<td class='c2'>13.297.258,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.297.258,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510578</td>
+				<td class='c1'>SENA</td>
+				<td class='c2'>8.864.819,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>8.864.819,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510578001</td>
+				<td class='c1'>SENA</td>
+				<td class='c2'>8.864.819,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>8.864.819,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510584</td>
+				<td class='c1'>GASTOS MEDICOS Y DROGAS</td>
+				<td class='c2'>24.485,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.485,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>510584001</td>
+				<td class='c1'>GASTOS MEDICOS Y DROGAS</td>
+				<td class='c2'>24.485,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.485,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5110</td>
+				<td class='c1'>HONORARIOS</td>
+				<td class='c2'>234.723.752,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>234.723.752,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511025</td>
+				<td class='c1'>ASESORIA JURIDICA</td>
+				<td class='c2'>13.920.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.920.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511025001</td>
+				<td class='c1'>ASESORIA JURIDICA</td>
+				<td class='c2'>13.920.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.920.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511030</td>
+				<td class='c1'>ASESORIA FINANCIERA</td>
+				<td class='c2'>135.000.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>135.000.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511030001</td>
+				<td class='c1'>OUTOSOURCING CONTABLE</td>
+				<td class='c2'>135.000.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>135.000.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511035</td>
+				<td class='c1'>ASESORIA TECNICA</td>
+				<td class='c2'>31.587.752,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>31.587.752,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511035001</td>
+				<td class='c1'>ASESORIA TECNICA</td>
+				<td class='c2'>31.587.752,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>31.587.752,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511095</td>
+				<td class='c1'>OTROS HONORARIOS</td>
+				<td class='c2'>54.216.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>54.216.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511095001</td>
+				<td class='c1'>ADMINISTRACION CLUB</td>
+				<td class='c2'>54.216.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>54.216.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5115</td>
+				<td class='c1'>IMPUESTOS</td>
+				<td class='c2'>59.817.275,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>59.817.275,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511505</td>
+				<td class='c1'>INDUSTRIA Y COMERCIO</td>
+				<td class='c2'>478.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>478.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511505001</td>
+				<td class='c1'>INDUSTRIA Y COMERCIO</td>
+				<td class='c2'>478.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>478.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511515</td>
+				<td class='c1'>A LA PROPIEDAD RAIZ</td>
+				<td class='c2'>59.339.275,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>59.339.275,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>511515001</td>
+				<td class='c1'>A LA PROPIEDAD RAIZ</td>
+				<td class='c2'>59.339.275,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>59.339.275,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5120</td>
+				<td class='c1'>ARRENDAMIENTOS</td>
+				<td class='c2'>67.229.912,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>67.229.912,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512010</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>59.687.332,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>59.687.332,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512010001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>59.687.332,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>59.687.332,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512025</td>
+				<td class='c1'>EQUIPO DE COMP. Y COMUNICACION</td>
+				<td class='c2'>4.040.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.040.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512025001</td>
+				<td class='c1'>EQUIPO DE COMP. Y COMUNICACION</td>
+				<td class='c2'>4.040.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.040.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512035</td>
+				<td class='c1'>EQUIPO DE HOTELES Y RESTAURANTES</td>
+				<td class='c2'>202.580,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>202.580,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512035001</td>
+				<td class='c1'>EQUIPO DE HOTELES Y RESTAURANTES</td>
+				<td class='c2'>202.580,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>202.580,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512095</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>3.300.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.300.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>512095001</td>
+				<td class='c1'>ALQUILER EQUIPOS, OTROS</td>
+				<td class='c2'>3.300.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.300.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5135</td>
+				<td class='c1'>SERVICIOS</td>
+				<td class='c2'>129.978.862,65</td>
+				<td class='c3'>447.657,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>447.657,00</td>
+				<td class='c6'>130.426.519,65</td>
+			</tr>
+			<tr>
+				<td class='c0'>513505</td>
+				<td class='c1'>ASEO Y VIGILANCIA</td>
+				<td class='c2'>27.859.166,00</td>
+				<td class='c3'>171.969,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>171.969,00</td>
+				<td class='c6'>28.031.135,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513505001</td>
+				<td class='c1'>ASEO</td>
+				<td class='c2'>2.420.110,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.420.110,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513505002</td>
+				<td class='c1'>VIGILANCIA</td>
+				<td class='c2'>25.439.056,00</td>
+				<td class='c3'>171.969,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>171.969,00</td>
+				<td class='c6'>25.611.025,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513520</td>
+				<td class='c1'>PROCESAMIENTO ELECTRONICO DATOS</td>
+				<td class='c2'>4.740.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.740.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513520001</td>
+				<td class='c1'>PROCESAMIENTO ELECTRONICO DATOS</td>
+				<td class='c2'>4.740.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>4.740.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513525</td>
+				<td class='c1'>ACUEDUCTO Y ALCANTARILLADO</td>
+				<td class='c2'>7.224.788,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.224.788,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513525001</td>
+				<td class='c1'>ACUEDUCTO Y ALCANTARILLADO</td>
+				<td class='c2'>7.224.788,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.224.788,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513530</td>
+				<td class='c1'>ENERGIA ELECTRICA</td>
+				<td class='c2'>22.786.882,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>22.786.882,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513530001</td>
+				<td class='c1'>ENERGIA ELECTRICA</td>
+				<td class='c2'>22.786.882,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>22.786.882,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513535</td>
+				<td class='c1'>TELEFONO</td>
+				<td class='c2'>13.345.281,65</td>
+				<td class='c3'>275.688,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>275.688,00</td>
+				<td class='c6'>13.620.969,65</td>
+			</tr>
+			<tr>
+				<td class='c0'>513535001</td>
+				<td class='c1'>TELEFONO</td>
+				<td class='c2'>5.140.485,65</td>
+				<td class='c3'>100.000,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>100.000,00</td>
+				<td class='c6'>5.240.485,65</td>
+			</tr>
+			<tr>
+				<td class='c0'>513535002</td>
+				<td class='c1'>INTERNET</td>
+				<td class='c2'>3.127.511,00</td>
+				<td class='c3'>175.688,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>175.688,00</td>
+				<td class='c6'>3.303.199,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513535003</td>
+				<td class='c1'>CELULAR</td>
+				<td class='c2'>5.077.285,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>5.077.285,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513540</td>
+				<td class='c1'>CORREO, PORTES Y TELEGRAMAS</td>
+				<td class='c2'>220.700,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>220.700,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513540001</td>
+				<td class='c1'>CORREO, PORTES Y TELEGRAMAS</td>
+				<td class='c2'>220.700,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>220.700,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513550</td>
+				<td class='c1'>TRANSPORTE FLETES Y ACARREOS</td>
+				<td class='c2'>20.700.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>20.700.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513550001</td>
+				<td class='c1'>TRANSPORTE FLETES Y ACARREOS</td>
+				<td class='c2'>20.700.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>20.700.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513555</td>
+				<td class='c1'>GAS</td>
+				<td class='c2'>6.557.160,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.557.160,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513555001</td>
+				<td class='c1'>GAS</td>
+				<td class='c2'>6.557.160,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.557.160,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513595</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>26.544.885,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>26.544.885,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513595001</td>
+				<td class='c1'>LAVANDERIA</td>
+				<td class='c2'>24.152.885,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>24.152.885,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>513595003</td>
+				<td class='c1'>SERVICIO PERSONAL EXTRA</td>
+				<td class='c2'>2.392.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.392.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5140</td>
+				<td class='c1'>GASTOS LEGALES</td>
+				<td class='c2'>2.116.520,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.116.520,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514005</td>
+				<td class='c1'>NOTARIALES</td>
+				<td class='c2'>134.020,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>134.020,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514005001</td>
+				<td class='c1'>NOTARIALES</td>
+				<td class='c2'>134.020,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>134.020,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514010</td>
+				<td class='c1'>REGISTRO MERCANTIL</td>
+				<td class='c2'>1.982.500,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.982.500,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514010001</td>
+				<td class='c1'>CAMARA DE COMERCIO</td>
+				<td class='c2'>1.982.500,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.982.500,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5145</td>
+				<td class='c1'>MANTENIMIENTO Y REPARACIONES</td>
+				<td class='c2'>25.066.925,93</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>25.066.925,93</td>
+			</tr>
+			<tr>
+				<td class='c0'>514505</td>
+				<td class='c1'>MANTENIMIENTO TERRENOS</td>
+				<td class='c2'>706.637,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>706.637,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514505001</td>
+				<td class='c1'>MANTENIMIENTO TERRENOS</td>
+				<td class='c2'>706.637,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>706.637,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514510</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>15.396.008,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>15.396.008,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514510001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>15.396.008,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>15.396.008,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514515</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>178.233,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>178.233,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514515001</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>178.233,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>178.233,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514520</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>687.603,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>687.603,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514520001</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>687.603,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>687.603,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514525</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACIO</td>
+				<td class='c2'>875.946,93</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>875.946,93</td>
+			</tr>
+			<tr>
+				<td class='c0'>514525001</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACIO</td>
+				<td class='c2'>875.946,93</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>875.946,93</td>
+			</tr>
+			<tr>
+				<td class='c0'>514535</td>
+				<td class='c1'>EQUIPO HOTELES Y RESTAURANTE</td>
+				<td class='c2'>7.222.498,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.222.498,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>514535001</td>
+				<td class='c1'>EQUIPO HOTELES Y RESTAURANTE</td>
+				<td class='c2'>7.222.498,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.222.498,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5160</td>
+				<td class='c1'>DEPRECIACIONES</td>
+				<td class='c2'>60.014.724,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>60.014.724,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516005</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>40.797.394,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>40.797.394,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516005001</td>
+				<td class='c1'>CONSTRUCCIONES Y EDIFICACIONES</td>
+				<td class='c2'>40.797.394,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>40.797.394,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516010</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>3.600.404,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.600.404,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516010001</td>
+				<td class='c1'>MAQUINARIA Y EQUIPO</td>
+				<td class='c2'>3.600.404,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.600.404,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516015</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>2.643.381,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.643.381,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516015001</td>
+				<td class='c1'>EQUIPO DE OFICINA</td>
+				<td class='c2'>2.643.381,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.643.381,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516020</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACIO</td>
+				<td class='c2'>5.883.633,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>5.883.633,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516020001</td>
+				<td class='c1'>EQUIPO DE COMPUTACION Y COMUNICACIO</td>
+				<td class='c2'>5.883.633,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>5.883.633,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516030</td>
+				<td class='c1'>EQUIPO HOTELES Y RESTAURANTES</td>
+				<td class='c2'>7.089.912,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.089.912,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516030001</td>
+				<td class='c1'>EQUIPO HOTELES Y RESTAURANTES</td>
+				<td class='c2'>7.089.912,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>7.089.912,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5165</td>
+				<td class='c1'>AMORTIZACIONES</td>
+				<td class='c2'>14.041.180,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>14.041.180,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516515</td>
+				<td class='c1'>CARGOS DIFERIDOS</td>
+				<td class='c2'>14.041.180,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>14.041.180,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516515001</td>
+				<td class='c1'>PROGRAMAS PARA COMPUTADOR (SOFTWARE</td>
+				<td class='c2'>2.715.517,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.715.517,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516515003</td>
+				<td class='c1'>DOTACION Y SUMINISTRO A TRBAJADORES</td>
+				<td class='c2'>108.750,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>108.750,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516515005</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>2.596.264,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.596.264,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>516515006</td>
+				<td class='c1'>SEGUROS</td>
+				<td class='c2'>8.620.649,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>8.620.649,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5195</td>
+				<td class='c1'>DIVERSOS</td>
+				<td class='c2'>128.163.571,10</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>55.683,70</td>
+				<td class='c5'>-55.683,70</td>
+				<td class='c6'>128.107.887,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>519510</td>
+				<td class='c1'>LIBROS, SUSCRIP., PERIODICO REVISTA</td>
+				<td class='c2'>1.438.795,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.438.795,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519510001</td>
+				<td class='c1'>LIBROS, SUSCRIP., PERIODICO REVISTA</td>
+				<td class='c2'>1.438.795,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>1.438.795,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519520</td>
+				<td class='c1'>GTOS. REPRESENT. Y RELACIONES PUB.</td>
+				<td class='c2'>3.442.286,08</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.442.286,08</td>
+			</tr>
+			<tr>
+				<td class='c0'>519520002</td>
+				<td class='c1'>GASTOS ASAMBLEA</td>
+				<td class='c2'>3.417.286,08</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.417.286,08</td>
+			</tr>
+			<tr>
+				<td class='c0'>519520004</td>
+				<td class='c1'>ATENCION A TERCEROS</td>
+				<td class='c2'>25.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>25.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519525</td>
+				<td class='c1'>ELEMENTOS DE ASEO Y CAFETERIA</td>
+				<td class='c2'>11.583.908,02</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>55.683,70</td>
+				<td class='c5'>-55.683,70</td>
+				<td class='c6'>11.528.224,32</td>
+			</tr>
+			<tr>
+				<td class='c0'>519525001</td>
+				<td class='c1'>ELEMENTOS DE ASEO Y CAFETERIA</td>
+				<td class='c2'>11.583.908,02</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>55.683,70</td>
+				<td class='c5'>-55.683,70</td>
+				<td class='c6'>11.528.224,32</td>
+			</tr>
+			<tr>
+				<td class='c0'>519530</td>
+				<td class='c1'>UTILES , PAPELERIA Y FOTOCOPIAS</td>
+				<td class='c2'>15.315.384,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>15.315.384,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519530001</td>
+				<td class='c1'>UTILES , PAPELERIA Y FOTOCOPIAS</td>
+				<td class='c2'>15.315.384,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>15.315.384,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519535</td>
+				<td class='c1'>COMBUSTIBLES Y LUBRICANTES</td>
+				<td class='c2'>21.934,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>21.934,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519535001</td>
+				<td class='c1'>COMBUSTIBLES Y LUBRICANTES</td>
+				<td class='c2'>21.934,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>21.934,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519545</td>
+				<td class='c1'>TAXIS Y BUSES</td>
+				<td class='c2'>3.738.100,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.738.100,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519545001</td>
+				<td class='c1'>TAXIS Y BUSES</td>
+				<td class='c2'>3.738.100,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.738.100,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519560</td>
+				<td class='c1'>CASINO Y RESTAURANTE</td>
+				<td class='c2'>45.506.800,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>45.506.800,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519560001</td>
+				<td class='c1'>CASINO Y RESTAURANTE</td>
+				<td class='c2'>45.506.800,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>45.506.800,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519565</td>
+				<td class='c1'>PARQUEADERO</td>
+				<td class='c2'>17.130.690,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>17.130.690,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519565001</td>
+				<td class='c1'>PARQUEADERO</td>
+				<td class='c2'>17.130.690,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>17.130.690,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>29.985.674,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>29.985.674,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595001</td>
+				<td class='c1'>AVISOS Y PUBLICACIONES</td>
+				<td class='c2'>2.944.006,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.944.006,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595002</td>
+				<td class='c1'>FLORES Y DECORACION</td>
+				<td class='c2'>5.284.846,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>5.284.846,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595003</td>
+				<td class='c1'>UTENSILIOS COCINA</td>
+				<td class='c2'>435.706,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>435.706,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595005</td>
+				<td class='c1'>MUSICA Y VARIEDADES</td>
+				<td class='c2'>6.650.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.650.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595006</td>
+				<td class='c1'>VARIOS</td>
+				<td class='c2'>3.094.294,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.094.294,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>519595009</td>
+				<td class='c1'>CUOTA APOYO SOSTENIMIENTO</td>
+				<td class='c2'>11.576.822,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>11.576.822,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>53</td>
+				<td class='c1'>NO OPERACIONALES</td>
+				<td class='c2'>141.057.104,03</td>
+				<td class='c3'>1.876.332,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>1.876.332,00</td>
+				<td class='c6'>142.933.436,03</td>
+			</tr>
+			<tr>
+				<td class='c0'>5305</td>
+				<td class='c1'>FINANCIEROS</td>
+				<td class='c2'>106.498.960,63</td>
+				<td class='c3'>1.876.332,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>1.876.332,00</td>
+				<td class='c6'>108.375.292,63</td>
+			</tr>
+			<tr>
+				<td class='c0'>530505</td>
+				<td class='c1'>GASTOS BANCARIOS</td>
+				<td class='c2'>2.148.447,57</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.148.447,57</td>
+			</tr>
+			<tr>
+				<td class='c0'>530505001</td>
+				<td class='c1'>GASTOS BANCARIOS</td>
+				<td class='c2'>2.148.447,57</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>2.148.447,57</td>
+			</tr>
+			<tr>
+				<td class='c0'>530515</td>
+				<td class='c1'>COMISIONES</td>
+				<td class='c2'>30.585.398,08</td>
+				<td class='c3'>1.876.332,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>1.876.332,00</td>
+				<td class='c6'>32.461.730,08</td>
+			</tr>
+			<tr>
+				<td class='c0'>530515001</td>
+				<td class='c1'>COMISIONES</td>
+				<td class='c2'>30.585.398,08</td>
+				<td class='c3'>1.876.332,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>1.876.332,00</td>
+				<td class='c6'>32.461.730,08</td>
+			</tr>
+			<tr>
+				<td class='c0'>530520</td>
+				<td class='c1'>INTERESES</td>
+				<td class='c2'>73.765.114,98</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>73.765.114,98</td>
+			</tr>
+			<tr>
+				<td class='c0'>530520001</td>
+				<td class='c1'>INTERESES SOCIOS</td>
+				<td class='c2'>34.953.220,96</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>34.953.220,96</td>
+			</tr>
+			<tr>
+				<td class='c0'>530520002</td>
+				<td class='c1'>INTERESES DE MORA</td>
+				<td class='c2'>875,02</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>875,02</td>
+			</tr>
+			<tr>
+				<td class='c0'>530520004</td>
+				<td class='c1'>INTERESES A TERCEROS</td>
+				<td class='c2'>38.811.019,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>38.811.019,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5315</td>
+				<td class='c1'>GASTOS EXTRAORDINARIOS</td>
+				<td class='c2'>6.195.245,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.195.245,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>531515</td>
+				<td class='c1'>COSTOS Y GASTOS DE EJERCICIOS ANTER</td>
+				<td class='c2'>6.195.245,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.195.245,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>531515001</td>
+				<td class='c1'>COSTOS Y GASTOS DE EJERCICIOS ANTER</td>
+				<td class='c2'>6.195.245,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>6.195.245,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5395</td>
+				<td class='c1'>GASTOS DIVERSOS</td>
+				<td class='c2'>28.362.898,40</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>28.362.898,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>539595</td>
+				<td class='c1'>OTROS</td>
+				<td class='c2'>28.362.898,40</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>28.362.898,40</td>
+			</tr>
+			<tr>
+				<td class='c0'>539595001</td>
+				<td class='c1'>NO DEDUCIBLES</td>
+				<td class='c2'>3.939.959,67</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>3.939.959,67</td>
+			</tr>
+			<tr>
+				<td class='c0'>539595002</td>
+				<td class='c1'>IMPUESTOS ASUMIDOS</td>
+				<td class='c2'>15.236.274,81</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>15.236.274,81</td>
+			</tr>
+			<tr>
+				<td class='c0'>539595003</td>
+				<td class='c1'>GRAVAMEN MVTO FINANCIERO</td>
+				<td class='c2'>9.186.663,92</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>9.186.663,92</td>
+			</tr>
+			<tr>
+				<td class='c0'>54</td>
+				<td class='c1'>IMPTO DE RENTA</td>
+				<td class='c2'>11.913.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>11.913.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>5405</td>
+				<td class='c1'>IMPTO DE RENTA</td>
+				<td class='c2'>11.913.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>11.913.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>540505</td>
+				<td class='c1'>IMPUESTO DE RENTA</td>
+				<td class='c2'>11.913.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>11.913.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>540505001</td>
+				<td class='c1'>PROV IMPTO RENTA</td>
+				<td class='c2'>11.913.000,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>11.913.000,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>6</td>
+				<td class='c1'>COSTOS DE VENTA</td>
+				<td class='c2'>242.768.445,74</td>
+				<td class='c3'>761.956,21</td>
+				<td class='c4'>18.859,47</td>
+				<td class='c5'>743.096,74</td>
+				<td class='c6'>243.511.542,48</td>
+			</tr>
+			<tr>
+				<td class='c0'>61</td>
+				<td class='c1'>COSTO DE VTAS Y PRESTACION DE SERVI</td>
+				<td class='c2'>242.768.445,74</td>
+				<td class='c3'>761.956,21</td>
+				<td class='c4'>18.859,47</td>
+				<td class='c5'>743.096,74</td>
+				<td class='c6'>243.511.542,48</td>
+			</tr>
+			<tr>
+				<td class='c0'>6170</td>
+				<td class='c1'>OTRAS ACTIVIDADES SERVICIOS SOCIALE</td>
+				<td class='c2'>242.768.445,74</td>
+				<td class='c3'>761.956,21</td>
+				<td class='c4'>18.859,47</td>
+				<td class='c5'>743.096,74</td>
+				<td class='c6'>243.511.542,48</td>
+			</tr>
+			<tr>
+				<td class='c0'>617040</td>
+				<td class='c1'>ENTRETENIMIENTO Y ESPARCIMIENTO</td>
+				<td class='c2'>242.768.445,74</td>
+				<td class='c3'>761.956,21</td>
+				<td class='c4'>18.859,47</td>
+				<td class='c5'>743.096,74</td>
+				<td class='c6'>243.511.542,48</td>
+			</tr>
+			<tr>
+				<td class='c0'>617040001</td>
+				<td class='c1'>COMEDORES - ALIMENTOS</td>
+				<td class='c2'>160.685.634,22</td>
+				<td class='c3'>604.785,54</td>
+				<td class='c4'>18.859,47</td>
+				<td class='c5'>585.926,07</td>
+				<td class='c6'>161.271.560,29</td>
+			</tr>
+			<tr>
+				<td class='c0'>617040002</td>
+				<td class='c1'>BARES - BEBIDAS</td>
+				<td class='c2'>80.645.550,21</td>
+				<td class='c3'>149.476,39</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>149.476,39</td>
+				<td class='c6'>80.795.026,60</td>
+			</tr>
+			<tr>
+				<td class='c0'>617040005</td>
+				<td class='c1'>CIGARRILLOS</td>
+				<td class='c2'>1.437.261,31</td>
+				<td class='c3'>7.694,28</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>7.694,28</td>
+				<td class='c6'>1.444.955,59</td>
+			</tr>
+			<tr>
+				<td class='c0'>8</td>
+				<td class='c1'>CUENTAS DE ORDEN DEUDORAS</td>
+				<td class='c2'>0,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>0,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>83</td>
+				<td class='c1'>DEUDORAS DE CONTROL</td>
+				<td class='c2'>596.539.296,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>596.539.296,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>8325</td>
+				<td class='c1'>ACTIVOS CASTIGADOS</td>
+				<td class='c2'>583.440.311,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>583.440.311,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>832510</td>
+				<td class='c1'>DEUDORES ACTIVOS CASTIGADOS</td>
+				<td class='c2'>583.440.311,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>583.440.311,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>832510001</td>
+				<td class='c1'>CASTIGO DE CARTERA SOCIOS</td>
+				<td class='c2'>583.440.311,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>583.440.311,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>8395</td>
+				<td class='c1'>OTRAS DEUDORAS DE CONTROL</td>
+				<td class='c2'>13.098.985,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.098.985,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>839520</td>
+				<td class='c1'>BIENES Y VALORES EN FIDEICOMISO</td>
+				<td class='c2'>13.098.985,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.098.985,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>839520001</td>
+				<td class='c1'>BIENES Y VALORES EN FIDEICOMISO</td>
+				<td class='c2'>13.098.985,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>13.098.985,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>86</td>
+				<td class='c1'>DEUDORAS DE CONTROL POR CONTRA</td>
+				<td class='c2'>-596.539.296,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-596.539.296,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>8625</td>
+				<td class='c1'>ACTIVOS CASTIGADOS CONTRA</td>
+				<td class='c2'>-583.440.311,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-583.440.311,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>862510</td>
+				<td class='c1'>DEUDORES ACTIVOS CASTIGADOS POR CONTRA</td>
+				<td class='c2'>-583.440.311,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-583.440.311,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>862510001</td>
+				<td class='c1'>CASTIGO DE CARTERA SOCIOS POR CONTRA</td>
+				<td class='c2'>-583.440.311,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-583.440.311,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>8695</td>
+				<td class='c1'>OTRAS CUENTAS DE CONTROL POR CONTRA</td>
+				<td class='c2'>-13.098.985,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-13.098.985,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>869520</td>
+				<td class='c1'>DEUDORAS DE CONTROL POR CONTRA</td>
+				<td class='c2'>-13.098.985,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-13.098.985,00</td>
+			</tr>
+			<tr>
+				<td class='c0'>869520001</td>
+				<td class='c1'>DEUDORAS DE CONTROL POR CONTRA</td>
+				<td class='c2'>-13.098.985,00</td>
+				<td class='c3'>0,00</td>
+				<td class='c4'>0,00</td>
+				<td class='c5'>0,00</td>
+				<td class='c6'>-13.098.985,00</td>
+			</tr>
+<tr><td class="c0"></td><td class="c1"></td><td class="c2">0,00</td><td class="c3">31.838.878,38</td><td class="c4">31.838.878,38</td><td class="c5">0,00</td><td class="c6">0,00</td></tr>	</table></p>
+	</body>
+</html>

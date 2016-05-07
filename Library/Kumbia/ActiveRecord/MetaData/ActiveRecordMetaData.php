@@ -560,7 +560,7 @@ abstract class ActiveRecordMetaData
 
 		//Grabar meta-data en un bodegas persistentes
 		$enviroment = CoreConfig::getAppSetting('mode');
-		/*if ($enviroment == 'production') {
+		if ($enviroment == 'production') {
 			$modelsDir = Core::getActiveModelsDir();
 			if (self::$_hasAPC == true) {
 				$sharedKey = self::_getAPCKey($source);
@@ -580,7 +580,7 @@ abstract class ActiveRecordMetaData
 			 	}
 			}
 			unset($modelsDir);
-		}*/
+		}
 
 		unset($schema);
 		unset($table);

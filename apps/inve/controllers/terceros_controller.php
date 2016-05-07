@@ -98,24 +98,6 @@ class TercerosController extends HyperFormController {
 				'notReport' => true,
 				'filters' => array('striptags', 'extraspaces')
 			),
-			'locciu' => array(
-				'single' => 'Ciudad',
-				'type' => 'ciudad',
-				'notBrowse' => true,
-				'notSearch' => true,
-				'notReport' => true,
-				'filters' => array('int')
-			),
-			'contacto' => array(
-				'single' => 'Contacto',
-				'type' => 'text',
-				'size' => 35,
-				'maxlength' => 35,
-				'notBrowse' => true,
-				'notSearch' => true,
-				'notReport' => true,
-				'filters' => array('striptags', 'extraspaces')
-			),
 			'email' => array(
 				'single' => 'Email',
 				'type' => 'text',
@@ -131,6 +113,24 @@ class TercerosController extends HyperFormController {
 				'type' => 'text',
 				'size' => 35,
 				'maxlength' => 145,
+				'notBrowse' => true,
+				'notSearch' => true,
+				'notReport' => true,
+				'filters' => array('striptags', 'extraspaces')
+			),
+			'locciu' => array(
+				'single' => 'Ciudad',
+				'type' => 'ciudad',
+				'notBrowse' => true,
+				'notSearch' => true,
+				'notReport' => true,
+				'filters' => array('int')
+			),
+			'contacto' => array(
+				'single' => 'Contacto',
+				'type' => 'text',
+				'size' => 35,
+				'maxlength' => 35,
 				'notBrowse' => true,
 				'notSearch' => true,
 				'notReport' => true,
@@ -262,6 +262,15 @@ class TercerosController extends HyperFormController {
 				//'notReport' => true,
 				'filters' => array('double')
 			),
+			'grupo_niif' => array(
+				'single' => 'Grupo NIIF',
+				'type' => 'int',
+				'size' => 2,
+				'maxlength' => 2,
+				'notNull'	=> false,
+				'filters' => array('int')
+			),
+
 		)
 	);
 

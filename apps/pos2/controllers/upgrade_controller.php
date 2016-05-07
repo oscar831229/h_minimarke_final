@@ -189,8 +189,7 @@ class UpgradeController extends ApplicationController
 		}
 	}
 
-	public function to54Action()
-	{
+	public function to54Action(){
 		$this->setResponse('view');
 		set_time_limit(0);
 		ActiveRecord::disableEvents(true);
@@ -1544,84 +1543,6 @@ class UpgradeController extends ApplicationController
 			$this->Datos->setTransaction($transaction);
 			$datos = $this->Datos->findFirst();
 			$datos->setVersion('6.0.3');
-			if ($datos->save() == false) {
-				foreach ($datos->getMessages() as $message) {
-					Flash::error($message->getMessage());
-				}
-				$transaction->rollback();
-			}
-
-			$this->_cleanTables();
-
-			$transaction->commit();
-
-		} catch (TransactionFailed $e){
-			$controllerResponse = ControllerResponse::getInstance();
-			$controllerResponse->setHeader('X-Application-State: Exception', true);
-			$controllerResponse->setHeader('HTTP/1.1 500 Application Exception', true);
-			Flash::error($e->getMessage());
-			print_r($e->getTrace());
-		}
-	}
-
-	public function to604Action()
-	{
-
-		$this->setResponse('view');
-		set_time_limit(0);
-		ActiveRecord::disableEvents(true);
-		GarbageCollector::freeAllMetaData();
-		$schema = unserialize(file_get_contents('apps/pos2/schema/604.php'));
-		$this->syncDb($schema);
-		unset($schema);
-
-		try {
-
-			$this->_cleanTables();
-
-			$transaction = TransactionManager::getUserTransaction();
-			$this->Datos->setTransaction($transaction);
-			$datos = $this->Datos->findFirst();
-			$datos->setVersion('6.0.4');
-			if ($datos->save() == false) {
-				foreach ($datos->getMessages() as $message) {
-					Flash::error($message->getMessage());
-				}
-				$transaction->rollback();
-			}
-
-			$this->_cleanTables();
-
-			$transaction->commit();
-
-		} catch (TransactionFailed $e){
-			$controllerResponse = ControllerResponse::getInstance();
-			$controllerResponse->setHeader('X-Application-State: Exception', true);
-			$controllerResponse->setHeader('HTTP/1.1 500 Application Exception', true);
-			Flash::error($e->getMessage());
-			print_r($e->getTrace());
-		}
-	}
-
-	public function to605Action()
-	{
-
-		$this->setResponse('view');
-		set_time_limit(0);
-		ActiveRecord::disableEvents(true);
-		GarbageCollector::freeAllMetaData();
-		$schema = unserialize(file_get_contents('apps/pos2/schema/605.php'));
-		$this->syncDb($schema);
-		unset($schema);
-
-		try {
-
-			$this->_cleanTables();
-
-			$transaction = TransactionManager::getUserTransaction();
-			$this->Datos->setTransaction($transaction);
-			$datos = $this->Datos->findFirst();
-			$datos->setVersion('6.0.5');
 			if ($datos->save() == false) {
 				foreach ($datos->getMessages() as $message) {
 					Flash::error($message->getMessage());

@@ -53,7 +53,6 @@ class Reabrir_MesController extends ApplicationController
 		try {
 
 			set_time_limit(0);
-			$allMessages = array();
 			$transaction = TransactionManager::getUserTransaction();
 
 			$this->Empresa->setTransaction($transaction);
@@ -138,6 +137,11 @@ class Reabrir_MesController extends ApplicationController
 			$anteriorCierre = clone $fechaCierre;
 			$anteriorCierre->diffMonths(1);
 			$anteriorCierre->toLastDayOfMonth();
+
+			//Create movi niif
+			$auraNiif = new AuraNiif();
+			$auraNiif->setTransaction($transaction);
+			$auraNiif->borrarSaldosDelMes($ultimoCierre);
 
 			$transaction->commit();
 			return array(

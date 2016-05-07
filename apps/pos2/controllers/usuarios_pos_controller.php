@@ -18,24 +18,22 @@ class Usuarios_PosController extends StandardForm
 
 	public $scaffold = true;
 
-	public function beforeInsert($usuarioPos)
-	{
+	public function beforeInsert($usuarioPos){
 		$clave = sprintf("%04s", mt_rand(0, 9999));
 		$usuarioPos->clave = sha1($clave);
 		Flash::success('La clave del usuario es "'.$clave.'", por favor no la olvide');
 	}
 
-	public function beforeUpdate($usuarioPos)
-	{
+	public function beforeUpdate($usuarioPos){
 		$usuario = new UsuariosPos();
 		$usuario->find($this->getRequestParam("fl_id", "int"));
 		$usuarioPos->clave = $usuario->clave;
 	}
 
-	public function initialize()
-	{
+	public function initialize(){
 
 		$this->setTemplateAfter('admin_menu');
+		//$this->set
 
 		$this->setFormCaption('Mantenimiento de Usuarios');
 		$this->setTitleImage('pos2/users.png');
@@ -55,5 +53,7 @@ class Usuarios_PosController extends StandardForm
 			array('A', 'ACTIVO'),
 			array('I', 'INACTIVO')
 		));
+
 	}
+
 }

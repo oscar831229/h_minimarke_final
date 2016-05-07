@@ -73,11 +73,11 @@ class HfosDelivery {
 		ini_set('default_socket_timeout', 60);
 
 		$delivery = EntityManager::get("Delivery")->findFirst();
-		if ($delivery == false) {
+		if ($delivery==false) {
 
 			$dathot = EntityManager::get("Dathot")->findFirst();
 
-			$colors   = array();
+			$colors = array();
 			$colors[] = array('type' => 'dark', 'value' => JASMIN_DARK_COLOR);
 			$colors[] = array('type' => 'draw', 'value' => JASMIN_DRAW_COLOR);
 			$colors[] = array('type' => 'light', 'value' => JASMIN_LIGHT_COLOR);
@@ -86,21 +86,21 @@ class HfosDelivery {
 			$colors[] = array('type' => 'text', 'value' => JASMIN_TEXT_COLOR);
 
 			$success = self::_doTransport('relay/register', array(
-				'nit' 				=> $dathot->getNit(),
-				'nombre' 			=> $dathot->getNombre(),
-				'nombreComercial' 	=> JASMIN_SYSTEM_CAPTION,
-				'razonSocial' 		=> $dathot->getNomcad(),
-				'direccion' 		=> $dathot->getDireccion(),
-				'telefono' 			=> $dathot->getTelefono(),
-				'ciudad' 			=> $dathot->getNomciu(),
-				'departamento' 		=> $dathot->getNomdep(),
-				'sitioWeb' 			=> $dathot->getSitweb(),
-				'email' 			=> $dathot->getEmail(),
-				'colors' 			=> json_encode($colors),
-				'logo' 				=> base64_encode(file_get_contents( KEF_ABS_PATH . 'public/img/logo.jpg'))
+				'nit' => $dathot->getNit(),
+				'nombre' => $dathot->getNombre(),
+				'nombreComercial' => JASMIN_SYSTEM_CAPTION,
+				'razonSocial' => $dathot->getNomcad(),
+				'direccion' => $dathot->getDireccion(),
+				'telefono' => $dathot->getTelefono(),
+				'ciudad' => $dathot->getNomciu(),
+				'departamento' => $dathot->getNomdep(),
+				'sitioWeb' => $dathot->getSitweb(),
+				'email' => $dathot->getEmail(),
+				'colors' => json_encode($colors),
+				'logo' => base64_encode(file_get_contents( KEF_ABS_PATH . 'public/img/logo.jpg'))
 			));
 
-			if ($success == true) {
+			if ($success==true) {
 				$response = self::getLastResponse();
 				$relayKey = filter_alpha($response['relayKey']);
 				$delivery = new Delivery();
@@ -119,20 +119,11 @@ class HfosDelivery {
 		return $relayKey;
 	}
 
-	/**
-	 * @param $type
-	 * @param $to
-	 * @param $subject
-	 * @param $body
-	 * @param string $from
-	 * @param array $extra
-	 * @return bool
-	 */
 	public static function send($type, $to, $subject, $body, $from='', $extra=array())
 	{
 
 		$relayKey = self::_getRelayKey();
-		if ($relayKey == false) {
+		if ($relayKey==false) {
 			return false;
 		}
 
@@ -177,7 +168,7 @@ class HfosDelivery {
 	{
 
 		$relayKey = self::_getRelayKey();
-		if ($relayKey == false) {
+		if ($relayKey==false) {
 			return false;
 		}
 
@@ -214,7 +205,7 @@ class HfosDelivery {
 	{
 
 		$relayKey = self::_getRelayKey();
-		if ($relayKey == false) {
+		if ($relayKey==false) {
 			return false;
 		}
 
@@ -249,7 +240,7 @@ class HfosDelivery {
 	public static function getCampaignStat($campaignCode)
 	{
 		$relayKey = self::_getRelayKey();
-		if ($relayKey == false) {
+		if ($relayKey==false) {
 			return false;
 		}
 		$success = self::_doTransport('campaign/getStat', array(

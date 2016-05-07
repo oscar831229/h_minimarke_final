@@ -49,22 +49,6 @@ if (KEF_OFAST == false) {
 	require KEF_ABS_PATH . 'public/index.fast.php';
 }
 
-register_shutdown_function( "fatal_handler" );
-
-function fatal_handler()
-{
-  $errfile = "unknown file";
-  $errstr  = "shutdown";
-  $errno   = E_CORE_ERROR;
-  $errline = 0;
-
-  $error = error_get_last();
-
-  if ( $error !== NULL) {
-    print_r($error);
-  }
-}
-
 try {
 
 	//Inicializar el ExceptionHandler
@@ -81,7 +65,7 @@ try {
 	Core::main();
 
 }
-catch (CoreException $e){
+catch(CoreException $e){
 	try {
 		if (!Session::isStarted()) {
 			Session::startSession();
@@ -94,7 +78,7 @@ catch (CoreException $e){
 		CoreException::showSimpleMessage($e);
 	}
 }
-catch (Exception $e){
+catch(Exception $e){
 	//Se trata de mostrar la excepción de la forma mas segura posible
 	echo 'Exception: '.$e->getMessage();
 	foreach(debug_backtrace() as $debug){

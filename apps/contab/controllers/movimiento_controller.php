@@ -1,50 +1,58 @@
 <?php
 
 /**
- * Hotel Front-Office Solution
- *
- * LICENSE
- *
- * This source file is subject to license that is bundled
- * with this package in the file docs/LICENSE.txt.
- *
- * @package 	Back-Office
- * @copyright 	BH-TECK Inc. 2009-2014
- * @version		$Id$
- */
+* Hotel Front-Office Solution
+*
+* LICENSE
+*
+* This source file is subject to license that is bundled
+* with this package in the file docs/LICENSE.txt.
+*
+* @package     Back-Office
+* @copyright   BH-TECK Inc. 2009-2014
+* @version     $Id$
+*/
 
 /**
- * MovimientoController
- *
- * Controlador del movimiento
- *
- */
+* MovimientoController
+*
+* Controlador del movimiento
+*
+*/
 class MovimientoController extends ApplicationController
 {
 
 	public function initialize()
 	{
 		$controllerRequest = ControllerRequest::getInstance();
+
 		if ($controllerRequest->isAjax()) {
 			View::setRenderLevel(View::LEVEL_LAYOUT);
 		}
+
 		parent::initialize();
 	}
 
 	public function indexAction()
 	{
 		$controllerRequest = ControllerRequest::getInstance();
+
 		if ($controllerRequest->isSetPostParam('clean')) {
+
 			$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
 			$numero = $this->getPostParam('numero', 'int');
-			if($numero>0){
+
+			if ($numero>0) {
+
 				$tokenId = IdentityManager::getTokenId();
 				$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero'";
 				$this->Movitemp->deleteAll($conditions);
 			}
+
 			Tag::displayTo('codigoComprobante', '');
 			Tag::displayTo('numero', '');
 		}
+
 		$this->setParamToView('message', 'Ingrese un criterio de búsqueda para consultar movimientos');
 		$this->setParamToView('comprobs', $this->Comprob->find(array('order' => 'nom_comprob')));
 	}
@@ -54,19 +62,23 @@ class MovimientoController extends ApplicationController
 
 		Session::set('lastAction', 'nuevo');
 
+		$movimientos = array();
+
 		$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
 		$numero = $this->getPostParam('numero', 'int');
 
-		$movimientos = array();
-		if($codigoComprobante!=''){
+		if ($codigoComprobante!='') {
 
 			$comprob = $this->Comprob->findFirst("codigo='$codigoComprobante'");
-			if($comprob==false){
+
+			if ($comprob==false) {
 				Flash::error('El comprobante "'.$codigoComprobante.'" no existe');
 				return $this->routeToAction('getDetallesError');
 			} else {
+
 				$identity = IdentityManager::getActive();
-				if(!Aura::checkPermission($identity['id'], $codigoComprobante, 'A')){
+
+				if (!Aura::checkPermission($identity['id'], $codigoComprobante, 'A')) {
 					Flash::error('No tiene permiso para adicionar comprobantes de "'.$comprob->getNomComprob().'"');
 					return $this->routeToAction('getDetallesError');
 				}
@@ -74,151 +86,155 @@ class MovimientoController extends ApplicationController
 				/*$maximoNumero = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
 				$numero = $comprob->getConsecutivo();
 				if($numero<$maximoNumero){
-					$numero = $maximoNumero;
-				}*/
+				$numero = $maximoNumero;
+			}*/
 
-				//Se debe coger el numero de comprobante seleccionado en Báscias tipo-comrobante
-				$tipoComprobante = $this->Comprob->findFirst(array('conditions'=>"codigo='$codigoComprobante'"));
-				$numero = $tipoComprobante->getConsecutivo();
+			//Se debe coger el numero de comprobante seleccionado en Báscias tipo-comrobante
+			$tipoComprobante = $this->Comprob->findFirst(array('conditions'=>"codigo='$codigoComprobante'"));
+			$numero = $tipoComprobante->getConsecutivo();
 
-				//verificamos si no existe ese comprobante con ese numero
-				$movi = $this->Movi->findFirst(array('conditions'=>"comprob='$codigoComprobante' AND numero='$numero'"));
-				if($movi!=false){
-					Flash::error('El comprobante "'.$comprob->getNomComprob().'" con numero "'.$numero.'" ya existe, debe cambiar el consecutivo del comprobante');
-					return $this->routeToAction('getDetallesError');
-				}
-
-			}
-
-			$tokenId = IdentityManager::getTokenId();
-			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-			foreach ($this->Movitemp->find($conditions, 'order: consecutivo') as $movi) {
-				$codigoCuenta = $movi->getCuenta();
-				$cuenta = BackCacher::getCuenta($codigoCuenta);
-				if ($cuenta != false) {
-					$movimientos[] = array(
-						'numero' => $movi->getConsecutivo(),
-						'cuenta' => $codigoCuenta,
-						'nombreCuenta' => $cuenta->getNombre(),
-						'naturaleza' => $movi->getDebCre(),
-						'descripcion' => $movi->getDescripcion(),
-						'valor' => $movi->getValor()
-					);
-				} else {
-					Flash::error('La cuenta "'.$codigoCuenta.'" no existe');
-				}
+			//verificamos si no existe ese comprobante con ese numero
+			$movi = $this->Movi->findFirst(array('conditions'=>"comprob='$codigoComprobante' AND numero='$numero'"));
+			if ($movi!=false) {
+				Flash::error('El comprobante "'.$comprob->getNomComprob().'" con numero "'.$numero.'" ya existe, debe cambiar el consecutivo del comprobante');
+				return $this->routeToAction('getDetallesError');
 			}
 
 		}
 
-		Tag::displayTo('codigoComprobante', $codigoComprobante);
-		Tag::displayTo('numero', $numero);
-		$fecha = $this->getPostParam('fecha', 'date');
-		if($fecha==''){
-			Tag::displayTo('fecha', Date::getCurrentDate());
-		} else {
-			Tag::displayTo('fecha', $fecha);
-		}
+		$tokenId = IdentityManager::getTokenId();
+		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
+		
+		foreach ($this->Movitemp->find($conditions, 'order: consecutivo') as $movi) {
 
-		if(count($movimientos)>0){
-			$this->setParamToView('message', 'Se han cargado automáticamente algunos movimientos sin guardar');
-		} else {
-			if($codigoComprobante!=''){
-				$this->setParamToView('message', 'Ingrese los movimientos contables y haga click en "Guardar"');
-			} else {
-				$this->setParamToView('message', 'Seleccione el tipo de comprobante a grabar');
-			}
-		}
-		$this->setParamToView('codigoComprobante', $codigoComprobante);
-		$this->setParamToView('movimientos', $movimientos);
-		$this->setParamToView('comprobs', $this->Comprob->find('order: nom_comprob'));
-	}
+			$codigoCuenta = $movi->getCuenta();
+			$cuenta = BackCacher::getCuenta($codigoCuenta);
 
-	public function validarFechaAction()
-	{
-		$this->setResponse('json');
-		try {
-			$fecha = $this->getPostParam('fecha', 'date');
-			$diasLimite = Settings::get('d_movi_limite');
-			if($diasLimite===null){
-				$diasLimite = 5;
-			}
-			$fecha = new Date($fecha);
-			$fechaLimite = new Date();
-			$fechaLimite->addDays($diasLimite);
-			if(Date::isLater($fecha, $fechaLimite)){
-				return array(
-					'status' => 'FAILED',
-					'message' => 'La fecha del comprobante es inválida'
+			if ($cuenta != false) {
+
+				$movimientos[] = array(
+					'numero' => $movi->getConsecutivo(),
+					'cuenta' => $codigoCuenta,
+					'nombreCuenta' => $cuenta->getNombre(),
+					'naturaleza' => $movi->getDebCre(),
+					'descripcion' => $movi->getDescripcion(),
+					'valor' => $movi->getValor()
 				);
 			} else {
-				$empresa = $this->Empresa->findFirst();
-				if (Date::isEarlier($fecha, $empresa->getFCierrec())) {
-					return array(
-						'status' => 'FAILED',
-						'message' => 'La fecha del comprobante debe estar en el cierre contable actual'
-					);
-				} else {
-					return array(
-						'status' => 'OK'
-					);
-				}
+				Flash::error('La cuenta "'.$codigoCuenta.'" no existe');
 			}
-		} catch (DateException $e) {
+		}
+
+	}
+
+	Tag::displayTo('codigoComprobante', $codigoComprobante);
+	Tag::displayTo('numero', $numero);
+	$fecha = $this->getPostParam('fecha', 'date');
+	if($fecha==''){
+		Tag::displayTo('fecha', Date::getCurrentDate());
+	} else {
+		Tag::displayTo('fecha', $fecha);
+	}
+
+	if(count($movimientos)>0){
+		$this->setParamToView('message', 'Se han cargado automáticamente algunos movimientos sin guardar');
+	} else {
+		if($codigoComprobante!=''){
+			$this->setParamToView('message', 'Ingrese los movimientos contables y haga click en "Guardar"');
+		} else {
+			$this->setParamToView('message', 'Seleccione el tipo de comprobante a grabar');
+		}
+	}
+	$this->setParamToView('codigoComprobante', $codigoComprobante);
+	$this->setParamToView('movimientos', $movimientos);
+	$this->setParamToView('comprobs', $this->Comprob->find('order: nom_comprob'));
+}
+
+public function validarFechaAction()
+{
+	$this->setResponse('json');
+	try {
+		$fecha = $this->getPostParam('fecha', 'date');
+		$diasLimite = Settings::get('d_movi_limite');
+		if($diasLimite===null){
+			$diasLimite = 5;
+		}
+		$fecha = new Date($fecha);
+		$fechaLimite = new Date();
+		$fechaLimite->addDays($diasLimite);
+		if(Date::isLater($fecha, $fechaLimite)){
 			return array(
 				'status' => 'FAILED',
-				'message' => 'La fecha indicada es inválida'
+				'message' => 'La fecha del comprobante es inválida'
 			);
-		}
-	}
-
-	public function buscarAction()
-	{
-
-		$this->setResponse('json');
-		$conditions = array();
-		$codigoComprob = $this->getPostParam('codigoComprobante', 'comprob');
-		$fecha = $this->getPostParam('fecha', 'date');
-		$numero = $this->getPostParam('numero', 'int');
-
-		$response = array();
-		if ($codigoComprob !== '') {
-			$conditions[] = 'comprob = \'' . $codigoComprob . '\'';
-		}
-		if ($fecha !== '') {
-			$conditions[] = 'fecha = \'' . $fecha . '\'';
-		}
-		if ($numero > 0){
-			$conditions[] = 'numero = \'' . $numero . '\'';
-		}
-		if (count($conditions) > 0) {
-			$movis = $this->Movi->find(array(join(' AND ', $conditions), 'columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
 		} else {
-			$movis = $this->Movi->find(array('columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
-		}
-		if (count($movis) == 1) {
-			$movi = $movis->getFirst();
-			$response['number'] = '1';
-			$response['key'] = 'codigoComprobante=' . $movi->getComprob() . '&numero=' . $movi->getNumero();
-		} else {
-			if (count($movis) > 0) {
-				$responseResults = array(
-					'headers' => array(
-						array('name' => 'Comprobante', 'ordered' => 'N'),
-						array('name' => 'Número', 'ordered' => 'N', 'type' => 'int'),
-						array('name' => 'Fecha', 'ordered' => 'S', 'type' => 'date'),
-					)
+			$empresa = $this->Empresa->findFirst();
+			if (Date::isEarlier($fecha, $empresa->getFCierrec())) {
+				return array(
+					'status' => 'FAILED',
+					'message' => 'La fecha del comprobante debe estar en el cierre contable actual'
 				);
-				$data = array();
-				foreach ($movis as $movi) {
-					$comprob = BackCacher::getComprob($movi->getComprob());
-					if ($comprob != false) {
-						$data[] = array(
-							'primary' => array('codigoComprobante=' . $movi->getComprob().'&numero='.$movi->getNumero()),
-							'data' => array(
-								array('key' => 'comprob', 'value' => $movi->getComprob().' / '.$comprob->getNomComprob()),
-								array('key' => 'numero', 'value' => $movi->getNumero()),
-								array('key' => 'fecha', 'value' => (string) $movi->getFecha())
+			} else {
+				return array(
+					'status' => 'OK'
+				);
+			}
+		}
+	} catch (DateException $e) {
+		return array(
+			'status' => 'FAILED',
+			'message' => 'La fecha indicada es inválida'
+		);
+	}
+}
+
+public function buscarAction()
+{
+
+	$this->setResponse('json');
+	$conditions = array();
+	$codigoComprob = $this->getPostParam('codigoComprobante', 'comprob');
+	$fecha = $this->getPostParam('fecha', 'date');
+	$numero = $this->getPostParam('numero', 'int');
+
+	$response = array();
+	if ($codigoComprob !== '') {
+		$conditions[] = 'comprob = \'' . $codigoComprob . '\'';
+	}
+	if ($fecha !== '') {
+		$conditions[] = 'fecha = \'' . $fecha . '\'';
+	}
+	if ($numero > 0){
+		$conditions[] = 'numero = \'' . $numero . '\'';
+	}
+	if (count($conditions) > 0) {
+		$movis = $this->Movi->find(array(join(' AND ', $conditions), 'columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
+	} else {
+		$movis = $this->Movi->find(array('columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
+	}
+	if (count($movis) == 1) {
+		$movi = $movis->getFirst();
+		$response['number'] = '1';
+		$response['key'] = 'codigoComprobante=' . $movi->getComprob() . '&numero=' . $movi->getNumero();
+	} else {
+		if (count($movis) > 0) {
+			$responseResults = array(
+				'headers' => array(
+					array('name' => 'Comprobante', 'ordered' => 'N'),
+					array('name' => 'Número', 'ordered' => 'N', 'type' => 'int'),
+					array('name' => 'Fecha', 'ordered' => 'S', 'type' => 'date'),
+				)
+			);
+			$data = array();
+			foreach ($movis as $movi) {
+				$comprob = BackCacher::getComprob($movi->getComprob());
+				if ($comprob != false) {
+					$data[] = array(
+						'primary' => array('codigoComprobante=' . $movi->getComprob().'&numero='.$movi->getNumero()),
+						'data' => array(
+							array('key' => 'comprob', 'value' => $movi->getComprob().' / '.$comprob->getNomComprob()),
+							array('key' => 'numero', 'value' => $movi->getNumero()),
+							array('key' => 'fecha', 'value' => (string) $movi->getFecha())
 							)
 						);
 					}
@@ -644,7 +660,7 @@ class MovimientoController extends ApplicationController
 				}
 			}
 		}
-		catch(AuraException $auraException){
+		catch(Exception $auraException){
 			return array(
 				'status' => 'FAILED',
 				'message' => $auraException->getMessage()
@@ -690,15 +706,15 @@ class MovimientoController extends ApplicationController
 		try {
 			$aura = new Aura($codigoComprobante, $numero, null, Aura::OP_DELETE);
 			$aura->delete();
-		} catch(AuraException $e){
+			return array(
+				'status' => 'OK'
+			);
+		} catch(Exception $e){
 			return array(
 				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
-		return array(
-			'status' => 'OK'
-		);
 	}
 
 	public function guardarAction()
@@ -763,16 +779,17 @@ class MovimientoController extends ApplicationController
 
 			$aura->save();
 			$this->Movitemp->deleteAll($conditions);
-		} catch (AuraException $e) {
+			return array(
+				'status' => 'OK',
+				'message' => "Se guardo el movimiento contable en el comprobante '$codigoComprobante-$numeroComprob'"
+			);
+		} catch (Exception $e) {
 			return array(
 				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}
-		return array(
-			'status' => 'OK',
-			'message' => "Se guardo el movimiento contable en el comprobante '$codigoComprobante-$numeroComprob'"
-		);
+
 	}
 
 	public function imprimirAction()
@@ -791,49 +808,38 @@ class MovimientoController extends ApplicationController
 		$reportType = $this->getPostParam('reportType', 'alpha');
 		$report = ReportBase::factory($reportType);
 
-  		$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
+		$codigoComprobante = $this->getPostParam('codigoComprobante', 'comprob');
 		$numero = $this->getPostParam('numero', 'int');
 		$orden = $this->getPostParam('orden', 'alpha');
-		$tipo = $this->getPostParam('tipo', 'alpha');
 
 		$comprob = $this->Comprob->findFirst("codigo='$codigoComprobante'");
 		if ($comprob != false) {
 
-			if ($tipo == 'N') {
-				$movi = $this->Movi->findFirst("comprob='$codigoComprobante' AND numero='$numero'");
+			$movi = $this->Movi->findFirst("comprob='$codigoComprobante' AND numero='$numero'");
 
-				$titulo = new ReportText('MOVIMIENTO CONTABLE ' . $comprob->getNomComprob() . '/' . $numero . ' de ' . $movi->getFecha()->getLocaleDate('medium'), array(
-					'fontSize' => 16,
-		   			'fontWeight' => 'bold',
-		   			'textAlign' => 'center'
-	  			));
-			} else {
-				$movi = $this->MoviNiif->findFirst("comprob='$codigoComprobante' AND numero='$numero'");
-
-				$titulo = new ReportText('MOVIMIENTO CONTABLE NIIF ' . $comprob->getNomComprob() . '/' . $numero . ' de ' . $movi->getFecha()->getLocaleDate('medium'), array(
-					'fontSize' => 16,
-		   			'fontWeight' => 'bold',
-		   			'textAlign' => 'center'
-	  			));
-			}
+			$titulo = new ReportText('MOVIMIENTO CONTABLE ' . $comprob->getNomComprob() . '/' . $numero . ' de ' . $movi->getFecha()->getLocaleDate('medium'), array(
+				'fontSize' => 16,
+				'fontWeight' => 'bold',
+				'textAlign' => 'center'
+			));
 		}
 
-  		$report->setHeader(array($titulo));
-  		$report->setDocumentTitle('Movimiento Contable '.$codigoComprobante.'-'.$numero);
-  		$report->setColumnHeaders(array(
-  			'CÓDIGO',
-  			'DESCRIPCIÓN',
-  			'TERCERO',
-  			'NOMBRE',
-  			'C. COSTO',
-  			'DOCUMENTO',
-  			'DEBITOS',
-  			'CREDITOS',
-  			'BASE GRAVABLE',
-  			'FOLIO'
-  		));
+		$report->setHeader(array($titulo));
+		$report->setDocumentTitle('Movimiento Contable '.$codigoComprobante.'-'.$numero);
+		$report->setColumnHeaders(array(
+			'CÓDIGO',
+			'DESCRIPCIÓN',
+			'TERCERO',
+			'NOMBRE',
+			'C. COSTO',
+			'DOCUMENTO',
+			'DEBITOS',
+			'CREDITOS',
+			'BASE GRAVABLE',
+			'FOLIO'
+		));
 
-  		$report->setCellHeaderStyle(new ReportStyle(array(
+		$report->setCellHeaderStyle(new ReportStyle(array(
 			'textAlign' => 'center',
 			'backgroundColor' => '#eaeaea'
 		)));
@@ -845,10 +851,10 @@ class MovimientoController extends ApplicationController
 			'textAlign' => 'left',
 			'fontSize' => 11
 		)));
-  		$report->setColumnStyle(array(2, 4, 6, 7, 8), new ReportStyle(array(
-  			'textAlign' => 'right',
-  			'fontSize' => 11,
-  		)));
+		$report->setColumnStyle(array(2, 4, 6, 7, 8), new ReportStyle(array(
+			'textAlign' => 'right',
+			'fontSize' => 11,
+		)));
 
 		$report->setColumnFormat(array(6, 7, 8), new ReportFormat(array(
 			'type' => 'Number',
@@ -862,50 +868,24 @@ class MovimientoController extends ApplicationController
 		$parameters = array("comprob='$codigoComprobante' AND numero='$numero'");
 		switch ($orden) {
 			case 'F':
-				$parameters['order'] = "numfol, cuenta, deb_cre";
-				break;
+			$parameters['order'] = "numfol, cuenta, deb_cre";
+			break;
 			case 'C':
-				$parameters['order'] = "cuenta, deb_cre";
-				break;
+			$parameters['order'] = "cuenta, deb_cre";
+			break;
 			case 'N':
-				$parameters['order'] = "deb_cre, cuenta";
-				break;
+			$parameters['order'] = "deb_cre, cuenta";
+			break;
 			case 'S':
-				break;
+			break;
 			default:
-				$parameters['order'] = "numfol, cuenta, deb_cre";
-				break;
+			$parameters['order'] = "numfol, cuenta, deb_cre";
+			break;
 		}
 
 		$debitos = 0;
 		$creditos = 0;
-
-		if ($tipo == 'N') {
-			$this->moviContent($parameters, $report);
-		} else {
-			if ($tipo == 'I') {
-				$this->niifContent($parameters, $report);
-			}
-		}
-
-		$report->addSignature(array('Revisado', 'Elaborado'), 2);
-
-		$report->finish();
-
-		$fileName = $report->outputToFile('public/temp/movimiento-'.$codigoComprobante.'-'.$numero);
-
-		return array(
-			'status' => 'OK',
-			'file' => 'temp/'.$fileName
-		);
-
-	}
-
-	private function moviContent($parameters, $report)
-	{
-		$movi = $this->Movi->find($parameters);
-
-		foreach ($movi as $movi) {
+		foreach ($this->Movi->find($parameters) as $movi) {
 			$cuenta = BackCacher::getCuenta($movi->getCuenta());
 			if ($movi->getNumeroDoc()) {
 				$numeroDoc = $movi->getTipoDoc() . '-' . $movi->getNumeroDoc();
@@ -941,53 +921,18 @@ class MovimientoController extends ApplicationController
 			}
 			$report->addRow($movement);
 		}
-	}
 
-	private function niifContent($parameters, $report)
-	{
-		$movi = $this->MoviNiif->find($parameters);
+		$report->addSignature(array('Revisado', 'Elaborado'), 2);
 
-		foreach ($movi as $movi) {
+		$report->finish();
 
-			$cuenta = BackCacher::getCuenta($movi->getCuenta());
-			$niif 	= BackCacher::getCuentaNiif($movi->getCuenta());
+		$fileName = $report->outputToFile('public/temp/movimiento-'.$codigoComprobante.'-'.$numero);
 
-			if ($movi->getNumeroDoc()) {
-				$numeroDoc = $movi->getTipoDoc() . '-' . $movi->getNumeroDoc();
-			} else {
-				$numeroDoc = '';
-			}
+		return array(
+			'status' => 'OK',
+			'file' => 'temp/'.$fileName
+		);
 
-			$movement = array(
-				$movi->getCuenta(),
-				$movi->getDescripcion(),
-				'',
-				'',
-				$movi->getCentroCosto(),
-				$numeroDoc,
-				0,
-				0,
-				$movi->getBaseGrab(),
-				$movi->getNumfol()
-			);
-
-			if ($movi->getNit()){
-				$tercero = BackCacher::getTercero($movi->getNit());
-				if ($tercero == false) {
-					$nombreTercero = 'NO EXISTE TERCERO';
-				} else {
-					$nombreTercero = $tercero->getNombre();
-				}
-				$movement[2] = $movi->getNit();
-				$movement[3] = $nombreTercero;
-			}
-			if($movi->getDebCre()=='D'){
-				$movement[6] = $movi->getValor();
-			} else {
-				$movement[7] = $movi->getValor();
-			}
-			$report->addRow($movement);
-		}
 	}
 
 	public function copiarAction()

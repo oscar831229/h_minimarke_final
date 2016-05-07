@@ -20,9 +20,7 @@
  */
 class AuraUtils extends UserComponent
 {
-	/**
-	 *
-	 */
+
 	public function recalculaPeriodoActual()
 	{
 		try {
@@ -174,7 +172,7 @@ class AuraUtils extends UserComponent
 			}
 
 			//reclaculamos Cartera
-			$this->recalculaCartera();
+			$this->recalculaCarteraAll();
 
 			$transaction->commit();
 		} catch(Exception $e){
@@ -563,5 +561,109 @@ class AuraUtils extends UserComponent
 		catch(TransactionFailed $e) {
 			Flash::error($e->getMessage());
 		}
+	}
+
+	/**
+	 * Recalcula la tabla cartera por el nit
+	 *
+	 * @param  string $nit [description]
+	 * @return boolean
+	 */
+    public function recalculateCarteraByNit($nit)
+	{
+        set_time_limit(0);
+
+		$transaction = TransactionManager::getUserTransaction();
+		$carteraNit = $this->Cartera->setTransaction($transaction)->deleteAll("nit='$nit'");
+
+		//$transaction->getConnection()->setDebug(true);
+
+		/**
+		 * Obtenemos las cuentas que piden documento
+		 */
+		$cuentasCartera = array();
+		$cuentas = $this->Cuentas->find("pide_fact='S'", "columns: cuenta");
+		foreach ($cuentas as $cuenta) {
+			$cuentaCode = $cuenta->getCuenta();
+			$cuentasCartera[$cuentaCode] = array();
+		}
+
+		/**
+		 * Buscamos los movimientos de ese nit con esas cuentas y sumamos debitos y creditos
+		 */
+		$cuentasIn = implode("','", array_keys($cuentasCartera));
+		$movis = $this->Movi->setTransaction($transaction)->find("nit='$nit' AND cuenta IN ('$cuentasIn')", "order: fecha ASC");
+		foreach ($movis as $movi) {
+
+			$fecha = $movi->getFecha();
+			$valor = $movi->getValor();
+			$cuenta = $movi->getCuenta();
+			$debcre = $movi->getDebCre();
+			$tipoDoc = $movi->getTipoDoc();
+			$numeroDoc = $movi->getNumeroDoc();
+			$centroCosto = $movi->getCentroCosto();
+
+			if ($debcre == 'C') {
+				$valor = $valor * -1;
+			}
+
+			if (!isset($cuentasCartera[$cuenta][$tipoDoc][$numeroDoc])) {
+				$cuentasCartera[$cuenta][$tipoDoc][$numeroDoc] = array(
+					"fecha" => $fecha,
+					"valor" => $valor,
+					"saldo" => $valor,
+					"centroCosto" => $centroCosto
+				);
+			} else {
+				$cuentasCartera[$cuenta][$tipoDoc][$numeroDoc]["saldo"] += $valor;
+			}
+		}
+
+		/**
+		 * Recorremos los resultados y los grabamos en la tabla cartera
+		 */
+		foreach ($cuentasCartera as $cuentaNum => $datosCuentas) {
+
+			if (!count($datosCuentas)) {
+				unset($cuentasCartera[$cuentaNum]);
+				continue;
+			}
+
+			foreach ($datosCuentas as $tipoDoc => $datosTipoDoc) {
+
+				foreach ($datosTipoDoc as $numeroDoc => $data) {
+
+					$condition = "nit='$nit' AND cuenta='$cuentaNum' AND tipo_doc='$tipoDoc' AND numero_doc='$numeroDoc'";
+					$cartera = $this->Cartera->setTransaction($transaction)->findFirst($condition);
+
+					if (!$cartera) {
+						$cartera = new Cartera;
+						$cartera->setNit($nit);
+						$cartera->setCuenta($cuentaNum);
+						$cartera->setTipoDoc($tipoDoc);
+						$cartera->setNumeroDoc($numeroDoc);
+					}
+
+					$cartera->setTransaction($transaction);
+
+					$cartera->setVendedor("1");
+					$cartera->setValor($data["valor"]);
+					$cartera->setSaldo($data["saldo"]);
+					$cartera->setFEmision((string) $data["fecha"]);
+					$cartera->setFVence((string) $data["fecha"]);
+					$cartera->setCentroCosto($data["centroCosto"]);
+
+					if (!$cartera->save()) {
+						foreach ($cartera->getMessages() as $key => $message) {
+							throw new Exception($message->getMessage());
+						}
+					}
+				}
+			}
+		}
+
+		//$transaction->rollback(print_r($cuentasCartera, true));
+
+        $transaction->commit();
 	}
 }

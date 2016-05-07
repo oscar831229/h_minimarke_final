@@ -261,7 +261,6 @@ class Almacenes extends RcsRecord {
 
 	public function initialize(){
 		$this->hasMany('almacen', 'Movihead', 'codigo');
-		$this->belongsTo('usuarios_id', 'Usuarios', 'id');
 
 		$this->addForeignKey('centro_costo', 'Centros', 'codigo', array(
 			'message' => 'El centro de costo no existe o no es auxiliar'

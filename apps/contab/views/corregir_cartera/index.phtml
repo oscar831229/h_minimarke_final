@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+
+<div class="resultados"></div>
+
+<?php echo HfosTag::iconTitle('cartera.png', 'Cartera por Edades') ?>
+
+<?php echo Tag::form('corregir_cartera/generar', 'class: corregirCarteraForm', 'autocomplete: off') ?>
+<table align="center">
+	<tr>
+		<td valign="top">
+			<table>
+				<tr>
+					<td align="right"><label for="nit">Tercero Inicial</label></td>
+					<td><?php echo HfosTag::terceroField('nit') ?></td>
+				</tr>
+				<tr>
+					<td align="right"></td>
+					<td>
+						<table cellspacing="0">
+							<tr>
+								<td>
+									<input type="submit" value="Generar"/>
+								</td>
+								<td>
+									<div class="formSpinner" style="display:none"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<?php echo Tag::endForm() ?>

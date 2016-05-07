@@ -19,17 +19,20 @@
  * Realiza el comprobante de cierre anual
  *
  */
-class Comprobante_CierreController extends ApplicationController {
+class Comprobante_CierreController extends ApplicationController
+{
 
-	public function initialize(){
+	public function initialize()
+	{
 		$controllerRequest = ControllerRequest::getInstance();
-		if($controllerRequest->isAjax()){
+		if ($controllerRequest->isAjax()) {
 			View::setRenderLevel(View::LEVEL_LAYOUT);
 		}
 		parent::initialize();
 	}
 
-	public function indexAction(){
+	public function indexAction()
+	{
 
 		$this->setParamToView('message', 'Indique los parámetros del comprobante y haga click en "Generar"');
 		$this->setParamToView('nombreComprobante', 'CIERRE ANUAL');
@@ -39,10 +42,10 @@ class Comprobante_CierreController extends ApplicationController {
 
 		$cuenta = $this->Cuentas->findFirst("cuenta LIKE '6%' AND es_auxiliar='S'", 'order: cuenta DESC');
 		Tag::displayTo('cuentaFinal', $cuenta->getCuenta());
-
 	}
 
-	public function generarAction(){
+	public function generarAction()
+	{
 
 		$this->setResponse('json');
 
@@ -59,13 +62,13 @@ class Comprobante_CierreController extends ApplicationController {
 			$empresa = $this->Empresa->findFirst();
 			$fechaCierre = $empresa->getFCierrec();
 
-			if($fechaCierre->getMonth()!=11){
+			if ($fechaCierre->getMonth() != 11) {
 				$transaction->rollback('El cierre contable actual debe estar a Noviembre');
 			}
 
 			$codigoEjercicio = $this->getPostParam('codigoEjercicio', 'cuentas');
 			$cuenta = $this->Cuentas->findFirst($codigoEjercicio);
-			if($cuenta==false){
+			if  ($cuenta == false) {
 				$transaction->rollback('La cuenta de resultado de ejercicio no existe');
 			} else {
 				if($cuenta->getEsAuxiliar()!='S'){
@@ -200,8 +203,6 @@ class Comprobante_CierreController extends ApplicationController {
 
 					unset($cuenta);
 				}
-
-				file_put_contents('a.txt', print_r($cierreAnual, true));
 
 				$nitEmpresa = $empresa->getNit();
 				ksort($cierreAnual, SORT_STRING);

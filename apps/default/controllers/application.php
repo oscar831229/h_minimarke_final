@@ -14,7 +14,8 @@
  */
 class ControllerBase {
 
-	public function init(){
+	public function init()
+	{
 		Router::routeTo(array('controller' => 'index'));
 	}
 
@@ -25,5 +26,5 @@ class ControllerBase {
 			'action' => 'index'
 		));
 	}
-}
 
+}

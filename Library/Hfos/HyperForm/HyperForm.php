@@ -216,17 +216,6 @@ class HyperForm extends UserComponent
 	}
 
 	/**
-	 * @param $value
-	 * @return mixed
-	 */
-	public static function escapeJsonString($value) { # list from www.json.org: (\b backspace, \f formfeed)
-	    $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
-	    $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
-	    $result = str_replace($escapers, $replacements, $value);
-	    return $result;
-	}
-
-	/**
 	 * Realiza una búsqueda según los parámetros enviados y devuelve un resultado en JSON
 	 * para ser construido en Javascript en el visualizar
 	 *
@@ -239,6 +228,7 @@ class HyperForm extends UserComponent
 
 		$response = ControllerResponse::getInstance();
 		$request = ControllerRequest::getInstance();
+
 		foreach ($config['fields'] as $name => $component)
 		{
 			if($request->isSetPostParam($name)){
@@ -295,10 +285,8 @@ class HyperForm extends UserComponent
 
 		$modelName = $config['model'];
 
-		$conditionsStr = join(' AND ', $conditions);
 		if(count($conditions)>0){
-			$results = $controller->$modelName->find(array($conditionsStr, 'order' => $config['preferedOrder']));
-			//$results = $controller->$modelName->find(array("conditions" => $conditionsStr, 'order' => $config['preferedOrder']));
+			$results = $controller->$modelName->find(array(join(' AND ', $conditions), 'order' => $config['preferedOrder']));
 		} else {
 			$results = $controller->$modelName->find(array('order' => $config['preferedOrder']));
 		}
@@ -319,11 +307,11 @@ class HyperForm extends UserComponent
 				$preferedOrder = explode(' ', $config['preferedOrder']);
 				foreach ($config['fields'] as $name => $component) {
 
-					if ( isset($component['notBrowse']) && $component['notBrowse'] == true ) {
+					if (isset($component['notBrowse'])&&$component['notBrowse']) {
 						continue;
 					}
 
-					if ( $name == $preferedOrder[0] ) {
+					if ($name==$preferedOrder[0]) {
 						$headers[] = array(
 							'ordered' => 'S',
 							'type' => $component['type'],
@@ -345,7 +333,6 @@ class HyperForm extends UserComponent
 				$data = array();
 				$number = 0;
 				$primaryKeys = $controller->$modelName->getPrimaryKeyAttributes();
-				//throw new HyperFormException("resultas: " . print_r($results, true));
 
 				foreach ($results as $result) {
 
@@ -438,17 +425,6 @@ class HyperForm extends UserComponent
 								$field['value'] = call_user_func_array(array($className, 'getDetail'), array($value));
 						}
 
-						//FIXED ENCODE ERRORS IN VALUE
-						try {
-							$a = json_encode($field);
-							if (empty($a)) {
-								$field["value"] = utf8_decode($field["value"]);
-								throw new Exception("no json: " . print_r($field, true));
-							}
-						} catch (Exception $e) {
-							//echo PHP_EOL . "Error: " . $e->getMessage();
-						}
-
 						$row['data'][] = $field;
 					}
 
@@ -463,7 +439,6 @@ class HyperForm extends UserComponent
 						break;
 					}
 				}
-				//throw new HyperFormException(var_dump($data));
 
 				$responseResults['data'] = $data;
 				if ($numberResults < 250) {
@@ -700,17 +675,16 @@ class HyperForm extends UserComponent
 	private static function _getRecordDetails($config, $record, $controller)
 	{
 		try {
-			$data    = array();
-			$charset = Hfos_Application::getAppCharset();
-			foreach ($config['fields'] as $attribute => $component) {
-				$value = null;
-				$fieldValue = '';
 
-				if (isset($component['notDetails']) && $component['notDetails']) {
+			$data = array();
+			$charset = Hfos_Application::getAppCharset();
+			foreach ($config['fields'] as $attribute => $component)
+			{
+				if (isset($component['notDetails'])&&$component['notDetails']) {
 					continue;
 				}
-				if (isset($component['extraField']) && $component['extraField']) {
-					if (method_exists($controller, 'getExtraField')) {
+				if (isset($component['extraField'])&&$component['extraField']) {
+					if(method_exists($controller, 'getExtraField')){
 						$value = $controller->getExtraField($attribute, $record);
 					} else {
 						$value = $record->readAttribute($attribute);
@@ -718,8 +692,7 @@ class HyperForm extends UserComponent
 				} else {
 					$value = $record->readAttribute($attribute);
 				}
-				$type = $config['fields'][$attribute]['type'];
-				switch ($type) {
+				switch ($config['fields'][$attribute]['type']) {
 					case 'closed-domain':
 						if (isset($component['values'][$value])) {
 							$fieldValue = $component['values'][$value];
@@ -732,7 +705,7 @@ class HyperForm extends UserComponent
 						}
 						break;
 					case 'relation':
-						$entity 	= EntityManager::getEntityInstance($component['relation']);
+						$entity = EntityManager::getEntityInstance($component['relation']);
 						$fieldValue = $entity->findFirst("{$component['fieldRelation']} = '$value'");
 						$fieldValue = ($fieldValue == false) ? '' : $fieldValue->readAttribute($component['detail']);
 						break;
@@ -753,40 +726,37 @@ class HyperForm extends UserComponent
 					case 'text':
 					case 'textarea':
 						$fieldValue = $value;
-						if ($fieldValue == null) {
+						if($fieldValue===null){
 							$fieldValue = '';
 						} else {
-							if ($charset == 'latin1') {
+							if($charset=='latin1'){
 								$fieldValue = utf8_encode($fieldValue);
 							}
 						}
 						break;
 					default:
 						$className = $component['type'].'HyperComponent';
-						if (class_exists($className, false) == false) {
-							$path = KEF_ABS_PATH . 'Library/Hfos/HyperForm/Components/' . ucfirst($component['type']) . '.php';
-							if (file_exists($path)) {
+						if(class_exists($className, false)==false){
+							$path = KEF_ABS_PATH.'Library/Hfos/HyperForm/Components/'.ucfirst($component['type']).'.php';
+							if(file_exists($path)){
 								require_once $path;
 							} else {
 								throw new HyperFormException("No existe el componente de HyperForm llamado '".$component['type']."'");
 							}
 						}
-
-						if (method_exists($className, 'getDetail') && !empty($value)) {
-							$fieldValue = (string) call_user_func_array(array($className, 'getDetail'), array($value));
-						}
+						$fieldValue = (string) call_user_func_array(array($className, 'getDetail'), array($value));
 						break;
 				}
 				$data[] = array(
-					'name' 	  => $attribute,
+					'name' => $attribute,
 					'caption' => $config['fields'][$attribute]['single'],
-					'value'   => $fieldValue
+					'value' => $fieldValue
 				);
-				unset($attribute, $component);
 			}
 			return $data;
-		} catch (Exception $e) {
-			throw new Exception($e->getMessage());
+		}
+		catch(Exception $e) {
+			return array();
 		}
 	}
 
@@ -796,58 +766,57 @@ class HyperForm extends UserComponent
 	 * @param Controller $controller
 	 * @param array $config
 	 */
-	public static function getRecordDetails($controller, $config, $conditions = array())
-	{
-		try {
-			$linguistics = new Linguistics();
-			$response    = ControllerResponse::getInstance();
-			$request     = ControllerRequest::getInstance();
+	public static function getRecordDetails($controller, $config, $conditions=array()){
 
-			$response->setResponseType(ControllerResponse::RESPONSE_OTHER);
-			$response->setResponseAdapter('json');
-			View::setRenderLevel(View::LEVEL_NO_RENDER);
+		$linguistics = new Linguistics();
+		$response = ControllerResponse::getInstance();
+		$request = ControllerRequest::getInstance();
 
-			foreach ($config['fields'] as $name => $component) {
-				if (isset($component['primary'])&&$component['primary']) {
-					if ($request->isSetPostParam($name)) {
-						$value = $request->getParamPost($name);
-						$conditions[] = $name . ' = \'' . $value . '\'';
-					}
+		$response->setResponseType(ControllerResponse::RESPONSE_OTHER);
+		$response->setResponseAdapter('json');
+		View::setRenderLevel(View::LEVEL_NO_RENDER);
+
+		foreach ($config['fields'] as $name => $component)
+		{
+			if (isset($component['primary'])&&$component['primary']) {
+				if ($request->isSetPostParam($name)) {
+					$value = $request->getParamPost($name);
+					$conditions[] = $name . ' = \'' . $value . '\'';
 				}
-				unset($component);
 			}
+			unset($component);
+		}
 
-			$data = array();
-			if (count($conditions) > 0) {
-				$modelName 	= $config['model'];
-				$record 	= $controller->$modelName->findFirst(array(join(' AND ', $conditions)));
-
-				if ($record == false) {
-					throw new Exception('El registro no existe '.join(' AND ', $conditions));
-				}
-
-				$data = Hyperform::_getRecordDetails($config, $record, $controller);
-
-				if ($request->isSetPostParam('n')) {
-					$number = $request->getParamPost('n', 'int');
-					return array(
-						'status'  => 'OK',
-						'number'  => $number,
-						'message' => 'Visualizando ' . $linguistics->the($config['single']) . ' ' . ($number+1) . ' de ',
-						'data'    => $data
-					);
-				}
+		if (count($conditions) > 0) {
+			$modelName = $config['model'];
+			$record = $controller->$modelName->findFirst(array(join(' AND ', $conditions)));
+			if ($record == false) {
 				return array(
-					'status'  => 'OK',
-					'message' => 'Visualizando ' . $linguistics->a($config['single']),
-					'data' 	  => $data
+					'status' => 'FAILED',
+					'message' => 'El registro no existe '.join(' AND ', $conditions)
 				);
 			}
-			throw new Exception('No se enviaron condiciones de búsqueda');
-		} catch (Exception $e) {
+			$data = self::_getRecordDetails($config, $record, $controller);
+
+			if ($request->isSetPostParam('n')) {
+				$number = $request->getParamPost('n', 'int');
+				return array(
+					'status'  => 'OK',
+					'number'  => $number,
+					'message' => 'Visualizando '.$linguistics->the($config['single']).' '.($number+1).' de ',
+					'data' 	  => $data
+				);
+			} else {
+				return array(
+					'status' => 'OK',
+					'message' => 'Visualizando '.$linguistics->a($config['single']),
+					'data' => $data
+				);
+			}
+		} else {
 			return array(
-				'status'  => 'FAILED',
-				'message' => $e->getMessage()
+				'status' => 'FAILED',
+				'message' => 'No se enviaron condiciones de búsqueda'
 			);
 		}
 
@@ -1443,7 +1412,6 @@ class HyperForm extends UserComponent
 		View::setRenderLevel(View::LEVEL_NO_RENDER);
 
 		$modelName = $config['model'];
-
 		if(method_exists($controller, 'getRecordToSave')){
 			$record = $controller->getRecordToSave($modelName);
 		} else {
@@ -1732,7 +1700,6 @@ class HyperForm extends UserComponent
 							$auditPrimaryKey[] = $config['fields'][$field]['single'].'='.$record->readAttribute($field);
 						}
 					}
-					Rcs::beforeDelete($record);
 					$deleted = $record->delete();
 					if($deleted===true){
 						if(isset($config['detail'])){
@@ -2346,7 +2313,7 @@ class HyperForm extends UserComponent
 					$numberCells = 0;
 					$rowErrors = 0;
 					$cellIterator = $row->getCellIterator();
-                    $debug .= "<br>";
+                    $debug = "";
 					$cellIterator->setIterateOnlyExistingCells(false);
 					foreach ($cellIterator as $col => $cell) {
                         if ($numberCells==0) {
@@ -2359,27 +2326,26 @@ class HyperForm extends UserComponent
 							}
 						}
 						if (isset($fieldsNames[$numberCells])) {
-							//echo "<br>numberCells: $numberCells, " . print_r($fields[$numberCells], true);
-							switch ($fields[$numberCells]['type']) {
+							switch ($fieldsNames[$numberCells]['type']) {
 								case 'relation':
 									$value = $cell->getCalculatedValue();
 									if ($value!='') {
-										$value = Filter::bring($cell->getValue(), $fields[$numberCells]['filters']);
-										$conditions = "{$fields[$numberCells]['fieldRelation']}='$value'";
+										$value = Filter::bring($cell->getValue(), $fieldsNames[$numberCells]['filters']);
+										$conditions = "{$fieldsNames[$numberCells]['fieldRelation']}='$value'";
 										if (!isset($countCache[$conditions])) {
-											$countCache[$conditions] = $fields[$numberCells]['entity']->count($conditions);
+											$countCache[$conditions] = $fieldsNames[$numberCells]['entity']->count($conditions);
 										}
 										$exists = $countCache[$conditions];
 										unset($conditions);
 										if ($exists==false) {
 											$value = Filter::bring($cell->getValue(), array('addslaches', 'extraspaces'));
-											$conditions = "{$fields[$numberCells]['detail']}='$value'";
+											$conditions = "{$fieldsNames[$numberCells]['detail']}='$value'";
 											if (!isset($findFirstCache[$conditions])) {
-												$findFirstCache[$conditions] = $fields[$numberCells]['entity']->findFirst($conditions);
+												$findFirstCache[$conditions] = $fieldsNames[$numberCells]['entity']->findFirst($conditions);
 											}
 											$relationModel = $findFirstCache[$conditions];
 											if ($relationModel!=false) {
-												$value = $relationModel->readAttribute($fields[$numberCells]['fieldRelation']);
+												$value = $relationModel->readAttribute($fieldsNames[$numberCells]['fieldRelation']);
 											}
 											unset($relationModel);
 											unset($conditions);
@@ -2389,18 +2355,18 @@ class HyperForm extends UserComponent
 								case 'closed-domain':
 									$value = $cell->getCalculatedValue();
 									$value = trim($value);
-									if (isset($fields[$numberCells]['domain'][$value])) {
-										$value = $fields[$numberCells]['domain'][$value];
+									if (isset($fieldsNames[$numberCells]['domain'][$value])) {
+										$value = $fieldsNames[$numberCells]['domain'][$value];
 									} else {
 										$value = '';
 									}
 									break;
 								case 'int':
 								case 'decimal':
-									$value = Filter::bring($cell->getCalculatedValue(), $fields[$numberCells]['filters']);
-									if (isset($fields[$numberCells]['maxlength'])) {
-										if (i18n::strlen($value)>$fields[$numberCells]['maxlength']) {
-											Flash::error('El tamaño máximo permitido para el campo '.$fields[$numberCells]['single'].' no es el correcto en la línea '.$line);
+									$value = Filter::bring($cell->getCalculatedValue(), $fieldsNames[$numberCells]['filters']);
+									if (isset($fieldsNames[$numberCells]['maxlength'])) {
+										if (i18n::strlen($value)>$fieldsNames[$numberCells]['maxlength']) {
+											Flash::error('El tamaño máximo permitido para el campo '.$fieldsNames[$numberCells]['single'].' no es el correcto en la línea '.$line);
 											$rowErrors++;
 											$numberErrors++;
 										}
@@ -2409,10 +2375,10 @@ class HyperForm extends UserComponent
 								case 'date':
 									$val = $cell->getCalculatedValue();
 									$val = PHPExcel_Style_NumberFormat::toFormattedString($val, "YYYY-MM-DD");
-									$value = Filter::bring($val, $fields[$numberCells]['filters']);
+									$value = Filter::bring($val, $fieldsNames[$numberCells]['filters']);
 									if (!empty($value)) {
 										if (!preg_match('/[0-9]{4}\-[0-9]{2}-[0-9]{2}/', $value)) {
-											Flash::error('El formato de fecha para el campo ' . $fields[$numberCells]['single'] . ' no es el correcto en la línea');
+											Flash::error('El formato de fecha para el campo ' . $fieldsNames[$numberCells]['single'] . ' no es el correcto en la línea');
 											$rowErrors++;
 											$numberErrors++;
 										}
@@ -2420,16 +2386,16 @@ class HyperForm extends UserComponent
 									break;
 								default:
 									$value = utf8_decode(Filter::bring($cell->getCalculatedValue(), $fields[$numberCells]['filters']));
-									break;
 							}
-							$debug .= "<br>Field {$fieldsNames[$numberCells]}: $value";
+							$debug .= "<br>&nbsp;&nbsp;&nbsp;&nbsp;Field {$fieldsNames[$numberCells]}: $value";
 							$model->writeAttribute($fieldsNames[$numberCells], $value);
 							unset($value);
 						}
 						$numberCells++;
 						unset($cell);
 					}
-                    if ($numberCells != $expectedNumberCells) {
+                    //throw new Exception($debug);
+					if ($numberCells != $expectedNumberCells) {
 						Flash::error('El número de columnas debe ser ' . $expectedNumberCells . ' (' . $numberCells . '), en la línea ' . $line);
 						$numberErrors++;
 					} else {
@@ -2445,6 +2411,9 @@ class HyperForm extends UserComponent
 								}
 							}
 						}
+					}
+					if ($line % 500 == 0) {
+						GarbageCollector::collectCycles();
 					}
 					$line++;
 					unset($cellIterator);

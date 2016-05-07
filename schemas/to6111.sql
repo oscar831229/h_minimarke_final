@@ -6,8 +6,6 @@ alter table nits add column grupo_niif int(2) null;
 
 create table movi_niif like movi;
 alter table movi_niif add column cuenta_movi varchar(16) not null;
-alter table movi_niif add column nic int(2) null;
-alter table movi_niif add column nota_nic text null;
 
 create table nic (
 	codigo int(2) not null primary key,

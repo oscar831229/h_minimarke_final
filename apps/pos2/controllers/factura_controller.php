@@ -150,7 +150,7 @@ class FacturaController extends ApplicationController
 								$comandas[] = $account->comanda;
 							}
 
-							if (!$account->tiempo_final) {
+							if(!$account->tiempo_final){
 								$account->tiempo_final = Date::getCurrentTime();
 							}
 
@@ -346,7 +346,6 @@ class FacturaController extends ApplicationController
 					$factura->salon_id = $salonId;
 					$factura->salon_nombre = $salon->nombre ? $salon->nombre : 'ORDEN DIRECTA';
 					$factura->salonmesas_numero = $salonMesa->numero ? $salonMesa->numero : '0';
-					$factura->numero_personas = $accountMaster->numero_asientos;
 					$factura->usuarios_id = Session::getData('usuarios_id');
 					$factura->usuarios_nombre = i18n::strtoupper(Session::getData('usuarios_nombre'));
 					$factura->fecha = (string)$datos->getFecha();

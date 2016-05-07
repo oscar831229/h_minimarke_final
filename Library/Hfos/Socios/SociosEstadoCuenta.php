@@ -1037,7 +1037,7 @@ class SociosEstadoCuenta extends UserComponent
         $estadoCuenta->setSaldoNuevo((float) $datos['valorAPagar']);
         $estadoCuenta->setSaldoNuevoMora((float) $datos['valorAPagarMora']);
 
-        if ($estadoCuenta->save() == false) {
+        if ($estadoCuenta->save()==false) {
             foreach ($estadoCuenta->getMessages() as $msg) {
                 throw new SociosException('EstadoCuenta: '.$msg->getMessage());
             }
@@ -1069,7 +1069,7 @@ class SociosEstadoCuenta extends UserComponent
             $detalleEstadoCuenta->setConcepto($conceptoTemp);
             $detalleEstadoCuenta->setCargos((float) $content['cargos']);
             $detalleEstadoCuenta->setAbonos((float) $content['abonos']);
-            if ($detalleEstadoCuenta->save() == false) {
+            if ($detalleEstadoCuenta->save()==false) {
                 foreach ($detalleEstadoCuenta->getMessages() as $msg) {
                     throw new SociosException($msg->getMessage().print_r($msg, true));
                 }
@@ -1085,7 +1085,7 @@ class SociosEstadoCuenta extends UserComponent
             $configuration = EntityManager::get('Configuration')->findFirst("application='SO' AND name='consecutivo_estado_cuenta'");
             if ($configuration) {
                 $configuration->setValue($consecutivoEstadoCuenta);
-                if ($configuration->save() == false) {
+                if ($configuration->save()==false) {
                     foreach ($configuration->getMessages() as $msg) {
                         throw new SociosException($msg->getMessage());
                     }
@@ -1181,12 +1181,6 @@ class SociosEstadoCuenta extends UserComponent
             if (!$config['reportType']) {
                 throw new SociosException("No se ha definido el tipo de salida a generar la validación");
             }
-
-            $sociosId = false;
-            if (isset($config['sociosId']) && $config['sociosId']>0){
-                $sociosId = $config['sociosId'];
-            }
-
             $reportType = $config['reportType'];
 
             $report = ReportBase::factory($reportType);
@@ -1239,11 +1233,7 @@ class SociosEstadoCuenta extends UserComponent
             $totales['diff'] = 0;
 
             //Socios
-            $query = 'socios_id>0';
-            if ($sociosId>0) {
-                $query = "socios_id = '$sociosId'";
-            }
-            $sociosObj = EntityManager::get('Socios')->find(array($query, 'column'=>'socios_id,cobra', 'order'=>"CAST(numero_accion AS SIGNED) ASC"));
+            $sociosObj = EntityManager::get('Socios')->find(array("1=1", 'column'=>'socios_id,cobra', 'order'=>"CAST(numero_accion AS SIGNED) ASC"));
 
             $num = 0;
             foreach ($sociosObj as $socios) {
@@ -1262,7 +1252,6 @@ class SociosEstadoCuenta extends UserComponent
 
                 //Diff
                 $diff = $saldoSocios - $saldoContab;
-                //throw new Exception("({$estadoCuenta->getFecha()}) $diff = $saldoSocios - $saldoContab", 1);
 
                 if ($diff==0) {
                     continue;
@@ -1333,10 +1322,7 @@ class SociosEstadoCuenta extends UserComponent
             $monthA = "0".$monthA;
         }
 
-        $query = "socios_id='{$socios->getSociosId()}' AND month(fecha)='$month' AND year(fecha)='$year'";
-        //throw new Exception($query);
-        
-        $estadoCuentaObj = EntityManager::get('EstadoCuenta')->find($query);
+        $estadoCuentaObj = EntityManager::get('EstadoCuenta')->find("socios_id='{$socios->getSociosId()}' AND month(fecha)='$month' AND year(fecha)='$year'");
         foreach ($estadoCuentaObj as $estadoCuenta) {
             //Sacar estado de cuenta atras para revisar el correcto
             $estadoCuentaAtras = EntityManager::get('EstadoCuenta')->findFirst("socios_id='{$socios->getSociosId()}' AND month(fecha)<='$monthA' AND year(fecha)<='$yearA'", "order: fecha DESC");
@@ -1506,12 +1492,6 @@ class SociosEstadoCuenta extends UserComponent
             $i = 0;
             foreach ($sociosObj as $socios) {
 
-                //Validacion de solo socios que generan estado de cuenta
-                if ($socios->getGeneraEstcue() != 'S') {
-                    $this->_cleanEstadoCuenta($dateFechaCorte->getPeriod(), $socios, $options);
-                    continue;
-                }
-
                 $sociosId = $socios->getSociosId();
 
                 $location = BackCacher::getLocation($socios->getCiudadCasa());
@@ -1530,14 +1510,13 @@ class SociosEstadoCuenta extends UserComponent
                 //$contentMovi = $this->getContentMovi($dateFechaCorte->getPeriod(), $socios, $options);
                 $contentMovi = $this->getContentMovi($fechaCorte, $socios, $options);
 
-                //Si no tiene movimiento ó no debería generar estado de cuenta limpie estado de cuenta
-                if (count($contentMovi)<=0 || $socios->getGeneraEstcue()=='N') {
-
+                if (count($contentMovi)<=0) {
                     //limpia estado de cuenta si existe cuando se calcula de nuevo y no tiene movimiento
                     if (isset($config['reemplaza']) && $config['reemplaza']==true) {
                         $this->_cleanEstadoCuenta($dateFechaCorte->getPeriod(), $socios, $options);
                     }
                     if (isset($config['showDebug'])==true && $config['showDebug']==true) {
+                        ob_end_clean();
                         throw new SociosException("El estado de cuenta no tiene movimiento a mostrar");
                     }
                     continue;

@@ -225,4 +225,3 @@ class Pecl_HTTPTransport
 	}
 
 }
-

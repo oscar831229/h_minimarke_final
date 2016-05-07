@@ -1,6 +1,3 @@
+apps/identity/security/data/*
 apps/*/config/*.ini
-public/index.config.php
-public/temp/*.pdf
-public/temp/*.html
-public/temp/*.xlsx
-public/temp/*.txt
+public/temp

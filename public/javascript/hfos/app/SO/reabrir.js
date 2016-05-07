@@ -46,8 +46,8 @@ var Reabrir = Class.create(HfosProcessContainer, {
 					}
 				} else {
 					this.getMessages().success('Se reabrió el mes correctamente');
-					this.selectOne('#periodoAbrir').update(response.periodoAbrir);
-					this.selectOne('#periodoActual').update(response.periodoActual);
+					this.selectOne('#anteriorCierre').update(response.anteriorCierre);
+					//this.selectOne('#cierreActual').update(response.cierreActual);
 				}
 			}.bind(this),
 			onComplete: function(cierreForm, reabrirButton){

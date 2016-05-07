@@ -313,7 +313,7 @@ class PayController extends ApplicationController
 				if ($numeroCuenta == 0) {
 
 					$cliente = $this->Clientes->findFirst("cedula='{$accountCuenta->clientes_cedula}'");
-					if ($cliente == false) {
+					if($cliente==false){
 						Flash::error('El cliente del pedido ya no existe');
 						$transaction->rollback();
 					}
@@ -353,7 +353,7 @@ class PayController extends ApplicationController
 				$total = 0;
 
 				$menuItem = $this->MenusItems->findFirst($account->menus_items_id);
-				if ($menuItem == false) {
+				if($menuItem==false){
 					Flash::error('El item "'.$account->menus_items_id.'" no existe');
 					$transaction->rollback();
 				}
@@ -642,7 +642,7 @@ class PayController extends ApplicationController
 					$conditions = "menus_items_id='{$account->menus_items_id}' AND salon_id='{$salon->id}' AND estado = 'A'";
 					$salonm = $this->SalonMenusItems->findFirst($conditions);
 					if ($salonm == false) {
-						Flash::error('El item "'.$menuItem->nombre.'" no está activo en el ambiente "' . $salon->nombre . '"');
+						Flash::error('El item "'.$menuItem->nombre.'" no está activo en el ambiente "'.$salon->nombre.'"');
 						$transaction->rollback();
 					} else {
 						$ventasPos = new Venpos();
@@ -798,7 +798,7 @@ class PayController extends ApplicationController
 						$cargo['servicio'] = LocaleMath::round($cargo['servicio'], 0);
 						$cargo['total'] = LocaleMath::round($cargo['total'], 0);
 
-						if (($cargo['valor'] + $cargo['iva'] + $cargo['servicio']) != $cargo['total']) {
+						if(($cargo['valor'] + $cargo['iva'] + $cargo['servicio']) != $cargo['total']) {
 							$cargo['valor'] = $cargo['total'] - ($cargo['iva'] + $cargo['impo'] + $cargo['servicio']);
 						}
 
@@ -932,7 +932,7 @@ class PayController extends ApplicationController
 			}
 
 			$sumaPagos = 0;
-			for ($i = 0; $i <= 8; $i++) {
+			for($i=0;$i<=8;$i++){
 				$valorPago = $this->getPostParam('pago'.$i, 'double');
 				if($valorPago>0){
 					$pago = new PagosFactura();
@@ -946,7 +946,7 @@ class PayController extends ApplicationController
 					}
 					$pago->formas_pago_id = $this->getPostParam('forma'.$i, 'int');
 					$pago->pago = $valorPago;
-					if ($accountCuenta->tipo_venta == 'P') {
+					if($accountCuenta->tipo_venta=='P'){
 						$pago->cargo_plan = 'S';
 					} else {
 						$pago->cargo_plan = 'N';
@@ -963,11 +963,11 @@ class PayController extends ApplicationController
 				}
 			}
 
-			if ($accountCuenta->tipo_venta == 'F') {
-				$totalPagos = $totalVenta + $totalPropina;
-				if ($sumaPagos != $totalPagos) {
-					if ($totalPropina > 0) {
-						Flash::error('El pago no coincide con el valor del servicio + la propina (' . $totalVenta . ' - ' . $totalPropina . ' - ' . $totalPagos . ')');
+			if($accountCuenta->tipo_venta=='F'){
+				$totalPagos = $totalVenta+$totalPropina;
+				if($sumaPagos!=$totalPagos){
+					if($totalPropina>0){
+						Flash::error('El pago no coincide con el valor del servicio + la propina');
 					} else {
 						Flash::error('El pago no coincide con el valor del servicio');
 					}
@@ -975,7 +975,7 @@ class PayController extends ApplicationController
 				}
 			}
 
-			if ($accountCuenta->tipo_venta == 'F') {
+			if($accountCuenta->tipo_venta=='F'){
 				new POSAudit('SE LIQUIDO LA FACTURA '.$accountCuenta->prefijo.'-'.$accountCuenta->numero, $transaction);
 			} else {
 				new POSAudit('SE LIQUIDO LA ORDEN DE SERVICIO '.$accountCuenta->prefijo.'-'.$accountCuenta->numero, $transaction);
@@ -983,16 +983,16 @@ class PayController extends ApplicationController
 
 			$accountCuenta->propina = $totalPropina;
 			$accountCuenta->estado = 'L';
-			if ($accountCuenta->save() == false) {
-				foreach ($accountCuenta->getMessages() as $message) {
+			if($accountCuenta->save()==false){
+				foreach($accountCuenta->getMessages() as $message){
 					Flash::error($message->getMessage());
 				}
 				$transaction->rollback();
 			}
 
 			$factura->propina = $totalPropina;
-			if ($factura->save() == false) {
-				foreach ($factura->getMessages() as $message) {
+			if($factura->save()==false){
+				foreach($factura->getMessages() as $message){
 					Flash::error($message->getMessage());
 				}
 				$transaction->rollback();
@@ -1001,39 +1001,39 @@ class PayController extends ApplicationController
 			$cerrarPedido = false;
 			$conditions = "account_master_id='{$accountMaster->id}' AND estado IN ('B', 'A')";
 			$numberCuentas = $this->AccountCuentas->count($conditions);
-			if ($numberCuentas == 0) {
+			if($numberCuentas==0){
 				$cerrarPedido = true;
 			} else {
 				$conItems = true;
 				$conditions = "account_master_id='{$accountMaster->id}' AND id<>'{$accountCuenta->id}' AND estado NOT IN ('L', 'C')";
 				$accountCuentas = $this->AccountCuentas->find($conditions);
-				foreach ($accountCuentas as $cuentaPedido) {
+				foreach($accountCuentas as $cuentaPedido){
 					$numeroItems = $this->Account->count("account_master_id='{$cuentaPedido->account_master_id}' AND cuenta='{$cuentaPedido->cuenta}' AND estado NOT IN ('C', 'L')");
-					if ($numeroItems != 0) {
+					if($numeroItems!=0){
 						$conItems = false;
 					} else {
 						$cuentaPedido->estado = 'C';
-						if ($cuentaPedido->save()==false) {
-							foreach ($cuentaPedido->getMessages() as $message){
+						if($cuentaPedido->save()==false){
+							foreach($cuentaPedido->getMessages() as $message){
 								Flash::error($message->getMessage());
 							}
 							$transaction->rollback();
 						}
 					}
 				}
-				if ($conItems == true) {
+				if($conItems==true){
 					$cerrarPedido = true;
 				}
 			}
 
-			foreach ($accounts as $account) {
-				if ($account->estado == 'B') {
-					if (!$account->tiempo_final) {
+			foreach($accounts as $account){
+				if($account->estado=='B'){
+					if(!$account->tiempo_final){
 						$account->tiempo_final = Date::getCurrentTime();
 					}
 					$account->estado = 'L';
-					if ($account->save() == false) {
-						foreach ($account->getMessages() as $message) {
+					if($account->save()==false){
+						foreach($account->getMessages() as $message){
 							Flash::error($message->getMessage());
 						}
 						$transaction->rollback();
@@ -1041,21 +1041,21 @@ class PayController extends ApplicationController
 				}
 			}
 
-			if ($cerrarPedido == true) {
-				if (!$accountMaster->hora_atencion) {
+			if($cerrarPedido==true){
+				if(!$accountMaster->hora_atencion){
 					$accountMaster->hora_atencion = $fechaSistema.' '.Date::getCurrentTime();
 				}
 				$accountMaster->estado = 'L';
-				if ($accountMaster->save()==false) {
-					foreach ($accountMaster->getMessages() as $message) {
+				if($accountMaster->save()==false){
+					foreach($accountMaster->getMessages() as $message){
 						Flash::error($message->getMessage());
 					}
 					$transaction->rollback();
 				}
 				$salonMesa = $accountMaster->getSalonMesas();
-				if ($salonMesa != false) {
+				if($salonMesa!=false){
 					$salonMesa->estado = 'N';
-					if ($salonMesa->save()==false) {
+					if($salonMesa->save()==false){
 						foreach($salonMesa->getMessages() as $message){
 							Flash::error($message->getMessage());
 						}

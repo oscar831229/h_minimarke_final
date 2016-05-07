@@ -25,7 +25,7 @@ Hfos.getApplication().getMenu().setOptions([
 						id: 'win-ordenes',
 						icon: 'ordenes.png',
 						title: "Órdenes de Compra",
-						width: '950px',
+						width: '900px',
 						height: '520px',
 						action: 'ordenes'
 					});

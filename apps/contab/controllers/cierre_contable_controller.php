@@ -48,9 +48,6 @@ class Cierre_ContableController extends ApplicationController
         $this->setParamToView('message', 'Haga click en "Hacer Cierre" para cerrar el periodo contable actual');
     }
 
-    /**
-     * Cierre de periodo
-     */
     public function cierreAction()
     {
         $this->setResponse('json');
@@ -98,8 +95,6 @@ class Cierre_ContableController extends ApplicationController
 
             $this->Saldosn->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
 
-            $this->SaldosNiif->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
-
             $saldospObj = $this->Saldosp->setTransaction($transaction)->find("ano_mes='$periodoCierre'");
             foreach ($saldospObj as $saldosp) {
                 $saldosp->setDebe(0);
@@ -138,7 +133,7 @@ class Cierre_ContableController extends ApplicationController
             unset($conditions,$saldoscObj);
 
             //SANDOSN
-            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
+            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0 OR base_grab!=0)";
             $saldosnObj = $this->Saldosn->setTransaction($transaction)->find($conditions);
             foreach ($saldosnObj as $saldonAnterior) {
                 $saldon = new Saldosn();
@@ -155,29 +150,7 @@ class Cierre_ContableController extends ApplicationController
                         $transaction->rollback('Saldos por Nit: '.$message->getMessage().'. '.$saldon->inspect());
                     }
                 }
-                unset($saldon,$saldonAnterior,$cuenta);
-            }
-            unset($conditions,$saldosnObj);
-
-            //SANDOSNIIF
-            $conditions = "ano_mes='$periodoUltimoCierre' AND (haber+debe+saldo+base_grab)!=0";
-            $saldosNiifObj = $this->SaldosNiif->setTransaction($transaction)->find($conditions);
-            foreach ($saldosNiifObj as $saldonAnterior) {
-                $saldon = new SaldosNiif();
-                $saldon->setTransaction($transaction);
-                $saldon->setCuenta($saldonAnterior->getCuenta());
-                $saldon->setNit(trim($saldonAnterior->getNit()));
-                $saldon->setAnoMes($periodoCierre);
-                $saldon->setDebe($saldonAnterior->getDebe());
-                $saldon->setHaber($saldonAnterior->getHaber());
-                $saldon->setSaldo($saldonAnterior->getSaldo());
-                $saldon->setBaseGrab($saldonAnterior->getBaseGrab());
-                if ($saldon->save()==false) {
-                    foreach ($saldon->getMessages() as $message) {
-                        $transaction->rollback('SaldosNiif por Nit: '.$message->getMessage().'. '.$saldon->inspect());
-                    }
-                }
-                unset($saldon,$saldonAnterior,$cuenta);
+                unset($saldon,$saldonAnterior);
             }
             unset($conditions,$saldosnObj);
 
@@ -193,12 +166,15 @@ class Cierre_ContableController extends ApplicationController
                      * debe tomar el saldo de saldosc del anopasado en diciembre siempre no el del mes anterior
                      * este caso se presento por el nit 17 en la cuenta 135517*** no debia aprecer porque en saldosc en
                      * 201302 estaba con saldo 0. Por favor no cambiar
-                    */
+                     */
                     $conditionsSaldosc = "ano_mes='{$anno}12' AND cuenta='{$comcier->getCuentaf()}'";
                     //throw new Exception($conditionsSaldosc);
 
                     $saldoscTemp = $this->Saldosc->setTransaction($transaction)->findFirst($conditionsSaldosc);
                     if ($saldoscTemp) {
+                        if ($comcier->getCuentaf()=='135518005005') {
+                            //throw new Exception($saldoscTemp->getSaldo());
+                        }
                         $saldon = new Saldosn();
                         $saldon->setTransaction($transaction);
                         $saldon->setCuenta($comcier->getCuentaf());
@@ -220,11 +196,8 @@ class Cierre_ContableController extends ApplicationController
 
             $conditions = "ano_mes='$periodoUltimoCierre'";
             $saldospObj = $this->Saldosp->setTransaction($transaction)->find($conditions);
-
             foreach ($saldospObj as $saldopAnterior) {
-
                 $saldop = $this->Saldosp->findFirst("cuenta='{$saldopAnterior->getCuenta()}' AND centro_costo='{$saldopAnterior->getCentroCosto()}' AND ano_mes='$periodoCierre'");
-
                 if ($saldop==false) {
                     $saldop = new Saldosp();
                     $saldop->setCuenta($saldopAnterior->getCuenta());
@@ -234,7 +207,6 @@ class Cierre_ContableController extends ApplicationController
                 } else {
                     $saldop->setPres($saldopAnterior->getPres());
                 }
-
                 $saldop->setTransaction($transaction);
                 $saldop->setDebe($saldopAnterior->getDebe());
                 $saldop->setHaber($saldopAnterior->getHaber());
@@ -270,6 +242,9 @@ class Cierre_ContableController extends ApplicationController
             }
             unset($conditions,$saldoscaObj);
 
+            $auraNiif = new AuraNiif();
+            $auraNiif->setTransaction($transaction);
+
             $conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
             $movis = $this->Movi->setTransaction($transaction)->findForUpdate(array($conditions, 'group' => 'comprob,numero', 'columns' => 'comprob,numero'));
             foreach ($movis as $movi) {
@@ -279,11 +254,18 @@ class Cierre_ContableController extends ApplicationController
                     if (count($messages)) {
                         $allMessages[] = array(
                             'comprob' => $movi->getComprob(),
-                            'numero' => $movi->getNumero(),
+                            'numero' => $movi->getComprob(),
                             'messages' => $messages
                         );
                     }
-                    unset($messages,$movi);
+
+                    //Create movi niif
+                    $comprob = BackCacher::getComprob($movi->getComprob());
+                    if ($comprob && $comprob->getTipoMoviNiif() == 'I') {
+                        $auraNiif->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
+                    }
+
+                    unset($messages, $movi);
                 }
                 catch (AuraException $e) {
                     $transaction->rollback($e->getMessage());
@@ -305,6 +287,8 @@ class Cierre_ContableController extends ApplicationController
                 $nuevoCierre = clone $fechaCierre;
                 $nuevoCierre->addDays(1);
                 $proximoCierre = Date::getLastDayOfMonth($nuevoCierre->getMonth(), $nuevoCierre->getYear());
+
+
 
                 return array(
                     'status' => 'OK',

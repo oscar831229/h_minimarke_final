@@ -166,7 +166,7 @@ class SociosController extends HyperFormController
                 'fieldRelation' => 'id',
                 'notSearch' => true,
                 'notBrowse' => true,
-                "detail" => 'nombre',
+                'detail' => 'nombre',
                 'filters' => array('int')
             ),
             'sexo' => array(
@@ -368,30 +368,6 @@ class SociosController extends HyperFormController
                 //'notSearch' => true,
                 'filters' => array('onechar')
             ),
-            'estado_front' => array(
-                'single' => 'Estado en Front',
-                'type' => 'closed-domain',
-                'size' => 1,
-                'notNull' => true,
-                'maxlength' => 1,
-                'values' => array(
-                    'A' => 'Activo',
-                    'I' => 'Inactivo'
-                ),
-                'filters' => array('onechar')
-            ),
-            'genera_estcue' => array(
-                'single' => 'Genera Estado de Cuenta?',
-                'type' => 'closed-domain',
-                'size' => 1,
-                'notNull' => true,
-                'maxlength' => 1,
-                'values' => array(
-                    'S' => 'Si',
-                    'N' => 'No'
-                ),
-                'filters' => array('onechar')
-            ),
             'cobra' => array(
                 'single' => 'Genera Cobro',
                 'type' => 'closed-domain',
@@ -555,68 +531,60 @@ class SociosController extends HyperFormController
      */
     public function beforeEdit()
     {
-        try {
-            $sociosId = $this->getPostParam('socios_id', 'int');
-            if ($sociosId) {
-                //Estudios
-                $estudiosObj = EntityManager::get('Estudios')->find(array('conditions'=>'socios_id='.$sociosId));
-                $this->setParamToView('estudiosObj', $estudiosObj);
-                
-                //Experiencia laborales
-                $expLaboralObj = EntityManager::get('Explaboral')->find(array('conditions'=>'socios_id='.$sociosId));
-                $this->setParamToView('expLaboralObj', $expLaboralObj);
-                
-                //Actividades Libres
-                $hobbiesArray = $this->Hobbies->find(array('order'=>'nombre'));
-                $this->setParamToView('hobbiesArray', $hobbiesArray);
-                $actividadesArray = $this->Actividades->find('socios_id='.$sociosId);
-                $actividadesArray2 = array();
-                foreach ($actividadesArray as $actividad) {
-                    $actividadesArray2[$actividad->getHobbiesId()]=true;
-                }
-                $this->setParamToView('actividadesArray', $actividadesArray2);
-                
-                //Clubes
-                $clubesArray = $this->Clubes->find(array('order'=>'nombre'));
-                $this->setParamToView('clubesArray', $clubesArray);
-                $asoclubesArray = $this->Asoclubes->find('socios_id='.$sociosId);
-                $asoclubesArray2 = array();
-                foreach ($asoclubesArray as $asoclub) {
-                    $asoclubesArray2[$asoclub->getClub()]=$asoclub;
-                }
-                $this->setParamToView('asoclubesArray', $asoclubesArray2);
-                
-                //Cargos Fijos Periodicos
-                $cargosFijosPeriodicosArray = $this->CargosFijos->find(array('conditions'=>'tipo_cargo="P"','order'=>'nombre'));
-                $this->setParamToView('cargosFijosPeriodicosArray', $cargosFijosPeriodicosArray);
-                $asignacionCargosFijoasArray = $this->AsignacionCargos->find('socios_id='.$sociosId);
-                $asignacionCargosFijoasArray2 = array();
-                foreach ($asignacionCargosFijoasArray as $asignacionCargoFijo) {
-                    $asignacionCargosFijoasArray2[$asignacionCargoFijo->getCargosFijosId()]=true;
-                }
-                $this->setParamToView('asignacionCargosFijosArray', $asignacionCargosFijoasArray2);
-                
-                //Otros Socios
-                $asociacionSocioObj = EntityManager::get('AsociacionSocio')->find(array('conditions'=>'socios_id='.$sociosId));
-                $this->setParamToView('asociacionSocioObj', $asociacionSocioObj);
-                
-                //estado Edit
-                $this->setParamToView('state', 'edit');
-                
-                //Correspondencia
-                $correspondenciaSociosObj = $this->CorrespondenciaSocios->find("socios_id='$sociosId'");
-                $this->setParamToView('correspondenciaSociosObj', $correspondenciaSociosObj);
-            } else {
-                return false;
+        $sociosId = $this->getPostParam('socios_id', 'int');
+        if ($sociosId) {
+            //Estudios
+            $estudiosObj = EntityManager::get('Estudios')->find(array('conditions'=>'socios_id='.$sociosId));
+            $this->setParamToView('estudiosObj', $estudiosObj);
+            
+            //Experiencia laborales
+            $expLaboralObj = EntityManager::get('Explaboral')->find(array('conditions'=>'socios_id='.$sociosId));
+            $this->setParamToView('expLaboralObj', $expLaboralObj);
+            
+            //Actividades Libres
+            $hobbiesArray = $this->Hobbies->find(array('order'=>'nombre'));
+            $this->setParamToView('hobbiesArray', $hobbiesArray);
+            $actividadesArray = $this->Actividades->find('socios_id='.$sociosId);
+            $actividadesArray2 = array();
+            foreach ($actividadesArray as $actividad) {
+                $actividadesArray2[$actividad->getHobbiesId()]=true;
             }
-            return true;
-        } catch(CoreException $e) {
-            throw new HyperFormException($e->getMessage());
-        } catch(SociosException $e) {
-            throw new HyperFormException($e->getMessage());    
-        } catch(TransactionFailed $e){
-            throw new HyperFormException($e->getMessage()); 
+            $this->setParamToView('actividadesArray', $actividadesArray2);
+            
+            //Clubes
+            $clubesArray = $this->Clubes->find(array('order'=>'nombre'));
+            $this->setParamToView('clubesArray', $clubesArray);
+            $asoclubesArray = $this->Asoclubes->find('socios_id='.$sociosId);
+            $asoclubesArray2 = array();
+            foreach ($asoclubesArray as $asoclub) {
+                $asoclubesArray2[$asoclub->getClub()]=$asoclub;
+            }
+            $this->setParamToView('asoclubesArray', $asoclubesArray2);
+            
+            //Cargos Fijos Periodicos
+            $cargosFijosPeriodicosArray = $this->CargosFijos->find(array('conditions'=>'tipo_cargo="P"','order'=>'nombre'));
+            $this->setParamToView('cargosFijosPeriodicosArray', $cargosFijosPeriodicosArray);
+            $asignacionCargosFijoasArray = $this->AsignacionCargos->find('socios_id='.$sociosId);
+            $asignacionCargosFijoasArray2 = array();
+            foreach ($asignacionCargosFijoasArray as $asignacionCargoFijo) {
+                $asignacionCargosFijoasArray2[$asignacionCargoFijo->getCargosFijosId()]=true;
+            }
+            $this->setParamToView('asignacionCargosFijosArray', $asignacionCargosFijoasArray2);
+            
+            //Otros Socios
+            $asociacionSocioObj = EntityManager::get('AsociacionSocio')->find(array('conditions'=>'socios_id='.$sociosId));
+            $this->setParamToView('asociacionSocioObj', $asociacionSocioObj);
+            
+            //estado Edit
+            $this->setParamToView('state', 'edit');
+            
+            //Correspondencia
+            $correspondenciaSociosObj = $this->CorrespondenciaSocios->find("socios_id='$sociosId'");
+            $this->setParamToView('correspondenciaSociosObj', $correspondenciaSociosObj);
+        } else {
+            return false;
         }
+        return true;
     }
     
     /**

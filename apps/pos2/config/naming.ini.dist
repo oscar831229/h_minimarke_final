@@ -1,0 +1,26 @@
+[identity.auth]
+host = 127.0.0.1
+uri = identity/auth
+protocol = Flux
+
+
+[identity.session]
+host = 127.0.0.1
+uri = identity/session
+protocol = Flux
+
+[identity.delivery]
+host = 127.0.0.1
+uri = identity/delivery
+protocol = Flux
+
+
+[contab.session]
+host = 127.0.0.1
+uri = contab/session
+protocol = Flux
+
+[contab.aura]
+host = 127.0.0.1
+uri = contab/aura
+protocol = Flux

@@ -612,10 +612,12 @@ class EntradasController extends HyperFormController
 			);
 		}
 		try {
+			$transaction = TransactionManager::getUserTransaction();
+
 			$tatico = new Tatico($movement['Comprobante'], $movement['Numero']);
 			$tatico->delMovement($movement);
 		}
-		catch(TaticoException $te){
+		catch(Exception $te){
 			return array(
 				'status' => 'FAILED',
 				'message' => $te->getMessage()

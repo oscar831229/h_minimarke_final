@@ -13,11 +13,9 @@
  * @version		$Id$
  */
 
-class StatusController extends ApplicationController
-{
+class StatusController extends ApplicationController {
 
-	public function indexAction()
-	{
+	public function indexAction(){
 		$this->loadModel('SalonMesas', 'AccountMaster');
 	}
 

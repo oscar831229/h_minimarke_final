@@ -306,7 +306,8 @@ class ReferenciasController extends HyperFormController
 		$this->setResponse('json');
 		$numeroItem = $this->getQueryParam('codigo', 'alpha');
 		$inve = $this->Inve->findFirst("item='$numeroItem'");
-		if($inve==false){
+		
+		if($inve == false){
 			$recetap = $this->Recetap->findFirst("numero_rec='$numeroItem'");
 			if($recetap==false){
 				return array(

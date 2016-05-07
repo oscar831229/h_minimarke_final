@@ -49,24 +49,23 @@ class Recibo_cajaController extends ApplicationController
 
         $conditions = array();
         if ($nit>0) {
-            $conditions[] = "nit = '$nit'";
+            $conditions[] = 'nit = \''.$nit.'\'';
         }
-        if ($numeroInicial > 0 &&$numeroFinal > 0) {
-            $conditions[] = "rc >= '$numeroInicial' AND rc <= '$numeroFinal'";
+        if ($numeroInicial>0&&$numeroFinal>0) {
+            $conditions[] = 'rc >= \''.$numeroInicial.'\' AND rc <= \''.$numeroFinal.'\'';
         }
-        if ($estado != '@') {
-            $conditions[] = "estado = '$estado.'";
+        if ($estado!='@') {
+            $conditions[] = 'estado = \''.$estado.'\'';
         }
-        if (count($conditions) == 0) {
+        if (count($conditions)==0) {
             $conditions[] = '1=1';
         }
 
         //print_r($conditions);exit;
         if (count($conditions)>0) {
-            $sql = implode( ' AND ', $conditions);
-            $reccajObj = $this->Reccaj->find(array("conditions" => $sql, 'order' => 'fecha DESC'));
+            $reccajObj = $this->Reccaj->find(array(join(' AND ', $conditions), 'order' => 'rc DESC'));
         } else {
-            $reccajObj = $this->Reccaj->find(array('order' => 'fecha DESC'));
+            $reccajObj = $this->Reccaj->find(array('order' => 'rc DESC'));
         }
         if (count($reccajObj)==0) {
             $response['number'] = '0';
@@ -79,7 +78,6 @@ class Recibo_cajaController extends ApplicationController
                 $responseResults = array(
                     'headers' => array(
                         array('name' => 'Rc', 'ordered' => 'S'),
-                        array('name' => 'Fecha', 'ordered' => 'N'),
                         array('name' => 'Tercero', 'ordered' => 'N'),
                         array('name' => 'Valor', 'ordered' => 'N', 'align' => 'right'),
                         array('name' => 'Estado', 'ordered' => 'N')
@@ -94,24 +92,16 @@ class Recibo_cajaController extends ApplicationController
 
                     $valorReccaj = $reccaj->getValor();
 
-                    $estadoDesc = 'Contabilizado';
-                    if($reccaj->getEstado()=='A'){
-                        $estadoDesc = 'Anulado';
-                    }
                     $data[] = array(
                         'primary' => array('id='.$reccaj->getId()),
                         'data' => array(
                             array('key' => 'rc', 'value' => $reccaj->getRc()),
-                            array('key' => 'fecha', 'value' => $reccaj->getFecha()->getDate()   ),
                             array('key' => 'tercero', 'value' => $tercero->getNit().' / '.$tercero->getNombre()),
                             array('key' => 'valor', 'value' => Currency::number($valorReccaj)),
-                            array('key' => 'estado', 'value' => $estadoDesc ),
+                            array('key' => 'estado', 'value' => $reccaj->getEstado()),
                         )
                     );
-
-                    unset($reccaj);
                 }
-
                 $responseResults['data'] = $data;
                 $response['numberResults'] = count($responseResults['data']);
                 $response['results'] = $responseResults;
@@ -577,7 +567,7 @@ class Recibo_cajaController extends ApplicationController
             $ciudadEmpresaNits = $empresaNits->getLocation()->getName();
         }
 
-        $reccajNit = BackCacher::getTercero($reccaj->getNit());
+        $reccajNit = EntityManager::get('Nits')->findFirst(array('conditions'=>"nit='{$reccaj->getNit()}'"));
         $ciudadReccajNit = '';
         if ($reccajNit!=false && $reccajNit->getLocciu()>0) {
             $ciudadReccajNit = $reccajNit->getLocation()->getName();
@@ -605,6 +595,7 @@ class Recibo_cajaController extends ApplicationController
                 </tr>";
             }
             $movimientoHtml .= '</table>';
+
 
             $html = '
 <html>
@@ -714,7 +705,7 @@ class Recibo_cajaController extends ApplicationController
                         <td>
                             <table cellpadding="10">
                                 <tr>
-                                    <td width="128"><img src="public/img/backoffice/logo.png" height="80" /></td>
+                                    <td width="128"><img src="public/img/backoffice/logo.jpg" height="80" /></td>
                                     <td valign="top" width="350">
                                         <span class="t1">'.$empresa->getNombre().'</span><br>
                                         <span>
@@ -751,7 +742,7 @@ class Recibo_cajaController extends ApplicationController
                                 <tr>
                                     <td colspan="2" class="b">
                                         <span class="lab">Recibimos de</span>
-                                        <span class="con">'.$reccajNit->getNombre().'</span>
+                                        <span class="con">'.$reccaj->getNombre().'</span>
                                     </td>
                                     <td class="b">
                                         <span class="lab">C.C o NIT</span>
@@ -895,11 +886,6 @@ class Recibo_cajaController extends ApplicationController
             </body>
         </html>';
 
-            //Modificar el nombre si esta mal
-            if ($reccaj->getNombre()!=$reccajNit->getNombre()) {
-                $reccaj->setNombre($reccajNit->getNombre());
-                $reccaj->save();
-            }
 
             $pdf->writeHTML($html);
             $pdf->Output('public/temp/reccaj-'.$reccaj->getId().'.pdf');

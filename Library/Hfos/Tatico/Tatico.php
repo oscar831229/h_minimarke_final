@@ -458,6 +458,9 @@ class Tatico extends UserComponent
 		catch (AuraException $e) {
 			throw new TaticoException('Contabilidad: '.$e->getMessage());
 		}
+		catch (AuraNiifException $e) {
+			throw new TaticoException('Contabilidad: '.$e->getMessage());
+		}
 		catch (GardienException $e) {
 			throw new TaticoException('Seguridad: '.$e->getMessage());
 		}
@@ -466,6 +469,9 @@ class Tatico extends UserComponent
 		}
 		catch (TransactionFailed $e) {
 			throw new TaticoException($e->getMessage(), $e->getCode());
+		}
+		catch (Exception $e) {
+			throw new TaticoException('Contabilidad: '.$e->getMessage());
 		}
 	}
 
@@ -500,14 +506,6 @@ class Tatico extends UserComponent
 		}
 
 		$identity = IdentityManager::getActive();
-
-		//Valida que no exista movimiento mayor ya que puede descuadrar costos
-		$movihead = self::getModel('Movihead')->findFirst("almacen='{$movement['Almacen']}' AND fecha > '{$movement['Fecha']}'");
-		if ($movihead) {
-			$this->_throwException("Ya existe movimiento en el almacen '" .
-				$almacen->getNomAlmacen() . "' con una fecha mayor a '" . $movement['Fecha'] . "'"
-			);
-		}
 
 		//Crear Movihead
 		$movihead = new Movihead();
@@ -697,9 +695,6 @@ class Tatico extends UserComponent
 				$movilin->setAlmacen($movement['Almacen']);
 				$movilin->setNumero($movement['Numero']);
 				$movilin->setItem($detail['Item']);
-				if (isset($detail['Descripcion'])) {
-					$movilin->setDescripcion($detail['Descripcion']);
-				}
 				$movilin->setFecha($movement['Fecha']);
 				$movilin->setNumLinea($i++);
 			}
@@ -1836,8 +1831,6 @@ class Tatico extends UserComponent
 			$options['Nit'] = $this->_empresa->getNit();
 			$options['CentroCosto'] = $almacen->getCentroCosto();
 
-			file_put_contents('a.txt', print_r($lineas, true));
-
 			if (isset($lineas['Entrada']) || isset($lineas['Salida'])) {
 				$cuentasDebito = array();
 				$cuentasCredito = array();
@@ -2483,9 +2476,62 @@ class Tatico extends UserComponent
 			throw new TaticoException('El movimiento no puede eliminarse por ser anterior a la hora de cierre');
 		}
 		if ($movihead->getEstado()=='C') {
-			throw new TaticoException('El movimiento no puede eliminarse por estar cerrado');
+			//throw new TaticoException('El movimiento no puede eliminarse por estar cerrado');
+		}
+		$this->verificarAntesDeBorrar($movihead);
+
+		$fecha = $movihead->getFecha();
+		$almacen = $movihead->getAlmacen();
+		$comprob = $movihead->getComprob();
+
+		switch ($tipoComprob) {
+			case 'E':
+				//Hace salida si el comprobnate a borrar es entrada
+				$comprob = sprintf('C%02s', $almacen);
+				break;
+			case 'S':
+				//Hace entrada si el comprobnate a borrar es salida
+				$comprob = sprintf('E%02s', $almacen);
+				break;
+
+			default:
+				throw new TaticoException("Comprobante no soportado para borrar '$tipoComprob'", 1);
+				break;
 		}
 
+		$newMovihead = clone $movihead;
+		$newMovihead->setComprob($comprob);
+		$max = $this->Movihead->maximum(array('numero', "conditions" => "comprob='$comprob'")) + 1;
+		$newMovihead->setNumero($max);
+		$newMovihead->setEstado('A');
+		$newMovihead->setDescription("Se elimino el movimiento '{$movihead->getComprob()} / {$movihead->getNumero()}'");
+		$newMovihead->save();
+
+		$movihead->setEstado('A');
+		$movihead->save();
+
+
+		$movilins = $this->Movilin->find("comprob='{$movihead->getComprob()}' AND numero='{$movihead->getNumero()}' AND almacen='{$movihead->getAlmacen()}'");
+		foreach ($movilins as $movilin) {
+			$newMovilin= clone $movilin;
+			$newMovilin->setId(null);
+			$newMovilin->setComprob($comprob);
+			$newMovilin->save();
+		}
+	}
+
+	private function verificarAntesDeBorrar($movihead)
+	{
+		if ($movihead->getEstado()=='A') {
+			throw new TaticoException('El movimiento ya esta anulado');
+		}
+
+		$fecha = $movihead->getFecha();
+		//throw new TaticoException("fecha > '$fecha' AND comprob NOT LIKE 'O%' AND estado = 'C'");
+		$moviFuturo = $this->Movihead->findFirst("fecha > '$fecha' AND comprob NOT LIKE 'O%' AND estado != 'A'");
+		if ($moviFuturo) {
+			throw new TaticoException("Existen otros movimientos de inventario con fecha mayor a '$fecha'. Antes debe borrar esos movimentos para borrar este.");
+		}
 	}
 
 	/**
@@ -2608,9 +2654,7 @@ class Tatico extends UserComponent
 		$recetal = self::getModel('Recetal')->find('almacen="1" AND numero_rec = "'.$recetap->getNumeroRec().'"');
 		foreach ($recetal as $recetal) {
 			if ($recetal->getTipol() == 'I') {
-				//$cantidad = $recetal->getCantidad()/($recetap->getNumPersonas()*$recetal->getDivisor());
-				//$cantidad = ($recetal->getCantidad()/$recetal->getDivisor()) * $recetap->getNumPersonas();
-				$cantidad = $recetal->getCantidad()/$recetal->getDivisor();
+				$cantidad = $recetal->getCantidad()/($recetap->getNumPersonas()*$recetal->getDivisor());
 				if (isset($data[$recetal->getItem()])) {
 					$data[$recetal->getItem()]['costo'] = LocaleMath::round($recetal->getValor()+$data[$recetal->getItem()]['costo'], 2);
 					$data[$recetal->getItem()]['cantidad'] = LocaleMath::round($cantidad+$data[$recetal->getItem()]['cantidad'],4);
@@ -2713,10 +2757,14 @@ class Tatico extends UserComponent
 	 * Retorna un arreglo asociativo con los campos de la referencia o de la receta
 	 *
 	 * @param	int $codigoItem
+	 * @param   int $codigoAlmacen
+	 * @param   string $tipoDetalle
+	 * @param   string $type //Orden de compra, Entrada, salida
 	 * @return	mixed
 	 */
-	public static function getReferenciaOrReceta($codigoItem, $codigoAlmacen=0, $tipoDetalle='I')
+	public static function getReferenciaOrReceta($codigoItem, $codigoAlmacen=0, $tipoDetalle='I', $type=null)
 	{
+
         //Buscamos Receta
 		if ($tipoDetalle=='R') {
 			$recetap = self::getModel('Recetap')->findFirst('almacen="1" AND numero_rec="' . $codigoItem . '"');
@@ -2742,6 +2790,7 @@ class Tatico extends UserComponent
 				);
 			}
 		} else {
+
             //Buscamos Referencia
             $inve = BackCacher::getInve($codigoItem);
             if ($inve===false) {
@@ -2790,6 +2839,7 @@ class Tatico extends UserComponent
                             'status' => 'UNDEFINED'
                         );
                     }
+
                     return array(
                         'status' => 'OK',
                         'data' => array(
@@ -2799,7 +2849,7 @@ class Tatico extends UserComponent
                             'unidad' => $inve->getUnidad(),
                             'existencias' => $inve->getSaldoActual(),
                             'num_personas' => 1,
-                            'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $codigoAlmacen), 2),
+                            'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $codigoAlmacen, null, $type), 2),
                             'saldo' => $saldo,
                             'iva' => (int) $inve->getIva(),
                             'estado' => $inve->getEstado(),
@@ -2813,10 +2863,12 @@ class Tatico extends UserComponent
 	/**
 	 * Retorna un arreglo asociativo con los campos de la referencia
 	 *
-	 * @param int $codigoItem
+	 * @param int 	 $codigoItem
+	 * @param int 	 $almacen
+	 * @param string $controllerName
 	 * @return mixed
 	 */
-	public static function getReferencia($codigoItem, $almacen=1)
+	public static function getReferencia($codigoItem, $almacen=1, $type = null)
     {
 		$inve = BackCacher::getInve($codigoItem);
 		if ($inve===false) {
@@ -2836,7 +2888,7 @@ class Tatico extends UserComponent
 					'peso' => $inve->getPeso(),
 					'existencias' => $inve->getSaldoActual(),
 					'num_personas' => 1,
-					'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $almacen), 2),
+					'costo' => LocaleMath::round(self::getCosto($codigoItem, 'I', $almacen, null, $type), 2),
 					'iva' => $inve->getIva(),
 					'estado' => $inve->getEstado()
 				)
@@ -2880,9 +2932,10 @@ class Tatico extends UserComponent
 	 * @param	string $tipo
 	 * @param 	int $almacen
 	 * @param 	Tatico $tatico
+	 * @param   String $controllerName
 	 * @return	mixed
 	 */
-	public static function getCosto($codigoItem, $tipo='I', $almacen=1, $tatico=null)
+	public static function getCosto($codigoItem, $tipo='I', $almacen=1, $tatico=null, $type=null)
     {
 		$costo = 0;
 		$hasTransaction = TransactionManager::hasUserTransaction();
@@ -2892,35 +2945,84 @@ class Tatico extends UserComponent
 			self::getModel('Movilin')->setTransaction($transaction);
 			self::getModel('Recetap')->setTransaction($transaction);
 		}
+
 		if ($tipo=='I') {
-			$saldo = self::getModel('Saldos')->findFirst("almacen='$almacen' AND ano_mes='0' AND item='$codigoItem'");
-			if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
-				$comprobEntrada = 'E'.sprintf('%02s', $almacen);
-				$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobEntrada' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+			$tipoValor = Settings::get("valor_orden_compra", 'IN');
+			//Solo para ordenes de compra (HUGO THINGS)
+			if ($tipoValor == 'U' && $type == 'O') {
+				$costo = self::getCostoUnitario($almacen, $codigoItem);
+			} else {
+				$costo = self::getCostoPromedio($almacen, $codigoItem);
+			}
+		} else {
+			$costo = self::getModel('Recetap')->maximum('precio_costo', 'conditions: almacen="1" AND numero_rec="' . $codigoItem . '"');
+		}
+		if ($costo<=0) {
+			return false;
+		}
+		return $costo;
+	}
+
+	/**
+	 * Obtiene el costo promedio del item
+	 *
+	 * @param  integer $almacen
+	 * @param  string $codigoItem
+	 * @return double
+	 */
+	private static function getCostoUnitario($almacen, $codigoItem)
+	{
+		$comprobEntrada = 'E'.sprintf('%02s', $almacen);
+
+		$movilin = self::getModel('Movilin')->findFirst(
+			"almacen='$almacen' AND item='$codigoItem' AND comprob='$comprobEntrada'",
+			"order: id DESC",
+			"limit: 1"
+		);
+
+		if ($movilin) {
+			return $movilin->getValor() / $movilin->getCantidad();
+		} else {
+			return self::getCostoPromedio($almacen, $codigoItem);
+		}
+
+	}
+
+	/**
+	 * Obtiene el costo promedio del item
+	 *
+	 * @param  integer $almacen
+	 * @param  string $codigoItem
+	 * @return double
+	 */
+	private static function getCostoPromedio($almacen, $codigoItem)
+	{
+		$costo = 0;
+		$saldo = self::getModel('Saldos')->findFirst("almacen='$almacen' AND ano_mes='0' AND item='$codigoItem'");
+		if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
+			$comprobEntrada = 'E'.sprintf('%02s', $almacen);
+			$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobEntrada' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+			if ($movilin==false) {
+				$comprobTraslado = 'T'.sprintf('%02s', $almacen);
+				$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTraslado' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
 				if ($movilin==false) {
-					$comprobTraslado = 'T'.sprintf('%02s', $almacen);
-					$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTraslado' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+					$comprobTransformacion = 'R'.sprintf('%02s', $almacen);
+					$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTransformacion' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
 					if ($movilin==false) {
-						$comprobTransformacion = 'R'.sprintf('%02s', $almacen);
-						$movilin = self::getModel('Movilin')->findFirst("comprob='$comprobTransformacion' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
-						if ($movilin==false) {
-							if ($almacen<>1) {
-								$saldo = self::getModel('Saldos')->findFirst("almacen='1' AND ano_mes='0' AND item='$codigoItem'");
-								if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
-									$movilin = self::getModel('Movilin')->findFirst("comprob='E01' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
-									if ($movilin==false) {
-										$costo = 0;
-									} else {
-										$costo = $movilin->getValor()/$movilin->getCantidad();
-										self::_addCostosWarning($codigoItem);
-									}
+						if ($almacen<>1) {
+							$saldo = self::getModel('Saldos')->findFirst("almacen='1' AND ano_mes='0' AND item='$codigoItem'");
+							if ($saldo==false||$saldo->getSaldo()<=0||$saldo->getCosto()<=0) {
+								$movilin = self::getModel('Movilin')->findFirst("comprob='E01' AND item='$codigoItem' AND cantidad>0", 'order: fecha DESC');
+								if ($movilin==false) {
+									$costo = 0;
 								} else {
-									$costo = $saldo->getCosto()/$saldo->getSaldo();
+									$costo = $movilin->getValor()/$movilin->getCantidad();
 									self::_addCostosWarning($codigoItem);
 								}
+							} else {
+								$costo = $saldo->getCosto()/$saldo->getSaldo();
+								self::_addCostosWarning($codigoItem);
 							}
-						} else {
-							$costo = $movilin->getValor()/$movilin->getCantidad();
 						}
 					} else {
 						$costo = $movilin->getValor()/$movilin->getCantidad();
@@ -2929,14 +3031,12 @@ class Tatico extends UserComponent
 					$costo = $movilin->getValor()/$movilin->getCantidad();
 				}
 			} else {
-				$costo = $saldo->getCosto()/$saldo->getSaldo();
+				$costo = $movilin->getValor()/$movilin->getCantidad();
 			}
 		} else {
-			$costo = self::getModel('Recetap')->maximum('precio_costo', 'conditions: almacen="1" AND numero_rec="' . $codigoItem . '"');
+			$costo = $saldo->getCosto()/$saldo->getSaldo();
 		}
-		if ($costo<=0) {
-			return false;
-		}
+
 		return $costo;
 	}
 
@@ -3023,7 +3123,6 @@ class Tatico extends UserComponent
 					'id' => $movilin->getId(),
 					'item' => $movilin->getItem(),
 					'descripcion' => $inve->getDescripcion(),
-					'descripcion2' => $movilin->getDescripcion(),
 					'unidad' => $inve->getUnidad(),
 					'costo' => LocaleMath::round($movilin->getValor(), 2),
 					'cantidad' => LocaleMath::round($movilin->getCantidad(), 3),
@@ -3142,7 +3241,6 @@ class Tatico extends UserComponent
 					'id' => $movilin->getId(),
 					'item' => $movilin->getItem(),
 					'descripcion' => $inve->getDescripcion(),
-					'descripcion2' => $movilin->getDescripcion(),
 					'unidad' => $inve->getUnidad(),
 					'costo' => LocaleMath::round($movilin->getValor(), 2),
 					'cantidad' => LocaleMath::round($movilin->getCantidad(), 3),
@@ -3206,7 +3304,7 @@ class Tatico extends UserComponent
 		if ($almacen==false) {
 			return array(
 				'status' => 'FAILED',
-				'message' => 'No existe el almacén indicado'
+				'message' => 'No existe el almacén indicado ' . $codigoAlmacen
 			);
 		}
 
@@ -4160,16 +4258,10 @@ class Tatico extends UserComponent
 				sprintf('%14s', Currency::number($movilin->getValor(), 2))."   ".
 				sprintf('%02s', (float)$movilin->getIva())."\r\n";
 			} else {
-				$descripcion2 = $movilin->getDescripcion();
-				if (!empty($descripcion2)) {
-					$descripcion = $inve->getDescripcion() . ' (' . $movilin->getDescripcion() . ')';
-				} else {
-					$descripcion = $inve->getDescripcion();
-				}
 				$content.= '<tr>
 					<td align="right">'.($i++).'</td>
 					<td width="40" align="right">'.$movilin->getItem().'</td>
-					<td>' . $descripcion . '</td>
+					<td>'.$inve->getDescripcion().'</td>
 					<td>'.$unidad.'</td>
 					<td align="right">'.Currency::number($saldoActual, 2).'</td>
 					<td align="right">'.Currency::number($movilin->getCantidad(), 3).'</td>

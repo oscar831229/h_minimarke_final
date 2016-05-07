@@ -47,11 +47,11 @@ class Hfos_Application
 	private static $_versions = array(
 		'IN' => '6.1.12',
 		'CO' => '6.1.12',
-		'NO' => '6.1.10',
+		'NO' => '6.1.12',
 		'IM' => '6.1.12',
-		'FC' => '6.1.10',
-		'CN' => '6.1.10',
-		'PV' => '6.1.10',
+		'FC' => '6.1.12',
+		'CN' => '6.1.12',
+		'PV' => '6.1.12',
 		'SO' => '1.0',
 		'TC' => '1.0',
 	);
@@ -95,7 +95,7 @@ class Hfos_Application
 			'impresion'
 		),
 		'CO' => array(
-			'movimiento', 'cuentas', 'incluir', 'excluir', 'terceros', 'balance', 'amortizacion',
+			'movimiento', 'movimiento_niif', 'cuentas', 'incluir', 'excluir', 'terceros', 'balance', 'amortizacion',
 			'consecutivos', 'libro-auxiliar', 'movimiento-terceros',
 			'movimiento-documentos', 'movimiento-centros', 'balance-centros', 'listado-movimiento',
 			'listado-retencion', 'retencion', 'cheque', 'formato-cheque',
@@ -107,7 +107,7 @@ class Hfos_Application
 			'comprobante-cierre', 'ordenes-servicio', 'pyg', 'ejecucion-pres',
 			'cierre-cuentas', 'reabrir-cuentas', 'caratulas', 'balance-general', 'certificado-retencion',
 			'certificado-ica', 'cierre-anual', 'reabrir-ano', 'recibo-caja', 'listado-comprob',
-			'interfase-siigo'
+			'interfase-siigo', 'cuentas-selector2', 'informe-balance-consolidado', 'corregir-cartera'
 		),
 		'NO' => array(
 			'liquidacion'
@@ -120,10 +120,10 @@ class Hfos_Application
 		),
 		'SO' => array(
 			'socios', 'cambio_accion', 'asignacion_cargos_grupo', 'cargos_socios', 'movimiento_cargos', 'facturar',
-			'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir',
-			'prestamos-socios', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
+			'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir', 'ajuste-saldos', 'ajuste-prestamos',
+			'prestamos-socios', 'ajuste-pagos', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
 			'informe-convenios', 'estado_cuenta', 'estado_cuenta_consolidado', 'pagos-periodo',
-			'estado_cuenta_validacion', 'informe_rc', 'importar-pagos', 'validacion_categorias', 'cumpleanos'
+			'estado_cuenta_validacion'
 		),
 		'TC' => array(
 			'contratos', 'reservas', 'proyeccion', 'abono_contrato', 'abono_reserva',

@@ -29,15 +29,12 @@ class SociosFactura extends UserComponent
     public function __constructor()
     {
         $this->_externalTransaction = TransactionManager::hasUserTransaction();
-        $this->_transaction         = TransactionManager::getUserTransaction();
+        $this->_transaction = TransactionManager::getUserTransaction();
     }
 
     /**
      * Agrega a un vector de configuracion datos staticos que solo se dben cargar una vez
-     *
-     * @param $config
-     * @throws Exception
-     * @throws SociosException
+     * @param Array $config Configuracion inicial
      */
     public function addConfigDefault(&$config)
     {
@@ -125,45 +122,45 @@ class SociosFactura extends UserComponent
         //Comprobante de factura
         if (!isset($config['codigoComprob']) || !isset($config['comprobFactura'])) {
             $codigoComprob = Settings::get('comprob_factura', 'SO');
-            if (empty($codigoComprob)) {
+            if ($codigoComprob=='') {
                 throw new SociosException('No se ha configurado el comprobante de socios');
             }
-            $config['codigoComprob']  = $codigoComprob;
+            $config['codigoComprob'] = $codigoComprob;
             $config['comprobFactura'] = $codigoComprob;
         }
     }
-
+    
     /**
      * Metodo que obtiene el saldo anterior
-     *
+     * 
      * @param array $config(
      *     SociosId    => 1,
-     *     periodo     => '2011'
+     *     periodo        => '2011'
      * )
      * @param ActiveRecordTransaction $this->_transaction
-     *
+     * 
      * @return double
      */
     public function calcularSaldoAnterior($config)
     {
 
-        if (isset($config['SociosId']) == false || $config['SociosId']<=0) {
+        if (isset($config['SociosId'])==false || $config['SociosId']<=0) {
             throw new SociosException('Es necesario dar el id del socio');
         }
-
+        
         $Socios = BackCacher::getSocios($config['SociosId']);
-        if ($Socios == false) {
+        if ($Socios==false) {
             throw new SociosException('El socio no existe');
         }
         $sociosId    = $config['SociosId'];
 
-        if (isset($config['periodo']) == false || $config['periodo']<=0) {
+        if (isset($config['periodo'])==false || $config['periodo']<=0) {
             throw new SociosException('Es necesario dar el periodo para calcular su mora');
         }
 
         $periodo = $config['periodo'];
         $periodoAnterior = EntityManager::get('Periodo')->setTransaction($this->_transaction)->maximum('periodo', 'conditions: periodo < "'.$periodo.'"');
-        if ($periodoAnterior == false) {
+        if ($periodoAnterior==false) {
             return 0;
         }
         $config['periodoAnterior'] = $periodoAnterior;
@@ -175,8 +172,8 @@ class SociosFactura extends UserComponent
         }
 
         //Datos DEFAULT
-        $tipoDocSocios  = $config['tipoDocSocios'];
-        $tipoDocPos     = $config['tipoDocPos'];
+        $tipoDocSocios = $config['tipoDocSocios'];
+        $tipoDocPos = $config['tipoDocPos'];
 
         //buscamos en cartera solo saldos con cuentas de cargos fijos
         $total = 0;
@@ -185,7 +182,7 @@ class SociosFactura extends UserComponent
             $total += $saldoCartera->getSaldo();
             unset($total);
         }
-
+        
         unset($saldoCarteraObj, $Socios);
 
         return $total;
@@ -193,147 +190,64 @@ class SociosFactura extends UserComponent
 
 
     /**
-     * Metodo que calcula la mora de factura
-     *
+     * Metodo que calcula la mora
+     * 
      * @param array $config(
      *     SociosId    => 1,
-     *     periodo     => '2011'
+     *     periodo        => '2011'
      * )
      * @param ActiveRecordTransaction $this->_transaction
-     *
+     * 
      * @return double
      */
     public function calcularMora(&$config)
     {
-        if (isset($config['SociosId']) == false || $config['SociosId']<=0) {
+        if (isset($config['SociosId'])==false || $config['SociosId']<=0) {
             throw new SociosException('Es necesario dar el id del socio');
         }
 
         $Socios = BackCacher::getSocios($config['SociosId']);
-        if ($Socios == false) {
+        if ($Socios==false) {
             throw new SociosException('El socio con id "'.$config['SociosId'].'" no existe');
         }
         $sociosId    = $config['SociosId'];
         $nit = $Socios->getIdentificacion();
-
-        if (isset($config['periodo']) == false || $config['periodo']<=0) {
+        
+        if (isset($config['periodo'])==false || $config['periodo']<=0) {
             throw new SociosException('Es necesario dar el periodo para calcular su mora');
         }
         $periodo = $config['periodo'];
         $periodoAnterior = EntityManager::get('Periodo')->setTransaction($this->_transaction)->maximum('periodo', 'conditions: periodo < "'.$periodo.'"');
-        if ($periodoAnterior == false) {
+        if ($periodoAnterior==false) {
             throw new Exception("Se esta calculando mora de un periodo no creado ".($periodo-1));
         }
-        //throw new Exception("periodo: $periodo, periodoAnt: " . print_r($periodoAnterior, true), 1);
 
         $config['periodoAnterior'] = $periodoAnterior;
         $fechaFactura = $config['fechaFactura'];
 
         #sacamos saldo de cartera siempre
         $base = $config['saldoAnteriorMora'];
-        //throw new Exception("base: $base", 1);
-
+        
         $ret = 0;
-        if ($base) {
+        if ($base>0) {
+
+            //Periodo
+            $periodo = EntityManager::get('Periodo')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'periodo = "'.$periodoAnterior.'"'));
+            if ($periodo==false) {
+                throw new SociosException('El periodo '.$periodoAnterior.' no existe');
+            }
+
+            $interesMoraPeriodo = (float) $periodo->getInteresesMora();
+
             //Restamos pagos del periodo
             $fechaActual = new Date($fechaFactura);
-            $fechaActual->toLastDayOfMonth();
-            $lastDay = $fechaActual->getDay();
-
-            $year = substr($fechaFactura, 0, 4);
-            $month = substr($fechaFactura, 5, 2);
-
-            switch($lastDay) {
-                case '31':
-                        $day = "30";
-                        break;
-                case '30':
-                        $day = "29";
-                        break;
-                case '29':
-                        $day = "28";
-                        break;
-                case '28':
-                        $day = "27";
-                        break;
-                default:
-                        throw new Exception("No se ha definido bien el dia de fact sostenimiento en calculo de saldoAnterio");
-                        break;
-            }
-
-            $fechaFactura2 = $year . "-" . $month . "-" . $day;
             $existenPagos = SociosCore::getPagosPeriodoXSocioExists($fechaActual->getPeriod(), $nit);
             if ($existenPagos==true) {
-                //throw new Exception("Existen pagos este mes, baseAnt: $base", 1);
-                //CUENTAS SOCIOS
-                $cuentasSocios = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
-
-                //CARGO FIJO CONSUMO MINIMO
-                $ctaConsumos = Settings::get('cuenta_consumos', 'SO');
-                if (!$ctaConsumos) {
-                        throw new Exception("La cuenta de consumos no esta parametrizada en configuraci?n");
-                }
-                //DIF TOTAL CUENTAS SOCIOS SIN CONSUMOS
-                $deb = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='D'"));
-                $cre = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='C'"));
-                $diff = $deb - $cre;
-                if ($diff == 0) {
-                        $base = 0;
-                } else {
-                        if ($diff > 0 ) {
-                                $base = $diff;
-                        } else {
-                                $base = 0;
-                        }
-                }
-
-                //CONSUMOS PERIODO ACTUAL
-                $debConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
-                $creConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='C'"));
-                $diffConsumos = $debConsumos - $creConsumos;
-                $base += $diffConsumos;
-                if ($base<0) {
-                        $base = 0;
-                }
-
-                //PAGOS Y AJUSTES
-                $comprobArray = array();
-                $comprobAjustes = Settings::get('comprob_ajustes', 'SO');
-                if (!$comprobAjustes) {
-                        throw new Exception("El comprobante de ajuste no esta parametrizado en configuraci?n");
-                }
-                $comprobNCStr = Settings::get('comprob_nc', 'SO');
-                if (!$comprobNCStr) {
-                        throw new Exception("Los comprobantes de nota contable no esta parametrizado en configuraci?n");
-                }
-                $comprobNCArray = explode(",", $comprobNCStr);
-                $comprobPagosStr = Settings::get('comprobs_pagos', 'SO');
-                if (!$comprobPagosStr) {
-                        throw new Exception("Los comprobantes de pagos no esta parametrizado en configuraci?n");
-                }
-                $comprobPagosArray = explode(",", $comprobPagosStr);
-
-                //agregando comprobantes
-                $comprobArray[]=$comprobAjustes;
-                $comprobArray = array_merge($comprobArray, $comprobNCArray);
-                $comprobArray = array_merge($comprobArray, $comprobPagosArray);
-                $comprobStr = "'" . implode("','", $comprobArray) . "'";
-
-                //buscamos movimiento de este mes
-                $debPagos = 0;
-                //EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
-                $crePagos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='C'"));
-                $diffPagos = $debPagos - $crePagos;
-                $base += $diffPagos;
-                if ($base<0) {
-                        $base = 0;
-                }
-
-
+                //Si hay pagos tome saldo de tabla cartera
+                $base = EntityManager::get('Cartera')->sum(array("column"=>"saldo", "conditions"=>"nit='$nit' AND DATE_FORMAT(f_emision,'%Y%m')<='$periodoAnterior'"));
             }
-
-            //throw new SociosException("base: $base, fechaFactura2: $fechaFactura2, fechaFactura: $fechaFactura, deb: $deb, cre: $cre, diff: $diff, creConsumos: $creConsumos, debConsumos: $debConsumos, diffConsumos: $diffConsumos");
-
+            //throw new SociosException("base: $base");
+            
             $ret = $base * $interesMoraPeriodo / 100;
         }
 
@@ -342,54 +256,54 @@ class SociosFactura extends UserComponent
 
     /**
      * Metodo que calcula la mora x dias segun facturas
-     *
+     * 
      * @param array $config(
      *     SociosId    => 1,
      *     periodo        => '2011'
      * )
      * @param ActiveRecordTransaction $this->_transaction
-     *
+     * 
      * @return double
      */
     public function calcularMoraXFecha(&$config)
     {
-        if (isset($config['SociosId']) == false || $config['SociosId']<=0) {
+        if (isset($config['SociosId'])==false || $config['SociosId']<=0) {
             throw new SociosException('Es necesario dar el id del socio');
         }
 
         $Socios = BackCacher::getSocios($config['SociosId']);
-        if ($Socios == false) {
+        if ($Socios==false) {
             throw new SociosException('El socio con id "'.$config['SociosId'].'" no existe');
         }
         $sociosId = $config['SociosId'];
         $nit = $Socios->getIdentificacion();
-
-        if (isset($config['periodo']) == false || $config['periodo']<=0) {
+        
+        if (isset($config['periodo'])==false || $config['periodo']<=0) {
             throw new SociosException('Es necesario dar el periodo para calcular su mora');
         }
         $periodo = $config['periodo'];
         $periodoAnterior = EntityManager::get('Periodo')->setTransaction($this->_transaction)->maximum('periodo', 'conditions: periodo < "'.$periodo.'"');
-        if ($periodoAnterior == false) {
+        if ($periodoAnterior==false) {
             throw new Exception("Se esta calculando mora de un periodo no creado ".($periodo-1));
         }
 
         $config['periodoAnterior'] = $periodoAnterior;
         $fechaFactura = $config['fechaFactura'];
-
+        
         $ret = 0;
-
+            
         //Saldo de estado de cuenta anterior
         $base = $config['saldoAnteriorMora'];
-
+        
         if ($base>0) {
 
             //Porcentaje de mora en el periodo anterior
             $periodo = EntityManager::get('Periodo')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'periodo = "' . $periodoAnterior . '"'));
-            if ($periodo == false) {
+            if ($periodo==false) {
                 throw new SociosException('El periodo '.$periodoAnterior.' no existe');
             }
             $interesMoraPeriodo = (float) $periodo->getInteresesMora();
-
+            
             /*//Obtenemos fecha limite de pago de estado de cuenta
             //Contamos dias de mora
             $dias = SociosCore::diffDiasFechas($fechaFactura, $fechaLimitePago->getDate());
@@ -399,7 +313,7 @@ class SociosFactura extends UserComponent
 
             //mora
             $mora = $dias * $moraDiaria;
-
+            
             $ret = $mora;
 */
             unset($fechaLimitePago, $dias, $moraDiaria, $mora);
@@ -416,10 +330,10 @@ class SociosFactura extends UserComponent
      */
     public function cleanMovimientoSocios(&$config)
     {
-
+            
         try {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             $conditions = "fecha_at='{$config['fechaFactura']}'";
             if (isset($config['sociosId']) && $config['sociosId']>0) {
                 $conditions .= "AND socios_id='{$config['sociosId']}'";
@@ -429,14 +343,14 @@ class SociosFactura extends UserComponent
             if (isset($config['sociosId']) && $config['sociosId']>0) {
                 $conditionsd .= "AND socios_id='{$config['sociosId']}'";
             }
-
+            
             //Borramos detalles de movimiento
             $movimientoObj = EntityManager::get('Movimiento')->setTransaction($this->_transaction)->find($conditions);
             foreach ($movimientoObj as $movimientoRow) {
                 //Borramos movimiento
                 $status = $movimientoRow->setTransaction($this->_transaction)->delete();
-
-                if ($status == false) {
+                
+                if ($status==false) {
                     throw new SociosException("No se pudo borrar el movimiento de la fecha el movimiento con id ({$movimientoRow->getId()})");
                 }
 
@@ -447,24 +361,24 @@ class SociosFactura extends UserComponent
             foreach ($detalleMovimientoObj as $detalleMovimiento) {
                 //Borramos movimiento
                 $status = $detalleMovimiento->setTransaction($this->_transaction)->delete();
-
-                if ($status == false) {
+                
+                if ($status==false) {
                     throw new SociosException("No se pudo borrar el detalle de movimiento de la fecha el movimiento con id ({$detalleMovimiento->getId()})");
                 }
 
                 unset($detalleMovimiento);
             }
-
+            
             unset($movimientoObj, $detalleMovimiento, $conditions, $movimiento);
-
+            
             return true;
         } catch (Exception $e) {
             throw new SociosException("cleanMovimientoSocios: ".$e->getMessage());
         }
     }
 
-
-
+    
+    
     /**
      * Obtiene los saldos pedientes de los socios
      * @param Array $configSaldos
@@ -472,35 +386,28 @@ class SociosFactura extends UserComponent
      */
     public function obtenerSaldosCartera($configSaldos)
     {
+        gc_enable();
         $saldosCartera = array();
-
+        
         $conditions = 'saldo!=0';
         if (isset($configSaldos['sociosId']) && $configSaldos['sociosId']) {
-
+                
             $socios = BackCacher::getSocios($configSaldos['sociosId']);
-
+            
             if ($socios->getIdentificacion()) {
                 $conditions .= " AND nit='{$socios->getIdentificacion()}'";
             }
-
+            
             unset($socios);
         }
 
         //Datos DEFAULT
-        if (!isset($configSaldos['tipoDocSocios'])) {
-            $this->addConfigDefault($configSaldos);
-        }
         $tipoDocSocios = $configSaldos['tipoDocSocios'];
         $tipoDocPos = $configSaldos['tipoDocPos'];
 
-        if (!isset($configSaldos['fechaFactura'])) {
-            throw new SociosException("No se ha definido la fecha limite a buscar saldos");
-        }
         $fechaFactura = $configSaldos['fechaFactura'];
 
-        $conditions .= " AND f_emision < '$fechaFactura' AND tipo_doc IN ('$tipoDocPos','$tipoDocSocios')";
-
-        //throw new SociosException($conditions);
+        $conditions .= " AND f_emision <= '$fechaFactura' AND tipo_doc IN ('tipoDocPos','tipoDocSocios')";
 
         $i=0;
         $numeroMeses = array();
@@ -510,28 +417,35 @@ class SociosFactura extends UserComponent
             if (!isset($saldosCartera[$nit])) {
                 $saldosCartera[$nit] = 0;
             }
-
+            
             $saldosCartera[$nit] += $cartera->getSaldo();
-
+            
             //Agregamos conteo de meses
             $fechaTemp = new Date($cartera->getFEmision());
             $fechaTempPeriod = $fechaTemp->getPeriod();
-
+            
             if (!isset($numeroMeses[$nit])) {
                 $numeroMeses[$nit] = array();
             }
             $numeroMeses[$nit][$fechaTempPeriod] = $fechaTempPeriod;
+            
+            if ($i>100) {
+                gc_collect_cycles();
+                $i=0;
+            }
+
+            $i++;
             unset($cartera);
         }
-
+        
         unset($carteraObj);
-
+        
         //agregamos numero de meses
         $saldosCartera['numeroMeses'] = $numeroMeses;
-
+         
         return $saldosCartera;
     }
-
+    
     /**
      * Proceso que genera el movimiento de cargos fijos de un socio
      * @param Array $config
@@ -549,12 +463,12 @@ class SociosFactura extends UserComponent
             $this->addConfigDefault($config);
 
             $sociosCore = new SociosCore();
-
+                
             $date = new Date($config['fechaFactura']);
             if (isset($config['sociosId'])) {
                 $sociosId = $config['sociosId'];
             }
-
+            
             $fechaFactura = $config['fechaFactura'];
             $fechaVenc = $config['fechaVenc'];
             $periodoAbierto = $config['periodoAbierto'];
@@ -562,7 +476,7 @@ class SociosFactura extends UserComponent
             $periodoAnterior = $config['periodoAnterior'];
             $cargosFijosArray = $config['cargosFijos'];
             $tipoSociosArray = $config['tipoSocios'];
-
+            
             //Obtenemos los saldos pendientes
             if (!isset($config['saldosCarteraArray'])) {
                 $saldosCarteraArray = $this->obtenerSaldosCartera($config);
@@ -570,21 +484,21 @@ class SociosFactura extends UserComponent
             } else {
                 $saldosCarteraArray = $config['saldosCarteraArray'];
             }
-
+            
             //Buscamos si hay vales de consumo en pos para agregar a factura
             $showPos = $config['showPos'];
-
+                    
             //Recorremos socios para generar cada cargo o saldo en factura que tenga estado Activo
             if (isset($config['sociosId'])) {
                 $sociosAll = EntityManager::get('Socios')->find(array("socios_id='{$config['sociosId']}'", 'columns' => 'socios_id,identificacion,titular_id,numero_accion,estados_socios_id,tipo_socios_id,genera_mora,consumo_minimo,ajuste_sostenimiento'));
             } else {
                 $sociosAll = EntityManager::get('Socios')->find(array("1=1", 'columns' => 'socios_id,identificacion,titular_id,numero_accion,estados_socios_id,tipo_socios_id,genera_mora,consumo_minimo,ajuste_sostenimiento', 'order'=>'CAST(numero_accion AS SIGNED) ASC'));
             }
-
+            
             if (!count($sociosAll)) {
                 //throw new SociosException('No se encontro socios con cobro="Si" a generar movimiento.');
             }
-
+            
             //Calcula mora de factura o estado de cuenta
             $calcularMoraDe = $config['calcularMoraDe'];
 
@@ -629,11 +543,11 @@ class SociosFactura extends UserComponent
             foreach ($sociosAll as $socios) {
                 //id
                 $sociosId     = $socios->getSociosId();
-
+                    
                 //Generamos movimiento
                 $movimiento = new Movimiento();
                 $movimiento->setTransaction($this->_transaction);
-
+                
                 //Crea o modifica un movimiento maestro
                 $movimiento->setSociosId($sociosId);
                 $movimiento->setPeriodo($periodoAbierto);
@@ -649,6 +563,22 @@ class SociosFactura extends UserComponent
                 $saldoAnterior = 0;
                 $saldoAnteriorMora = 0;
                 $nitSocio = $socios->getIdentificacion();
+                
+                $estadoCuenta = EntityManager::get('EstadoCuenta')->findFirst("socios_id='$sociosId' AND fecha<'{$fechaLimit2->getDate()}'", "order: fecha desc");
+                if ($estadoCuenta) {
+
+                    //Usado en base al estado de cuenta anterior
+                    $saldoAnterior = $estadoCuenta->getSaldoNuevo();
+                    //throw new SociosException($saldoAnterior);
+                    
+                } else {
+                    if (isset($saldosCarteraArray[$nitSocio]) && $saldosCarteraArray[$nitSocio]) {
+                        $saldoAnterior = $saldosCarteraArray[$socios->getIdentificacion()];
+                        $saldoAnteriorMora = $saldoAnterior;
+                    }
+                }
+
+                $saldoAnteriorMora = 0;
 
                 switch ($calcularMoraDe) {
                     case 'F': //Factura
@@ -672,7 +602,7 @@ class SociosFactura extends UserComponent
                 }
 
                 //throw new SociosException($saldoAnteriorMora);
-
+                
                 $saldoAnterior = LocaleMath::round($saldoAnterior, 0);
                 $movimiento->setSaldoAnterior($saldoAnterior);
 
@@ -682,7 +612,7 @@ class SociosFactura extends UserComponent
                 $mora = 0;
                 $ivaMora = 0;
                 if ($saldoAnteriorMora>0 && $saldoAnterior>=0 && $config['g_interesesMora']=='M' && $socios->getGeneraMora()=='S') {
-
+                    
                     //Config de calulos de saldos y mora
                     $configCalculos = array(
                         'SociosId' => $sociosId,
@@ -690,7 +620,7 @@ class SociosFactura extends UserComponent
                         'saldoAnteriorMora' => $saldoAnteriorMora,
                         'fechaFactura' => $fechaFactura
                     );
-
+                    
                     //Calculo de mora por días
                     $tipoMora = SociosCore::getSettingsValue('calcular_mora_de', 'SO');
 
@@ -698,13 +628,10 @@ class SociosFactura extends UserComponent
                         case 'E':
                             //Estado de cuenta
                             $mora = $this->calcularMora($configCalculos);
-                            //throw new SociosException("m1:". $mora);
-
                             break;
                         case 'D':
                             //Por fecha de Factura x mora diaria
                             $mora = $this->calcularMoraXFecha($configCalculos);
-                            //throw new SociosException("m2:". $mora);
                             break;
                         default:
                             throw new SociosException("no se reconoce el tipo de calculo de mora en configuracion");
@@ -712,19 +639,14 @@ class SociosFactura extends UserComponent
                     }
 
                     unset($configCalculos);
-
+                    
                     $mora = LocaleMath::round($mora, 0);
-                    //throw new SociosException($mora);
-
 
                     //Calculamos el iva de la mora
                     $ivaMora = $mora * 16 / 100;
                     $ivaMora = LocaleMath::round($ivaMora, 0);
                 }
-
-                //throw new SociosException("mora: " . $mora .", ivaMora: " . $ivaMora . ", total: " . ($mora + $ivaMora) , 1);
-
-
+                
                 $movimiento->setMora($mora);
                 $movimiento->setIvaMora($ivaMora);
 
@@ -737,9 +659,9 @@ class SociosFactura extends UserComponent
                 $saldoActual = $saldoAnterior + $mora + $ivaMora + $cargosMes;
                 $saldoActual = LocaleMath::round($saldoActual, 0);
                 $movimiento->setSaldoActual($saldoActual);
-
+                
                 //Save
-                if ($movimiento->save() == false) {
+                if ($movimiento->save()==false) {
                     foreach ($movimiento->getMessages() as $message) {
                         throw new SociosException('movimiento: '.$message->getMessage());
                     }
@@ -767,7 +689,7 @@ class SociosFactura extends UserComponent
                     $detalleMovimiento->setEstado('A'); //Activo
                     $detalleMovimiento->setTipoMovi('S');//SALDO ANTERIOR
 
-                    if ($detalleMovimiento->save() == false) {
+                    if ($detalleMovimiento->save()==false) {
                         foreach ($detalleMovimiento->getMessages() as $message) {
                             throw new SociosException('SALDO ANTERIOR:'.$message->getMessage());
                         }
@@ -782,7 +704,7 @@ class SociosFactura extends UserComponent
                     if (!$cargoFijoMora) {
                         throw new SociosException("El cargo fijo seleccionado a la mora no existe");
                     }
-
+                    
                     $detalleMovimiento = new DetalleMovimiento();
                     $detalleMovimiento->setTransaction($this->_transaction);
                     $detalleMovimiento->setMovimientoId($movimientoId);
@@ -800,27 +722,28 @@ class SociosFactura extends UserComponent
                     $detalleMovimiento->setEstado('A');//Activo
                     $detalleMovimiento->setTipoMovi('M');//MORA
 
-                    if ($detalleMovimiento->save() == false) {
+                    if ($detalleMovimiento->save()==false) {
                         foreach ($detalleMovimiento->getMessages() as $message) {
                             throw new SociosException('MORA: '.$message->getMessage());
                         }
                     }
                     unset($detalleMovimiento,$cargoFijoMora);
                 }
-
+                
                 //Buscamos cargos fijos asignados de un socios en especifico en la fecha a facturar
                 $cargosSociosObj = EntityManager::get('CargosSocios')->setTransaction($this->_transaction)->find(array('conditions'=>"socios_id={$socios->getSociosId()} AND fecha='{$config['fechaFactura']}' "));
 
                 foreach ($cargosSociosObj as $cargosSocio) {
-
-                    $cargosFijosId = $cargosSocio->getCargosFijosId();
-
-                    if (!isset($cargosFijosArray[$cargosFijosId])) {
+                    if (!isset($cargosFijosArray[$cargosSocio->getCargosFijosId()])) {
                         throw new SociosException("El cargo fijo con id '{$cargosSocio->getCargosFijosId()}' no existe");
                     }
-
+                    
                     //buscamos los cargos asignado a ese socio que esten activos y sin procesar
-                    $cargosFijos = $cargosFijosArray[$cargosFijosId];
+                    $cargosFijos = $cargosFijosArray[$cargosSocio->getCargosFijosId()];
+
+                    if (!isset($cargosFijos['naturaleza']) || !$cargosFijos['naturaleza']) {
+                        throw new SociosException("El cargo fijo '{$cargosFijos['id']}/{$cargosFijos['nombre']}' no tiene definido que naturaleza es");
+                    }
 
                     //Creamos detalle de movmiento
                     $detalleMovimiento = new DetalleMovimiento();
@@ -829,7 +752,7 @@ class SociosFactura extends UserComponent
                     $detalleMovimiento->setSociosId($sociosId);
                     $detalleMovimiento->setFecha($date->getDate());
                     $detalleMovimiento->setFechaVenc($fechaVenc->getDate());
-                    $detalleMovimiento->setTipo('D'); //DEBITO o CREDITO
+                    $detalleMovimiento->setTipo($cargosFijos['naturaleza']); //DEBITO o CREDITO
                     $detalleMovimiento->setTipoDocumento($comprobFactura); //FACTURA
                     $detalleMovimiento->setCargosSociosId($cargosSocio->getId());
                     $detalleMovimiento->setDescripcion($cargosSocio->getDescripcion().' PERIODO '.$periodoAbierto);
@@ -857,7 +780,7 @@ class SociosFactura extends UserComponent
                     $detalleMovimiento->setEstado('A');//Activo
                     $detalleMovimiento->setTipoMovi('C');//CARGO FIJO
 
-                    if ($detalleMovimiento->save() == false) {
+                    if ($detalleMovimiento->save()==false) {
                         foreach ($detalleMovimiento->getMessages() as $message) {
                             throw new SociosException($message->getMessage());
                         }
@@ -866,26 +789,26 @@ class SociosFactura extends UserComponent
                     //Cargo socio
                     $cargosSocio->setTransaction($this->_transaction);
                     $cargosSocio->setEstado('P');//Paso de A a P de procesado
-                    if ($cargosSocio->save() == false) {
+                    if ($cargosSocio->save()==false) {
                         foreach ($cargosSocio->getMessages() as $message) {
                             throw new SociosException('Cargo Socio: '.$message->getMessage());
                         }
                     }
-
-                    unset($saldoAnterior, $mora, $cargosSocio, $detalleMovimiento, $valor, $iva, $totalCA, $cargosFijosId);
+                    
+                    unset($saldoAnterior, $mora, $cargosSocio, $detalleMovimiento, $valor, $iva, $totalCA);
                 }
-
+                
                 ///////////////////////////
                 //Lectura de POS No pagadas
                 ///////////////////////////
-
+                    
                 //Obtenemos facturas pasadas a cartera
                 $detallePOS = array();
 
                 if ($showFacturaPos=='S') {
-
+                
                     $facturaHotelObj = $sociosCore->getFacturasCartera((int) $periodoAbierto, $socios->getIdentificacion());
-
+                    
                     if (isset($facturaHotelObj['facturas']) && count($facturaHotelObj['facturas'])>0) {
                         foreach ($facturaHotelObj['facturas'] as $facturaHotel) {
                             //Existe un saldo a esa factura? Es decir ya la pagaron?
@@ -911,7 +834,7 @@ class SociosFactura extends UserComponent
                         }
                     }
 
-
+                
                     /////////////////////////
                     //Agregar ajuste de Consumos
                     /////////////////////////
@@ -937,9 +860,9 @@ class SociosFactura extends UserComponent
                     if (isset($detallePOS[1]['detalle'])) {
                         $detallePOS[1]['detalle'] = 'PUNTO DE VENTA ('.$detallePOS[1]['detalle'].')';
                     }
-
+                    
                     if (isset($detallePOS[1])) {
-
+                        
                         $detalle = $detallePOS[1]['detalle'];
                         $total = $detallePOS[1]['total'];
                         $iva = $detallePOS[1]['iva'];
@@ -964,31 +887,31 @@ class SociosFactura extends UserComponent
                         $detalleMovimiento->setEstado('A');//Activo
                         $detalleMovimiento->setTipoMovi('P');//PUNTO DE VENTA
 
-                        if ($detalleMovimiento->save() == false) {
+                        if ($detalleMovimiento->save()==false) {
                             foreach ($detalleMovimiento->getMessages() as $message) {
                                 throw new SociosException('POS:'.$message->getMessage());
                             }
                         }
-
-
+                        
+                            
                     }
                 }
-
+                
                 /////////////////
                 //CONSUMO MINIMO
                 /////////////////
                 if (!$socios->getTipoSociosId() || !isset($tipoSociosArray[$socios->getTipoSociosId()])) {
                     throw new SociosException("El socio con accion '{$socios->getNumeroAccion()}' no tiene asignado un tipo de socio valido/activo");
                 }
-
+                
                 //Segun tipo de socios hay un valor de consumo minimo
                 $tipoSociosObj = $tipoSociosArray[$socios->getTipoSociosId()];
                 $cuotaMinimaValor = $tipoSociosObj['cuota_minima'];
                 $cuotaMinimaIva = ($cuotaMinimaValor*16/100);
                 $cuotaMinima = $cuotaMinimaValor + $cuotaMinimaIva;
-
+                
                 $moraCuota = $tipoSociosObj['mora_cuota'];
-
+                
                 //Si cuota minima es mayor a cero y se selecciono al generar factura ademas el socio si se le cobra consumo minimo
                 if ($cuotaMinima>0 && $config['g_consumoMinimo']=='C' && $socios->getConsumoMinimo()=='S') {
 
@@ -996,7 +919,7 @@ class SociosFactura extends UserComponent
                     // CONSUMOS DE POS DIRECTOS NO EN HOTEL5
                     ////////////////////////////////////////////////////
                     $facturasDirectasPos = $sociosCore->getFacturasDirectasPos($periodoAbierto, $socios->getIdentificacion());
-
+                    
                     //throw new SociosException(print_r($facturasDirectasPos,true));
 
                     $totalFDP = 0;
@@ -1009,24 +932,24 @@ class SociosFactura extends UserComponent
                     ////////////////////////////////////////////////////
                     // CONSUMOS DE POS DIRECTOS EN HOTEL5
                     ////////////////////////////////////////////////////
-                    $facturasDirectasHotel = $sociosCore->getFacturasDirectasAll($periodoAbierto, $socios->getIdentificacion());
+                    $facturasDirectasHotel = $sociosCore->getFacturasDirectas($periodoAbierto, $socios->getIdentificacion());
 
                     $totalFD = 0;
                     $detalleCM = 'CONSUMO MINIMO';
-
+                    
                     //throw new SociosException(print_r($facturasDirectasHotel,true));
-
+                    
                     //Contamos consumos de Factura Directas de POS
                     foreach ($facturasDirectasHotel as $facturaHotel) {
                         $totalFD += $facturaHotel['total'];
                         unset($facturaHotel);
                     }
                     unset($facturasDirectasHotel);
-
+                    
 
                     $totalCM = $cuotaMinima - ($totalFD+$totalFDP);
                     //throw new SociosException($totalCM);
-
+                    
                     //Obetenems el cargo fijos del socio
                     $ctaCM = $config['ctaCM'];
 
@@ -1040,7 +963,7 @@ class SociosFactura extends UserComponent
                     $valorCM = LocaleMath::round($valorCM);
 
                     //throw new SociosException($valorCM);
-
+                    
                     //IVA
                     $ivaCM = 0;
                     if ($cFCM->getPorcentajeIva()>0) {
@@ -1071,14 +994,14 @@ class SociosFactura extends UserComponent
                         $detalleMovimiento->setEstado('A');//Activo
                         $detalleMovimiento->setTipoMovi('N');//CUOTA MINIMA
 
-                        if ($detalleMovimiento->save() == false) {
+                        if ($detalleMovimiento->save()==false) {
                             foreach ($detalleMovimiento->getMessages() as $message) {
                                 throw new SociosException('POS CUOTA MINIMA:'.$message->getMessage());
                             }
                         }
                     }
                     //throw new SociosException($totalCM);
-
+                    
                 }
 
                 ////////////////////////
@@ -1120,7 +1043,7 @@ class SociosFactura extends UserComponent
                         $detalleMovimiento->setEstado('A');//Activo
                         $detalleMovimiento->setTipoMovi('O');//Novedad de Factura
 
-                        if ($detalleMovimiento->save() == false) {
+                        if ($detalleMovimiento->save()==false) {
                             foreach ($detalleMovimiento->getMessages() as $message) {
                                 throw new SociosException('NOVEDAD DE FACTURA:'.$message->getMessage());
                             }
@@ -1135,10 +1058,10 @@ class SociosFactura extends UserComponent
                 //////////////////////////////////////////////
 
                 //si desea facturar ajuste sostenimiento tendra 'T'
-
+                
                 if ($config['g_ajusteSostenimiento']=='T' && $socios->getAjusteSostenimiento()=='S') {
                     //throw new SociosException($config['g_ajusteSostenimiento'].",".$socios->getAjusteSostenimiento());
-
+    
                     $date = $config['date'];
 
                     $periodo4 = SociosCore::subPeriodo($periodoAbierto, 1);
@@ -1153,12 +1076,12 @@ class SociosFactura extends UserComponent
                     $fecha5 = "$year5-$month5-01";
                     $fechaLimit5 = new Date($fecha5);
                     $fechaLimit5->toLastDayOfMonth();
-
+    
 
                     //buscamos factura de sostenimiento si tiene
                     $conditionsFSoste = "fecha_factura='$fecha5' AND socios_id='$sociosId'";
                     //throw new SociosException($conditionsFSoste);
-
+                    
                     $facturaSoste = EntityManager::get('Factura')->findFirst($conditionsFSoste);
                     if ($facturaSoste) {
                         $fechaSosteVenc = $facturaSoste->getFechaVencimiento();
@@ -1166,9 +1089,9 @@ class SociosFactura extends UserComponent
                         //buscamos pagos que se realizaron a esta factura CXS - ###
                         $conditionsMSoste = "comprob!='$comprobFactura' AND tipo_doc='$tipoDoc' AND numero_doc='{$facturaSoste->getNumero()}' AND deb_cre='C'";
                         //throw new SociosException($conditionsMSoste);
-
+                        
                         $moviSoste = EntityManager::get('Movi')->findFirst($conditionsMSoste);
-
+                        
                         //si hay pago
                         if ($moviSoste) {
 
@@ -1201,7 +1124,7 @@ class SociosFactura extends UserComponent
                                 $detalleMovimiento->setEstado('A');//Activo
                                 $detalleMovimiento->setTipoMovi('T');//Ajuste Sostenimiento
 
-                                if ($detalleMovimiento->save() == false) {
+                                if ($detalleMovimiento->save()==false) {
                                     foreach ($detalleMovimiento->getMessages() as $message) {
                                         throw new SociosException('AJUSTE SOSTENIMIENTO:'.$message->getMessage());
                                     }
@@ -1235,7 +1158,7 @@ class SociosFactura extends UserComponent
                             $detalleMovimiento->setEstado('A');//Activo
                             $detalleMovimiento->setTipoMovi('T');//Ajuste Sostenimiento
 
-                            if ($detalleMovimiento->save() == false) {
+                            if ($detalleMovimiento->save()==false) {
                                 foreach ($detalleMovimiento->getMessages() as $message) {
                                     throw new SociosException('AJUSTE SOSTENIMIENTO:'.$message->getMessage());
                                 }
@@ -1252,10 +1175,10 @@ class SociosFactura extends UserComponent
                 $i++;
                 unset($movimiento, $cargosSociosObj, $socios, $sociosId);
             }
-
+            
             unset($sociosAll);
             gc_disable();
-
+            
             return true;
         } catch (SociosException $e) {
             throw new SociosException($e->getMessage() . print_r($e, true));
@@ -1266,22 +1189,22 @@ class SociosFactura extends UserComponent
 
     /**
      * Metodo que genera el movimiento del periodo antes de hacer la factura
-     *
+     * 
      * @param array $config(
      *     SociosId    => 1,
      *     periodo        => '2011'
      * )
      * @param ActiveRecordTransaction $this->_transaction
-     *
+     * 
      * @return double
      */
     public function generarMovimiento(&$config)
     {
         set_time_limit(0);
-
+    
         try
         {
-
+                        
             $this->_transaction = TransactionManager::getUserTransaction();
 
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
@@ -1291,20 +1214,20 @@ class SociosFactura extends UserComponent
 
             $periodo = SociosCore::getCurrentPeriodo();
             $periodoAbierto = $periodo;
-
+            
             $sociosCore = new SociosCore();
-
+            
             //Obtenemos cargos fijos
             $cargosFijos = $sociosCore->getCargosFijos();
             $config["cargosFijos"] = $cargosFijos;
-
+            
             //Obtenemos Tipos Socios
             $tipoSocios = $sociosCore->getTipoSocios();
             $config["tipoSocios"] = $tipoSocios;
-
+            
             //Obtenemos periodo
             $periodo = EntityManager::get('Periodo')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'periodo="'.$periodoAbierto.'"'));
-            if ($periodo == false) {
+            if ($periodo==false) {
                 throw new SociosException('No existe el periodo "'.$periodoAbierto.'"');
             }
             $config['periodoAbierto'] = $periodoAbierto;
@@ -1315,19 +1238,19 @@ class SociosFactura extends UserComponent
             //obtenemos datos de cartera
             $diaVenc = $periodo->getDiasPlazo();//Dias de vencimiento de factura
             if (!$diaVenc) {
-                throw new SociosException('No se ha configurado el día de vencimiento en el periodo actual');
+                throw new SociosException('No se ha configurado el día de vencimiento de factura en configuración');
             }
             $config['diaVenc'] = $diaVenc;
-
+            
             //obtenemos datos de cartera
             $comprobFactura = $config['comprobFactura'];
-
+            
             //generamos fechas de rango de factura dadas por formulario
             $fechaFactura = $config['fechaFactura'];
             $fechaVencimiento = $config['fechaVencimiento'];
-
+            
             $date = new Date($fechaFactura);
-
+            
             try
             {
                 $fechaVenc = new Date($fechaVencimiento);
@@ -1336,29 +1259,29 @@ class SociosFactura extends UserComponent
                 $fechaVenc = clone $date;
                 $fechaVenc->toLastDayOfMonth();
             }
-
+            
             $config['date'] = $date;
             $config['fechaVenc'] = $fechaVenc;
-
+            
             //limpiamos los movimientos de un(s) socio(s) en un periodo
             $movimientoBorrado = $this->cleanMovimientoSocios($config);
-
-            // && true == false
+            
+            // && true==false
             if ($movimientoBorrado==true) {
 
                 $periodo            = (int) $config['periodo'];
                 $periodoAnterior    = SociosCore::subPeriodo($periodo, 1);
                 $config['periodoAnterior'] = $periodoAnterior;
-
+                
                 //Generamos cargos fijos en movimiento
                 $flag = $this->_generarMovimientoCargosFijosYCartera($config);
                 if (!$flag) {
                     throw new SociosException('No se pudo generar el movimiento');
                 }
             }
-
+            
             unset($periodo,$config,$periodoAnterior,$movimientoBorrado,$fechaVenc,$date,$comprobFactura);
-
+            
             return true;
         }
         catch (Exception $e) {
@@ -1418,7 +1341,7 @@ class SociosFactura extends UserComponent
             //Recorremos socios y se genera la factura para cada uno
             foreach ($movimientoObj as $movimiento) {
                 $consecutivoFactura = $this->getConsecutivoFactura();
-
+            
                 //Si se dijo que solo a un socio los demas son omitidos
                 if (isset($config['sociosId']) && $config['sociosId']>0) {
                     if ($config['sociosId'] != $movimiento->getSociosId()) {
@@ -1431,17 +1354,17 @@ class SociosFactura extends UserComponent
                 $sociosId = $movimiento->getSociosId();
 
                 $socios = BackCacher::getSocios($sociosId);
-                if ($socios == false) {
+                if ($socios==false) {
                     throw new SociosException('El socios con id "'.$sociosId.'" no existe!');
                 }
                 $config['sociosIdMovi'] = $sociosId;
 
                 //miramos si el socio no existe en terceros (nits)
                 $this->checkTercero($socios);
-
+                
                 //Se mira el detalle del movimiento si existe
                 $detalleMovimiento = EntityManager::get('DetalleMovimiento')->setTransaction($this->_transaction)->findFirst(array('conditions'=>"movimiento_id='".$movimiento->getId()."' AND fecha='{$config['fechaFactura']}'"));
-                if ($detalleMovimiento == false) {
+                if ($detalleMovimiento==false) {
 
                     //Limpia detalle de factura si no hay nada que calcular pero deja en existencia
                     $factura = EntityManager::get('Factura')->setTransaction($this->_transaction)->findFirst("socios_id='$sociosId' AND fecha_factura='{$config['fechaFactura']}'");
@@ -1460,7 +1383,7 @@ class SociosFactura extends UserComponent
 
                     continue;
                 }
-
+                
                 //Si no hay registro de movimiento en facturas es un nuevo registro
                 $flagNew = false;
                 $factura = EntityManager::get('Factura')->setTransaction($this->_transaction)->findFirst("socios_id='$sociosId' AND fecha_factura='{$config['fechaFactura']}'");
@@ -1490,7 +1413,7 @@ class SociosFactura extends UserComponent
                     $totalFactura += $detalleMovimiento->getTotal();
                     unset($detalleMovimiento);
                 }
-
+                
                 $factura->setTotalFactura($totalFactura);
                 $factura->setEstado('D');//Debe
 
@@ -1500,18 +1423,18 @@ class SociosFactura extends UserComponent
                 $valUltAbono = 0;
                 $fecUltAbono = '';
                 $salAntNeto = $salAntInteres = $cargoMes = 0;
-
+                
                 //Obtenemos el estado actual de saldo de prestamo
                 $prestamosSocios = EntityManager::get('PrestamosSocios')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'socios_id='.$sociosId.' AND estado="D"'));
-
+                
                 $cargoMes = 0;
 
                 //Si hay prestamos
                 if ($prestamosSocios!=false) {
-
+                
                     //Buscamos en amortizacion la cuota pendiente
                     $amortizacion = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId().' AND estado="D"', 'order'=>'numero_cuota ASC'));
-
+                    
                     if ($amortizacion!=false) {
                         $cargoMes = LocaleMath::round($amortizacion->getValor(), 0);
                         $salAntNeto = $amortizacion->getSaldo()+$amortizacion->getValor();
@@ -1536,9 +1459,9 @@ class SociosFactura extends UserComponent
 
                 $valMora = ($factura->getSalActual()*$interesMora)/100;
                 $factura->setSalActMora($factura->getSalActual()+$valMora);
-
+                
                 //guardar
-                if ($factura->save() == false) {
+                if ($factura->save()==false) {
                     foreach ($factura->getMessages() as $msg) {
                         throw new SociosException('factura: '.$msg->getMessage());
                     }
@@ -1552,13 +1475,13 @@ class SociosFactura extends UserComponent
 
                 //Creamos detalle de factura
                 $statusDF = $this->_detalleFactura($config);
-                if ($statusDF == false) {
+                if ($statusDF==false) {
                     continue;
                 }
 
                 //Asignamos el id de la factura al movimiento
                 $movimiento->setFacturaId($factura->getId());
-                if ($movimiento->save() == false) {
+                if ($movimiento->save()==false) {
                     foreach ($movimiento->getMessages() as $msg) {
                         throw new SociosException($msg->getMessage());
                     }
@@ -1604,7 +1527,7 @@ class SociosFactura extends UserComponent
                     if ($cargosSocios!=false) {
                         $cargoFijoId = $cargosSocios->getCargosFijosId();
                     }
-
+                    
                     //////////////
                     //CUOTA MINIMA
                     /////////////
@@ -1707,24 +1630,24 @@ class SociosFactura extends UserComponent
                     $config['sociosId'] = $sociosId = $prestamosSocios->getSociosId();
 
                     $socios = BackCacher::getSocios($sociosId);
-                    if ($socios == false) {
+                    if ($socios==false) {
                         throw new SociosException('El socios con id "'.$sociosId.'" no existe!');
                     }
                     $config['sociosIdMovi'] = $sociosId;
 
                     //miramos si el socio no existe en terceros (nits)
                     $this->checkTercero($socios);
-
+                    
                     //////////////////////
                     // No anula porque esta replazando el existente
                     /////////////////////
                     //anular facturas del periodo
                     /*$this->anularFacturasPeriodo(array(
                         'facturas'=>array($sociosId),
-                        'fechaFactura'=>$config['fechaFactura'],
+                        'fechaFactura'=>$config['fechaFactura'], 
                         'nits'=>array($socios->getIdentificacion()))
                     );*/
-
+                    
                     //Si no hay registro de movimiento en facturas es un nuevo registro
                     $flagNew = false;
                     $factura = EntityManager::get('Factura')->setTransaction($this->_transaction)->findFirst("socios_id='$sociosId' AND fecha_factura='{$config['fechaFactura']}'");
@@ -1750,7 +1673,7 @@ class SociosFactura extends UserComponent
                     $factura->setVigentePagado(0);
 
                     $totalFactura = 0;
-
+                    
                     $factura->setTotalFactura($totalFactura);
                     $factura->setEstado('D');//Debe
 
@@ -1760,12 +1683,12 @@ class SociosFactura extends UserComponent
                     $valUltAbono = 0;
                     $fecUltAbono = '';
                     $salAntNeto = $salAntInteres = $cargoMes = 0;
-
+                    
                     $cargoMes = 0;
 
                     //Buscamos en amortizacion la cuota pendiente
                     $amortizacion = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId().' AND estado="D"', 'order'=>'numero_cuota ASC'));
-
+                    
                     if ($amortizacion!=false) {
                         $cargoMes = LocaleMath::round($amortizacion->getValor(), 0);
                         $salAntNeto = $amortizacion->getSaldo()+$amortizacion->getValor();
@@ -1785,12 +1708,12 @@ class SociosFactura extends UserComponent
 
                     //Obtenemos mora de fecha
                     $interesMora = SociosCore::getCurrentPeriodoMora($config['periodoAbierto']);
-
+                    
                     $valMora = ($factura->getSalActual()*$interesMora)/100;
                     $factura->setSalActMora($factura->getSalActual()+$valMora);
-
+                    
                     //guardar
-                    if ($factura->save() == false) {
+                    if ($factura->save()==false) {
                         foreach ($factura->getMessages() as $msg) {
                             throw new SociosException('factura: '.$msg->getMessage());
                         }
@@ -1799,7 +1722,7 @@ class SociosFactura extends UserComponent
                     //Detalle factura
                     $config['factura'] = $factura;
                     $config['facturaId'] = $factura->getId();
-
+                    
                     //Add prestamos a factura
                     $this->_addPrestamosToFactura($config);
 
@@ -1882,29 +1805,29 @@ class SociosFactura extends UserComponent
         $resumenIva     = array('0' => 0, '10' => 0, '16' => 0);
         $resumenIco     = array('8' => 0);
         $resumenVenta     = array('0' => 0, '10' => 0, '16' => 0);
-
+        
         $empresa = EntityManager::get('Empresa')->findFirst();
-
+                
         $nits = EntityManager::get('Nits')->findFirst(array('conditions'=>"nit='{$empresa->getNit()}'"));
-        if ($nits == false) {
+        if ($nits==false) {
             throw new SociosException('El nit del club no esta creado en terceros: '.$empresa->getNit());
         }
         if (!$nits->getEstadoNit()) {
             throw new SociosException('No se ha configurado el regimen de la empresa en terceros');
         }
         $regimenCuentas = EntityManager::get('RegimenCuentas')->findFirst(array('conditions'=>"regimen='{$nits->getEstadoNit()}'"));
-        if ($regimenCuentas == false) {
+        if ($regimenCuentas==false) {
             throw new SociosException('No se ha configurado las cuentas segun regimen de la empresa');
         }
 
         $movimiento = $config['movimiento'];
 
-
+        
         foreach ($config['detalleMovimiento'] as $detalleMovimiento) {
             //throw new SociosException(print_r($detalleMovimiento,true));
             $codigoCuentaIva = null;
             $codigoCuentaIva = 0;
-
+                
             $cargosSociosId = $detalleMovimiento->getCargosSociosId();
 
             //Solo por cargos socios
@@ -1913,7 +1836,7 @@ class SociosFactura extends UserComponent
                 //TIPO DE MOVIMIENTO NOVEDAD
                 if ($detalleMovimiento->getTipoMovi()=='O') {
                     $cargosFijos = $this->CargosFijos->findFirst("nombre='{$detalleMovimiento->getDescripcion()}'");
-                    if ($cargosFijos == false) {
+                    if ($cargosFijos==false) {
                         throw new SociosException('El cargo fijo de novedad con nombre "'.$detalleMovimiento->getDescripcion().'" no existe, en la línea '.($n+1));
                     }
                 } else {
@@ -1934,13 +1857,13 @@ class SociosFactura extends UserComponent
                             } else {
                                 //OTROS
                                 $cargosSocios = $this->CargosSocios->setTransaction($this->_transaction)->findFirst($cargosSociosId);
-                                if ($cargosSocios == false) {
+                                if ($cargosSocios==false) {
                                     throw new SociosException('No existe el cargo_socio '.$cargosSociosId);
                                 }
                                 $cargosFijosId = $cargosSocios->getCargosFijosId();
 
                                 $cargosFijos = BackCacher::getCargosFijos($cargosFijosId);
-                                if ($cargosFijos == false) {
+                                if ($cargosFijos==false) {
                                     throw new SociosException('El cargo fijo con código "'.$item.'" no existe, en la línea '.($n+1));
                                 }
                             }
@@ -1951,7 +1874,7 @@ class SociosFactura extends UserComponent
                 if ($cargosFijos->getPorcentajeIva()===null) {
                     throw new SociosException('No se ha definido el porcentaje de IVA de venta del cargo fijo '.$cargosFijos->getNombre().', en la línea '.($n+1));
                 }
-
+                
                 $valorTotal = $detalleMovimiento->getTotal();
                 $baseIva = $detalleMovimiento->getValor();
                 $baseIco = $detalleMovimiento->getValor();
@@ -1961,9 +1884,9 @@ class SociosFactura extends UserComponent
                 //IVA
                 if ($cargosFijos->getPorcentajeIva()>0) {
                     $ivaSel = (int) $cargosFijos->getPorcentajeIva();
-                    $codigoCuentaIva = $cargosFijos->getCuentaIvaDeb();
+                    $codigoCuentaIva = $cargosFijos->getCuentaIva();
                     $cuentaIva = BackCacher::getCuenta($codigoCuentaIva);
-                    if ($cuentaIva == false) {
+                    if ($cuentaIva==false) {
                         throw new SociosException('La cuenta de contabilización ('.$codigoCuentaIva.') del IVA del '.$cargosFijos->getPorcentajeIva().'%  de Ventas en Regimen Cuentas configurada en el comprobante de facturación no existe ('.$codigoCuentaIva.')');
                     } else {
                         if ($cuentaIva->getEsAuxiliar()!='S') {
@@ -1980,7 +1903,7 @@ class SociosFactura extends UserComponent
                     $icoSel = (int) $cargosFijos->getIco();
                     $codigoCuentaIco = $cargosFijos->getCuentaIco();
                     $cuentaIco = BackCacher::getCuenta($codigoCuentaIco);
-                    if ($cuentaIco == false) {
+                    if ($cuentaIco==false) {
                         throw new SociosException('La cuenta de ICO del cargo fijo "'.$cargosFijos->getNombre().'" no existe');
                     } else {
                         if ($cuentaIco->getEsAuxiliar()!='S') {
@@ -2001,12 +1924,12 @@ class SociosFactura extends UserComponent
                 if ($cargosFijos->getIngresoTercero()=='N') {
 
                     if ($cargosFijos->getPorcentajeIva()>0) {
-
+                
                         if (!isset($resumenVenta['16'])) {
                             $resumenVenta['16'] = 0;
                         }
                         $resumenVenta['16']+=$baseIva;
-
+                        
                     } else {
 
                         if ($ico>0) {
@@ -2023,7 +1946,7 @@ class SociosFactura extends UserComponent
                             $resumenVenta['0']+=$baseIva;
                         }
                     }
-
+                    
                 } else {
 
                     if (!isset($resumenVenta['10'])) {
@@ -2031,7 +1954,7 @@ class SociosFactura extends UserComponent
                     }
                     $resumenVenta['10']+=$baseIva;
                 }
-
+                
                 if (!isset($resumenIva['16'])) {
                     $resumenIva['16'] = 0;
                 }
@@ -2052,9 +1975,9 @@ class SociosFactura extends UserComponent
 
     /**
      * Convierte un modelo a array
-     *
+     * 
      * @param Object $model
-     * @return array $modelData
+     * @return array $modelData 
     */
     public function actualizaDatosDeFacturaArray($model)
     {
@@ -2102,13 +2025,13 @@ class SociosFactura extends UserComponent
                         $auraConsecutivoOld = $optionsLocal['auraConsecutivo'];
                     }
                 }
-
+                
                 if ($auraConsecutivo > 0) {
                     $factura->setComprobContab($optionsLocal['codigoComprob']);
                     $factura->setNumeroContab($auraConsecutivo);
                 }
 
-                if ($factura->save() == false) {
+                if ($factura->save()==false) {
                     foreach ($factura->getMessages() as $msg) {
                         throw new SociosException('makeInvoicer2: '.$msg->getMessage());
                     }
@@ -2121,8 +2044,8 @@ class SociosFactura extends UserComponent
                 $options[$indexF]['factura'] = $this->actualizaDatosDeFacturaArray($factura);
 
                 unset($optionsLocal, $facturaId, $factura, $auraConsecutivo);
-
-                gc_collect_cycles();
+                
+                gc_collect_cycles();    
             }
 
             return $options;
@@ -2133,7 +2056,7 @@ class SociosFactura extends UserComponent
 
     }
 
-
+    
 
     /**
     * Add to Factura the finantiation
@@ -2146,7 +2069,7 @@ class SociosFactura extends UserComponent
 
         try
         {
-
+        
             $this->_transaction = TransactionManager::getUserTransaction();
 
             $prestamosSociosObj = EntityManager::get('PrestamosSocios')->setTransaction($this->_transaction)->find(array('conditions'=>'socios_id='.$config['sociosIdMovi'].' AND estado="D"'));
@@ -2160,13 +2083,13 @@ class SociosFactura extends UserComponent
             if (!$periodoObj) {
                 throw new SociosException("No se encontro periodo $periodo");
             }
-
+            
             $fechaFactura = SociosCore::getFechaFactura($periodo);
 
             $mora = SociosCore::getCurrentPeriodoMora();
-
+                    
             foreach ($prestamosSociosObj as $prestamosSocios) {
-
+                
                 //ultimo abonos
                 $ultimoAbono = 0.00;
                 $fechaUltimo = '';
@@ -2183,7 +2106,7 @@ class SociosFactura extends UserComponent
 
                 //revisar estado de amortizacion
                 $this->revisarConvenios($prestamosSocios);
-
+                
                 //Cuota a hoy de amortizacion
                 $amortizacionHoy = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId()." AND MONTH(fecha_cuota)='{$fechaFactura->getMonth()}' AND YEAR(fecha_cuota)='{$fechaFactura->getYear()}'",'order'=>'numero_cuota ASC'));
                 if (!$amortizacionHoy) {
@@ -2197,7 +2120,7 @@ class SociosFactura extends UserComponent
                     //echo "<br>fecha_cuota:".$amortizacionSaldo->getFechaCuota();
                     //$amortizacionSaldo = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId().' AND estado="D"','order'=>'numero_cuota ASC'));
 
-
+                    
                     //encontramos meses de mora de cuota extraordinaria
                     try
                     {
@@ -2222,22 +2145,22 @@ class SociosFactura extends UserComponent
                         $valorPeriodo = $amortizacionSaldo->getValor();
 
                         $valorMoraDia = LocaleMath::round(($amortizacionSaldo->getValor() * $mora / 100 / 30), 0);
-
+                        
                         //Dias de mora
                         $fechaPeriodoAmortizacion = new Date($amortizacionHoy->getFechaCuota());
                         $diffDias = Date::difference($fechaAmortizacion, $fechaPeriodoAmortizacion);
                         $diffDias = abs($diffDias);
-
+                        
                         $totalDiasMora += $diffDias;
 
                         $valorMora += ($valorMoraDia * $diffDias);
-
+                                
                     }
                     //echo "<br>"."diffperiod: $diffPeriod, diffDias: $diffDias, valor: $valor, valorMoraDia: $valorMoraDia, valorMora : $valorMora, fechaAmortizacion: $fechaAmortizacion,fechaFactura: $fechaFactura";
                 }
                 $valorTotal = $valor + $valorMora;
-
-
+    
+                
                 //throw new SociosException("diffDias: $totalDiasMora, valor: $valor, valorMoraDia: $valorMoraDia, valorMora: $valorMora, fechaFactura: $fechaFactura");
                 if ($valorTotal) {
                     $prestamoArray[] = array(
@@ -2269,7 +2192,7 @@ class SociosFactura extends UserComponent
     }
 
     /**
-     * Retorna los prestamos actuales a pagar
+     * Retorna los prestamos actuales a pagar 
     */
     public function getPrestamosActuales($config)
     {
@@ -2296,7 +2219,7 @@ class SociosFactura extends UserComponent
                     $config['salAntNeto']      = $salAntNeto;
                     $config['salAntInteres'] = $salAntInteres;
                 }
-
+                
                 $prestamoArray[] = array(
                     'prestamosSocios'     => $prestamosSocios,
                     'amortizacion'        => $amortizacion,
@@ -2350,7 +2273,7 @@ class SociosFactura extends UserComponent
 
             //Solo para cargos fijos
             if (is_numeric($cargosSociosId)==true && $cargosSociosId> 0) {
-
+            
                 $cargosSocios = EntityManager::get('CargosSocios')->setTransaction($this->_transaction)->findFirst($detalleMovimiento->getCargosSociosId());
                 if ($cargosSocios != false) {
 
@@ -2382,10 +2305,10 @@ class SociosFactura extends UserComponent
                     }
 
                 }
-
+            
             } else {
                 $detalle = $detalleMovimiento->getDescripcion();
-
+            
                 //Vales de consumo POS
                 if ($detalleMovimiento->getTipoMovi()=='P') {
                     if (!isset($detalleMovimientosFiltered['P'])) {
@@ -2428,8 +2351,8 @@ class SociosFactura extends UserComponent
             $detalleFactura->setIco($detalleMovimiento['ico']);
 
             $detalleFactura->setValor($detalleMovimiento['valor']);
-
-            if ($detalleFactura->save() == false) {
+            
+            if ($detalleFactura->save()==false) {
 
                 foreach ($detalleFactura->getMessages() as $msg) {
                     throw new SociosException($msg->getMessage());
@@ -2462,7 +2385,7 @@ class SociosFactura extends UserComponent
      *     'sociosId' //solo para una factura
      * )
      * @param ActiveRecordTransaction $this->_transaction
-     * @return $config
+     * @return $config 
      */
     public function generarFactura(&$config)
     {
@@ -2476,9 +2399,9 @@ class SociosFactura extends UserComponent
             if (!isset($config['periodo']) || empty($config['periodo'])) {
                 throw new SociosException('Es necesario el periodo a facturar');
             }
-
+            
             $periodoAbierto = $config['periodo'];
-
+            
             if (!$config['fechaFactura']) {
                 throw new SociosException('Es necesario dar la fecha de la factura a generar en el periodo a facturar');
             }
@@ -2489,9 +2412,9 @@ class SociosFactura extends UserComponent
             $datosClub = EntityManager::get('DatosClub')->setTransaction($this->_transaction)->findFirst();
 
             $config['datosClub'] = $datosClub;
-
+            
             Rcs::disable();
-
+            
             //Carga en vista el periodo
             $periodo = SociosCore::makePeriodo($periodoAbierto, $this->_transaction);
             $config['periodoObj'] = $periodo;
@@ -2530,7 +2453,7 @@ class SociosFactura extends UserComponent
                     unset($socio,$factura);
                 }
                 unset($facturaObj);
-
+                
                 if (count($nitsArray)>0) {
                     $configAnulaF = array(
                         'nits'        => $nitsArray,
@@ -2538,11 +2461,11 @@ class SociosFactura extends UserComponent
                         'fechaFactura'     => $config['fechaFactura'],
                         'showDebug' => true
                     );
-
+                    
                     $status = $this->anularFacturasPeriodo($configAnulaF);
                 }
             }
-
+            
             //Make factura
             $config = $this->_makeFactura($config);
 
@@ -2564,9 +2487,9 @@ class SociosFactura extends UserComponent
     {
 
         $this->_transaction = TransactionManager::getUserTransaction();
-
+    
         $where   = array('conditions' => 'fecha_factura="'.$config['fechaFactura'].'"');
-
+    
         if (isset($config['facturas'])) {
             $sociosIdArray = $config['facturas'];
             $sociosIdWhere = implode(',', $sociosIdArray);
@@ -2576,7 +2499,7 @@ class SociosFactura extends UserComponent
                 $where['conditions']     = 'fecha_factura="'.$config['fechaFactura'].'"';
             }
         }
-
+        
         $configAnula = array(
             'apps'        => 'SO', //Socios
             'facturas'    => array(),
@@ -2656,7 +2579,7 @@ class SociosFactura extends UserComponent
 
         $conditions = "comprob='$comprobSocios' AND fecha='{$factura->getFechaFactura()}' and nit='{$socios->getIdentificacion()}'";
         //throw new SociosException($conditions);
-
+        
         $moviObj = EntityManager::get('Movi')->setTransaction($this->_transaction)->find(array("conditions" => $conditions, "group" => "numero"));
         foreach ($moviObj as $movi) {
 
@@ -2699,24 +2622,22 @@ class SociosFactura extends UserComponent
             throw new SociosException("No existe el consecutivo ".$periodo->getConsecutivosId());
         }
         //throw new SociosException($periodo->getConsecutivosId()."-".$consecutivos->getNumeroActual());
-
+        
         return $consecutivos->getNumeroActual();
     }
 
 
     /**
      * Obtiene el interes de mora de una fecha
-     *
+     * 
      * @params string $fecha default today
      * @params ActiveRecordsTransaction $this->_transaction
-     *
+     * 
      * @return double interes_mensual
      */
     public function getTasaDeMora($fecha = '')
     {
-
-        Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
-
+    
         if (!$fecha) {
             $fecha = date('Y-m-d');
         }
@@ -2725,23 +2646,16 @@ class SociosFactura extends UserComponent
             $this->_transaction = TransactionManager::getUserTransaction();
         }
 
-        $fechaDate = new Date($fecha);
-        $periodo = SociosCore::getCurrentPeriodoObject($fechaDate->getPeriod());
-        if ($periodo == false) {
-            $defaultMora = Settings::get("interes_mora_default", "SO");
-            if (!$defaultMora) {
-                throw new SociosException('No se ha configurado la mora por defecto en configuración');
-            } else {
-                return $defaultMora;
-            }
-        } else {
-            return $periodo->getInteresesMora();
+        $interesMora = EntityManager::get('InteresMora')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'"'.$fecha.'" BETWEEN fecha_inicial AND fecha_final'));
+        if ($interesMora==false) {
+            throw new SociosException('No se ha asignado el interes de mora para la fecha '.$fecha);
         }
+        return $interesMora->getInteresMensual();
     }
 
     /**
      * Crear los registros de una amortizacion y relaciona con un cliente
-     *
+     * 
      * @param array $config(
      *     'prestamosSociosId',
      *     'valorFinanciacion',
@@ -2752,23 +2666,23 @@ class SociosFactura extends UserComponent
      */
     public function crearAmortizacion(&$config)
     {
-
+        
         Core::importFromLibrary('Hfos/Tpc', 'Tpc.php');
-
+        
         //validaciones
-        if (isset($config['prestamosSociosId']) == false || $config['prestamosSociosId']<=0) {
+        if (isset($config['prestamosSociosId'])==false || $config['prestamosSociosId']<=0) {
             throw new SociosException('Es necesario de el id del prestamo para crear la amortizacion');
         }
-
-        if (isset($config['valorFinanciacion']) == false || $config['valorFinanciacion']<=0) {
+        
+        if (isset($config['valorFinanciacion'])==false || $config['valorFinanciacion']<=0) {
             throw new SociosException('El valor a financiar debe ser mayor a 0');
         }
-
-        if (isset($config['fechaCompra']) == false || !$config['fechaCompra']) {
+        
+        if (isset($config['fechaCompra'])==false || !$config['fechaCompra']) {
             throw new SociosException('La fecha de inicio de financiación es necesaria.');
         }
-
-        if (isset($config['plazoMeses']) == false || $config['plazoMeses']<=0) {
+        
+        if (isset($config['plazoMeses'])==false || $config['plazoMeses']<=0) {
             throw new SociosException('El número de cuotas debe ser mayor a 0');
         }
 
@@ -2777,13 +2691,13 @@ class SociosFactura extends UserComponent
         }
 
         $this->_transaction = TransactionManager::getUserTransaction();
-
+        
         //borramos anteriores amortizaciones
         $pretamosSociosDel = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->delete("prestamos_socios_id={$config['prestamosSociosId']}");
-
+        
         //obtenemos la mora de esta fecha
         $interesUsura2 = $this->getTasaDeMora($config['fechaCompra'], $this->_transaction);
-
+        
         //generamos los calculos de la amortización
         $dataAmortizacion = array(
             'valorFinanciacion'        => $config['valorFinanciacion'],
@@ -2796,7 +2710,7 @@ class SociosFactura extends UserComponent
             'debug'                    => false
         );
         $amortizacionArray = TPC::generarAmortizacion($dataAmortizacion);
-
+        
         //insertamos los registros generados
         foreach ($amortizacionArray as $data) {
             $amortizacion = EntityManager::get('Amortizacion', true)->setTransaction($this->_transaction);
@@ -2809,7 +2723,7 @@ class SociosFactura extends UserComponent
             $amortizacion->setFechaCuota($data['periodo']);
             $amortizacion->setEstado('D');//debe
             $amortizacion->setPagado(0);
-            if ($amortizacion->save() == false) {
+            if ($amortizacion->save()==false) {
                 foreach ($amortizacion->getMessages() as $message) {
                     throw new SociosException($message->getMessage());
                 }
@@ -2822,7 +2736,7 @@ class SociosFactura extends UserComponent
 
     /**
     * Add a Aura
-    *
+    * 
     * tipo_soporte char(3)
     * numero_soporte int unsigned
     *
@@ -2831,7 +2745,7 @@ class SociosFactura extends UserComponent
     */
     private function _addAura(&$options)
     {
-
+        
         try
         {
 
@@ -2840,25 +2754,25 @@ class SociosFactura extends UserComponent
             }
 
             $fechaVencimiento     = $options['fechaVencimiento'];
-            $codigoComprob        = $options['codigoComprob'];
+            $codigoComprob         = $options['codigoComprob'];
             $numeroAccion         = $options['numeroAccion'];
             $fechaFactura         = $options['fechaFactura'];
             $nitDocumento         = $options['nitDocumento'];
-            $facturaId            = $options['factura']['id'];
-            $periodo              = $options['periodo'];
-
+            $facturaId             = $options['factura']['id'];
+            $periodo             = $options['periodo'];
+            
             $numeroComprob    = 0;
             if (isset($options['factura']['numero_contab']) && $options['factura']['numero_contab']>0) {
                 $numeroComprob    = (int) $options['factura']['numero_contab'];
             }
-
+            
             //Nit
             if (!$nitDocumento) {
                 throw new SociosException('El nit del movimiento no puede ser nulo. '.$options['numeroAccion'].' -> nit: '.$options['nitDocumento']);
             }
 
             $numeroDocumento = Filter::bring($options['factura']['numero'], 'int');
-
+            
             $detalleMovimientoObj = $options['detalleMovimiento'];
 
             //obtenemos datos de cartera
@@ -2873,9 +2787,9 @@ class SociosFactura extends UserComponent
                 $day = '0'.$day;
             }
             $fechaPeriodo = substr($periodo, 0, 4).'-'.$day;
-
+            
             $auraConsecutivo = 0;
-
+            
             if (!isset($options['auraConsecutivo'])) {
                 $aura = new Aura($codigoComprob, 0, $fechaFactura);
             } else {
@@ -2885,12 +2799,10 @@ class SociosFactura extends UserComponent
             }
 
             $total = 0;
-            $totalIva = 0;
-            $totalIco = 0;
             $movements = array();
-
+                    
             if ($nitDocumento && !strstr($nitDocumento, '-') && count($detalleMovimientoObj)>0) {
-
+                
                 foreach ($detalleMovimientoObj as $detalleMovimiento) {
                     $cargosFijosId = (int) $detalleMovimiento['cargos_fijos_id'];
 
@@ -2899,7 +2811,7 @@ class SociosFactura extends UserComponent
                         /////////////////////////////////////////////////
                         //BLOQUE PARA CARGOS FIJOS
                         /////////////////////////////////////////////////
-
+                        
                         $tempNit = $nitDocumento;
 
                         //CARGOS FIJOS
@@ -2914,187 +2826,108 @@ class SociosFactura extends UserComponent
                                 $tempNit = $teceroFijo;
                             }
                         }
-
-                        $ctaCredito = $cargosFijos->getCuentaCredito();
-                        if (!$ctaCredito) {
-                            throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado la cuenta crédito");
-                        }
-                        $ctaDebito = $cargosFijos->getCuentaDebito();
-                        if (!$ctaDebito) {
-                            throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado la cuenta débito");
-                        }
-                        $ctaCenCos = $cargosFijos->getCentroCostos();
-                        if (!$ctaCenCos) {
-                            throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado el centro de costo principal");
-                        }
-
-
-                        //Debitos segun naturaleza de cargo fijo
-                        if (!isset($movements[$ctaDebito])) {
-                            $movements[$ctaDebito] = array(
+                        
+                        $cuentaContable = $cargosFijos->getCuentaContable();
+                        
+                        //Creditos/Debitos segun naturaleza de cargo fijo
+                        if (!isset($movements[$cuentaContable])) {
+                            $movements[$cuentaContable] = array(
                                 'Descripcion'    => $detalleMovimiento['descripcion'],
                                 'Nit'            => $tempNit,
-                                'CentroCosto'    => $ctaCenCos,
-                                'Cuenta'         => $ctaDebito,
-                                'Valor'          => $detalleMovimiento['valor'],
-                                'BaseGrab'       => 0,
-                                'TipoDocumento'  => $tipoDoc,
+                                'CentroCosto'    => $cargosFijos->getCentroCostos(),
+                                'Cuenta'        => $cuentaContable,
+                                'Valor'            => $detalleMovimiento['valor'],
+                                'BaseGrab'        => $detalleMovimiento['valor'],
+                                'TipoDocumento' => $tipoDoc,
                                 'NumeroDocumento' => $numeroDocumento,
-                                'FechaVence'     => $fechaVencimiento,
-                                'DebCre'         => 'D',
-                                'debug'          => true
+                                'FechaVence'    => $fechaVencimiento,
+                                'DebCre'        => $cargosFijos->getNaturaleza(),
+                                'debug'            => true
                             );
+                                
                         } else {
                             //Si existe ya la cuenta acumule el valor
-                            $movements[$ctaDebito]['Valor'] += $detalleMovimiento['valor'];
+                            $movements[$cuentaContable]['Valor'] += $detalleMovimiento['valor'];
                         }
-
-                        //Credito segun naturaleza de cargo fijo
-                        if (!isset($movements[$ctaCredito])) {
-                            $movements[$ctaCredito] = array(
-                                'Descripcion'    => $detalleMovimiento['descripcion'],
-                                'Nit'            => $tempNit,
-                                'CentroCosto'    => $ctaCenCos,
-                                'Cuenta'         => $ctaCredito,
-                                'Valor'          => $detalleMovimiento['valor'],
-                                'BaseGrab'       => 0,
-                                'TipoDocumento'  => $tipoDoc,
-                                'NumeroDocumento' => $numeroDocumento,
-                                'FechaVence'     => $fechaVencimiento,
-                                'DebCre'         => 'C',
-                                'debug'          => true
-                            );
-                        } else {
-                            //Si existe ya la cuenta acumule el valor
-                            $movements[$ctaCredito]['Valor'] += $detalleMovimiento['valor'];
-                        }
-
-                        //TOTALES CARGOS FIJOS
                         $total += $detalleMovimiento['valor'];
 
-                        /////////////////////
-                        // IVA DE CARGO FIJO
-                        /////////////////////
-                        if (isset($detalleMovimiento['iva']) == true && $detalleMovimiento['iva'] > 0) {
-
-                            //VARIABLES
-                            $ctaIvaDeb = $cargosFijos->getCuentaIvaDeb();
-                            if (!$ctaIvaDeb) {
-                                throw new SociosException("El cargo fijo '{$cargosFijos->getNombre()}' no tiene configurado la cuenta débito del iva ");
-                            }
-                            $ctaIvaCre = $cargosFijos->getCuentaIvaCre();
-                            if (!$ctaIvaCre) {
-                                throw new SociosException("El cargo fijo '{$cargosFijos->getNombre()}' no tiene configurado la cuenta crédito del iva ");
-                            }
-                            $ctaCenCosIva = $cargosFijos->getCentroCostosIva();
-                            if (!$ctaCenCosIva) {
-                                throw new SociosException("El cargo fijo '{$cargosFijos->getNombre()}' no tiene configurado el centro de costo del iva");
-                            }
-                            //DEBITO
-                            if (!isset($movements[$ctaIvaDeb])) {
-                                $movements[$ctaIvaDeb] = array(
-                                    'Descripcion'       => 'IVA '.$detalleMovimiento['descripcion'],
-                                    'Nit'               => $tempNit,
-                                    'CentroCosto'       => $ctaCenCosIva,
-                                    'Cuenta'            => $ctaIvaDeb,
-                                    'Valor'             => $detalleMovimiento['iva'],
-                                    'BaseGrab'          => 0,
-                                    'TipoDocumento'     => $tipoDoc,
-                                    'NumeroDocumento'   => $numeroDocumento,
-                                    'FechaVence'        => $fechaVencimiento,
-                                    'DebCre'            => 'D',
-                                    'debug'             => true
+                        //Si hay iva
+                        $debitoIva= 0;
+                        if ($detalleMovimiento['iva']>0 && $detalleMovimiento['iva']) {
+                            if (!isset($movements[$cargosFijos->getCuentaIva()])) {
+                                $movements[$cargosFijos->getCuentaIva()] = array(
+                                    'Descripcion'    => 'IVA '.$detalleMovimiento['descripcion'],
+                                    'Nit'            => $tempNit,
+                                    'CentroCosto'    => $cargosFijos->getCentroCostosIva(),
+                                    'Cuenta'        => $cargosFijos->getCuentaIva(),
+                                    'Valor'            => $detalleMovimiento['iva'],
+                                    'BaseGrab'         => $detalleMovimiento['valor'],
+                                    'TipoDocumento' => $tipoDoc,
+                                    'NumeroDocumento' => $numeroDocumento,
+                                    'FechaVence'     => $fechaVencimiento,
+                                    'DebCre'         => $cargosFijos->getNaturaleza(),
+                                    'debug'         => true
                                 );
                             } else {
                                 //Si existe ya la cuenta acumule el valor
-                                $movements[$ctaIvaDeb]['Valor'] += $detalleMovimiento['iva'];
+                                $movements[$cargosFijos->getCuentaIva()]['Valor'] += $detalleMovimiento['iva'];
                             }
-
-                            //CREDITO
-                            if (!isset($movements[$ctaIvaCre])) {
-                                $movements[$ctaIvaCre] = array(
-                                    'Descripcion'       => 'IVA '.$detalleMovimiento['descripcion'],
-                                    'Nit'               => $tempNit,
-                                    'CentroCosto'       => $ctaCenCosIva,
-                                    'Cuenta'            => $ctaIvaCre,
-                                    'Valor'             => $detalleMovimiento['iva'],
-                                    'BaseGrab'          => 0,
-                                    'TipoDocumento'     => $tipoDoc,
-                                    'NumeroDocumento'   => $numeroDocumento,
-                                    'FechaVence'        => $fechaVencimiento,
-                                    'DebCre'            => 'C',
-                                    'debug'             => true
-                                );
-                            } else {
-                                //Si existe ya la cuenta acumule el valor
-                                $movements[$ctaIvaCre]['Valor'] += $detalleMovimiento['iva'];
-                            }
-
-                            //TOTALES IVA
-                            $totalIva += $detalleMovimiento['iva'];
+                            $debitoIva += $detalleMovimiento['iva'];
                         }
 
-                        ////////////////////////
-                        // ICO DE CARGO FIJO
-                        ///////////////////////
-                        if (isset($detalleMovimiento['ico']) && $detalleMovimiento['ico'] > 0) {
-                            //VARIABLES
-                            $ctaIcoCre = $cargosFijos->getCuentaIcoCre();
-                            if (!$ctaIcoCre) {
-                                throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado la cuenta crédito del ico ");
-                            }
-                            $ctaIcoDeb = $cargosFijos->getCuentaIcoDeb();
-                            if (!$ctaIcoDeb) {
-                                throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado la cuenta débito del ico ");
-                            }
-                            $ctaCenCosIco = $cargosFijos->getCentroCostosIva();
-                            if (!$ctaCenCosIco) {
-                                throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado el centro de costo del ico");
-                            }
-                            //DEBITO
-                            if (!isset($movements[$ctaIcoDeb])) {
-                                $movements[$ctaIcoDeb] = array(
-                                    'Descripcion'       => 'ICO '.$detalleMovimiento['descripcion'],
-                                    'Nit'               => $tempNit,
-                                    'CentroCosto'       => $ctaCenCosIco,
-                                    'Cuenta'            => $ctaIcoDeb,
-                                    'Valor'             => $detalleMovimiento['ico'],
-                                    'BaseGrab'          => 0,
-                                    'TipoDocumento'     => $tipoDoc,
-                                    'NumeroDocumento'   => $numeroDocumento,
-                                    'FechaVence'        => $fechaVencimiento,
-                                    'DebCre'            => 'D',
-                                    'debug'             => true
+                        //Si hay ico
+                        $debitoIco= 0;
+                        if ($detalleMovimiento['ico']>0 && $detalleMovimiento['ico']) {
+                            if (!isset($movements[$cargosFijos->getCuentaIco()])) {
+                                $movements[$cargosFijos->getCuentaIco()] = array(
+                                    'Descripcion'    => 'ICO '.$detalleMovimiento['descripcion'],
+                                    'Nit'            => $tempNit,
+                                    'CentroCosto'    => $cargosFijos->getCentroCostosIva(),
+                                    'Cuenta'        => $cargosFijos->getCuentaIco(),
+                                    'Valor'            => $detalleMovimiento['ico'],
+                                    'BaseGrab'         => $detalleMovimiento['valor'],
+                                    'TipoDocumento' => $tipoDoc,
+                                    'NumeroDocumento' => $numeroDocumento,
+                                    'FechaVence'     => $fechaVencimiento,
+                                    'DebCre'         => $cargosFijos->getNaturaleza(),
+                                    'debug'         => true
                                 );
                             } else {
                                 //Si existe ya la cuenta acumule el valor
-                                $movements[$ctaIcoDeb]['Valor'] += $detalleMovimiento['ico'];
+                                $movements[$cargosFijos->getCuentaIco()]['Valor'] += $detalleMovimiento['ico'];
                             }
-
-                            //CREDITO
-                            if (!isset($movements[$ctaIcoCre])) {
-                                $movements[$ctaIcoCre] = array(
-                                    'Descripcion'       => 'ICO '.$detalleMovimiento['descripcion'],
-                                    'Nit'               => $tempNit,
-                                    'CentroCosto'       => $ctaCenCosIco,
-                                    'Cuenta'            => $ctaIcoCre,
-                                    'Valor'             => $detalleMovimiento['ico'],
-                                    'BaseGrab'          => 0,
-                                    'TipoDocumento'     => $tipoDoc,
-                                    'NumeroDocumento'   => $numeroDocumento,
-                                    'FechaVence'        => $fechaVencimiento,
-                                    'DebCre'            => 'C',
-                                    'debug'             => true
-                                );
-                            } else {
-                                //Si existe ya la cuenta acumule el valor
-                                $movements[$ctaIcoCre]['Valor'] += $detalleMovimiento['ico'];
-                            }
-
-                            //TOTALES ICO
-                            $totalIco += $detalleMovimiento['ico'];
+                            $debitoIco += $detalleMovimiento['ico'];
                         }
 
+                        //Consolidar
+                        $consolidarDbCre = '';
+                        if ($cargosFijos->getNaturaleza()=='C') {
+                            $consolidarDbCre = 'D';
+                        } else {
+                            $consolidarDbCre = 'C';
+                        }
+                        $valorTot = ($detalleMovimiento['valor']+$detalleMovimiento['iva']+$detalleMovimiento['ico']);
+                        $valorTot = LocaleMath::round($valorTot, 0);
+                        if (!isset($movements[$cargosFijos->getCuentaConsolidar()])) {
+                            $movements[$cargosFijos->getCuentaConsolidar()] = array(
+                                //'Descripcion'    => 'FACTURA POR COBRAR TERCERO '.$nitDocumento,
+                                'Descripcion'    => $cargosFijos->getNombre(),
+                                'Nit'            => $tempNit,
+                                'CentroCosto'     => $cargosFijos->getCentroCostos(),
+                                'Cuenta'         => $cargosFijos->getCuentaConsolidar(),
+                                'Valor'         => $valorTot,
+                                'BaseGrab'         => 0,
+                                'TipoDocumento' => $tipoDoc,
+                                'NumeroDocumento' => $numeroDocumento,
+                                'FechaVence'     => $fechaVencimiento,
+                                'DebCre'         => $consolidarDbCre,
+                                'debug'         => true
+                            );
+                        } else {
+                            //Si existe ya la cuenta acumule el valor
+                            $movements[$cargosFijos->getCuentaConsolidar()]['Valor'] += $valorTot;
+                        }
+                        
                     } else {
                         /////////////////////////////////////////////////
                         //BLOQUE PARA CONCEPTOS QUE NO SON CARGOS FIJOS
@@ -3103,7 +2936,6 @@ class SociosFactura extends UserComponent
                         //MORA SALDOS ANTERIORES
                         if (strstr($detalleMovimiento['descripcion'], 'MORA')) {
 
-                            //VARIABLES
                             $cargosFijosMoraId = Settings::get('cargo_fijo_mora', 'SO');
                             if ($cargosFijosMoraId=='') {
                                 throw new SociosException('No se ha configurado el cargo fijo de la mora de socios');
@@ -3111,97 +2943,70 @@ class SociosFactura extends UserComponent
 
                             $cargosFijosMora = BackCacher::getCargosFijos($cargosFijosMoraId);
                             if (!$cargosFijosMora) {
-                                throw new SociosException('El cargo fijo de la mora no existe en cargos fijos');
+                                throw new SociosException('El cargo fijo de la mora no existe');
                             }
 
                             //Creditos/Debitos segun naturaleza de cargo fijo
                             $valor = $detalleMovimiento['valor'];
                             $valor = LocaleMath::round($valor, 0);
-
-                            //DEBITO MORA
                             $movements[] = array(
-                                'Descripcion'       => $detalleMovimiento['descripcion'],
-                                'Nit'               => $nitDocumento,
-                                'CentroCosto'       => $ctaCenCos,
-                                'Cuenta'            => $cargosFijosMora->getCuentaDebito(),
-                                'Valor'             => $valor,
-                                'BaseGrab'          => $valor,
-                                'TipoDocumento'     => $tipoDoc,
-                                'NumeroDocumento'   => $numeroDocumento,
-                                'FechaVence'        => $fechaVencimiento,
-                                'DebCre'            => 'D',
-                                'debug'             => true
+                                'Descripcion' => $detalleMovimiento['descripcion'],
+                                'Nit' => $nitDocumento,
+                                'CentroCosto' => $cargosFijosMora->getCentroCostos(),
+                                'Cuenta' => $cargosFijosMora->getCuentaContable(),
+                                'Valor' => $valor,
+                                'BaseGrab' => $valor,
+                                'TipoDocumento' => $tipoDoc,
+                                'NumeroDocumento' => $numeroDocumento,
+                                'FechaVence' => $fechaVencimiento,
+                                'DebCre' => $detalleMovimiento['tipo'],
+                                'debug' => true
                             );
 
-                            //CREDITO MORA
-                            $movements[] = array(
-                                'Descripcion'       => $detalleMovimiento['descripcion'],
-                                'Nit'               => $nitDocumento,
-                                'CentroCosto'       => $ctaCenCos,
-                                'Cuenta'            => $cargosFijosMora->getCuentaCredito(),
-                                'Valor'             => $valor,
-                                'BaseGrab'          => $valor,
-                                'TipoDocumento'     => $tipoDoc,
-                                'NumeroDocumento'   => $numeroDocumento,
-                                'FechaVence'        => $fechaVencimiento,
-                                'DebCre'            => 'C',
-                                'debug'             => true
-                            );
+                            //Si hay iva
+                            if ($detalleMovimiento['iva']>0 && $detalleMovimiento['iva']) {
+                                $movements[] = array(
+                                    'Descripcion' => 'IVA '.$detalleMovimiento['descripcion'],
+                                    'Nit' => $nitDocumento,
+                                    'CentroCosto' => $cargosFijosMora->getCentroCostosIva(),
+                                    'Cuenta' => $cargosFijosMora->getCuentaIva(),
+                                    'Valor' => $detalleMovimiento['iva'],
+                                    'BaseGrab' => $detalleMovimiento['valor'],
+                                    'TipoDocumento' => $tipoDoc,
+                                    'NumeroDocumento' => $numeroDocumento,
+                                    'FechaVence' => $fechaVencimiento,
+                                    'DebCre' => $detalleMovimiento['tipo'],
+                                    'debug' => true
+                                );
 
-                            //IVA DE MORA
-                            if (isset($detalleMovimiento['iva']) == true && $detalleMovimiento['iva']) {
-                                //VARIABLES
-                                $ctaIvaDeb = $cargosFijos->getCuentaIvaDeb();
-                                if (!$ctaIvaDeb) {
-                                    throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado la cuenta débito del iva ");
-                                }
-                                $ctaIvaCre = $cargosFijos->getCuentaIvaCre();
-                                if (!$ctaIvaCre) {
-                                    throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado la cuenta crédito del iva ");
-                                }
-                                $ctaCenCosIva = $cargosFijos->getCentroCostosIva();
-                                if (!$ctaCenCosIva) {
-                                    throw new SociosException("El cargo fijo '{$cargosFijos->getDescripcion()}' no tiene configurado el centro de costo del iva");
-                                }
-                                //DEBITO
-                                $movements[] = array(
-                                    'Descripcion'       => 'IVA '.$detalleMovimiento['descripcion'],
-                                    'Nit'               => $nitDocumento,
-                                    'CentroCosto'       => $cargosFijosMora->getCentroCostosIva(),
-                                    'Cuenta'            => $cargosFijosMora->getCuentaIvaDeb(),
-                                    'Valor'             => $detalleMovimiento['iva'],
-                                    'BaseGrab'          => 0,
-                                    'TipoDocumento'     => $tipoDoc,
-                                    'NumeroDocumento'   => $numeroDocumento,
-                                    'FechaVence'        => $fechaVencimiento,
-                                    'DebCre'            => 'D',
-                                    'debug'             => true
-                                );
-                                //CREDITO
-                                $movements[] = array(
-                                    'Descripcion'       => 'IVA '.$detalleMovimiento['descripcion'],
-                                    'Nit'               => $nitDocumento,
-                                    'CentroCosto'       => $cargosFijosMora->getCentroCostosIva(),
-                                    'Cuenta'            => $cargosFijosMora->getCuentaIvaCre(),
-                                    'Valor'             => $detalleMovimiento['iva'],
-                                    'BaseGrab'          => 0,
-                                    'TipoDocumento'     => $tipoDoc,
-                                    'NumeroDocumento'   => $numeroDocumento,
-                                    'FechaVence'        => $fechaVencimiento,
-                                    'DebCre'            => 'C',
-                                    'debug'             => true
-                                );
-                                //TOTALES MORA IVA
                                 $total += $detalleMovimiento['iva'];
                             }
+
+                            //Consolidar
+                            $consolidarDbCre = '';
+                            if ($detalleMovimiento['tipo']=='C') {
+                                $consolidarDbCre = 'D';
+                            } else {
+                                $consolidarDbCre = 'C';
+                            }
+                            $movements[] = array(
+                                'Descripcion' => 'MORA POR COBRAR TERCERO '.$nitDocumento,
+                                'Nit' => $nitDocumento,
+                                'CentroCosto' => $cargosFijosMora->getCentroCostos(),
+                                'Cuenta' => $cargosFijosMora->getCuentaConsolidar(),
+                                'Valor' => ($detalleMovimiento['valor']+$detalleMovimiento['iva']),
+                                'BaseGrab' => 0,
+                                'TipoDocumento' => $tipoDoc,
+                                'NumeroDocumento' => $numeroDocumento,
+                                'FechaVence' => $fechaVencimiento,
+                                'DebCre' => $consolidarDbCre,
+                                'debug' => true
+                            );
 
                         }
 
                     }
                 }
-
-                //throw new SociosException(print_r($movements));
-
 
                 /*//Valida movements
                 if (!isset($movements) || count($movements)<2) {
@@ -3222,7 +3027,7 @@ class SociosFactura extends UserComponent
                 $status = $aura->save();
                 $auraConsecutivo = $aura->getConsecutivo($codigoComprob);
             }
-
+            
             $options['aura'] = $aura;
             $options['auraStatus'] = $status;
             $options['auraConsecutivo'] = $auraConsecutivo;
@@ -3230,17 +3035,17 @@ class SociosFactura extends UserComponent
             unset($detalleMovimientoObj, $movements, $aura);
 
             return $auraConsecutivo;
-
+            
         }
         catch(Exception $e) {
-            throw new SociosException('Contabilidad: ' . $e->getMessage() /*. ",<br>" . print_r($e->getTrace(), true)*/);
+            throw new SociosException('Contabilidad: ' . $e->getMessage() . ",<br>" . print_r($e->getTrace(), true));
         }
 
     }
-
+    
     /**
      * Crea el movimiento en contabilidad del prestamo
-     *
+     * 
      */
     public function makePrestamosAura($transaction, $prestamosSocios)
     {
@@ -3250,39 +3055,39 @@ class SociosFactura extends UserComponent
 
             //Obtenemos comprobante de financiación
             $numeroComprob = 0;
-
+            
             if ($prestamosSocios!=false) {
-
+                
                 #Si es modificación
                 if ($prestamosSocios->getComprob()) {
                     $numeroComprob = $prestamosSocios->getNumero();
                     $comprobFinanciacion = $prestamosSocios->getComprob();
                 } else {
-
+                    
                     #si es movimiento nuevo
                     $comprobFinanciacion = Settings::get('comprob_financiacion', 'SO');
                     if (!$comprobFinanciacion) {
                         throw new SociosException('Configuración: No se ha configurado el comprobante de financiación');
                     }
                 }
-
+                
             }
-
+            
             #centro mora
             $centroMora = Settings::get('centro_mora', 'SO');
             if (!$centroMora) {
                 throw new SociosException('Configuración: No se ha configurado el centro mora');
             }
-
+            
             #Socios
             $socios = BackCacher::getSocios($prestamosSocios->getSociosId());
             if (!$socios) {
                 throw new SociosException('El socio con id "'.$prestamosSocios->getSociosId().'" no existe');
             }
-
+            
             //se crea llamado a servicio web de aura
             $aura = new Aura($comprobFinanciacion, $numeroComprob);
-
+            
             $aura->addMovement(array(
                 'Descripcion'    => 'PRESTAMOS SOCIOS No.'.$prestamosSocios->getId(),
                 'Nit'            => $socios->getIdentificacion(),
@@ -3296,7 +3101,7 @@ class SociosFactura extends UserComponent
                 'DebCre'         => 'C',
                 'debug'         => true
             ));
-
+            
             $aura->addMovement(array(
                 'Descripcion'    => 'PRESTAMOS SOCIOS No.'.$prestamosSocios->getId(),
                 'Nit'            => $socios->getIdentificacion(),
@@ -3310,21 +3115,21 @@ class SociosFactura extends UserComponent
                 'DebCre'         => 'D',
                 'debug'         => true
             ));
-
+            
             $aura->save();
             $auraConsecutivo = $aura->getConsecutivo($comprobFinanciacion);
-
+            
             $prestamosSocios->setComprob($comprobFinanciacion);
             $prestamosSocios->setNumero($auraConsecutivo);
-
+            
             $prestamosSocios->save();
-
+            
             unset($socios,$aura,$prestamosSocios);
         }
         catch(Exception $e) {
             throw new SociosException('Contabilidad: ' . $e->getMessage());
         }
-
+                
     }
 
     /**
@@ -3335,7 +3140,7 @@ class SociosFactura extends UserComponent
      * )
      * @return Boolean
      */
-    /*public function ajustarSaldos($config)
+    public function ajustarSaldos($config)
     {
 
         $arr_data = array();
@@ -3378,21 +3183,21 @@ class SociosFactura extends UserComponent
             {
 
                 //throw new SociosException($fechaInicial);
-
+                
                 $transaction = TransactionManager::getUserTransaction();
-
+                
                 $comprob = Settings::get('comprob_ajustes', 'SO');
                 if (!$comprob) {
                     throw new SociosException('El comprobante de ajustes no se ha definido en configuración');
                 }
-
+                
                 Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
                 #echo "<br>",$file;
                 $arr_data = array();
-
+                
                 $objReader = PHPExcel_IOFactory::createReader('Excel2007');
                 $objReader->setReadDataOnly(true);
-
+                
                 $objPHPExcel = $objReader->load($file);
                 $total_sheets=$objPHPExcel->getSheetCount(); // here 4
                 $allSheetName=$objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
@@ -3408,11 +3213,11 @@ class SociosFactura extends UserComponent
                         }
                     }
                 }
-
+                
                 if (!count($arr_data)) {
                     throw new SociosException("El archivo esta vacio", 1);
                 }
-
+                
                 //throw new SociosException("ArrData: ".print_r($arr_data,true));
 
                 unset($objReader);
@@ -3423,19 +3228,19 @@ class SociosFactura extends UserComponent
                     $cuenta = $line[2];
                     $saldoNuevo = $line[3];
                     $numfact = $line[4];
-
+                    
                     $movements = array();
-
+                    
                     #Buscamos socios solo activos
                     $socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst("numero_accion='$numeroAccion' AND identificacion='$identificacion'");
-                    if ($socios == false) {
+                    if ($socios==false) {
                         //throw new SociosException("El socio con número de acción '$numeroAccion' y cédula '$identificacion' no existe o no esta activo", 1);
                         $errors[] = "El socio con número de acción '$numeroAccion' y cédula '$identificacion' no existe o no esta activo";
                         continue;
                     }
-
+                    
                     $saldoTotal = array('D'=>0, 'C'=>0);
-
+                        
                     #CARTERA
                     $saldo = 0;
                     $carteraObj = EntityManager::get('Cartera')->setTransaction($transaction)->find("nit='$identificacion' and cuenta='$cuenta' and saldo<>0 and f_emision<'$fechaInicial'");
@@ -3448,7 +3253,7 @@ class SociosFactura extends UserComponent
                         } else {
                             $debCre = 'D';
                             $saldoTotal['D'] += abs($saldoCartera);
-
+                        
                         }
                         $movements[] = array(
                             'Descripcion'    => 'AJUSTE SALDO '.$date,
@@ -3466,10 +3271,10 @@ class SociosFactura extends UserComponent
                         unset($cartera,$saldoCartera);
                     }
                     unset($carteraObj);
-
+        
                     #AJUSTE NUEVO
                     if ($saldoNuevo!=0) {
-
+                        
                         if ($saldoNuevo<0) {
                             $debCre = 'C';
                             $saldoTotal['C'] += abs($saldoNuevo);
@@ -3477,9 +3282,9 @@ class SociosFactura extends UserComponent
                             $debCre = 'D';
                             $saldoTotal['D'] += abs($saldoNuevo);
                         }
-
+                        
                         $saldoNuevo2 = abs($saldoNuevo);
-
+                        
                         $movements[] = array(
                             'Descripcion'    => 'AJUSTE SALDO '.$date,
                             'Nit'            => $identificacion,
@@ -3493,24 +3298,24 @@ class SociosFactura extends UserComponent
                             'DebCre'        => $debCre,
                             'debug'            => true
                         );
-
-
-
+                    
+                        
+                        
                     }
                     #echo "<br>saldoTotal2";    print_r($saldoTotal);
-
+        
                     #CRUCE
                     $diffSaldo = abs(abs($saldoTotal['D']) - abs($saldoTotal['C']));
                     if ($diffSaldo>0) {
                         #echo "<br>diff: $diffSaldo = ({$saldoTotal['D']} - {$saldoTotal['C']})";
-
+                        
                         $debCre = 'C';
                         if (abs($saldoTotal['D'])<abs($saldoTotal['C'])) {
                             $debCre = 'D';
                         }
-
+                        
                         $diffSaldo2 = abs($diffSaldo);
-
+                        
                         $movements[] = array(
                             'Descripcion'    => 'AJUSTE SALDO '.$date,
                             'Nit'            => $identificacion,
@@ -3525,9 +3330,9 @@ class SociosFactura extends UserComponent
                             'debug'            => true
                         );
                     }
-
+                
                     //throw new SociosException(print_r($movements,true));
-
+                    
                     #print_r($movements);
                     if (count($movements)) {
                         try
@@ -3558,27 +3363,27 @@ class SociosFactura extends UserComponent
                             throw new SociosException("Error en Aura: " . $e->getMessage() . "movements: " . print_r($movements, true));
                         }
                     }
-
-
+                    
+                    
                     #echo "<br><h2>OK</h2>";
-
+                    
                     unset($arr_data, $saldoTotal, $identificacion, $socios, $movements, $aura, $auraConsecutivo, $debCre, $diffSaldo);
-
+                    
                 }
                 if (count($errors)) {
                     throw new SociosException(implode('<br>', $errors));
                 }
                 $transaction->commit();
                 return true;
-
+                
             }
             catch(Exception $e) {
                 throw new SociosException('Ocurrio un error al subir el archivo. ' . $e->getMessage());
             }
         }
-
-    }*/
-
+        
+    }
+    
     /**
      * Ajusta los saldos de contabilidad de un socio por Aura de lso prestamos
      * @param Array $config (
@@ -3587,13 +3392,13 @@ class SociosFactura extends UserComponent
      * )
      * @return Boolean
      */
-    /*public function ajustarPrestamos($config)
+    public function ajustarPrestamos($config)
     {
 
         $arr_data = array();
         $date = $config['date'];
         $file = $config['file'];
-
+        
         if (!$file) {
             throw new SociosException('El archivo no se pudo cargar al servidor');
         } else {
@@ -3605,19 +3410,19 @@ class SociosFactura extends UserComponent
             try
             {
                 $transaction = TransactionManager::getUserTransaction();
-
+                
                 $comprob = Settings::get('comprob_ajustes', 'SO');
                 if (!$comprob) {
                     throw new SociosException('El comprobante de ajustes no se ha definido en configuración');
                 }
-
+                
                 Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
                 #echo "<br>",$file;
                 $arr_data = array();
-
+                
                 $objReader = PHPExcel_IOFactory::createReader('Excel2007');
                 $objReader->setReadDataOnly(true);
-
+                
                 $objPHPExcel = $objReader->load($file);
                 $total_sheets=$objPHPExcel->getSheetCount(); // here 4
                 $allSheetName=$objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
@@ -3633,52 +3438,52 @@ class SociosFactura extends UserComponent
                         }
                     }
                 }
-
+                
                 if (!count($arr_data)) {
                     throw new SociosException("El archivo esta vacio", 1);
                 }
-
+                
                 unset($objReader);
-
+                
                 $movements = array();
-
+                
                 foreach ($arr_data as $line) {
                     $numeroAccion = $line[0];
                     $identificacion = $line[1];
                     $saldoNuevo = $line[2];
-
+                    
                     #Buscamos el socios si esta activo
                     $socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst("numero_accion='$numeroAccion' AND identificacion='$identificacion' AND estados_socios_id=1");
-                    if ($socios == false) {
+                    if ($socios==false) {
                         throw new SociosException("El socio con número de acción '$numeroAccion' y identificación '$identificacion' no existe o no esta activo", 1);
                     }
-
+                    
                     #Buscamos el prestamo activo del socio
                     $prestamosSocios = EntityManager::get('PrestamosSocios')->setTransaction($transaction)->findFirst("socios_id='{$socios->getSociosId()}' AND estado='D'");
-                    if ($prestamosSocios == false) {
+                    if ($prestamosSocios==false) {
                         throw new SociosException("El socio con número de acción '$numeroAccion' y identificación '$identificacion' no tiene prestamos con estado 'Debe'", 1);
                     }
                     $numDoc = $prestamosSocios->getId();
-
+                    
                     #Buscamos el movimiento del prestamo
                     $movi = EntityManager::get('Movi')->setTransaction($transaction)->findFirst("comprob='{$prestamosSocios->getComprob()}' AND numero='{$prestamosSocios->getNumero()}'");
-                    if ($movi == false) {
+                    if ($movi==false) {
                         throw new SociosException("El socio con número de acción '$numeroAccion' y identificación '$identificacion' no tiene el movimiento contable en contabilidad", 1);
                     }
-
+                    
                     #Buscamos saldo del prestamo
                     $saldo = 0;
                     $moviObj = EntityManager::get('Movi')->setTransaction($transaction)->find("nit='$identificacion' AND cuenta='{$prestamosSocios->getCuenta()}'");
                     foreach ($moviObj as $movi) {
-
+                            
                         if ($movi->getDebCre()=='C') {
                             $saldo += $movi->getValor();
                         } else {
                             $saldo -= $movi->getValor();
                         }
-
+                        
                     }
-
+                    
                     $diffAjuste = $saldo - $saldoNuevo;
                     if ($diffAjuste < 0) {
                         //CREDITO
@@ -3690,10 +3495,10 @@ class SociosFactura extends UserComponent
                         $debCreC = 'C';
                     }
                     $diffAjusteVal = abs($diffAjuste);
-
+                    
                     $cuenta = $prestamosSocios->getCuenta();
                     $cuentaCruce = $prestamosSocios->getCuentaCruce();
-
+                    
                     $movements[] = array(
                         'Descripcion'    => 'AJUSTE PRESTAMOS '.$date,
                         'Nit'            => $identificacion,
@@ -3707,8 +3512,8 @@ class SociosFactura extends UserComponent
                         'DebCre'        => $debCre,
                         'debug'            => true
                     );
-
-
+                    
+                    
                     //CRUCE DE CUENTAS
                     $movements[] = array(
                         'Descripcion'    => 'AJUSTE PRESTAMOS '.$date,
@@ -3723,23 +3528,23 @@ class SociosFactura extends UserComponent
                         'DebCre'        => $debCreC,
                         'debug'            => true
                     );
-
+                    
                 }
 
-
+                
                 $aura = new Aura($comprob, 0, $date);
-
+                
                 //Make Comprob
                 foreach ($movements as $movement) {
                     $aura->addMovement($movement);
                 }
-
+                
                 //throw new SociosException(print_r($movements,true), 1);
-
+                
                 $aura->save();
-
+                
                 $rc = $aura->getConsecutivo();
-
+                    
                 //Creamos historial de ajuste
                 $identity = IdentityManager::getActive();
                 $ajustePagos = EntityManager::get('AjustePagos', true)->setTransaction($transaction);
@@ -3753,422 +3558,293 @@ class SociosFactura extends UserComponent
                         throw new SociosException($message->getMessage());
                     }
                 }
-
+                        
                 $transaction->commit();
                 return true;
-
+                
             }
             catch(Exception $e) {
                 throw new SociosException('Ocurrio un error al subir el archivo. '.$e->getMessage());
             }
         }
-
-    }*/
+        
+    }
 
     /**
-     * importa los pagos desde un excel y crea comprobantes en contabilidad por Aura
+     * Ajusta los pagos de contabilidad de un socio por Aura
      * @param Array $config (
-     *      fecha string date
-     *      comprob string
-     *      file string with path
+     *     file string with path
      * )
      * @return Boolean
      */
-    public function importarPagos($config)
+    public function ajustarPagos($config)
     {
-        try {
 
-            if (!isset($config['fecha']) || empty($config['fecha'])) {
-                throw new SociosException("Es necesario dar la fecha a importar pagos", 1);
+        $date = date('Y-m-d');
+        $file = $config['file'];
+        
+        if (!$file) {
+            throw new SociosException('El archivo no se pudo cargar al servidor');
+        } else {
+
+            if (!preg_match('/\.xlsx$/', $file)) {
+                throw new SociosException('El archivo cargado parece no ser de Microsoft Excel 2007 o superior');
             }
-            $fecha = $config['fecha'];
 
-            if (!isset($config['comprob']) || empty($config['comprob'])) {
-                throw new SociosException("Es necesario dar el comprobante para importar pagos", 1);
-            }
-            $comprob = $config['comprob'];
-
-            if (!isset($config['file']) || empty($config['file'])) {
-                throw new SociosException("Es necesario dar la ruta del archivo a importar pagos", 1);
-            }
-            $file = $config['file'];
-
-            if (!$file) {
-                throw new SociosException('El archivo no se pudo cargar al servidor');
-            } else {
-
-                if (!preg_match('/\.xlsx$/', $file)) {
-                    throw new SociosException('El archivo cargado parece no ser de Microsoft Excel 2007 o superior');
-                }
-
+            try
+            {
                 $transaction = TransactionManager::getUserTransaction();
-
+                
                 Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
                 $periodo = SociosCore::getCurrentPeriodo();
-
-                //Cuentas de Ajustes '132505%'
-                $cuentasCartera = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
-                if (!$cuentasCartera) {
-                    throw new SociosException("No se ha definido las 'Cuentas de Ajustes' en Configuración");
+                
+                //Cuenta que cruja los ajustes de pagos
+                $cuentaCruce = Settings::get('cuenta_cruce_pagos', 'SO');
+                if (!$cuentaCruce) {
+                    throw new SociosException("La cuenta de cruce de ajuste pagos no esta configurado", 1);
                 }
-
-                //cuenta que va a capital al importar pagos y sobro plata
-                $ctaCapital = Settings::get('capital_importar_pagos', 'SO');
-                if (!$ctaCapital) {
-                    throw new SociosException("No se ha definido la 'Cuenta de Captal' en Configuración");
+                
+                Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
+                $arr_data = array();
+                
+                $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+                $objReader->setReadDataOnly(true);
+                
+                $objPHPExcel = $objReader->load($file);
+                $total_sheets=$objPHPExcel->getSheetCount(); // here 4
+                $allSheetName=$objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
+                $objWorksheet = $objPHPExcel->setActiveSheetIndex(0); // first sheet
+                $highestRow = $objWorksheet->getHighestRow(); // here 5
+                $highestColumn = $objWorksheet->getHighestColumn(); // here 'E'
+                $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);  // here 5
+                for ($row = 1; $row <= $highestRow; ++$row) {
+                    for ($col = 0; $col <= $highestColumnIndex; ++$col) {
+                        $value=$objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
+                        if (is_array($arr_data)) {
+                            $arr_data[$row-1][$col]=$value;
+                        }
+                    }
                 }
-
-                //cuenta que va a cruza el movi al importar pagos
-                $ctaCruce = Settings::get('contrapartida_importar_pagos', 'SO');
-                if (!$ctaCruce) {
-                    throw new SociosException("No se ha definido la 'Cuenta de Cruce' en Configuración");
+                
+                if (!count($arr_data)) {
+                    throw new SociosException("El archivo esta vacio", 1);
                 }
-
-                //forma de pago al importar pagos
-                $formaPagoId = Settings::get('forma_pago_importar_pagos', 'SO');
-                if (!$formaPagoId) {
-                    throw new SociosException("No se ha definido la 'Forma Pago Importar pagos' en Configuración");
-                }
-
-                //obtnemos orden de cuentas a importar pagos
-                $ctaImportarPagos = EntityManager::get("Configuration")->find(array(
-                    "conditions" => "application='SO' AND name LIKE 'importar_pagos_%' and value!=''",
-                    "order" => "id ASC"
-                ));
-                $ordenCuentas = array();
-                foreach ($ctaImportarPagos as $setting) {
-                    $ordenCuentas[]= $setting->getValue();
-                }
-                unset($ctaImportarPagos);
-
-                $arrData = SociosCore::obtenerDatosDeExcel($file);
-
+                
+                unset($objReader);
+                
                 //Agrupamos los pagos por comprobantes y numero acción este caso para ingresos y pago con tarjeta
                 $data = array();
-                foreach ($arrData as $line) {
-                    $numeroAccion = trim($line[0]);
-                    $socios = EntityManager::get("Socios")->findFirst("numero_accion='$numeroAccion'");
-                    if (!$socios) {
-                        throw new SociosException("El socios con acción '$numeroAccion' no existe en maestro de socios");
+                foreach ($arr_data as $line) {
+                    $numeroAccion     = trim($line[0]);
+                    $comprobante     = trim($line[2]);
+                    
+                    if (!isset($data[$comprobante])) {
+                        $data[$comprobante] = array();
                     }
-                    if (!isset($data[$numeroAccion])) {
-                        $data[$numeroAccion] = array();
+                    
+                    if (!isset($data[$comprobante][$numeroAccion])) {
+                        $data[$comprobante][$numeroAccion] = array();
                     }
-                    $data[$numeroAccion][] = array(
-                        "socios_id" => $socios->getSociosId(),
-                        "nit" => $socios->getIdentificacion(),
-                        "valor" => $line[1]
-                    );
-                    unset($line, $socios);
+                    
+                    $data[$comprobante][$numeroAccion][] = $line;
+                    
+                    unset($line);
                 }
-                unset($arrData);
-
-/*
-1. fecha antigua
-2. Aplicación en Cuentas,; Interes de Mora, Sostenimiento, Consumo Minimo, Consumos, Cuota regalo de navidad, Si genera saldo aplicar a iria a Sostenimiento.
-*/
-
+                unset($arr_data);
+                
                 $identity = IdentityManager::getActive();
-                $aPagar = array();
-                $sobro = array();
-                foreach ($data as $numeroAccion => $dataArray) {
-                    foreach ($dataArray as $line) {
-                        $nit = $line["nit"];
-                        $valorPagado = $line["valor"];
-                        $valorPagadoInit = $line["valor"];
-
-                        if (!isset($aPagar[$nit])) {
-                            $aPagar[$nit] = array();
+                        
+                
+                foreach ($data as $comprob => $comprobArray) {
+                    
+                    foreach ($comprobArray as $numeroAccion => $linesArray) {
+                        
+                        if (!$numeroAccion) {
+                            continue;
                         }
-
-                        //preparamos el array con las fecha en orden de la ultima a la primera
-                        $sql ="nit='$nit' AND cuenta LIKE '$cuentasCartera%' AND saldo>0 AND f_emision<='$fecha'";
-                        $carteraObj = EntityManager::get("Cartera")->find(array(
-                            "columns" => "f_emision",
-                            "conditions" => $sql,
-                            "order" => "f_emision ASC"
-                        ));
-                        foreach ($carteraObj as $cartera) {
-                            $fecha2 = (string) $cartera->getFEmision()->getDate();
-                            if (!isset($aPagar[$nit][$fecha2])) {
-                                $aPagar[$nit][$fecha2] = array();
-                            }
-                            unset($fecha2, $cartera);
+                        
+                        //SOLo para mes / Dia / año
+                        $fechaCell = PHPExcel_Style_NumberFormat::toFormattedString($linesArray[0][4], "M/D/YYYY");
+                        $fechaArray = explode('/', $fechaCell);
+                        if (!isset($fechaArray[2])) {
+                            throw new SociosException("Por favor ingresar una fecha en la linea con la accion '$numeroAccion'", 1);
                         }
-                        unset($carteraObj, $sql);
-
-                        //Orden definido en settings de pagos
-                        foreach ($ordenCuentas as $cuenta) {
-                            //buscamos las cuentas de cartera que faltan por pagar
-                            $sql = "nit='$nit' AND cuenta = '$cuenta' AND saldo>0 AND f_emision<='$fecha'";
-                            $carteraObj = EntityManager::get("Cartera")->find(array(
-                                "conditions" => $sql,
-                                "order" => "f_emision ASC"
-                            ));
-
-                            foreach ($carteraObj as $cartera) {
-                                //Lo que alcanse el pago del socio
-                                if ($valorPagado <= 0) {
-                                    continue;
-                                }
-
-                                //que hay que pagar
-                                $fecha2 = (string) $cartera->getFEmision()->getDate();
-                                if (!isset($aPagar[$nit][$fecha2][$cuenta])) {
-                                    $aPagar[$nit][$fecha2][$cuenta] = array();
-                                }
-                                $temp = array();
-                                foreach ($cartera->getAttributes() as $campo) {
-                                    $temp[$campo] = $cartera->readAttribute($campo);
-                                }
-
-                                //descontamos lo pagado
-                                if ($temp["saldo"] > $valorPagado) {
-                                    $temp["pago"] = $valorPagado;
-                                    $valorPagado = 0;
-                                } else {
-                                    $temp["pago"] = $temp["saldo"];
-                                    $valorPagado -= $temp["saldo"];
-                                }
-                                $temp["valorPagado"] = $valorPagado;
-                                $temp["valorPagadoInit"] = $valorPagadoInit;
-
-                                //new row
-                                $aPagar[$nit][$fecha2][$cuenta][] = $temp;
-
-                                unset($cartera, $fecha2, $temp);
+                        $fecha = "{$fechaArray[2]}-{$fechaArray[0]}-{$fechaArray[1]}";
+                        
+                        $aura = new Aura($comprob, 0, $fecha);
+                        
+                        $valorTotal = 0;
+                        $movements = array();
+                            
+                        //throw new SociosException(print_r($linesArray,true), 1);
+                        
+                        foreach ($linesArray as $n => $line) {
+                            #print_r($line);
+                            
+                            $nit = $line[1];
+                            $nit = trim($nit);
+                            $nit = trim($nit, " ");
+                            $nit = str_replace(' ', '', $nit);
+                            
+                            if (!$nit) {
+                                throw new SociosException("El nit no puede ser nulo '$nit' en la linea '$n'", 1);
                             }
-                            unset($cuenta, $carteraObj);
-                        }
-
-                        //Otras cuentas que no estan en orden de cuentas
-                        $sql ="nit='$nit' AND cuenta NOT IN (" . implode(",", $ordenCuentas) .
-                            ") AND cuenta LIKE '$cuentasCartera%' AND saldo>0 AND f_emision<='$fecha'";
-                        //throw new SociosException($sql);
-
-                        $carteraObj = EntityManager::get("Cartera")->find(array(
-                            "conditions" => $sql,
-                            "order" => "f_emision ASC"
-                        ));
-
-                        foreach ($carteraObj as $cartera) {
-
-                            //Lo que alcanse el pago del socio
-                            if ($valorPagado <= 0) {
-                                continue;
-                            }
-                            //miramos que pagar
-                            $fecha2 = (string) $cartera->getFEmision()->getDate();
-                            $cuenta = $cartera->getCuenta();
-                            if (!isset($aPagar[$nit][$fecha2][$cuenta])) {
-                                $aPagar[$nit][$fecha2][$cuenta] = array();
-                            }
-                            $temp = array();
-                            foreach ($cartera->getAttributes() as $campo) {
-                                $temp[$campo] = $cartera->readAttribute($campo);
-                            }
-                            //descontamos lo pagado
-                            if ($temp["saldo"] > $valorPagado) {
-                                $temp["pago"] = $valorPagado;
-                                $valorPagado = 0;
-                            } else {
-                                $temp["pago"] = $temp["saldo"];
-                                $valorPagado -= $temp["saldo"];
-                            }
-                            $temp["valorPagado"] = $valorPagado;
-                            $temp["valorPagadoInit"] = $valorPagadoInit;
-
-                            //New row
-                            $aPagar[$nit][$fecha2][$cuenta][] = $temp;
-
-                            unset($cartera, $fecha2, $cuenta, $temp);
-                        }
-                        unset($carteraObj);
-
-                        //Sobro dinero
-                        if ($valorPagado > 0) {
-                            $sobro[$nit][] = $valorPagado;
-                        }
-
-                        unset($line);
-                    }
-                    unset($dataArray);
-                }
-                unset($data);
-
-                //DEBUG
-                /*echo "aPagar: ";print_r($aPagar);
-                echo "sobro: ";print_r($sobro);
-                exit;*/
-
-                //Ya teninedo listo todo para apagar en ese orden creamos el aura
-                foreach ($aPagar as $nit => $nitArray) {
-                    $aura = new Aura($comprob, 0, $fecha);
-                    $lastPago = null;
-                    $valorTotal = 0;
-                    foreach ($nitArray as $fecha2 => $fechaArray) {
-                        foreach ($fechaArray as $cuenta => $cuentaArray) {
-                            foreach ($cuentaArray as $pago) {
-                                //validar movimiento para saber la naturalez a usar
-                                $sql =  "nit = '{$pago['nit']}' AND tipo_doc = '{$pago['tipo_doc']}' AND ".
-                                        "numero_doc = '{$pago['numero_doc']}' AND cuenta = '{$pago['cuenta']}'";
-                                //throw new SociosException($sql);
-
-                                $debCre = 'C';
-                                $moviTmp = EntityManager::get("Movi")->findFirst($sql);
-                                if ($moviTmp!= false && $moviTmp->getDebCre() == 'C') {
-                                    $debCre = 'D';
-                                }
-
-                                //pago
-                                $aura->addMovement(array(
-                                    'Descripcion' => 'IMPORTAR PAGO ' . $fecha,
-                                    'Nit' => $pago['nit'],
-                                    'CentroCosto' => $pago['centro_costo'],
-                                    'Cuenta' => $pago['cuenta'],
-                                    'Valor' => $pago['pago'],
-                                    'BaseGrab' => 0,
-                                    'TipoDocumento' => $pago['tipo_doc'],
-                                    'NumeroDocumento' => $pago['numero_doc'],
-                                    'FechaVence' => $pago['f_vence'],
-                                    'DebCre' => $debCre,
-                                    'debug'  => true
-                                ));
-                                $valorTotal += $pago['pago'];
-
-                                $lastPago = $pago;
-                                unset($pago);
-                            }
-                            unset($cuentaArray, $cuenta);
-                        }
-                        unset($fechaArray, $fecha2);
-                    }
-
-                    try {
-
-                        //Agregamos movimiento de lo que sobro
-                        if (isset($sobro[$nit]) == true) {
-                            foreach ($sobro[$nit] as $valorSobro) {
-                                //pago
-                                $aura->addMovement(array(
-                                    'Descripcion' => 'IMPORTAR PAGO (SOBRO)' . $fecha,
-                                    'Nit' => $lastPago['nit'],
-                                    'CentroCosto' => $lastPago['centro_costo'],
-                                    'Cuenta' => $ctaCapital,
-                                    'Valor' => $valorSobro,
-                                    'BaseGrab' => 0,
-                                    'TipoDocumento' => $lastPago['tipo_doc'],
-                                    'NumeroDocumento' => $lastPago['numero_doc'],
-                                    'FechaVence' => $lastPago['f_vence'],
-                                    'DebCre' => 'C',
-                                    'debug'  => true
-                                ));
-                                $valorTotal += $valorSobro;
-                            }
-                        }
-
-                        //CRUCE
-                        $aura->addMovement(array(
-                            'Descripcion' => 'IMPORTAR PAGO (CRUCE)' . $fecha,
-                            'Nit' => $lastPago['nit'],
-                            'CentroCosto' => $lastPago['centro_costo'],
-                            'Cuenta' => $ctaCruce,
-                            'Valor' => $valorTotal,
-                            'BaseGrab' => 0,
-                            'TipoDocumento' => $lastPago['tipo_doc'],
-                            'NumeroDocumento' => $lastPago['numero_doc'],
-                            'FechaVence' => $lastPago['f_vence'],
-                            'DebCre' => 'D',
-                            'debug'  => true
-                        ));
-
-                        //throw new SociosException("valorTotal: " . $valorTotal . ", nit: " . $nit, 1);
-
-                        $statusAura = $aura->save();
-                        //var_dump($statusAura);exit;
-                        if ($statusAura == true ) {
-
-                            //CREAMOS RC
-                            $rc = $aura->getConsecutivo();
-
-                            $reccaj = new Reccaj();
-                            $reccaj->setTransaction($transaction);
-                            $reccaj->setNit($nit);
+                            
                             $tercero = BackCacher::getTercero($nit);
                             if (!$tercero) {
                                 throw new SociosException("El nit '$nit' no existe en Terceros", 1);
                             }
-                            $reccaj->setNombre(strtoupper($tercero->getNombre()));
-                            $reccaj->setDireccion($tercero->getDireccion());
-                            $reccaj->setCiudad($tercero->getLocciu());
-                            $reccaj->setTelefono($tercero->getTelefono());
-                            $reccaj->setFecha($fecha);
-                            $reccaj->setComprob($comprob);
-                            $reccaj->setNumero($rc);
-                            $reccaj->setCodusu($identity['id']);//De session
-                            $reccaj->setObservaciones('PAGO POR OPCION IMPORTAR PAGOS ' . $fecha);
-                            $reccaj->setValor($valorTotal);
-                            $reccaj->setEstado('C');
-                            $reccaj->setRc($rc);
-
-                            if ($reccaj->save() == false) {
-                                foreach ($reccaj->getMessages() as $message) {
-                                    $transaction->rollback('Reccaj: ' . $message->getMessage());
-                                }
+                            unset($tercero);
+                            
+                            $comprobante     = $line[2];
+                            $cuenta         = $line[3];
+                            $fechaPago         = $line[4];
+                            $valor             = $line[5];
+                            $nroFactura     = $line[6];
+                            
+                            if (!$valor) {
+                                throw new SociosException("El nit '$nit' no puede ingresar un valor cero", 1);
                             }
 
-                            $detalleReccaj = new DetalleReccaj();
-                            $detalleReccaj->setTransaction($transaction);
-                            $detalleReccaj->setReccajId($reccaj->getId());
-                            $detalleReccaj->setFormaPagoId($formaPagoId);//PRIMERO
-                            $detalleReccaj->setNumero(1);
-                            $detalleReccaj->setValor($valorTotal);
-                            if ($detalleReccaj->save() == false) {
-                                foreach ($detalleReccaj->getMessages() as $message) {
-                                    $transaction->rollback('DetalleReccaj: ' . $message->getMessage());
-                                }
+                            if (!$nroFactura) {
+                                throw new SociosException("El Nro. Factura '$nroFactura' no puede estar vacio", 1);
                             }
 
-
-                            //IMPORTAR PAGOS REGISTRO
-                            $importarPagos = new ImportarPagos();
-                            $importarPagos->setTransaction($transaction);
-                            $importarPagos->setFecha($fecha);
-                            $importarPagos->setComprob($comprob);
-                            $importarPagos->setNumero($rc);
-                            $importarPagos->setNit($lastPago['nit']);
-                            $importarPagos->setValor($valorTotal);
-                            $importarPagos->setUsuariosId($identity['id']);
-                            $importarPagos->setDateCreate(date("Y-m-d H:i:s"));
-                            if ($importarPagos->save() == false) {
-                                foreach ($importarPagos->getMessages() as $message) {
-                                    $transaction->rollback('importarPagos: ' . $message->getMessage());
-                                }
+                            //Validamos si existe esa factura en cartera a ese socio
+                            $cartera = EntityManager::get("Cartera")->findFirst("nit='$nit' AND tipo_doc='CXS' AND numero_doc='$nroFactura'");
+                            if ($cartera==false) {
+                                throw new SociosException("El Nro. Factura '$nroFactura' del nit '$nit' no existe en cartera");
                             }
-
-                        } else {
-                            throw new SociosException("Aura not save");
+                            
+                            #Buscamos socios solo activos
+                            $socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst("numero_accion='$numeroAccion' AND identificacion='$nit' AND estados_socios_id=1");
+                            if ($socios==false) {
+                                throw new SociosException("El socio con accion '$numeroAccion' y cedula '$nit' no existe o no esta activo");
+                            }
+                            unset($socios);
+                            
+                            $movements[] = array(
+                                'Descripcion'    => 'AJUSTE PAGO '.$date,
+                                'Nit'            => $nit,
+                                'CentroCosto'    => 130,
+                                'Cuenta'        => $cuenta,
+                                'Valor'            => $valor,
+                                'BaseGrab'        => 0,
+                                'TipoDocumento'    => 'CXS',
+                                'NumeroDocumento' => $nroFactura,
+                                'FechaVence'    => $date,
+                                'DebCre'        => 'C',
+                                'debug'            => true
+                            );
+                            
+                            $valorTotal += $valor;
+                            
+                            unset($line, $cuenta, $valor);
                         }
-                    } catch(AuraException $e) {
-                        throw new SociosException($e->getMessage());
-                    }
-                    unset($nitArray, $nit, $aura, $reccaj, $detalleReccaj);
-                }
-                unset($aPagar, $sobro);
+                        
+                        unset($linesArray);
+                        
+                        //CRUCE DE CUENTAS
+                        $movements[] = array(
+                            'Descripcion'    => 'AJUSTE PAGO '.$date,
+                            'Nit'            => $nit,
+                            'CentroCosto'    => 130,
+                            'Cuenta'        => $cuentaCruce,
+                            'Valor'            => $valorTotal,
+                            'BaseGrab'        => 0,
+                            'TipoDocumento'    => 'CXS',
+                            'NumeroDocumento' => $nroFactura,
+                            'FechaVence'    => $date,
+                            'DebCre'        => 'D',
+                            'debug'            => true
+                        );
 
+                        //Make Comprob
+                        foreach ($movements as $movement) {
+                            #print_r($movement);
+                            $aura->addMovement($movement);
+                        }
+                        
+                        //throw new SociosException(print_r($movements,true), 1);
+                        
+                        $aura->save();
+                        
+                        $rc = $aura->getConsecutivo();
+                        
+                        $observacion = 'PAGO POR OPCION AJUSTE DE PAGOS';
+                        
+                        $reccaj = new Reccaj();
+                        $reccaj->setTransaction($transaction);
+                        $reccaj->setNit($nit);
+                        $tercero = BackCacher::getTercero($nit);
+                        if (!$tercero) {
+                            throw new SociosException("El nit '$nit' no existe en Terceros", 1);
+                        }
+                        $reccaj->setNombre(strtoupper($tercero->getNombre()));
+                        $reccaj->setDireccion($tercero->getDireccion());
+                        $reccaj->setCiudad($tercero->getLocciu());
+                        $reccaj->setTelefono($tercero->getTelefono());
+                        $reccaj->setFecha($date);
+                        $reccaj->setComprob($comprob);
+                        $reccaj->setNumero($rc);
+                        $reccaj->setCodusu($identity['id']);//De session
+                        $reccaj->setObservaciones($observacion);
+                        $reccaj->setValor($valorTotal);
+                        $reccaj->setEstado('C');
+                        $reccaj->setRc($rc);
+                        
+                        if ($reccaj->save()==false) {
+                            foreach ($reccaj->getMessages() as $message) {
+                                $transaction->rollback('Reccaj: '.$message->getMessage());
+                            }
+                        }
+        
+                        $detalleReccaj = new DetalleReccaj();
+                        $detalleReccaj->setTransaction($transaction);
+                        $detalleReccaj->setReccajId($reccaj->getId());
+                        $detalleReccaj->setFormaPagoId(1);//PRIMERO
+                        $detalleReccaj->setNumero(1);
+                        $detalleReccaj->setValor($valorTotal);
+                        if ($detalleReccaj->save()==false) {
+                            foreach ($detalleReccaj->getMessages() as $message) {
+                                $transaction->rollback('DetalleReccaj: '.$message->getMessage());
+                            }
+                        }
+
+                        //Creamos historial de ajuste
+                        $identity = IdentityManager::getActive();
+                        $ajustePagos = EntityManager::get('AjustePagos', true)->setTransaction($transaction);
+                        $ajustePagos->setComprob($comprob);
+                        $ajustePagos->setNumero($rc);
+                        $ajustePagos->setFechaHora(date('Y-m-d H:i:s'));
+                        $ajustePagos->setPeriodo($periodo);
+                        $ajustePagos->setUsuariosId($identity['id']);
+                        if (!$ajustePagos->save()) {
+                            foreach ($ajustePagos->getMessages() as $message) {
+                                throw new SociosException($message->getMessage());
+                            }
+                        }
+                
+                        unset($aura, $detalleReccaj, $reccaj);
+                    }
+                    unset($comprob);
+                }
+                unset($data, $comprobArray);
+                
                 $transaction->commit();
                 return true;
+                
             }
-            return false;
-        } catch(Exception $e) {
-            throw new SociosException($e->getMessage()/*. ", trace: " . print_r($e->getTrace(), true)*/ );
-            return false;
+            catch(Exception $e) {
+                throw new SociosException('Ocurrio un error al subir el archivo. '.$e->getMessage().' '.print_r($e, true));
+            }
         }
+        
     }
 
     /**
      * Obtiene un listado de cuentas que usa los cargos fijos para cartera
-     *
+     * 
      * @return array
      */
     public function _getCuentasCargosFijos()
@@ -4176,21 +3852,21 @@ class SociosFactura extends UserComponent
         try
         {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             $cuentas = array();
             $cargosFijosObj = EntityManager::get('CargosFijos')->setTransaction($this->_transaction)->find(array("columns"=>"cuenta_consolidar","group"=>"cuenta_consolidar"));
             foreach ($cargosFijosObj as $cargosFijos) {
                 $cuentas[]= $cargosFijos->getCuentaConsolidar();
             }
-
+            
             return $cuentas;
         }
         catch(Exception $e) {
             throw new SociosException($e->getMessage()."....");
         }
-
+        
     }
-
+    
 
     /**
      * Actualiza los socios a estado suspendido si deben algo en cartera de los cargos fijos
@@ -4200,27 +3876,21 @@ class SociosFactura extends UserComponent
         try
         {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             //Meses de auto suspencion, pero si es cero no hace nada
             $mesesAutosuspension = (int) Settings::get('autosuspender_meses', 'SO');
             if (!$mesesAutosuspension) {
                 return true;
             }
-
+            
             $estadoAutosuspension = Settings::get('autosuspender_estado', 'SO');
             if (!$estadoAutosuspension) {
                 throw new SociosException("El estado para autosuspención no se ha definido en configuración.", 1);
             }
-
+            
             $periodo = SociosCore::getCurrentPeriodo();
-            $ano = substr($periodo, 0, 4);
-            $mes = substr($periodo, 4, 2);
-            $fechaIni = "$ano-$mes-01";
-            $fechaFin = new Date("$ano-$mes-01");
-            $fechaFin->getLastDayOfMonth();
-
             $cuentasCargosFijos = $this->_getCuentasCargosFijos();
-            $configSaldos = array('cuentas'=>$cuentasCargosFijos, 'fechaFactura' => $fechaIni);
+            $configSaldos = array('cuentas'=>$cuentasCargosFijos);
             $saldosPorNit = $this->obtenerSaldosCartera($configSaldos);
             $saldosPorNitMeses = $saldosPorNit['numeroMeses'];
             $identity = IdentityManager::getActive();
@@ -4228,48 +3898,41 @@ class SociosFactura extends UserComponent
             $sociosObj = EntityManager::get('Socios')->setTransaction($this->_transaction)->find(array("group"=>"socios_id"));
             foreach ($sociosObj as $socios) {
                 $nit = $socios->getIdentificacion();
-
-                //Contamos meses de diferencia al periodo actual
-                $difMonths = 0;
-                if (isset($saldosPorNitMeses[$nit])) {
-                    foreach ($saldosPorNitMeses[$nit] as $p) {
-                        $difMonths += Date::diffMonthsPeriod($p, $periodo);
-                    }
-                }
-
-                if (isset($saldosPorNit[$nit]) && $saldosPorNit[$nit] > 0 && $difMonths >= $mesesAutosuspension) {
-                    //throw new SociosException($difMonths . ":$periodo,mesesAutosuspension: $mesesAutosuspension, ".print_r($saldosPorNitMeses['1020751393'], true));
-
+            
+                if (isset($saldosPorNit[$nit]) && $saldosPorNit[$nit]>0 && count($saldosPorNitMeses[$nit])>=$mesesAutosuspension) {
                     $socios->setEstadosSociosId($estadoAutosuspension);
                     if (!$socios->save()) {
                         foreach ($socios->getMessages() as $message) {
                             throw new SociosException($message->getMessage());
                         }
                     } else {
-                        $msg = 'Suspendido Automaticamente por falta de pago en periodo ' . $periodo .
-                        ', numero de meses sin pago: ' . $difMonths. ', total a pagar: $'.$saldosPorNit[$socios->getIdentificacion()];
-
                         //Si cambio estado crear registro de suspendido
                         $suspendido = EntityManager::get('Suspendidos', true)->setTransaction($this->_transaction);
                         $suspendido->setSociosId($socios->getSociosId());
                         $suspendido->setPeriodo($periodo);
                         $suspendido->setUsuariosId($identity['id']);
-                        $suspendido->setObservacion($msg);
+                        $suspendido->setObservacion('Suspendido Automaticamente por falta de pago en periodo '.$periodo.', $'.$saldosPorNit[$socios->getIdentificacion()]);
                         if (!$suspendido->save()) {
                             foreach ($suspendido->getMessages() as $message) {
                                 throw new SociosException($message->getMessage());
                             }
                         }
-
+                        
                         //Si cambio estado crear registro de asgnacion de estados
                         $asignacionEstados = EntityManager::get('AsignacionEstados', true)->setTransaction($this->_transaction);
                         $asignacionEstados->setSociosId($socios->getSociosId());
                         $asignacionEstados->setEstadosSociosId($estadoAutosuspension);
-
+                        
+                        $ano = substr($periodo, 0, 4);
+                        $mes = substr($periodo, 4, 2);
+                        $fechaIni = "$ano-$mes-01";
+                        $fechaFin = new Date("$ano-$mes-01");
+                        $fechaFin->getLastDayOfMonth();
+                        
                         $asignacionEstados->setFechaIni($fechaIni);
                         $asignacionEstados->setFechaFin($fechaFin->getDate());
-
-                        $asignacionEstados->setObservaciones($msg);
+                        
+                        $asignacionEstados->setObservaciones('Suspendido Automaticamente por falta de pago en periodo '.$periodo.', $'.$saldosPorNit[$socios->getIdentificacion()]);
                         if (!$asignacionEstados->save()) {
                             foreach ($asignacionEstados->getMessages() as $message) {
                                 throw new SociosException($message->getMessage());
@@ -4278,8 +3941,9 @@ class SociosFactura extends UserComponent
                     }
                 }
             }
-        } catch (Exception $e) {
-            $this->_transaction->rollback('Ocurrio un problema. ' . $e->getMessage() /*. ", Trace: " . print_r($e->getTrace(), true)*/);
+        }
+        catch(Exception $e) {
+            $this->_transaction->rollback('Ocurrio un problema. '.$e->getMessage());
         }
     }
 
@@ -4290,14 +3954,16 @@ class SociosFactura extends UserComponent
     {
         try {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             $periodo = SociosCore::getCurrentPeriodo();
             $cuentasCargosFijos = $this->_getCuentasCargosFijos();
-            $suspendidosObj = EntityManager::get('Suspendidos')->setTransaction($this->_transaction)->find(array("periodo='$periodo'"));
+            $configSaldos = array('cuentas'=>$cuentasCargosFijos);
+            $saldosPorNit = $this->obtenerSaldosCartera($configSaldos);
 
+            $suspendidosObj = EntityManager::get('Suspendidos')->setTransaction($this->_transaction)->find(array("periodo='$periodo'"));
             foreach ($suspendidosObj as $suspendidos) {
                 $socios = BackCacher::getSocios($suspendidos->getSociosId());
-                if ($socios != false) {
+                if ($socios!=false) {
                     $socios->setTransaction($this->_transaction);
                     $socios->setEstadosSociosId(1);//Activo
                     if (!$socios->save()) {
@@ -4308,8 +3974,9 @@ class SociosFactura extends UserComponent
                 }
                 $suspendidos->setTransaction($this->_transaction)->delete();
             }
-        } catch (Exception $e) {
-            throw new SociosException('Ocurrio un problema. ' . $e->getMessage() /*. print_r($e->getTrace(), true)*/);
+        }
+        catch(Exception $e) {
+            throw new SociosException('Ocurrio un problema. '.$e->getMessage());
         }
     }
 
@@ -4330,7 +3997,7 @@ class SociosFactura extends UserComponent
 
         Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
         $periodo = SociosCore::getCurrentPeriodo();
-
+        
         if (!$file) {
             throw new SociosException('El archivo no se pudo cargar al servidor');
         } else {
@@ -4342,13 +4009,13 @@ class SociosFactura extends UserComponent
             try
             {
                 $transaction = TransactionManager::getUserTransaction();
-
+                
                 Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
                 $arr_data = array();
-
+                
                 $objReader = PHPExcel_IOFactory::createReader('Excel2007');
                 $objReader->setReadDataOnly(true);
-
+                
                 $objPHPExcel = $objReader->load($file);
                 $total_sheets=$objPHPExcel->getSheetCount(); // here 4
                 $allSheetName=$objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
@@ -4364,32 +4031,32 @@ class SociosFactura extends UserComponent
                         }
                     }
                 }
-
+                
                 if (!count($arr_data)) {
                     throw new SociosException("El archivo esta vacio", 1);
                 }
-
+                
                 unset($objReader);
-
+                
                 $identity = IdentityManager::getActive();
 
                 $ajusteConsumos = EntityManager::get('AjusteConsumos')->setTransaction($transaction)->deleteAll("periodo='$periodo'");
-
+                    
                 foreach ($arr_data as $line) {
                     #print_r($line);
-
+                    
                     $numeroAccion     = $line[0];
                     $identificacion = $line[1];
                     $prefijo         = $line[2];
                     $numero         = $line[3];
                     $iva             = $line[4];
                     $saldoNuevo     = $line[5];
-
+                    
                     $movements = array();
-
+                    
                     #Buscamos socios solo activos
                     $socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst("numero_accion='$numeroAccion' AND identificacion='$identificacion' AND estados_socios_id=1");
-                    if ($socios == false) {
+                    if ($socios==false) {
                         throw new SociosException("El socio con número de acción '$numeroAccion' y cédula '$identificacion' no existe o no esta activo", 1);
                     }
 
@@ -4409,19 +4076,19 @@ class SociosFactura extends UserComponent
                         }
                     }
                     #echo "<br><h2>OK</h2>";
-
+                    
                     unset($arr_data, $identificacion, $socios, $movements, $ajusteConsumos);
-
+                    
                 }
                 $transaction->commit();
                 return true;
-
+                
             }
             catch(Exception $e) {
                 throw new SociosException('Ocurrio un error al subir el archivo. '.$e->getMessage());
             }
         }
-
+        
     }
 
     /**
@@ -4431,9 +4098,9 @@ class SociosFactura extends UserComponent
     {
         try
         {
-
+            
             $transaction = TransactionManager::getUserTransaction();
-
+                
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
             $periodo = SociosCore::getCurrentPeriodo();
 
@@ -4456,7 +4123,7 @@ class SociosFactura extends UserComponent
                     unset($comprob, $numero, $ajustePagos, $movi);
                 }
             }
-
+            
             $transaction->commit();
 
             return array(
@@ -4476,9 +4143,9 @@ class SociosFactura extends UserComponent
     {
         try
         {
-
+            
             $transaction = TransactionManager::getUserTransaction();
-
+                
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
             $periodo = SociosCore::getCurrentPeriodo();
 
@@ -4501,7 +4168,7 @@ class SociosFactura extends UserComponent
                     unset($comprob, $numero, $ajustePrestamos, $movi);
                 }
             }
-
+            
             $transaction->commit();
 
             return array(
@@ -4521,9 +4188,9 @@ class SociosFactura extends UserComponent
     {
         try
         {
-
+            
             $transaction = TransactionManager::getUserTransaction();
-
+                
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
             $periodo = SociosCore::getCurrentPeriodo();
 
@@ -4564,9 +4231,9 @@ class SociosFactura extends UserComponent
     {
         try
         {
-
+            
             $transaction = TransactionManager::getUserTransaction();
-
+                
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
             $periodo = SociosCore::getCurrentPeriodo();
 
@@ -4577,7 +4244,7 @@ class SociosFactura extends UserComponent
                     unset($ajusteConsumos);
                 }
             }
-
+            
             $transaction->commit();
 
             return array(
@@ -4592,11 +4259,11 @@ class SociosFactura extends UserComponent
 
     /**
      * Devuelve el numero de meses que no se genero factura por estado suspendido principalmente
-     *
+     *  
      * @param array $config (
-     *     'sociosId' => int
-     * )
-     * @return ActiveRecord $factura
+     *     'sociosId' => int 
+     * ) 
+     * @return ActiveRecord $factura 
     */
     public function facturasNoCausadas($config)
     {
@@ -4626,16 +4293,16 @@ class SociosFactura extends UserComponent
         catch(Exception $e) {
             throw new SociosException($e->getMessage());
         }
-
+        
     }
 
     /**
      * Obtiene la ultima factura generada a un socio
-     *
+     * 
      * @param array $config (
-     *     'sociosId' => int
-     * )
-     * @return ActiveRecord $factura
+     *     'sociosId' => int 
+     * ) 
+     * @return ActiveRecord $factura 
     */
     private function _getUltimaFactura($config)
     {
@@ -4644,26 +4311,26 @@ class SociosFactura extends UserComponent
             throw new SociosException("Debe proveer el id del socio a buscar");
         }
         $transaction = TransactionManager::getUserTransaction();
-
+            
         $factura = EntityManager::get('Factura')->setTransaction($transaction)->findFirst(array("socios_id='{$config['sociosId']}'",'order'=>'periodo DESC'));
-
+        
         return $factura;
     }
 
     /**
-     * Genera los cargos de socios del periodo con base a los cargos fijos asignados
+     * Genera los cargos de socios del periodo con base a los cargos fijos asignados 
     */
     public function generarCargosSocios(&$config)
     {
         try
         {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             $date = new Date();
 
             //Periodo actual
             $periodo = SociosCore::getCurrentPeriodo();
-
+                
             //limpiamos los cargos_socios de la fecha a facturar
             $cargosSocios = EntityManager::get('CargosSocios')->setTransaction($this->_transaction)->delete('fecha="'.$config['fechaFactura'].'"');
 
@@ -4673,7 +4340,7 @@ class SociosFactura extends UserComponent
             $asignacionCargosObj = EntityManager::get('AsignacionCargos')->setTransaction($this->_transaction)->find(array('conditions'=>'estado="A"'));
 
             foreach ($asignacionCargosObj as $asignacionCargos) {
-
+            
                 $cargosFijos = $asignacionCargos->getCargosFijos();
 
                 //Si se va a generar cosas que no son sostenimiento skip
@@ -4682,21 +4349,21 @@ class SociosFactura extends UserComponent
                         continue;
                     }
                 }
-
+            
                 //Si se va a generar cosas que no son administracion skip
                 if ($cargosFijos->getClaseCargo()=='A') {
                     if (!$config['g_administracion']) {
                         continue;
                     }
                 }
-
+            
                 $sociosId = $asignacionCargos->getSociosId();
 
                 //Buscamos los socios que tengan tipos de cargos y estado Activo
                 $socios = BackCacher::getSocios($sociosId);
-
+        
                 if ($socios) {
-
+                    
                     //Generamos los cargos de un socio
                     $cargosSocios = new CargosSocios();
                     $cargosSocios->setTransaction($this->_transaction);
@@ -4706,7 +4373,7 @@ class SociosFactura extends UserComponent
                     $cargosSocios->setCargosFijosId($cargosFijos->getId());
                     $cargosSocios->setDescripcion($cargosFijos->getNombre());
                     $cargosSocios->setValor($cargosFijos->getValor());
-
+                    
                     $iva = $cargosFijos->getValor() * $cargosFijos->getPorcentajeIva() / 100;
                     $iva = LocaleMath::round($iva, 0);
                     $cargosSocios->setIva($iva);
@@ -4718,7 +4385,7 @@ class SociosFactura extends UserComponent
                     $cargosSocios->setCuotaAplicar($cargosSocios->getValor() + $cargosSocios->getIva() + $cargosSocios->getIco());
                     $cargosSocios->setEstado('P');
 
-                    if ($cargosSocios->save() == false) {
+                    if ($cargosSocios->save()==false) {
                         foreach ($cargosSocios->getMessages() as $msg) {
                             throw new SociosException($msg->getMessage());
                         }
@@ -4744,7 +4411,7 @@ class SociosFactura extends UserComponent
         try
         {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             $date = new Date();
 
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
@@ -4755,12 +4422,12 @@ class SociosFactura extends UserComponent
             $cuentaMora = Settings::get("cuenta_mora", "SO");
 
             $rows = array();
-
+                
             $movimientoObj = EntityManager::get("Movimiento")->find("periodo=$periodo");
             foreach ($movimientoObj as $movimiento) {
                 //Si no tiene saldo anterio buscar el siguiente
                 $existeSaldoAnterior = EntityManager::get("DetalleMovimiento")->findFirst("movimiento_id={$movimiento->getId()} AND descripcion LIKE 'SALDO PERIODO%'");
-                if ($existeSaldoAnterior == false) {
+                if ($existeSaldoAnterior==false) {
                     continue;
                 }
 
@@ -4798,12 +4465,12 @@ class SociosFactura extends UserComponent
                 $detalleMovimientoObj = EntityManager::get("DetalleMovimiento")->find("movimiento_id={$movimiento->getId()} AND estado='A'");
                 foreach ($detalleMovimientoObj as $detalleMovimiento) {
                     $desc = $detalleMovimiento->getDescripcion();
-
+                        
                     if (strstr($desc, "SALDO PERIODO")) {
                         $valorSaldoAnterior += $detalleMovimiento->getTotal();
                     } else {
                         $descTemp = str_replace("PERIODO $periodo", "", $desc);
-
+                            
                         if (strstr($descTemp, "MORA DE SALDO")) {
                             $valorMoraPeriodo += $detalleMovimiento->getTotal();
                         } else {
@@ -4818,7 +4485,7 @@ class SociosFactura extends UserComponent
                             if (!isset($b[$descTemp])) {
                                 $b[$descTemp] = 0;
                             }
-
+                        
                             $valorPagarPeriodo += $detalleMovimiento->getTotal();
                             $a[$cuenta] += $detalleMovimiento->getTotal();
                             $b[$descTemp] += $detalleMovimiento->getTotal();
@@ -4880,7 +4547,7 @@ class SociosFactura extends UserComponent
                             echo ",diffValor2($cuentaMora): ".$diffValor;
                             $rows[$nit][$cuentaMora] += $diffValor;
                             echo ",cuenta2: $cuentaMora(valor: {$rows[$nit][$cuentaMora]})";
-
+                                
                         } else {
                             $diffValor = 0 ;
                             //Si es mayor al saldo del periodo pero no mayor al doble
@@ -5017,86 +4684,13 @@ class SociosFactura extends UserComponent
                     }
                 }
             }
-
+            
             $report->finish();
             echo "<br>",$fileName = $report->outputToFile('public/temp/ajuste-saldos-auto');
         }
         catch(Exception $e) {
             throw new SociosException("_generarCargosSocios: ".$e->getMessage());
         }
-    }
-
-    /**
-     * Contabiliza el convenio o lo actualiza
-     *
-     * @param ActiveRecord $prestamosSocios
-     */
-    public function contabilizarConvenio($prestamosSocios)
-    {
-        $tipoDocConvenio = Settings::get("tipo_doc_convenio", "SO");
-        if (!$tipoDocConvenio) {
-            throw new SociosException("No se ha configurado el tipo de documento del convenio en configuración");
-        }
-        $convenioId = $prestamosSocios->getId();
-        $socios = BackCacher::getSocios($prestamosSocios->getSociosId());
-
-        $fechaInicio = $prestamosSocios->getFechaInicio();
-        $fechaVence = new Date($fechaInicio);
-        $fechaVence->addMonths($prestamosSocios->getNumeroCuotas());
-        $fechaVenceStr = $fechaVence->getDate();
-
-        $comprobMovi = $prestamosSocios->getComprob();
-        $numeroMovi = $prestamosSocios->getNumero();
-        $nitMovi = $socios->getIdentificacion();
-        $valorFinanciacion = $prestamosSocios->getValorFinanciacion();
-
-        if (empty($comprobMovi) || empty($numeroMovi)) {
-            $comprobConvenio = Settings::get("comprob_convenio", "SO");
-            if (!$comprobConvenio) {
-                throw new SociosException("No se ha configurado el comprobante de convenios en configuración");
-            }
-            $numeroConvenio = 0;
-        } else {
-            $movi = EntityManager::get("Movi")->findFirst("comprob='$comprobMovi' AND numero='$numeroMovi' and nit='$nitMovi'");
-            if (!$movi) {
-                throw new SociosException("No existe el comprobante contable del convenio '$convenioId'");
-            }
-        }
-
-        $aura = new Aura($comprobConvenio, $numeroConvenio, $fechaInicio);
-
-        $msg = "Convenio '$convenioId' socio '{$socios->getNumeroAccion()}'";
-        $aura->addMovement(array(
-            'Descripcion'       => $msg,
-            'Nit'               => $nitMovi,
-            'CentroCosto'       => 0,
-            'Cuenta'            => $prestamosSocios->getCuenta(),
-            'Valor'             => $valorFinanciacion,
-            'BaseGrab'          => 0,
-            'TipoDocumento'     => $tipoDocConvenio,
-            'NumeroDocumento'   => $convenioId,
-            'FechaVence'        => $fechaVenceStr,
-            'DebCre'            => "C",
-            'debug'             => true
-        ));
-        $aura->addMovement(array(
-            'Descripcion'       => $msg,
-            'Nit'               => $nitMovi,
-            'CentroCosto'       => 0,
-            'Cuenta'            => $prestamosSocios->getCuentaCruce(),
-            'Valor'             => $valorFinanciacion,
-            'BaseGrab'          => 0,
-            'TipoDocumento'     => $tipoDocConvenio,
-            'NumeroDocumento'   => $convenioId,
-            'FechaVence'        => $fechaVenceStr,
-            'DebCre'            => "D",
-            'debug'             => true
-        ));
-
-        if ($aura->save()==true) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -5112,24 +4706,10 @@ class SociosFactura extends UserComponent
         if (!$this->_transaction) {
             $this->_transaction = TransactionManager::getUserTransaction();
         }
-
-        //validamos si se debe causar o no?
-        $contabilizarConvenio = Settings::get("contabilizar_convenio", "SO");
-        if (!$contabilizarConvenio) {
-            throw new SociosException("No se ha definido si se desea contabilizar o no los convenio en configuración");
-        }
-        if ($contabilizarConvenio == "S") {
-            $comprob = $prestamosSocios->getComprob();
-            $numero = $prestamosSocios->getNumero();
-            if (empty($comprob) || empty($numero)) {
-                //throw new SociosException("El convenio no esta causado en contabilidad", 1);
-                $this->contabilizarConvenio($prestamosSocios);
-            }
-        }
-
+            
         $sociosId = $prestamosSocios->getSociosId();
         $socios = BackCacher::getSocios($sociosId);
-
+    
         if ($socios) {
             $nit = $socios->getIdentificacion();
             $valorInicial = $prestamosSocios->getValorFinanciacion();
@@ -5137,33 +4717,32 @@ class SociosFactura extends UserComponent
             $valorPagado = 0;
             foreach ($moviObj2 as $movi) {
                 $valorPagado += $movi->getValor();
-                unset($movi);
             }
-            unset($moviObj2);
-
+            //throw new SociosException("cuenta='{$prestamosSocios->getCuenta()}' AND nit='$nit' AND deb_cre='C':  ".$valorPagado);
+            
             $saldoPendiente    = (float) abs($valorInicial - $valorPagado);
-
+            
             $amortizacionObj = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->find("prestamos_socios_id=".$prestamosSocios->getId());
-
+            //throw new SociosException(count($amortizacionObj).', '."prestamos_socios_id=".$prestamosSocios->getId());
+            
             foreach ($amortizacionObj as $amortizacion) {
                 $estado= 'D';
                 $saldoAmortizacion = (float) $amortizacion->getSaldo();
+
+                //throw new SociosException("saldoAmortizacion: $saldoAmortizacion, saldopendiente: $saldoPendiente, valorPagado: $valorPagado");
+                
 
                 if ($saldoAmortizacion>=$saldoPendiente) {
                     $estado= 'P';
                 }
                 $amortizacion->setTransaction($this->_transaction);
                 $amortizacion->setEstado($estado);//Pagado
-                if ($amortizacion->save() == false) {
+                if ($amortizacion->save()==false) {
                     foreach ($amortizacion->getMessages() as $msg) {
                         throw new SociosException("Amortizacion: ".$msg->getMessage());
                     }
                 }
-                unset($amortizacion);
             }
-            unset($amortizacionObj);
-        } else {
-            throw new SociosException("El socios con id '$sociosId' no existe");
         }
     }
 
@@ -5179,7 +4758,7 @@ class SociosFactura extends UserComponent
 
         try
         {
-
+        
             $this->_transaction = TransactionManager::getUserTransaction();
 
             $prestamosSociosObj = EntityManager::get('PrestamosSocios')->setTransaction($this->_transaction)->find(array('conditions'=>'socios_id='.$config['sociosId'].' AND estado="D"'));
@@ -5193,13 +4772,13 @@ class SociosFactura extends UserComponent
             if (!$periodoObj) {
                 throw new SociosException("No se encontro periodo $periodo");
             }
-
+            
             $fechaFactura = SociosCore::getFechaFactura($periodo);
 
             $mora = SociosCore::getCurrentPeriodoMora();
-
+                    
             foreach ($prestamosSociosObj as $prestamosSocios) {
-
+                
                 //ultimo abonos
                 $ultimoAbono = 0.00;
                 $fechaUltimo = '';
@@ -5216,7 +4795,7 @@ class SociosFactura extends UserComponent
 
                 //revisar estado de amortizacion
                 $this->revisarConvenios($prestamosSocios);
-
+                
                 //Cuota a hoy de amortizacion
                 $amortizacionHoy = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId()." AND MONTH(fecha_cuota)='{$fechaFactura->getMonth()}' AND YEAR(fecha_cuota)='{$fechaFactura->getYear()}'",'order'=>'numero_cuota ASC'));
                 if (!$amortizacionHoy) {
@@ -5227,7 +4806,7 @@ class SociosFactura extends UserComponent
                 //Cuota actual de amortizacion
                 $amortizacionSaldoObj = EntityManager::get('Amortizacion')->setTransaction($this->_transaction)->find(array('conditions'=>'prestamos_socios_id='.$prestamosSocios->getId().' AND estado="D"'." AND fecha_cuota<'{$fechaFactura->getDate()}'",'order'=>'numero_cuota ASC'));
                 foreach ($amortizacionSaldoObj as $amortizacionSaldo) {
-
+                    
                     //encontramos meses de mora de cuota extraordinaria
                     try
                     {
@@ -5252,24 +4831,24 @@ class SociosFactura extends UserComponent
                         $valorPeriodo = $amortizacionSaldo->getValor();
 
                         $valorMoraDia = LocaleMath::round(($amortizacionSaldo->getValor() * $mora / 100 / 30), 0);
-
+                        
                         //Dias de mora
                         $fechaPeriodoAmortizacion = new Date($amortizacionHoy->getFechaCuota());
                         $diffDias = Date::difference($fechaAmortizacion, $fechaPeriodoAmortizacion);
                         $diffDias = abs($diffDias);
-
+                        
                         $totalDiasMora += $diffDias;
 
                         $valorMora += ($valorMoraDia * $diffDias);
-
+                                
                     }
                     //echo "<br>"."diffperiod: $diffPeriod, diffDias: $diffDias, valor: $valor, valorMoraDia: $valorMoraDia, valorMora : $valorMora, fechaAmortizacion: $fechaAmortizacion,fechaFactura: $fechaFactura";
                 }
                 $valorTotal = $valor + $valorMora;
-
-
+    
+                
                 //throw new SociosException("diffDias: $totalDiasMora, valor: $valor, valorMoraDia: $valorMoraDia, valorMora: $valorMora, fechaFactura: $fechaFactura");
-
+                        
                 if ($valorTotal) {
                     $prestamoArray[] = array(
                         'descripcion'    => 'SALDO CUOTA EXTRA. DESDE PERIODO '.$periodoAmortizacion,
@@ -5280,7 +4859,7 @@ class SociosFactura extends UserComponent
                 }
 
                 //throw new SociosException($valorMora);
-
+                
 
                 if ($amortizacionHoy) {
 
@@ -5321,7 +4900,7 @@ class SociosFactura extends UserComponent
             throw new SociosException('Indique el tercero al que se le generará la factura');
         } else {
             $tercero = BackCacher::getTercero($nitDocumento);
-            if ($tercero == false) {
+            if ($tercero==false) {
                 throw new SociosException('No existe el tercero con número de documento "'.$nitDocumento.'"');
             }
         }
@@ -5348,13 +4927,13 @@ class SociosFactura extends UserComponent
             throw new SociosException('No se ha configurado el almacén donde se descargan las referencias de la factura');
         } else {
             $almacen = BackCacher::getAlmacen($codigoAlmacen);
-            if ($almacen == false) {
+            if ($almacen==false) {
                 throw new SociosException('El almacén donde se descargan las referencias de la factura configurado no existe');
             }
         }
         $options['codigoAlmacen']     = $codigoAlmacen;
         $options['almacen']         = $almacen;*/
-
+        
         $codigoComprob = Settings::get('comprob_factura', 'SO');
         if ($codigoComprob=='') {
             throw new SociosException('No se ha configurado el comprobante de socios');
@@ -5364,7 +4943,7 @@ class SociosFactura extends UserComponent
         //throw new SociosException($codigoComprob);
         $comprob = BackCacher::getComprob($codigoComprob);
         //$comprob = EntityManager::get('Comprob')->findFirst(array('conditions'=>"codigo='$codigoComprob'"));
-        if ($comprob == false) {
+        if ($comprob==false) {
             throw new SociosException('El comprobante '.$codigoComprob.' no existe');
         }
         $options['comprob'] = $comprob;
@@ -5374,7 +4953,7 @@ class SociosFactura extends UserComponent
             throw new SociosException('Indique el tercero al que se le entregará la mercancía');
         } else {
             $terceroEntregar = BackCacher::getTercero($nitEntregarDocumento);
-            if ($terceroEntregar == false) {
+            if ($terceroEntregar==false) {
                 throw new SociosException('No existe el tercero con número de documento "'.$nitEntregarDocumento.'"');
             }
         }
@@ -5406,26 +4985,26 @@ class SociosFactura extends UserComponent
         $empresa = EntityManager::get('Empresa')->findFirst();
         //throw new SociosException($empresa->getNit());
         $nits = EntityManager::get('Nits')->findFirst(array('conditions'=>"nit='{$empresa->getNit()}'"));
-        if ($nits == false) {
+        if ($nits==false) {
             throw new SociosException('El nit de la empresa no esta creado en terceros: '.$empresa->getNit());
         }
         if (!$nits->getEstadoNit()) {
             throw new SociosException('No se ha configurado el regimen de la empresa en terceros');
         }
         $regimenCuentas = EntityManager::get('RegimenCuentas')->findFirst(array('conditions'=>"regimen='{$nits->getEstadoNit()}'"));
-        if ($regimenCuentas == false) {
+        if ($regimenCuentas==false) {
             throw new SociosException('No se ha configurado las cuentas segun regimen de la empresa');
         }
 
         //$cargosFijos = BackCacher::getCargosFijos($item);
         $cargosFijos = $this->CargosFijos->findFirst($item);
-        if ($cargosFijos == false) {
+        if ($cargosFijos==false) {
             throw new SociosException('El cargo fijo con código "'.$item.'" no existe, en la línea '.($n+1));
         }
         $options['cargosFijos'] = $cargosFijos;
 
         $cuentaVenta = BackCacher::getCuenta($cargosFijos->getCuentaContable());
-        if ($cuentaVenta == false) {
+        if ($cuentaVenta==false) {
             throw new SociosException('La cuenta de venta no existe, para el cargo fijo "'.$cargosFijos->getNombre().'", en la línea '.($n+1));
         }
         $options['cuentaVenta'] = $cuentaVenta;
@@ -5445,7 +5024,7 @@ class SociosFactura extends UserComponent
         }
 
         $codigoCuentaIva = 0;
-
+        
         $valorTotal = ($precios[$n] * $cantidades[$n]);
 
         if ($cargosFijos->getPorcentajeIva()>0) {
@@ -5463,7 +5042,7 @@ class SociosFactura extends UserComponent
                     $codigoCuentaIva = $regimenCuentas->getCtaIva10v();
                 }
                 $cuentaIva = BackCacher::getCuenta($codigoCuentaIva);
-                if ($cuentaIva == false) {
+                if ($cuentaIva==false) {
                     throw new SociosException('La cuenta de contabilización ('.$codigoCuentaIva.') del IVA del '.$cargosFijos->getPorcentajeIva().'%  de Ventas en Regimen Cuentas configurada en el comprobante de facturación no existe ('.$codigoCuentaIva.')');
                 } else {
                     if ($cuentaIva->getEsAuxiliar()!='S') {
@@ -5477,17 +5056,17 @@ class SociosFactura extends UserComponent
             $baseIva = LocaleMath::round($precios[$n]*$cantidades[$n], 0);
             $iva = 0;
         }
-
-
+        
+        
         if ($cargosFijos->getIngresoTercero()=='N') {
 
             if ($cargosFijos->getPorcentajeIva()>0) {
-
+        
                 if (!isset($resumenVenta[16])) {
                     $resumenVenta[16] = 0;
                 }
                 $resumenVenta[16]+=$baseIva;
-
+                
             } else {
 
                 if (!isset($resumenVenta[0])) {
@@ -5497,7 +5076,7 @@ class SociosFactura extends UserComponent
 
             }
 
-
+            
         } else {
 
             if (!isset($resumenVenta[10])) {
@@ -5506,9 +5085,9 @@ class SociosFactura extends UserComponent
             $resumenVenta[10]+=$baseIva;
 
         }
-
-
-
+        
+        
+        
         if (!isset($resumenIva[16])) {
             $resumenIva[16] = 0;
         }
@@ -5540,7 +5119,7 @@ class SociosFactura extends UserComponent
         $options['detalles'] = $detalles;
         $options['baseIva'] = $baseIva;
         $options['iva'] = $iva;
-
+        
     }
 
     /**
@@ -5567,13 +5146,13 @@ class SociosFactura extends UserComponent
             }
             $consecutivosId = $options['consecutivos'];
             $consecutivo = EntityManager::get('Consecutivos')->setTransaction($this->_transaction)->findFirst($consecutivosId);
-
+            
             $resumenVenta = $options['resumenVenta'];
             $detalleFacturaSO = $options['detalleFacturasObj'];
             $detalleMovimientoSO = $options['detalleMovimiento'];
 
             $nombreCompleto = $socios['nombres'].' '.$socios['apellidos'].' / '.$socios['numero_accion'];
-
+            
             //buscamos si existe invoicer
             $factura = EntityManager::get('Invoicer')->setTransaction($this->_transaction)->findFirst("numero='{$facturaSO['numero']}'");
             if (!$factura) {
@@ -5606,14 +5185,14 @@ class SociosFactura extends UserComponent
             $factura->setIva0($resumenIva['0']);
             $factura->setPagos($facturaSO['total_factura']);
             $factura->setTotal($facturaSO['total_factura']);
-
+            
             //$factura->setComprobInve('');
             //$factura->setNumeroInve('');
-
+            
             $factura->setComprobContab($codigoComprob);
             $factura->setNumeroContab($auraConsecutivo);
             $factura->setEstado('A');
-            if ($factura->save() == false) {
+            if ($factura->save()==false) {
                 foreach ($factura->getMessages() as $message) {
                     throw new Exception('Factura: '.$message->getMessage());
                 }
@@ -5634,7 +5213,7 @@ class SociosFactura extends UserComponent
                 $facturaDetalle->setIco($detalleMovimiento['ico']);
                 $total = ($detalleMovimiento['valor']+$detalleMovimiento['iva']+$detalleMovimiento['ico']);
                 $facturaDetalle->setTotal($total);
-                if ($facturaDetalle->save() == false) {
+                if ($facturaDetalle->save()==false) {
                     foreach ($facturaDetalle->getMessages() as $message) {
                         throw new Exception('Invoicer-Detalle: '.$message->getMessage().print_r($detalle, true));
                     }
@@ -5642,7 +5221,7 @@ class SociosFactura extends UserComponent
                 unset($detalleMovimiento,$facturaDetalle,$total);
             }
             unset($detalleMovimientoSO);
-
+            
             $facturaData = array();
             foreach ($factura->getAttributes() as $field) {
                 $facturaData[$field] = $factura->readAttribute($field);
@@ -5676,7 +5255,7 @@ class SociosFactura extends UserComponent
 
         $this->_transaction = TransactionManager::getUserTransaction();
 
-
+        
         try
         {
             $prestamoArray = $options['prestamo'];
@@ -5684,7 +5263,7 @@ class SociosFactura extends UserComponent
             #throw new Exception(print_r($prestamoArray,true));
             $nitEntregarDocumento     = $options['nitDocumento'];
             $facturaId                 = $options['facturasId'];
-
+        
             foreach ($prestamoArray as $prestamo) {
 
                 if (isset($prestamo['total']) && $prestamo['total']) {
@@ -5695,8 +5274,8 @@ class SociosFactura extends UserComponent
                     $financiacion->setValor($prestamo['valor']);
                     $financiacion->setMora($prestamo['mora']);
                     $financiacion->setTotal($prestamo['total']);
-
-                    if ($financiacion->save() == false) {
+                    
+                    if ($financiacion->save()==false) {
                         foreach ($financiacion->getMessages() as $message) {
                             throw new SociosException('addPrestamo: '.$message->getMessage());
                         }
@@ -5710,7 +5289,7 @@ class SociosFactura extends UserComponent
         catch(Exception $e) {
             throw new Exception('_addPrestamo: '.$e->getMessage());
         }
-
+        
     }
 
     /**
@@ -5719,8 +5298,6 @@ class SociosFactura extends UserComponent
     * @param array $options(
     *    'facturas'            => array(int,int,....)
     *)
-     * @throws Exception
-     * @return boolean
     */
     public function disableInvoicer(&$options)
     {
@@ -5728,22 +5305,23 @@ class SociosFactura extends UserComponent
         {
             $this->_transaction = TransactionManager::getUserTransaction();
 
-            if (isset($options['facturas']) == false) {
+            if (isset($options['facturas'])==false) {
                 throw new SociosException('Agregue primero id de facturas en anular en index facturas');
             }
             $facturasArray = $options['facturas'];
-
+            
             if ($facturasArray && is_array($facturasArray)==true && count($facturasArray)>0) {
                 $inWhere = implode(',', $facturasArray);
                 if ($inWhere) {
                     $andWhere = '';
                     //throw new Exception(print_r($options,true));
-
+                    
                     if (isset($options['nits']) && count($options['nits'])) {
                         $andWhere = ' OR (nit IN("'.implode('","', $options['nits']).'") AND fecha_emision="'.$options['fechaFactura'].'")';
                     }
                     $whereStr = 'id IN('.$inWhere.')'.$andWhere;
-
+                    //throw new Exception($whereStr);
+                    
                     $facturasObj = EntityManager::get('Invoicer')->setTransaction($this->_transaction)->deleteAll($whereStr);
                 }
             }
@@ -5757,21 +5335,20 @@ class SociosFactura extends UserComponent
 
 
     /**
-     * Add a Invoicer
-     *
-     * @param array $options(
-     *    'items'                 => array
-     *    'precios'                 => array
-     *    'cantidades'             => array
-     *    'descuentos'             => array
-     *    'formasPago'             => array
-     *    'valoresFormas'         => array
-     *    'nitDocumento'             => string
-     *    'nitEntregarDocumento'     => string
-     *    'fechaVencimiento'         => date
-     *    'fechaFactura'            => date
-     *)
-     * @throws Exception
+    * Add a Invoicer
+    *
+    * @param array $options(
+    *    'items'                 => array
+    *    'precios'                 => array
+    *    'cantidades'             => array
+    *    'descuentos'             => array
+    *    'formasPago'             => array
+    *    'valoresFormas'         => array
+    *    'nitDocumento'             => string
+    *    'nitEntregarDocumento'     => string
+    *    'fechaVencimiento'         => date
+    *    'fechaFactura'            => date
+    *)
     */
     public function addInvoicer(&$options)
     {
@@ -5802,11 +5379,10 @@ class SociosFactura extends UserComponent
     }
 
     /**
-    * Obtiene el consecutivo actual de la tabla consecutivos de facturacion
-    *
+    * Obtiene el consecutivo actual de la tabla consecutivos de facturacion 
+    * 
     * @param array $options
     * @return int $consecutivo
-     * @throws Exception
     */
     public function getConsecutivo(&$options)
     {
@@ -5814,7 +5390,7 @@ class SociosFactura extends UserComponent
         try
         {
             $this->_transaction = TransactionManager::getUserTransaction();
-
+            
             //Si deseo el consecutivo actual
             if (!isset($options['facturaId'])) {
                 $periodo = SociosCore::getCurrentPeriodoObject();
@@ -5824,7 +5400,7 @@ class SociosFactura extends UserComponent
             } else {
                 //Si deseo el consecutivo de una factura en especial
                 $facturas = EntityManager::get('Invoicer')->setTransaction($this->_transaction)->findFirst($options['facturaId']);
-                if ($facturas == false) {
+                if ($facturas==false) {
                     throw new Exception("La factura no existe. '{$options['facturaId']}'");
                 }
                 $consecutivo = $facturas->getNumero();
@@ -5837,10 +5413,10 @@ class SociosFactura extends UserComponent
     }
 
     /**
-     * Cambia el consecutivo actual de la tabla consecutivos de facturacion
-     *
-     * @return int $consecutivo
-     * @throws Exception
+    * Cambia el consecutivo actual de la tabla consecutivos de facturacion 
+    * 
+    * @param array $options
+    * @return int $consecutivo
     */
     public function setConsecutivoFactura($consecutivo)
     {
@@ -5866,20 +5442,13 @@ class SociosFactura extends UserComponent
     ///////////////////////
     // Saldos a favor
     ///////////////////////
-    /**
-     * Se utiliza en el cierre de periodo cuando un socio tiene un saldo a favor
-     * lo pasan a un cuenta diferent e de sostenimineto y luego al cerrar periodo pasa a otra cuenta para facturar
-     *
-     * @throws ActiveRecordException
-     * @throws AuraException
-     * @throws Exception
-     * @throws SociosException
-     * @throws TransactionManagerException
-     */
+    /*
+    Se utilza en el cierre de periodo cuando un socio tiene un saldo a favor lo pasan a un cuenta diferent e de sostenimineto y luego al cerrar periodo pasa a otra cuenta para facturar
+    */
     public function pasarSaldosAFavor()
     {
         $this->_transaction = TransactionManager::getUserTransaction();
-
+        
         $periodo = SociosCore::getCurrentPeriodo();
 
         $ctaSaldoAFavor = SociosCore::getCuentaSaldoAFavor();
@@ -5896,7 +5465,7 @@ class SociosFactura extends UserComponent
         {
             //Buscamos saldos a favor en cartera de la cuenta de saldo a favor
             $carteraObj = EntityManager::get('Cartera')->setTransaction($this->_transaction)->find("cuenta='$ctaSaldoAFavor' and saldo<0");
-
+    
             //Nota todos los abonos son debitos y debemos crear un credito para matarlo y hacer otro debito a la otra cuenta
             $movements = array();
             foreach ($carteraObj as $cartera) {
@@ -5913,17 +5482,17 @@ class SociosFactura extends UserComponent
                 }
 
                 $movements[$cuentaContable] = array(
-                    'Descripcion'     => "CIERRE PERIODO '$periodo' SALDO A FAVOR",
-                    'Nit'             => $cartera->getNit(),
-                    'CentroCosto'     => $cartera->getCentroCosto(),
-                    'Cuenta'          => $cartera->getCuenta(),
-                    'Valor'           => $cartera->getValor(),
+                    'Descripcion'    => "CIERRE PERIODO '$periodo' SALDO A FAVOR",
+                    'Nit'            => $cartera->getNit(),
+                    'CentroCosto'    => $cartera->getCentroCosto(),
+                    'Cuenta'        => $cartera->getCuenta(),
+                    'Valor'            => $cartera->getValor(),
                     'BaseGrab'        => 0,
-                    'TipoDocumento'   => $cartera->getTipoDoc(),
+                    'TipoDocumento' => $cartera->getTipoDoc(),
                     'NumeroDocumento' => $cartera->getNumeroDoc(),
-                    'FechaVence'      => $cartera->getFVence(),
-                    'DebCre'          => $debCre,
-                    'debug'           => true
+                    'FechaVence'    => $cartera->getFVence(),
+                    'DebCre'        => $debCre,
+                    'debug'            => true
                 );
 
                 unset($cartera);
@@ -5931,18 +5500,19 @@ class SociosFactura extends UserComponent
             unset($carteraObj);
 
             //throw new Exception($periodo);
+                
+            if (count($movements)>0) {
 
-            if (count($movements) > 0) {
-
-                $datosClub  = EntityManager::get("DatosClub")->setTransaction($this->_transaction)->findFirst();
-                $aura       = new Aura($comprobSaldoAFavor, 0, $datosClub->getFCierre());
-
+                $datosClub = EntityManager::get("DatosClub")->setTransaction($this->_transaction)->findFirst();
+                
+                $aura = new Aura($comprobSaldoAFavor, 0, $datosClub->getFCierre());
+                
                 foreach ($movements as $movement) {
                     $aura->addMovement($movement);
                     unset($movement);
                 }
 
-                if ($aura->save() == true) {
+                if ($aura->save()==true) {
 
                     //Registro de comprobante saldo a favor
                     $auraConsecutivo = $aura->getConsecutivo($comprobSaldoAFavor);
@@ -5953,9 +5523,9 @@ class SociosFactura extends UserComponent
                     $saldoafavor->setComprob($comprobSaldoAFavor);
                     $saldoafavor->setNumero($auraConsecutivo);
 
-                    if ($saldoafavor->save() == false) {
+                    if ($saldoafavor->save()==false) {
                         foreach ($saldoafavor->getMessages() as $message) {
-                            throw new SociosException('save: ' . $message->getMessage());
+                            throw new SociosException('save: '.$message->getMessage());
                         }
                     }
 
@@ -5963,20 +5533,17 @@ class SociosFactura extends UserComponent
 
             }
             unset($movements);
-        } catch (SociosException $e) {
+                
+        }
+        catch (SociosException $e) {
             throw new Exception('SaldoAFavorAura: '.$e->getMessage());
         }
     }
 
 
     /**
-     * Borra las facturas de invoicer
-     *
-     * @param $config
-     * @return bool
-     * @throws ActiveRecordException
-     * @throws SociosException
-     */
+    * Borra las facturas de invoicer
+    */
     public function _cleanInvoicer($config)
     {
         if (!isset($config['fechaFactura']) && $config['fechaFactura']) {
@@ -5985,7 +5552,7 @@ class SociosFactura extends UserComponent
         if (!isset($config['facturaNumero']) && $config['facturaNumero']>0) {
             throw new SociosException("Es necesario el número de la factura para borrar de invoicer");
         }
-
+        
         //Buscamos facturas de invoicer con el mismo numero de la factura de socios
         $invoicerObj = EntityManager::get('Invoicer')->setTransaction($this->_transaction)->find("numero='{$config['facturaNumero']}'");
         foreach ($invoicerObj as $invoicer) {
@@ -5999,6 +5566,7 @@ class SociosFactura extends UserComponent
                     throw new SociosException("Invoicer: ".$message->getMessage());
                 }
             }
+
             unset($invoicer);
         }
         unset($invoicerObj);
@@ -6006,12 +5574,6 @@ class SociosFactura extends UserComponent
         return true;
     }
 
-    /**
-     * @param $facturasId
-     * @return bool
-     * @throws ActiveRecordException
-     * @throws SociosException
-     */
     public function _cleanDetalleInvoicer($facturasId)
     {
         //buscamos el detalle del invoicer de la factura
@@ -6032,13 +5594,8 @@ class SociosFactura extends UserComponent
     }
 
     /**
-     * limpia el detalle de la factura a partir de su ID
-     *
-     * @param $facturaId
-     * @return bool
-     * @throws ActiveRecordException
-     * @throws SociosException
-     */
+    * limpia el detalle de la factura a partir de su ID
+    */
     public function limpiarDetalleFactura($facturaId)
     {
         if (!$facturaId) {
@@ -6049,11 +5606,11 @@ class SociosFactura extends UserComponent
         foreach ($detalleFacturaObj as $detalleFactura) {
             $detalleFactura->setTransaction($this->_transaction);
             $detalleFactura->delete();
-
+            
             unset($detalleFactura);
         }
         unset($detalleFacturaObj);
-
+        
         return true;
     }
 }

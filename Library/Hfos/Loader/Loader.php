@@ -29,6 +29,8 @@ class Hfos_Loader {
 		'AuraException' => 'Aura/Exception',
 		'AuraFusion' => 'Aura/Fusion/AuraFusion',
 		'AuraUtils' => 'Aura/Utils/AuraUtils',
+		'AuraNiif' => 'Aura/AuraNiif',
+		'AuraNiifException' => 'Aura/ExceptionNiif',
 		'BackCacher' => 'BackCacher/BackCacher',
 		'Clara' => 'Clara/Clara',
 		'ClaraMacro' => 'Clara/Macro/ClaraMacro',

@@ -76,50 +76,6 @@ class HfosTag extends Tag {
 	}
 
 	/**
- 	 * Componente para capturar niif contables
- 	 *
- 	 * @access 	public
- 	 * @param 	mixed $params
- 	 * @return 	string
- 	 * @static
- 	 */
-	static public function niifField($params)
-	{
-		$numberArguments = func_num_args();
-		$params = Utils::getParams(func_get_args(), $numberArguments);
-		if(!isset($params[0])) {
-			$params[0] = $params['id'];
-		}
-		if(!isset($params['name'])||!$params['name']){
-			$params['name'] = $params[0];
-		}
-		if(isset($params['value'])){
-			$value = $params['value'];
-			unset($params['value']);
-		} else {
-			$value = self::getValueFromAction($params[0]);
-		}
-		$nombreNiif = '';
-		if ($value) {
-			$value  = Filter::bring($value, 'niif');
-			$niif = BackCacher::getNiif($value);
-			if ($niif != false) {
-				$nombreNiif = $niif->getNombre();
-			} else {
-				$nombreNiif = 'NO EXISTE LA CUENTA';
-			}
-		}
-		$code = '<table cellspacing="0" class="cuentaCompleter">
-			<tr>
-				<td>'.Tag::numericField(array($params[0], 'size' => '12', 'maxlength' => 12, 'value' => $value)).'</td>
-				<td>'.Tag::textField(array($params[0].'_det', 'size' => 35, 'class' => 'cuentaDetalle', 'value' => $nombreNiif, 'placeholder' => 'Buscar por nombre')).'</td>
-			</tr>
-		</table>
-		<script type="text/javascript">HfosCommon.addNiifCompleter("'.$params[0].'")</script>';
-		return $code;
-	}
-
-	/**
  	 * Componente para capturar terceros
  	 *
  	 * @access 	public
@@ -209,7 +165,7 @@ class HfosTag extends Tag {
 		}
 		$code = '<table cellspacing="0" class="itemCompleter">
 			<tr>
-				<td>'.Tag::numericField(array($params[0], 'size' => '7', 'maxlength' => 12, 'value' => $value)).'</td>
+				<td>'.Tag::textField(array($params[0], 'size' => '7', 'maxlength' => 12, 'value' => $value)).'</td>
 				<td>'.Tag::textField(array($params[0].'_det', 'size' => 35, 'class' => 'itemDetalle', 'value' => $nombreItem, 'placeholder' => 'Buscar por nombre')).'</td>
 			</tr>
 		</table>

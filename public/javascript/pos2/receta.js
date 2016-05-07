@@ -30,12 +30,12 @@ var Receta = {
 	dataDetailName: 'dataDetail',
 	tableDetailName: 'tableDetail',
 	register: {
-		'tipol'		: {'type': 'domain','caption': 'Tipo','domain': {'I': 'REFERENCIA','R': 'RECETA'}},
-		'item'		: {'type': 'domain','caption': 'Item','domain': {'@': 'Seleccione el tipo...'},'use_dummy': false,'width': '59%','fieldWidth': '100%'},
-		'unidad'	: {'type': 'string','caption': 'Unidad','size': 7,'ignore': true},
-		'divisor'	: {'type': 'int','caption': 'Divisor','size': 4,'format': 'numeric'},
-		'cantidad'	: {'type': 'decimal','caption': 'Cantidad','size': 6,'format': 'numeric'},
-		'valor'		: {'type': 'decimal','caption': 'Valor','size': 10,'format': 'numeric'}
+		'tipol': {'type': 'domain','caption': 'Tipo','domain': {'I': 'REFERENCIA','R': 'RECETA'}},
+		'item': {'type': 'domain','caption': 'Item','domain': {'@': 'Seleccione el tipo...'},'use_dummy': false,'width': '59%','fieldWidth': '100%'},
+		'unidad': {'type': 'string','caption': 'Unidad','size': 7,'ignore': true},
+		'divisor': {'type': 'int','caption': 'Divisor','size': 4,'format': 'numeric'},
+		'cantidad': {'type': 'decimal','caption': 'Cantidad','size': 6,'format': 'numeric'},
+		'valor': {'type': 'decimal','caption': 'Valor','size': 10,'format': 'numeric'}
 	},
 
 	setPostDataDetail: function(){
@@ -310,7 +310,6 @@ var Receta = {
 				break;
 			}
 		}
-		$('divisor').value = elem['divisor'];
 		$('valor').value = elem['costo'];
 		$('unidad').value = elem['unidad'];
 		if($F('valor') == 0) {

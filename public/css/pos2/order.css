@@ -137,13 +137,10 @@ button.menuItemButtonSelected {
 	background: -webkit-linear-gradient(#EDEEEF, #D3D4D9);
 	border-radius: 5px;
 	border: 1px solid #cacaca;
+	font-size: 10px;
 	width: 72px;
 	height: 62px;
-}
-
-.commandButton b {
 	color: #1B1B1B;
-	font-size: 10px;
 	text-shadow: 0 1px 0 #F3F3F3;
 }
 
@@ -454,7 +451,7 @@ table#tabAccount select {
 
 #preOrderDown {
 	background: url("../../img/pos2/bg-texture-1.png");
-	min-height: 350px;
+	min-height: 180px;
 }
 
 #tipoPedidoDiv {
@@ -800,8 +797,8 @@ div#buscar-div input {
 	width: 98%;
 }
 
-input.addButton,
-button.addButton {
+input.addButton {
+	font-family: Arial;
 	background: -moz-linear-gradient(top center, #8FC161, #73AB43);
 	background: -webkit-linear-gradient(#8FC161, #73AB43);
 	color: #294617;
@@ -809,13 +806,13 @@ button.addButton {
 	border: 1px solid #72A04D;
 	border-radius: 5px;
 	text-shadow: rgba(0, 0, 0, .02) 0px 1px 0px;
-	width: 28px;
-	height: 28px;
+	width: 24px;
+	height: 24px;
 	font-size: 18px;
 }
 
-input.deleteButton,
-button.deleteButton {
+input.deleteButton {
+	font-family: Arial;
 	background: -moz-linear-gradient(top center, #C66161, #A84848) transparent;
 	background: -webkit-linear-gradient(#C66161, #A84848) transparent;
 	color: #913434;
@@ -823,8 +820,8 @@ button.deleteButton {
 	border: 1px solid #973636;
 	border-radius: 5px;
 	text-shadow: rgba(0, 0, 0, .02) 0px 1px 0px;
-	width: 28px;
-	height: 28px;
+	width: 24px;
+	height: 24px;
 }
 
 .selectFolioDiv {

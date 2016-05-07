@@ -99,7 +99,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 
 		var containerElement = this.getContentElement();
 		containerElement.observe('scroll', function(){
-			HfosCuentasSelectores.removeAll();
+			HfosCuentasSelectores2.removeAll();
 			this._removeDetails();
 		}.bind(this));
 
@@ -173,7 +173,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 */
 	_onInactiveCallback: function(){
 		this._removeDetails();
-		HfosCuentasSelectores.removeAll();
+		HfosCuentasSelectores2.removeAll();
 	},
 
 	/**
@@ -333,7 +333,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 		this.setState('index');
 
 		this._dropDetails();
-		HfosCuentasSelectores.removeAll();
+		HfosCuentasSelectores2.removeAll();
 
 		this.hideStatusBar();
 	},
@@ -499,7 +499,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	_saveComprobante: function(saveButton){
 		saveButton.disable();
 		this._removeDetails();
-		HfosCuentasSelectores.removeAll();
+		HfosCuentasSelectores2.removeAll();
 		this.setIgnoreTermSignal(true);
 		this.getElement("headerSpinner").show();
 		new HfosAjax.JsonRequest('movimiento/guardar', {
@@ -680,7 +680,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	_printComprobante: function()
 	{
 		this._removeDetails();
-		HfosCuentasSelectores.removeAll();
+		HfosCuentasSelectores2.removeAll();
 		var	changed = this.select('tr.lineaChanged').length;
 		if (changed) {
 			new HfosModal.confirm({
@@ -1023,7 +1023,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 			movimientoSeleccion.hide();
 		};
 		this._removeDetails();
-		HfosCuentasSelectores.removeAll();
+		HfosCuentasSelectores2.removeAll();
 	},
 
 	/**
@@ -1060,7 +1060,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 							parameters: 'lineas='+rows.join(',')+'&'+this._key,
 							onSuccess: function(rows, response){
 								if (response.status=='OK'){
-									HfosCuentasSelectores.removeAll();
+									HfosCuentasSelectores2.removeAll();
 									this._removeDetails();
 									for(var i=0;i<rows.length;i++){
 										var movimientoTr = this.getElement('movimiento'+rows[i]);
@@ -1241,7 +1241,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 
 	_columnSortHandler: function(columnHeader, columnNumber)
 	{
-		HfosCuentasSelectores.removeAll();
+		HfosCuentasSelectores2.removeAll();
 		this._removeDetails();
 		var wasAscending = columnHeader.hasClassName('sortasc');
 		for(var i=0;i<this._columnHeaders.length;i++){
@@ -1567,7 +1567,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 
 		var position = parseInt(element.up(1).retrieve('position'), 10);
 		var elementDetalle = this.select('input.nombreCuenta')[position];
-		var cuentaSelector = new HfosCuentasSelector(element, elementDetalle);
+		var cuentaSelector = new HfosCuentasSelector2(element, elementDetalle);
 
 		cuentaSelector.observe('change', this._changeCuentaSelector.bind(this));
 		cuentaSelector.observe('leave', this._leaveCuentaSelector.bind(this));
@@ -1756,7 +1756,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 					var carteraTable = form.selectOne('table#carteraTable');
 					if (carteraTable != null) {
 						var browse = new HfosBrowseData(this);
-						browse.fromHtmlTable(form, carteraTable, 12);
+						browse.fromHtmlTable(form, carteraTable, 20);
 					};
 				}.bind(this),
 				beforeClose: function(detailElement, position, form, canceled, response){
@@ -2094,31 +2094,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 	 */
 	_baseGravableNavigation: function(element)
 	{
-		var contentElement = this.getContentElement();
 		var position = parseInt(element.retrieve('position'), 10);
-		var detailElement = this._getDetailElement(position);
-
-		var valorElement = this.selectOne('input#valor' + position);
-		var cuentaPorcIvaElement = detailElement.selectOne('input#cuentaPorcIva');
-		if (valorElement && cuentaPorcIvaElement) {
-			var valor = parseFloat(element.getValue());
-			if (valor) {
-				new HfosModal.confirm({
-					title: 'Base Gravable',
-					message: 'Desea que el sistema calcule la base gravable según el porcentaje de la cuenta?',
-					onAccept: function() {
-						var porcIva = parseFloat(cuentaPorcIvaElement.getValue());
-						if (porcIva) {
-							var baseCalc = valor * porcIva / 100;
-							valorElement.setValue(baseCalc);
-						} else {
-							alert("No se ha definido el porcentaje de iva de esta cuenta que pide base, por favor ingresarla");
-						}
-					}
-				});
-			}
-		}
-
 		this._pushRowForUpdate(element, position);
 
 		var focusElement = this.select('input.descripcion')[position];
@@ -2195,7 +2171,7 @@ var Movimiento = Class.create(HfosProcessContainer, {
 			event.keyCode != 224){
 
 			//remove cuentas selectores
-			HfosCuentasSelectores.removeAll();
+			HfosCuentasSelectores2.removeAll();
 			this._removeDetails();
 
 			//agregar autocompleter

@@ -13,8 +13,6 @@
  * @version		$Id$
  */
 
-set_time_limit(0);
-
 /**
  * Certificado_RetencionController
  *
@@ -54,8 +52,7 @@ class Certificado_RetencionController extends ApplicationController {
 	 */
 	public function generarAction()
     {
-
-    	try {
+		ini_set('memory_limit', '2024M');
 
 		$this->setResponse('json');
 
@@ -85,19 +82,9 @@ class Certificado_RetencionController extends ApplicationController {
 		$fechaExpedicion = new Date($fechaExpedicion);
 
 		if (empty($cuentaInicial) || empty($cuentaFinal)) {
-			$cuentas = $this->Cuentas->find(
-				array(
-					"conditions" => "pide_base='S'",
-					"columns"	 => "cuenta,porc_iva"
-				)
-			);
+			$cuentas = $this->Cuentas->find("pide_base='S'");
 		} else {
-			$cuentas = $this->Cuentas->find(
-				array(
-					"conditions" => "cuenta>='$cuentaInicial' AND cuenta<='$cuentaFinal' AND pide_base='S'",
-					"columns"	 => "cuenta,porc_iva"
-				)
-			);
+			$cuentas = $this->Cuentas->find("cuenta>='$cuentaInicial' AND cuenta<='$cuentaFinal' AND pide_base='S'");
 		}
 
 		$bases = array();
@@ -105,19 +92,9 @@ class Certificado_RetencionController extends ApplicationController {
 
 			$codigoCuenta = $cuenta->getCuenta();
 			if (!empty($nitInicial) && !empty($nitFinal)) {
-				$nits = $this->Saldosn->distinct(
-					array(
-						"nit",
-						"conditions" => "nit>='$nitInicial' AND nit<='$nitFinal' AND cuenta='$codigoCuenta'"
-					)
-				);
+				$nits = $this->Saldosn->distinct(array("nit", "conditions" => "nit>='$nitInicial' AND nit<='$nitFinal' AND cuenta='$codigoCuenta'"));
 			} else {
-				$nits = $this->Saldosn->distinct(
-					array(
-						"nit",
-						"conditions" => "cuenta='$codigoCuenta'"
-					)
-				);
+				$nits = $this->Saldosn->distinct(array("nit", "conditions" => "cuenta='$codigoCuenta'"));
 			}
 
 			foreach ($nits as $numeroNit) {
@@ -127,8 +104,8 @@ class Certificado_RetencionController extends ApplicationController {
 				if (!isset($bases[$numeroNit][$codigoCuenta])) {
 					$bases[$numeroNit][$codigoCuenta] = array(
 						'porcIva' => $cuenta->getPorcIva(),
-						'valor'   => 0,
-						'base'    => 0
+						'valor' => 0,
+						'base' => 0
 					);
 				}
 
@@ -141,22 +118,13 @@ class Certificado_RetencionController extends ApplicationController {
 					} else {
 						$bases[$numeroNit][$codigoCuenta]['valor'] += $movi->getValor();
 					}
-					unset($movi);
 				}
-				unset($conditions, $saldon, $numeroNit);
-			}
-			unset($cuenta, $nits);
-		}
-		unset($cuentas);
 
-		ksort($bases, SORT_NUMERIC);
-		if (!count($bases)) {
-			unset($bases);
-			return array(
-				'status'  => 'FAILED',
-				'message' => 'No se encontró movimientos'
-			);
-        }
+				unset($conditions);
+				unset($saldon);
+			}
+			unset($cuenta);
+		}
 
         require 'Library/Mpdf/mpdf.php';
 		$pdf = new mPDF();
@@ -167,7 +135,7 @@ class Certificado_RetencionController extends ApplicationController {
 
 		$empresa = $this->Empresa->findFirst();
 		$empresaNit = $this->Nits->findFirst("nit='{$empresa->getNit()}'");
-		if ($empresaNit == false) {
+		if ($empresaNit==false) {
 			return array(
 				'status' => 'FAILED',
 				'message' => 'Debe crear el hotel como una tercero del sistema antes de continuar'
@@ -246,7 +214,7 @@ class Certificado_RetencionController extends ApplicationController {
 				</div>
 			</div>';
 			if (count($bases)>1) {
-				$html2 .= '<pagebreak />';
+				$html2.='<pagebreak />';
 			}
 
 			//Si hay valores agregar
@@ -255,9 +223,9 @@ class Certificado_RetencionController extends ApplicationController {
 
 				//Add lista nits
 				$listaNits[$nit] = array(
-					'nit' 		  => $nit,
+					'nit' => $nit,
 					'razonSocial' => $tercero->getNombre(),
-					'sucursal' 	  => 01
+					'sucursal' => 01
 				);
 			}
 		}
@@ -282,21 +250,21 @@ class Certificado_RetencionController extends ApplicationController {
 
 		$html.='</body></html>';
 
+		if (count($cuentaBases)>0) {
+			$pdf->writeHTML(trim($html));
+			$fileName = 'certificados.'.mt_rand(1, 9999).'.pdf';
+			$pdf->Output('public/temp/'.$fileName);
 
-		$pdf->writeHTML($html);
-		$fileName = 'certificados_retencion_.' . mt_rand(1, 9999) . '.pdf';
-		$pdf->Output('public/temp/'.$fileName);
-
-		return array(
-			'status' => 'OK',
-			'file'   => 'temp/' . $fileName
-		);
-	} catch (Exception $e) {
-		return array(
-			'status'  => 'FAILED',
-			'message' => $e->getMessage(). ", trace:" . $e->getTraceAsString()
-		);
-	}
+			return array(
+				'status' => 'OK',
+				'file' => 'temp/'.$fileName
+			);
+		} else {
+			return array(
+				'status' => 'FAILED',
+				'message' => 'No se encontró movimiento'
+			);
+		}
 
 	}
 

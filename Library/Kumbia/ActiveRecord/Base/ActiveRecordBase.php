@@ -1289,9 +1289,9 @@ abstract class ActiveRecordBase extends Object
 			$table = $this->_source;
 		}
 		if(isset($params['group'])&&$params['group']){
-			$select = 'SELECT '.$params['group'].',SUM('.$params['column'].') AS sumatory FROM '.$table.' ';
+			$select = 'SELECT '.$params['group'].', IFNULL(SUM('.$params['column'].'), 0) AS sumatory FROM '.$table.' ';
 		} else {
-			$select = 'SELECT SUM('.$params['column'].') AS sumatory FROM '.$table.' ';
+			$select = 'SELECT IFNULL(SUM('.$params['column'].'), 0) AS sumatory FROM '.$table.' ';
 		}
 		if(isset($params['conditions'])&&$params['conditions']){
 			$select.= ' WHERE '.$params['conditions'].' ';

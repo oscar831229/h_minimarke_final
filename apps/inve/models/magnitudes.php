@@ -17,17 +17,12 @@ class Magnitudes extends RcsRecord {
 	 */
 	protected $unidad_base;
 
-	/**
-	 * @var double
-	 */
-	protected $divisor;
 
 	/**
 	 * Metodo para establecer el valor del campo id
 	 * @param integer $id
 	 */
-	public function setId($id)
-	{
+	public function setId($id){
 		$this->id = $id;
 	}
 
@@ -35,8 +30,7 @@ class Magnitudes extends RcsRecord {
 	 * Metodo para establecer el valor del campo nombre
 	 * @param string $nombre
 	 */
-	public function setNombre($nombre)
-	{
+	public function setNombre($nombre){
 		$this->nombre = $nombre;
 	}
 
@@ -44,18 +38,8 @@ class Magnitudes extends RcsRecord {
 	 * Metodo para establecer el valor del campo unidad_base
 	 * @param string $unidad_base
 	 */
-	public function setUnidadBase($unidad_base)
-	{
+	public function setUnidadBase($unidad_base){
 		$this->unidad_base = $unidad_base;
-	}
-
-	/**
-	 * Metodo para establecer el valor del campo divisor
-	 * @param string $divisor
-	 */
-	public function setDivisor($divisor)
-	{
-		$this->divisor = (double) $divisor;
 	}
 
 
@@ -63,8 +47,7 @@ class Magnitudes extends RcsRecord {
 	 * Devuelve el valor del campo id
 	 * @return integer
 	 */
-	public function getId()
-	{
+	public function getId(){
 		return $this->id;
 	}
 
@@ -72,8 +55,7 @@ class Magnitudes extends RcsRecord {
 	 * Devuelve el valor del campo nombre
 	 * @return string
 	 */
-	public function getNombre()
-	{
+	public function getNombre(){
 		return $this->nombre;
 	}
 
@@ -81,18 +63,9 @@ class Magnitudes extends RcsRecord {
 	 * Devuelve el valor del campo unidad_base
 	 * @return string
 	 */
-	public function getUnidadBase()
-	{
+	public function getUnidadBase(){
 		return $this->unidad_base;
 	}
 
-	/**
-	 * Devuelve el valor del campo divisor
-	 * @return double
-	 */
-	public function getDivisor()
-	{
-		return (double) $this->divisor;
-	}
 }
 

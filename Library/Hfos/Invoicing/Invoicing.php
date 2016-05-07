@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hotel Front-Office Solution
  *
@@ -20,24 +21,25 @@ require_once 'InvoicingException.php';
  * Class of Invoicing to all aplication of Hfos
  *
  */
-abstract class Invoicing extends UserComponent {
+abstract class Invoicing extends UserComponent
+{
 
-	public static function factory($adapterName){
+	public static function factory($adapterName)
+	{
 		$basePath = 'Library/Hfos/Invoicing/';
-		if(class_exists($adapterName)==false){
-			$className = 'Invoicing'.$adapterName;
-			$filePath = $basePath.'Adapter/'.$adapterName.'.php';
-			if(file_exists($filePath)==true){
+		if (class_exists($adapterName) == false) {
+			$className = 'Invoicing' . $adapterName;
+			$filePath = $basePath . 'Adapter/' . $adapterName . '.php';
+			if (file_exists($filePath) == true) {
 				require_once $filePath;
 			} else {
-				throw new InvoicingException('The adapter "'.$filePath.'" not exists');
+				throw new InvoicingException('The adapter "' . $filePath . '" not exists');
 			}
 		}
-		if(class_exists($className)==true){
+		if (class_exists($className) == true) {
 			return new $className();
 		} else {
-			throw new InvoicingException('The adapter class '.$className.' not exists');
+			throw new InvoicingException('The adapter class ' . $className . ' not exists');
 		}
 	}
-
 }

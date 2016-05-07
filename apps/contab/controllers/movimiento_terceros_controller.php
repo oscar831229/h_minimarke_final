@@ -299,7 +299,6 @@ class Movimiento_TercerosController extends ApplicationController
 
 					$saldoCuenta = 0;
 					$conditionsSadosn = "cuenta='$codigoCuenta' AND nit='$nitTercero' AND ano_mes='$periodoAnterior'";
-					file_put_contents("/tmp/e.txt", $conditionsSadosn);
 
 					$saldosnAnterior = $this->Saldosn->findFirst($conditionsSadosn);
 					if ($saldosnAnterior!=false) {
@@ -307,14 +306,13 @@ class Movimiento_TercerosController extends ApplicationController
 					}
 					unset($saldosnAnterior);
 
-
 					$conditions = "cuenta='$codigoCuenta' AND nit='$nitTercero' AND fecha>'$fechaIn' AND fecha<'$fechaInicial'";
 					$movis = $this->Movi->find(array($conditions, 'columns' => 'deb_cre,valor'));
 					foreach ($movis as $movi) {
 						if ($movi->getDebCre() == 'D' || $movi->getDebCre() == '0') {
-							$saldoCuenta += $movi->getValor();
+							$saldoCuenta+=$movi->getValor();
 						} else {
-							$saldoCuenta -= $movi->getValor();
+							$saldoCuenta-=$movi->getValor();
 						}
 						unset($movi);
 					}

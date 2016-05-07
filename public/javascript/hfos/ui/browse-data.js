@@ -456,7 +456,7 @@ var HfosBrowseData = Class.create({
 			};
 			var numberColumns = element.select('th').length;
 			var html = '';
-			
+
 			var base = trRows.length/numberRows;
 			var mod = trRows.length % numberRows;
 			var numberPages = parseInt(base + (mod > 0?1:0), 10);

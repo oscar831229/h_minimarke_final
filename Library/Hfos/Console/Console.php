@@ -675,9 +675,6 @@ class HfosConsole extends UserComponent
 			case 'corrigeUnaLinea':
 				$aura->corrigeUnaLinea();
 				break;
-			case 'recalculateSaldosn':
-                $aura->recalculateSaldosn();
-                break;
 			default:
 				echo 'Unknown command "' . $code[1][1] . '" for aura', '<br/><br/>';
 				return;

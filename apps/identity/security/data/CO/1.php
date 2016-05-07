@@ -55,6 +55,15 @@
     'cambiarFecha' => true,
     'copiar' => true,
   ),
+  'movimiento_niif' => 
+  array (
+    'index' => true,
+    'buscar' => true,
+    'guardar' => true,
+    'eliminar' => true,
+    'cambiarFecha' => true,
+    'copiar' => true,
+  ),
   'consultas' => 
   array (
     'index' => true,
@@ -72,6 +81,10 @@
     'index' => true,
   ),
   'balance' => 
+  array (
+    'index' => true,
+  ),
+  'informe_balance_consolidado' => 
   array (
     'index' => true,
   ),
@@ -156,6 +169,10 @@
     'index' => true,
   ),
   'cartera_edades' => 
+  array (
+    'index' => true,
+  ),
+  'corregir_cartera' => 
   array (
     'index' => true,
   ),

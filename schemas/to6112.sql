@@ -16,9 +16,11 @@ update cuentas set cuenta_niif = cuenta;
 create table niif like cuentas;
 insert into niif select * from cuentas;
 alter table niif drop column cuenta_niif;
-alter table niif drop column usa_revelacion;
+alter table niif add column usa_revelacion char(1) null;
+update niif set usa_revelacion = 'S';
 
 create table saldos_niif like saldosn;
+alter table saldos_niif add column depre char(1) not null default 'N';
 
 CREATE TABLE `movibackup` (
   `comprob` char(3) NOT NULL,
@@ -39,3 +41,27 @@ CREATE TABLE `movibackup` (
   `usuarios_id` int(11) NOT NULL,
   KEY `contab_1_index` (`comprob`,`numero`,`nit`,`fecha`,`deb_cre`,`cuenta`,`tipo_doc`,`numero_doc`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table movitempniif like movitemp;
+alter table movitempniif add column cuenta_movi varchar(20) null;
+alter table movitempniif add column numero_movi varchar(20) null;
+
+create table movibackupniif like movibackup;
+alter table movibackupniif add column cuenta_movi varchar(20);
+
+create table grabniif like grab;
+#alter table grabniif add column cuenta_movi varchar(20);
+
+alter table movi_niif drop column nic;
+alter table movi_niif drop column nota_nic;
+alter table movi_niif drop column comprob_movi;
+alter table movi_niif drop column numero_movi;
+
+alter table movi_niif change cuenta_movi cuenta_movi varchar(20) null;
+alter table movi_niif change numero_movi numero_movi varchar(20) null;
+
+alter table saldosc add column neto decimal(20,2) null;
+
+create table cartera_niif like cartera;
+alter table cartera_niif add column depre_porce int null;
+alter table cartera_niif add column depre_meses int null;
