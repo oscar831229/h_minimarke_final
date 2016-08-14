@@ -7,9 +7,11 @@ dirPath=`pwd`
 gitPath="/opt/local/apache2/htdocs/h/"
 
 cd public
-#mkdir temp
-#chmod 777 temp
-ln -s /tmp temp
+mkdir temp
+chmod 777 temp
+#ln -s /tmp temp
+
+
 
 cp index.config.php.dist index.config.php
 echo $dirPath
@@ -21,13 +23,34 @@ function setIni {
         cd apps/$1/config/
 
         cp app.ini.dist app.ini
-        sed -i "s|jockey|$instance|" app.ini
+        if [[ -z "$instance" ]]; then
+            sed -i "s|pjockey|pos|" app.ini
+            sed -i "s|hjockey|hotel2|" app.ini
+            sed -i "s|rjockey|ramocol|" app.ini
+            sed -i "s|ijockey|hfos_identity" app.ini
+        else
+            sed -i "s|jockey|$instance|" app.ini
+        fi
 
         cp config.ini.dist config.ini
-        sed -i "s|jockey|$instance|" config.ini
+        if [[ -z "$instance" ]]; then
+            sed -i "s|pjockey|pos|" config.ini
+            sed -i "s|hjockey|hotel2|" config.ini
+            sed -i "s|rjockey|ramocol|" config.ini
+            sed -i "s|ijockey|hfos_identity" config.ini
+        else
+            sed -i "s|jockey|$instance|" config.ini
+        fi
 
         cp environment.ini.dist environment.ini
-        sed -i "s|jockey|$instance|" environment.ini
+        if [[ -z "$instance" ]]; then
+            sed -i "s|pjockey|pos|" environment.ini
+            sed -i "s|hjockey|hotel2|" environment.ini
+            sed -i "s|rjockey|ramocol|" environment.ini
+            sed -i "s|ijockey|hfos_identity" environment.ini
+        else
+            sed -i "s|jockey|$instance|" environment.ini
+        fi
 
         cp naming.ini.dist naming.ini
 }
