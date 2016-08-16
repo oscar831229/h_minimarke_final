@@ -731,8 +731,6 @@ class BalanceController extends ApplicationController
 		$totalDiferencia = 0;
 		$totalNuevoSaldo = 0;
 
-
-
 		if ($cuentaInicial=='' && $cuentaFinal=='') {
 			$cuentas = $this->Niif->find("es_auxiliar='S'");
 		} else {
@@ -763,7 +761,7 @@ class BalanceController extends ApplicationController
 				$balance[$codigoCuenta]['saldoAnterior'] = 0;
 			} else {
 				$balance[$codigoCuenta]['saldoAnterior'] = $saldosNiif->getSaldo();
-				$totalSaldoAnterior+=$saldosNiif->getSaldo();
+				$totalSaldoAnterior += $saldosNiif->getSaldo();
 			}
 
 			//verificamos que siempre sea el primer dia del mes apra el saldo
@@ -771,7 +769,6 @@ class BalanceController extends ApplicationController
 			$fechaInicioSaldos->toFirstDayOfMonth();
 			$fechaInicioSaldosStr = $fechaInicioSaldos->getDate();
 
-			//if ($noIncluirCierre=='S') {
 			$conditions = "cuenta='$codigoCuenta' AND fecha>='$fechaInicio' AND fecha<='$fechaFinal'";
 
 			if ($noIncluirCierre) {
@@ -806,6 +803,7 @@ class BalanceController extends ApplicationController
 						$totalSaldoAnterior -= $moviNiif->getValor();
 					}
 				}
+
 				unset($moviNiif);
 			}
 			unset($moviObj);
@@ -833,9 +831,13 @@ class BalanceController extends ApplicationController
 			);
 
 			foreach ($balance as $codigoCuenta => $balanceCuenta) {
+
 				foreach ($partes as $tipoParte => $valorNivel) {
+
+
 					$length = strlen($codigoCuenta);
-					if ($length>$valorNivel) {
+					if ($length > $valorNivel) {
+
 						$parte = substr($codigoCuenta, 0, $valorNivel);
 						if ($parte!='') {
 							if (!isset($balance[$parte])) {
@@ -896,7 +898,7 @@ class BalanceController extends ApplicationController
 						}
 					}
 
-					unset($valorRow);
+					http://hfosdev.bhteck.com/h/contab#unset($valorRow);
 
 					if ($detallado == 'S') {
 						if ($cuenta != false) {
