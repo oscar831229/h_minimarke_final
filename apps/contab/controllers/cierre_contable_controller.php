@@ -54,16 +54,15 @@ class Cierre_ContableController extends ApplicationController
 
         try
         {
-
             set_time_limit(0);
             $allMessages = array();
 
             $transaction = TransactionManager::getUserTransaction();
             $transaction->setRollbackOnAbort(true);
 
-
-            $empresa1 = $this->Empresa->setTransaction($transaction)->findFirst();
-            $empresa = $this->Empresa->setTransaction($transaction)->findFirst(array('for_update' => true));
+            $empresaModel = $this->Empresa->setTransaction($transaction);
+            $empresa1 = $empresaModel->findFirst();
+            $empresa  = $empresaModel->findFirst(array('for_update' => true));
             $ultimoCierre = $empresa->getFCierrec();
 
             $ultimoCierre->toLastDayOfMonth();
@@ -82,14 +81,12 @@ class Cierre_ContableController extends ApplicationController
                     }
                 }
             }
-            /*if ($fechaCierre->getYear()>$ultimoCierre->getYear()) {
+            if ($fechaCierre->getYear()>$ultimoCierre->getYear()) {
                 $transaction->rollback('Debe hacer el cierre anual primero '.$fechaCierre->getYear().' '.$ultimoCierre->getYear());
-            }*/
+            }
 
             $periodoCierre = $fechaCierre->getPeriod();
             $periodoUltimoCierre = $ultimoCierre->getPeriod();
-
-            //throw new Exception("ano_mes='$periodoCierre'");
 
             $this->Saldosc->setTransaction($transaction)->deleteAll("ano_mes='$periodoCierre'");
 
@@ -242,9 +239,6 @@ class Cierre_ContableController extends ApplicationController
             }
             unset($conditions,$saldoscaObj);
 
-            $auraNiif = new AuraNiif();
-            $auraNiif->setTransaction($transaction);
-
             $conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
             $movis = $this->Movi->setTransaction($transaction)->findForUpdate(array($conditions, 'group' => 'comprob,numero', 'columns' => 'comprob,numero'));
             foreach ($movis as $movi) {
@@ -259,12 +253,6 @@ class Cierre_ContableController extends ApplicationController
                         );
                     }
 
-                    //Create movi niif
-                    $comprob = BackCacher::getComprob($movi->getComprob());
-                    if ($comprob && $comprob->getTipoMoviNiif() == 'I') {
-                        $auraNiif->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
-                    }
-
                     unset($messages, $movi);
                 }
                 catch (AuraException $e) {
@@ -272,7 +260,7 @@ class Cierre_ContableController extends ApplicationController
                 }
                 unset($movi);
             }
-            unset($movis);
+            
 
             if (count($allMessages)==0) {
                 $empresa->setFCierrec((string)$fechaCierre);
@@ -282,13 +270,15 @@ class Cierre_ContableController extends ApplicationController
                     }
                 }
 
+                $auraNiif = new AuraNiif();
+                $auraNiif->setTransaction($transaction);
+                $auraNiif->cerrarPeriodoByMovi($movis);
+
                 $transaction->commit();
 
                 $nuevoCierre = clone $fechaCierre;
                 $nuevoCierre->addDays(1);
                 $proximoCierre = Date::getLastDayOfMonth($nuevoCierre->getMonth(), $nuevoCierre->getYear());
-
-
 
                 return array(
                     'status' => 'OK',

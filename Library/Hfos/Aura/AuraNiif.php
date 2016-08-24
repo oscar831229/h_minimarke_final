@@ -1303,8 +1303,6 @@ class AuraNiif extends UserComponent
     public function createMoviNiifByMovi($comprob, $numero)
     {
         $condition = "comprob = '$comprob' AND numero= '$numero'";
-        //throw new Exception("createMoviNiifByMovi: " . $condition);
-
         $movis = $this->Movi->setTransaction($this->_transaction)->find(array(
             "conditions" => $condition
         ));
@@ -1313,13 +1311,18 @@ class AuraNiif extends UserComponent
 
             $this->MoviNiif->setTransaction($this->_transaction)->deleteAll($condition);
 
+            $period = null;
             foreach ($movis as $movi) {
+            	
+            	if ($period === null) {
+            		$fechaPeriodo = new Date($movi->getFecha());
+            		$period = $fechaPeriodo->getPeriod() - 1;
+            	}
 
                 $cuentaMovi = $movi->readAttribute('cuenta');
 
                 $cuenta = BackCacher::getCuenta($cuentaMovi);
 
-                //throw new Exception(print_r($cuenta, true));
                 $cuentaNiif = $cuenta->getCuentaNiif();
                 if (!$cuentaNiif && $this->debug == true) {
                     throw new AuraNiifException("La cuenta '$cuentaMovi' no tiene parametrizada la cuenta NIIF");
@@ -1341,15 +1344,72 @@ class AuraNiif extends UserComponent
                     $moviNiif->writeAttribute('cuenta', $cuentaNiif);
 
                     if (!$moviNiif->save()) {
-
                         foreach ($moviNiif->getMessages() as $message) {
                             throw new AuraNiifException($message->getMessage());
                         }
-
                     }
 
-                }
+                    $cuentasNiif = BackCacher::getCuentaNiif($cuentaNiif);
+					if ($cuentasNiif && $cuentasNiif->getPideNit() == 'S') {
 
+						$nit = $moviNiif->getNit();
+						$valor = $moviNiif->getValor();
+						$debcre = $moviNiif->getDebCre();
+						
+						$saldosNiif = $this->SaldosNiif->findFirst(
+							"cuenta='$cuentaNiif' AND nit='$nit' AND ano_mes=" . $period
+						);
+						
+						if ($saldosNiif == false) {
+							$saldosNiif = new SaldosNiif();
+							$saldosNiif->setTransaction($this->_transaction);
+							$saldosNiif->setCuenta($cuentaNiif);
+							$saldosNiif->setNit($nit);
+							$saldosNiif->setAnoMes($period);
+							$saldosNiif->setDepre('N');
+
+							if($debcre=='C'){
+								$saldosNiif->setDebe(0);
+								$saldosNiif->setHaber($valor);
+								$saldosNiif->setSaldo(-$valor);
+							} else {
+								$saldosNiif->setDebe($valor);
+								$saldosNiif->setHaber(0);
+								$saldosNiif->setSaldo($valor);
+							}
+						} else {
+							$saldosNiif->setTransaction($this->_transaction);
+							if ($debcre == 'C') {
+								$haber = $saldosNiif->getHaber() + $valor;
+								$saldosNiif->setHaber($haber);
+								$saldosNiif->setSaldo($saldosNiif->getDebe() - $haber);
+								unset($haber);
+							} else {
+								$debe = $saldosNiif->getDebe() + $valor;
+								$saldosNiif->setDebe($debe);
+								$saldosNiif->setSaldo($debe - $saldosNiif->getHaber());
+								unset($debe);
+							}
+						}
+						if ($saldosNiif->save() == false) {
+							if ($this->_externalTransaction == true) {
+								foreach ($saldosNiif->getMessages() as $message) {
+									$this->_transaction->rollback('saldosNiif: ' . $message->getMessage() . '. ' . 
+										$saldosNiif->inspect() . '. ', 
+										$message->getCode()
+									);
+								}
+							} else {
+								foreach ($saldosNiif->getMessages() as $message) {
+									throw new AuraException('saldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . 
+										'. ', $message->getCode()
+									);
+								}
+							}
+						}
+						unset($saldosNiif);
+					}
+                }
                 unset($movi);
             }
 
@@ -1398,5 +1458,16 @@ class AuraNiif extends UserComponent
 			}
 			unset($saldosNiif);
 		}
+	}
+
+	public function cerrarPeriodoByMovi($movis)
+	{
+		foreach ($movis as $movi) {
+			//Create movi niif
+	        $comprob = BackCacher::getComprob($movi->getComprob());
+	        if ($comprob && $comprob->getTipoMoviNiif() == 'I') {
+	            $this->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
+	        }
+	    }
 	}
 }

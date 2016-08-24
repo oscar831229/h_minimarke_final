@@ -756,6 +756,8 @@ class BalanceController extends ApplicationController
 				'saldoAnterior' => 0
 			);
 
+			//throw new Exception("cuenta='{$codigoCuenta}' AND ano_mes='{$periodoAnterior}'");
+
 			$saldosNiif = $this->SaldosNiif->findFirst("cuenta='{$codigoCuenta}' AND ano_mes='{$periodoAnterior}'");
 			if ($saldosNiif==false) {
 				$balance[$codigoCuenta]['saldoAnterior'] = 0;
