@@ -1316,7 +1316,7 @@ class AuraNiif extends UserComponent
             	
             	if ($period === null) {
             		$fechaPeriodo = new Date($movi->getFecha());
-            		$period = $fechaPeriodo->getPeriod() - 1;
+            		$period = Date::subPeriodo($fechaPeriodo->getPeriod(), 1);
             	}
 
                 $cuentaMovi = $movi->readAttribute('cuenta');

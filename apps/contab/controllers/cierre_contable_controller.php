@@ -81,9 +81,9 @@ class Cierre_ContableController extends ApplicationController
                     }
                 }
             }
-            if ($fechaCierre->getYear()>$ultimoCierre->getYear()) {
+            /*if ($fechaCierre->getYear()>$ultimoCierre->getYear()) {
                 $transaction->rollback('Debe hacer el cierre anual primero '.$fechaCierre->getYear().' '.$ultimoCierre->getYear());
-            }
+            }*/
 
             $periodoCierre = $fechaCierre->getPeriod();
             $periodoUltimoCierre = $ultimoCierre->getPeriod();
