@@ -118,6 +118,17 @@
 						)) ?>
 					</td>
 				</tr>
+				<tr>
+					<td align="right"><label for="porc_retenc">Porcentaje de Retenci&oacute;n</label></td>
+					<td><?php echo Tag::numericField(array('porc_retenc', 'size' => 3, 'maxlength' => 3)) ?>%</td>
+					<td align="right"><label for="usa_revelacion">Usa revelaciones?</label></td>
+					<td>
+						<?php echo Tag::selectStatic('usa_revelacion', array(
+							'N' => 'NO',
+							'S' => 'SI'
+						)) ?>
+					</td>
+				</tr>
 			</table>
 			<table width="75%" align="center">
 				<tr>

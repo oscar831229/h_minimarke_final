@@ -226,7 +226,7 @@ class CuentasController extends HyperFormController {
 				'filters' => array('double')
 			),
 			'cta_iva' => array(
-				'single' => 'Cuenta Retención',
+				'single' => 'Cuenta Iva',
 				'type' => 'cuenta',
 				'notBrowse' => true,
 				'notSearch' => true,
