@@ -1460,14 +1460,248 @@ class AuraNiif extends UserComponent
 		}
 	}
 
-	public function cerrarPeriodoByMovi($movis)
+	public function cerrarPeriodoByMovi($movis, $fechaCierre)
 	{
+		$fechaCierre = new Date($fechaCierre);
+		$periodoCierre = $fechaCierre->getPeriod();
+		$periodoUltimoCierre = Date::subPeriodo($periodoCierre, 1);
+
+		$fechaUltimoCierre = substr($periodoUltimoCierre, 0, 4) . '-' . substr($periodoUltimoCierre, 4, 2) . '-01';
+		$fechaUltimoCierre = new Date($fechaUltimoCierre);
+		$fechaUltimoCierre->toLastDayOfMonth();
+		$ultimoCierre = $fechaUltimoCierre->getDate();
+		//throw new Exception("ultimoCierre: $ultimoCierre", 1);
+		
+
+		// Limpiamos este periodo
+		$this->SaldosNiif->setTransaction($this->_transaction)->deleteAll("ano_mes='$periodoCierre'");
+
+		// Creamos saldos base de anterior periodo a este nuevo periodo
+		$conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0 OR base_grab!=0)";
+        $saldosNiifObj = $this->SaldosNiif->setTransaction($this->_transaction)->find($conditions);
+        foreach ($saldosNiifObj as $saldonAnterior) {
+            $saldosNiif = new SaldosNiif();
+            $saldosNiif->setTransaction($this->_transaction);
+            $saldosNiif->setCuenta($saldonAnterior->getCuenta());
+            $saldosNiif->setNit(trim($saldonAnterior->getNit()));
+            $saldosNiif->setAnoMes($periodoCierre);
+            $saldosNiif->setDebe($saldonAnterior->getDebe());
+            $saldosNiif->setHaber($saldonAnterior->getHaber());
+            $saldosNiif->setSaldo($saldonAnterior->getSaldo());
+            $saldosNiif->setBaseGrab($saldonAnterior->getBaseGrab());
+            $saldosNiif->setDepre('N');
+            if ($saldosNiif->save()==false) {
+                foreach ($saldosNiif->getMessages() as $message) {
+                    throw new Exception('Saldos Niif: '.$message->getMessage().'. '.$saldosNiif->inspect());
+                }
+            }
+            unset($saldosNiif,$saldonAnterior);
+        }
+        unset($conditions,$saldosNiifObj);
+
+        // Incluir saldos niif del movimiento de solo niif
+		$conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
+		//throw new Exception($conditions, 1);
+        $moviNiifs = $this->MoviNiif->setTransaction($this->_transaction)->find($conditions);
+		$this->recalcularSaldosNiifByMoviNiif($moviNiifs);
+		
+		//Creamos MoviNiif por el Movi
 		foreach ($movis as $movi) {
-			//Create movi niif
-	        $comprob = BackCacher::getComprob($movi->getComprob());
-	        if ($comprob && $comprob->getTipoMoviNiif() == 'I') {
-	            $this->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
+			$comprob = BackCacher::getComprob($movi->getComprob());
+	        if ($comprob && $comprob->getTipoMoviNiif() != 'I') {
+	        	throw new Exception("El comprobante '{$movi->getComprob()}' no esta habilitado para ingresar movimiento NIIF", 1);    
 	        }
+	        $this->createMoviNiifByMovi($movi->getComprob(), $movi->getNumero());
 	    }
+	}
+
+	/**
+	 * Inserta un comprobante en movi_niif
+	 *
+	 * @param  string $comprob
+	 * @param  integer $numero
+	 */
+	public function insertMoviNiifByRecepNiif($comprob, $numero)
+	{
+		$key = $comprob . "-" . $numero;
+		$this->removeMoviNiif($comprob, $numero);
+
+		$recepNiifs = $this->Recepniif->setTransaction($this->_transaction)->find(
+			"comprob='" . $comprob . "' AND numero='" . $numero . "'"
+		);
+
+		$period = null;
+		foreach ($recepNiifs as $recepNiif) {
+
+			if ($period === null) {
+        		$fechaPeriodo = new Date($recepNiif->getFecha());
+        		$period = $fechaPeriodo->getPeriod();
+        	}
+
+			$moviNiif = new MoviNiif();
+			$moviNiif->setTransaction($this->_transaction);
+			foreach ($recepNiif->getAttributes() as $field) {
+				$moviNiif->writeAttribute($field, $recepNiif->readAttribute($field));
+			}
+			$moviNiif->save();
+			$cuentaNiif = $moviNiif->getCuenta();
+
+			$cuentasNiif = BackCacher::getCuentaNiif($cuentaNiif);
+			if ($cuentasNiif && $cuentasNiif->getPideNit() == 'S') {
+
+				$nit = $moviNiif->getNit();
+				$valor = $moviNiif->getValor();
+				$debcre = $moviNiif->getDebCre();
+				
+				$saldosNiif = $this->SaldosNiif->findFirst(
+					"cuenta='$cuentaNiif' AND nit='$nit' AND ano_mes=" . $period
+				);
+				
+				if ($saldosNiif == false) {
+					$saldosNiif = new SaldosNiif();
+					$saldosNiif->setTransaction($this->_transaction);
+					$saldosNiif->setCuenta($cuentaNiif);
+					$saldosNiif->setNit($nit);
+					$saldosNiif->setAnoMes($period);
+					$saldosNiif->setDepre('N');
+
+					if($debcre=='C'){
+						$saldosNiif->setDebe(0);
+						$saldosNiif->setHaber($valor);
+						$saldosNiif->setSaldo(-$valor);
+					} else {
+						$saldosNiif->setDebe($valor);
+						$saldosNiif->setHaber(0);
+						$saldosNiif->setSaldo($valor);
+					}
+				} else {
+					$saldosNiif->setTransaction($this->_transaction);
+					if ($debcre == 'C') {
+						$haber = $saldosNiif->getHaber() + $valor;
+						$saldosNiif->setHaber($haber);
+						$saldosNiif->setSaldo($saldosNiif->getDebe() - $haber);
+						unset($haber);
+					} else {
+						$debe = $saldosNiif->getDebe() + $valor;
+						$saldosNiif->setDebe($debe);
+						$saldosNiif->setSaldo($debe - $saldosNiif->getHaber());
+						unset($debe);
+					}
+				}
+				if ($saldosNiif->save() == false) {
+					if ($this->_externalTransaction == true) {
+						foreach ($saldosNiif->getMessages() as $message) {
+							$this->_transaction->rollback('saldosNiif: ' . $message->getMessage() . '. ' . 
+								$saldosNiif->inspect() . '. ', 
+								$message->getCode()
+							);
+						}
+					} else {
+						foreach ($saldosNiif->getMessages() as $message) {
+							throw new AuraException('saldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . 
+								'. ', $message->getCode()
+							);
+						}
+					}
+				}
+				unset($saldosNiif);
+			}
+		}
+		Flash::success('Se grabó el comprobante ' . $key);
+	}
+
+	/**
+	 * Borra un comprobante en movi_niif si existe
+	 *
+	 * @param  string $comprob
+	 * @param  integer $numero
+	 */
+	public function removeMoviNiif($comprob, $numero)
+	{
+		$moviNiifs = $this->MoviNiif->setTransaction($this->_transaction)->find(
+			"comprob='" . $comprob . "' AND numero='" . $numero . "'"
+		);
+
+		if (count($moviNiifs)) {
+			throw new Exception("Actualmente existe el comprobante '$comprob-$numero'");
+		}
+
+		foreach ($moviNiifs as $moviNiif) {
+			$moviNiif->delete();
+		}
+	}
+
+	public function recalcularSaldosNiifByMoviNiif($moviNiifs)
+	{
+		$period = null;
+		foreach ($moviNiifs as $moviNiif) {
+			
+			if ($period === null) {
+        		$fechaPeriodo = new Date($moviNiif->getFecha());
+        		$period = $fechaPeriodo->getPeriod();
+        	}
+
+			$cuentaNiif = $moviNiif->getCuenta();
+			$cuentasNiif = BackCacher::getCuentaNiif($cuentaNiif);
+			if ($cuentasNiif && $cuentasNiif->getEsAuxiliar() == 'S') {
+
+				$nit = $moviNiif->getNit();
+				$valor = $moviNiif->getValor();
+				$debcre = $moviNiif->getDebCre();
+				
+				$saldosNiif = $this->SaldosNiif->findFirst(
+					"cuenta='$cuentaNiif' AND nit='$nit' AND ano_mes=" . $period
+				);
+				
+				if ($saldosNiif == false) {
+					$saldosNiif = new SaldosNiif();
+					$saldosNiif->setTransaction($this->_transaction);
+					$saldosNiif->setCuenta($cuentaNiif);
+					$saldosNiif->setNit($nit);
+					$saldosNiif->setAnoMes($period);
+					$saldosNiif->setDepre('N');
+
+					if($debcre=='C'){
+						$saldosNiif->setDebe(0);
+						$saldosNiif->setHaber($valor);
+						$saldosNiif->setSaldo(-$valor);
+					} else {
+						$saldosNiif->setDebe($valor);
+						$saldosNiif->setHaber(0);
+						$saldosNiif->setSaldo($valor);
+					}
+				} else {
+					$saldosNiif->setTransaction($this->_transaction);
+					if ($debcre == 'C') {
+						$haber = $saldosNiif->getHaber() + $valor;
+						$saldosNiif->setHaber($haber);
+						$saldosNiif->setSaldo($saldosNiif->getDebe() - $haber);
+						unset($haber);
+					} else {
+						$debe = $saldosNiif->getDebe() + $valor;
+						$saldosNiif->setDebe($debe);
+						$saldosNiif->setSaldo($debe - $saldosNiif->getHaber());
+						unset($debe);
+					}
+				}
+				if ($saldosNiif->save() == false) {
+					if ($this->_externalTransaction == true) {
+						foreach ($saldosNiif->getMessages() as $message) {
+							$this->_transaction->rollback('saldosNiif: ' . $message->getMessage() . '. ' . 
+								$saldosNiif->inspect() . '. ', 
+								$message->getCode()
+							);
+						}
+					} else {
+						foreach ($saldosNiif->getMessages() as $message) {
+							throw new AuraException('saldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . 
+								'. ', $message->getCode()
+							);
+						}
+					}
+				}
+				unset($saldosNiif);
+			}
+		}
 	}
 }

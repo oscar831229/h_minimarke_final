@@ -272,7 +272,7 @@ class Cierre_ContableController extends ApplicationController
 
                 $auraNiif = new AuraNiif();
                 $auraNiif->setTransaction($transaction);
-                $auraNiif->cerrarPeriodoByMovi($movis);
+                $auraNiif->cerrarPeriodoByMovi($movis, $fechaCierre);
 
                 $transaction->commit();
 

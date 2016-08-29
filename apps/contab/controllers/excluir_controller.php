@@ -57,9 +57,9 @@ class ExcluirController extends ApplicationController {
 
 		$this->setResponse('json');
 
-		$serverId = $this->getPost('servidorId', 'int');
 		$year = $this->getPost('year', 'int');
 		$month = $this->getPost('month', 'int');
+		$serverId = $this->getPost('servidorId', 'int');
 		$reportType = $this->getPostParam('reportType', 'alpha');
 
 		try {
@@ -81,9 +81,10 @@ class ExcluirController extends ApplicationController {
 
 		$this->setResponse('json');
 
+		$origen   = $this->getPost('origen');
 		$fechaIni = $this->getPost('fechaIni', 'date');
 		$fechaFin = $this->getPost('fechaFin', 'date');
-		$comprob = $this->getPost('comprob', 'comprob');
+		$comprob  = $this->getPost('comprob', 'comprob');
 		$reportType = "csv";
 
 		try {
@@ -97,7 +98,12 @@ class ExcluirController extends ApplicationController {
 				$where .= " AND comprob='$comprob'";
 			}
 
+			$modelName = 'Movi';
 			$tableName = 'movi';
+			if ($origen == 'N') {
+				$tableName = 'movi_niif';
+				$modelName = 'MoviNiif';
+			}
 
 			$db = DbBase::rawConnect();
 
@@ -109,7 +115,11 @@ class ExcluirController extends ApplicationController {
 				$schema = $config2->database->name;
 			}
 
-			$model = EntityManager::getEntityInstance($tableName);
+			$model = EntityManager::getEntityInstance($modelName);
+			$rows = $model->find($where);
+			if (!count($rows)) {
+				throw new Exception("No se encontraron registros");
+			}
 			$modelTableName = $model->getSource();
 
 			//file_put_contents($path, "TEMPORALY");

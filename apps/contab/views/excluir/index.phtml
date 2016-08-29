@@ -29,6 +29,12 @@
 						<td valign="top" align="left" width="65%">
 							<table align="center">
 								<tr>
+									<td align="right"><label for="origen">Origen</label></td>
+									<td>
+										<?php echo Tag::selectStatic('origen', array("M" => "Normal", "N" => "NIIF")) ?>
+									</td>
+								</tr>
+								<tr>
 									<td align="right"><label for="fechaIni">Fecha Inicial</label></td>
 									<td><?php echo Tag::dateField(array('fechaIni')) ?></td>
 								</tr>

@@ -66,8 +66,8 @@ class IncluirController extends ApplicationController
 
 			$this->transaction = TransactionManager::getUserTransaction();
 
-			if ($archivo->getFileType()!='text/csv') {
-				$message = 'Tipo de archivo incorrecto debe ser un CSV separado por "|" ' . $archivo->getFileType();
+			if (!in_array($archivo->getFileType(), array('text/csv', 'text/plain'))) {
+				$message = 'Tipo de archivo incorrecto debe ser un archivo de texto separado por "|" ' . $archivo->getFileType();
 				$this->transaction->rollback($message);
 			}
 
@@ -230,6 +230,7 @@ class IncluirController extends ApplicationController
 
 			$numberLine = 1;
 
+			$empresa = $this->Empresa->findFirst();
 			$deleteStatus = EntityManager::get("Recepniif")->setTransaction($this->transaction)->deleteAll();
 
 			foreach ($lines as $line) {
@@ -264,6 +265,10 @@ class IncluirController extends ApplicationController
 				}
 				$recep->setFVence($this->filter($fVence, 'date'));
 
+				if ($recep->getFecha() < $empresa->getFCierrec()) {
+					throw new Exception("El movimiento a importar tiene fecha en el pasado, debe abrir el periodo");
+				}
+
 				if ($recep->save()==false) {
 					foreach ($recep->getMessages() as $message)	{
 						throw new Exception($message->getMessage() . ' en la lÃ­nea ' . $numberLine . print_r($line, true));
@@ -279,59 +284,17 @@ class IncluirController extends ApplicationController
 
 			$receps = $this->Recepniif->setTransaction($this->transaction)->find(array('order' => 'comprob,numero,fecha', 'group' => 'comprob,numero'));
 
+			$auraNiif = new AuraNiif();
+            $auraNiif->setTransaction($this->transaction);
 			foreach ($receps as $recep) {
-				$this->insertMoviNiif($recep->getComprob(), $recep->getNumero());
+				$auraNiif->insertMoviNiifByRecepNiif($recep->getComprob(), $recep->getNumero());
 				$numberLine++;
 			}
 			$this->transaction->commit();
 		} catch(Exception $e) {
-   			Flash::error($e->getMessage());
+			Flash::error($e->getMessage());
+			$this->transaction->rollback();
    		}
 	}
 
-	/**
-	 * Inserta un comprobante en movi_niif
-	 *
-	 * @param  string $comprob
-	 * @param  integer $numero
-	 */
-	private function insertMoviNiif($comprob, $numero)
-	{
-		$key = $comprob . "-" . $numero;
-		$this->removeMoviNiif($comprob, $numero);
-
-		$recepNiifs = $this->Recepniif->setTransaction($this->transaction)->find(
-			"comprob='" . $comprob . "' AND numero='" . $numero . "'"
-		);
-
-		foreach ($recepNiifs as $recepNiif) {
-			$moviNiif = new MoviNiif();
-			foreach ($recepNiif->getAttributes() as $field) {
-				$moviNiif->writeAttribute($field, $recepNiif->readAttribute($field));
-			}
-			$moviNiif->save();
-		}
-		Flash::success('Se grabó el comprobante ' . $key);
-	}
-
-	/**
-	 * Borra un comprobante en movi_niif si existe
-	 *
-	 * @param  string $comprob
-	 * @param  integer $numero
-	 */
-	private function removeMoviNiif($comprob, $numero)
-	{
-		$moviNiifs = $this->MoviNiif->setTransaction($this->transaction)->find(
-			"comprob='" . $comprob . "' AND numero='" . $numero . "'"
-		);
-
-		if (count($moviNiifs)) {
-			throw new Exception("Actualmente existe el comprobante '$comprob-$numero'");
-		}
-
-		foreach ($moviNiifs as $moviNiif) {
-			$moviNiif->delete();
-		}
-	}
 }
