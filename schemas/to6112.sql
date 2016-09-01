@@ -19,8 +19,11 @@ alter table niif drop column cuenta_niif;
 alter table niif add column usa_revelacion char(1) null;
 update niif set usa_revelacion = 'S';
 
-create table saldos_niif like saldosn;
-alter table saldos_niif add column depre char(1) not null default 'N';
+create table saldosn_niif like saldosn;
+alter table saldosn_niif add column depre char(1) not null default 'N';
+
+create table saldosc_niif like saldosc;
+alter table saldosc_niif add column depre char(1) not null default 'N';
 
 CREATE TABLE `movibackup` (
   `comprob` char(3) NOT NULL,

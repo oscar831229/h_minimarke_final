@@ -240,15 +240,20 @@ class Cierre_ContableController extends ApplicationController
             unset($conditions,$saldoscaObj);
 
             $conditions = "fecha>'$ultimoCierre' AND fecha<='$fechaCierre'";
-            $movis = $this->Movi->setTransaction($transaction)->findForUpdate(array($conditions, 'group' => 'comprob,numero', 'columns' => 'comprob,numero'));
+            $movis = $this->Movi->setTransaction($transaction)->findForUpdate(
+                array(
+                    $conditions, 
+                    'group' => 'comprob,numero'
+                )
+            );
             foreach ($movis as $movi) {
                 try
                 {
                     $messages = Aura::saveOnPeriod($movi->getComprob(), $movi->getNumero(), $periodoCierre);
                     if (count($messages)) {
                         $allMessages[] = array(
-                            'comprob' => $movi->getComprob(),
-                            'numero' => $movi->getComprob(),
+                            'comprob'  => $movi->getComprob(),
+                            'numero'   => $movi->getComprob(),
                             'messages' => $messages
                         );
                     }

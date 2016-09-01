@@ -758,12 +758,12 @@ class BalanceController extends ApplicationController
 
 			//throw new Exception("cuenta='{$codigoCuenta}' AND ano_mes='{$periodoAnterior}'");
 
-			$saldosNiif = $this->SaldosNiif->findFirst("cuenta='{$codigoCuenta}' AND ano_mes='{$periodoAnterior}'");
-			if ($saldosNiif==false) {
+			$saldoscNiif = $this->SaldoscNiif->findFirst("cuenta='{$codigoCuenta}' AND ano_mes='{$periodoAnterior}'");
+			if ($saldoscNiif==false) {
 				$balance[$codigoCuenta]['saldoAnterior'] = 0;
 			} else {
-				$balance[$codigoCuenta]['saldoAnterior'] = $saldosNiif->getSaldo();
-				$totalSaldoAnterior += $saldosNiif->getSaldo();
+				$balance[$codigoCuenta]['saldoAnterior'] = $saldoscNiif->getSaldo();
+				$totalSaldoAnterior += $saldoscNiif->getSaldo();
 			}
 
 			//verificamos que siempre sea el primer dia del mes apra el saldo
@@ -900,14 +900,12 @@ class BalanceController extends ApplicationController
 						}
 					}
 
-					http://hfosdev.bhteck.com/h/contab#unset($valorRow);
-
 					if ($detallado == 'S') {
 						if ($cuenta != false) {
 							if ($cuenta->getPideNit() == 'S') {
 								$nitsTerceros = array();
 
-								foreach ($this->SaldosNiif->distinct(array('nit', 'conditions' => "cuenta='$codigoCuenta'", 'order' => 'nit')) as $numeroNit) {
+								foreach ($this->SaldoscNiif->distinct(array('nit', 'conditions' => "cuenta='$codigoCuenta'", 'order' => 'nit')) as $numeroNit) {
 									$numeroNit = trim($numeroNit);
 									$nitsTerceros[$numeroNit] = true;
 								}
@@ -940,14 +938,14 @@ class BalanceController extends ApplicationController
 										 * este caso se presento por el nit 17 en la cuenta 135517*** no debia aprecer porque en saldosc en
 										 * 201302 estaba con saldo 0. Por favor no cambiar
 										 */
-										$saldoscTemp = $this->SaldosNiif->findFirst("ano_mes='{$empresa1->getAnoc()}12' AND cuenta='$codigoCuenta'");
+										$saldoscTemp = $this->SaldoscNiif->findFirst("ano_mes='{$empresa1->getAnoc()}12' AND cuenta='$codigoCuenta'");
 										if ($saldoscTemp) {
 											$saldoAnterior = $saldoscTemp->getSaldo();
 										}
 
 									} else {
 										$conditions = "ano_mes = '$periodoAnterior' AND nit='$numeroNit' AND cuenta='$codigoCuenta'";
-										$saldon = $this->SaldosNiif->findFirst($conditions);
+										$saldon = $this->SaldoscNiif->findFirst($conditions);
 										if ($saldon==false) {
 											$saldoAnterior = 0;
 										} else {

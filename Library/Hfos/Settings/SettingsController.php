@@ -22,86 +22,103 @@ class SettingsController extends ApplicationController
 
     private static $_settings = array(
         'CO' => array(
-            'd_movi_limite' => array(
-                'type' => 'int',
-                'description' => 'Límite de días que puede tener en el futuro un comprobante',
-                'filters' => array('int')
-            ),
-            'comprob_cierre' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante de Cierre',
-                'filters' => array('comprob')
-            ),
-            'comprob_entactivo' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Entradas Activos',
-                'filters' => array('comprob')
-            ),
-            'comprob_deprec' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Depreciación',
-                'filters' => array('comprob')
-            ),
-            'comprob_amortiz' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Causación Diferidos',
-                'filters' => array('comprob')
-            ),
-            'comprob_cheque' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Contabilizacion Cheques',
-                'filters' => array('comprob')
-            ),
-            'comprob_ordenes' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Ordenes Servicio',
-                'filters' => array('comprob')
-            ),
-            'comprob_ventas' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Ventas',
-                'filters' => array('comprob')
-            ),
-            'comprob_ingresos' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Ingresos',
-                'filters' => array('comprob')
-            ),
-            'comprob_rc'        => array(
-                'description'   => 'Comprobante de recibo de caja',
-                'type'          => 'comprob',
-                'filters'       => array('alpha')
-            ),
-            'comprob_proveedores1' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Proveedores 1',
-                'filters' => array('comprob')
-            ),
-            'comprob_proveedores2' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Proveedores 2',
-                'filters' => array('comprob')
-            ),
-            'comprob_depre_niif' => array(
-                'type' => 'comprob',
-                'description' => 'Comprobante Depreciación NIIF',
-                'filters' => array('comprob')
-            ),
-            'cuenta_depre_niif' => array(
-                'description'   => 'Cuenta que cruza depreciación NIIF',
-                'type'          => 'cuenta',
-                'filters'       => array('cuentas')
-            ),
-            'porce_depre_niif' => array(
-                'type' => 'int',
-                'description' => 'Porcentaje Depreciación Cartera NIIF',
-                'filters' => array('int')
-            ),
-            'porce_meses_niif' => array(
-                'type' => 'int',
-                'description' => 'Meses para depreciar Cartera NIIF',
-                'filters' => array('int')
-            ),
+            'activeTabs' => true,
+            'tabs' => array(
+                'Normal' => array(
+                    'd_movi_limite' => array(
+                        'type' => 'int',
+                        'description' => 'Límite de días que puede tener en el futuro un comprobante',
+                        'filters' => array('int')
+                    ),
+                    'comprob_cierre' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante de Cierre',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_entactivo' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Entradas Activos',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_deprec' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Depreciación',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_amortiz' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Causación Diferidos',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_cheque' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Contabilizacion Cheques',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_ordenes' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Ordenes Servicio',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_ventas' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Ventas',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_ingresos' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Ingresos',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_rc'        => array(
+                        'description'   => 'Comprobante de recibo de caja',
+                        'type'          => 'comprob',
+                        'filters'       => array('alpha')
+                    ),
+                    'comprob_proveedores1' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Proveedores 1',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_proveedores2' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Proveedores 2',
+                        'filters' => array('comprob')
+                    )
+                ),
+                'NIIF' => array(
+                    'period_saldos_ini_niif' => array(
+                        'type' => 'int',
+                        'description' => 'Periodo saldos iniciales NIIF',
+                        'filters' => array('int')
+                    ),
+                    'comprob_saldos_init_niif' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante saldos iniciales NIIF',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_depre_niif' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante Depreciación NIIF',
+                        'filters' => array('comprob')
+                    ),
+                    'cuenta_depre_niif' => array(
+                        'description'   => 'Cuenta que cruza depreciación NIIF',
+                        'type'          => 'cuenta',
+                        'filters'       => array('cuentas')
+                    ),
+                    'porce_depre_niif' => array(
+                        'type' => 'int',
+                        'description' => 'Porcentaje Depreciación Cartera NIIF',
+                        'filters' => array('int')
+                    ),
+                    'porce_meses_niif' => array(
+                        'type' => 'int',
+                        'description' => 'Meses para depreciar Cartera NIIF',
+                        'filters' => array('int')
+                    )
+                )
+            )
         ),
         'IN' => array(
             'd_vence' => array(
