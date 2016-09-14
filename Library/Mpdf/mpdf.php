@@ -15002,6 +15002,8 @@ function WriteFixedPosHTML($html='',$x, $y, $w, $h, $overflow='visible', $boundi
 	$actual_h = $this->y - $y;
 	$use_w = $w;
 	$use_h = $h;
+    if (!$use_h) { $use_h = 1; }
+    if (!$use_w) { $use_w = 1; $w = 1; }
 	$ratio = $actual_h / $use_w;
 
 	if ($overflow!='hidden' && $overflow!='visible') {
