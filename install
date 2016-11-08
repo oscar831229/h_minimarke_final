@@ -65,7 +65,15 @@ setIni identity
 setIni pos2
 
 cd "$dirPath/schemas"
-echo "mysql -uroot -p r$instance < to6110.sql"
-mysql -uroot -p "r$instance" < to6110.sql
-mysql -uroot -p "r$instance" < to6111.sql
-mysql -uroot -p "r$instance" < to6112.sql
+
+if [[ -z "$instance" ]]; then
+    echo "mysql -uroot -p ramocol < to6110.sql"
+    mysql -uroot -p "ramocol" < to6110.sql
+    mysql -uroot -p "ramocol" < to6111.sql
+    mysql -uroot -p "ramocol" < to6112.sql
+else 
+    echo "mysql -uroot -p r$instance < to6110.sql"
+    mysql -uroot -p "r$instance" < to6110.sql
+    mysql -uroot -p "r$instance" < to6111.sql
+    mysql -uroot -p "r$instance" < to6112.sql
+fi
