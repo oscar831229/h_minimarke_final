@@ -6,12 +6,15 @@ instance=$1
 dirPath=`pwd`
 gitPath="/opt/local/apache2/htdocs/h/"
 
+cd $dirPath
+mkdir Library/Mpdf/tmp
+chmod -R 777 Library/Mpdf/tmp
+
+chmod -R 777 apps/identity/security/data
+
 cd public
 mkdir temp
 chmod 777 temp
-#ln -s /tmp temp
-
-
 
 cp index.config.php.dist index.config.php
 echo $dirPath
@@ -60,3 +63,9 @@ setIni default
 setIni contab
 setIni identity
 setIni pos2
+
+cd "$dirPath/schemas"
+echo "mysql -uroot -p r$instance < to6110.sql"
+mysql -uroot -p "r$instance" < to6110.sql
+mysql -uroot -p "r$instance" < to6111.sql
+mysql -uroot -p "r$instance" < to6112.sql
