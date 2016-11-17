@@ -68,3 +68,10 @@ alter table saldosc add column neto decimal(20,2) null;
 create table cartera_niif like cartera;
 alter table cartera_niif add column depre_porce int null;
 alter table cartera_niif add column depre_meses int null;
+
+CREATE TABLE depre_niif (
+  `comprob` VARCHAR(6) NOT NULL,
+  `numero` INT NOT NULL,
+  `periodo` INT NOT NULL,
+  `usuario_id` INT NOT NULL,
+  PRIMARY KEY (`comprob`, `numero`));
