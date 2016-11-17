@@ -667,7 +667,7 @@ class SociosCore extends UserComponent
 
         $nit = $socios->getIdentificacion();
         $tercero = EntityManager::get('Nits')->findFirst(array('conditions'=>'nit="'.$nit.'"'));
-        $nombre = $socios->getNumeroAccion()."/".$socios->getApellidos().' '.$socios->getNombres();
+        $nombre = sprintf("%04s",   $socios->getNumeroAccion())." - ".$socios->getApellidos().' '.$socios->getNombres();
         //throw new Exception($nombre);
         
         //Rcs::disable();
@@ -725,23 +725,20 @@ class SociosCore extends UserComponent
                 $clientes->setNumest(0);
                 $clientes->setLocnac(0);
                 $observaciones = "Se creo por maestro de socios";
+                $clientes->setCredito('S');
             }
-            $clientes->setCredito('S');
-            $clientes->setCredito('A');
 
-            if ($socios->getCobra()=='S') {
-                //$clientes->setCredito('S');
-                //$clientes->setEstsis("A");//Activo
-                //$observaciones = "Se asigno Credito Si por estar generando estado de cuenta en maestro de socios.";
+            if (!$socios->getEstadoFront()) {
+                $clientes->setEstsis('A');
             } else {
-                //$clientes->setCredito('N');
-                //$clientes->setEstsis("I");//Inctivo
-                //$observaciones = "Se asigno Credito No por no estar generando estado de cuenta en maestro de socios.";
+                //asigna el estado de maestro de socios
+                $clientes->setEstsis($socios->getEstadoFront());    
             }
+            
             $identity = IdentityManager::getActive();
             $clientes->setObservacion($clientes->getObservacion().",\n".date("Y-m-d H:i:s")." [{$identity['login']}]- ".$observaciones);
 
-            $clientes->setNombre($socios->getNumeroAccion()." // ".$socios->getNombres()." ".$socios->getApellidos());
+            $clientes->setNombre($nombre);
             $clientes->setAccion($socios->getNumeroAccion());
             $clientes->setDireccion($socios->getDireccionCasa());
 
@@ -1076,7 +1073,7 @@ class SociosCore extends UserComponent
             $periodo->setInteresesMora($interesMoraDefault);
 
             //Consecutivo segun fechas
-            $consecutivo = EntityManager::get('Consecutivos')->findFirst("numero_actual<numero_final");
+            $consecutivo = EntityManager::get('Consecutivos')->findFirst(array("conditions" => "numero_actual<numero_final", "order" => "id DESC"));
             if (!$consecutivo) {
                 throw new SociosException("El no hay consecutivos con numeros disponibles.");
             }
@@ -1376,6 +1373,49 @@ class SociosCore extends UserComponent
         //$facturaHotelObj = EntityManager::get("FacturasHotel")->find(array("MONTH(fecfac) = '$mes' AND YEAR(fecfac) = '$ano' AND cedula = '$nit' AND estado='A'"));
 
         $conditionsPos = "cedula='$nit' AND year(fecfac)=$ano AND month(fecfac)=$mes AND saldo>0 AND estado='A'";
+        //throw new SociosException($conditionsPos);
+        
+        $facturaHotelObj = EntityManager::get("FacturasHotel")->find($conditionsPos);
+
+        foreach ($facturaHotelObj as $facturaHotel)
+        {
+            $ret[(float) $facturaHotel->getNumfac()] = SociosCore::modelToArray($facturaHotel);
+            unset($facturaHotel);
+        }
+        unset($facturaHotelObj);
+        //throw new SociosException(print_r($ret,true));
+        
+        return $ret;
+    }
+
+    /**
+     * Obtiene las facturas directas generadas de socios
+     * @param int periodo
+     * @param string nit 
+     * @return array
+     */
+    public function getFacturasDirectasAll($periodo,$nit)
+    {
+        if (!$nit) {
+            throw new SociosException("getFacturasDirectas: Debe dar el nit a buscar");
+        }
+        
+        if (!$periodo) {
+            throw new SociosException("getFacturasDirectas: Debe dar el perido a buscar");
+        }
+        
+        $ano = substr($periodo,0,4);
+        $mes = substr($periodo,4,2);
+
+        //Se buscan es el mes anterior no el actual
+        $periodoAnterior = SociosCore::subPeriodo($periodo,1);
+        $anoAnte = substr($periodoAnterior,0,4);
+        $mesAnte = substr($periodoAnterior,4,2);
+
+        $ret = array();
+        //$facturaHotelObj = EntityManager::get("FacturasHotel")->find(array("MONTH(fecfac) = '$mes' AND YEAR(fecfac) = '$ano' AND cedula = '$nit' AND estado='A'"));
+
+        $conditionsPos = "cedula='$nit' AND year(fecfac)=$ano AND month(fecfac)=$mes AND estado='A'";
         //throw new SociosException($conditionsPos);
         
         $facturaHotelObj = EntityManager::get("FacturasHotel")->find($conditionsPos);
@@ -2191,8 +2231,8 @@ class SociosCore extends UserComponent
         $date1 = strtotime((string) $fechaSaldo);
         $date2 = strtotime((string) $cartera->getFEmision());
         $dateDiff = $date1 - $date2;
-        $days = floor($dateDiff/(60*60*24));        
-        return $days;
+        $days = floor($dateDiff/(60*60*24));    
+        return (int) $days;
     }
 
     /**
@@ -2205,9 +2245,8 @@ class SociosCore extends UserComponent
     {
         $days = SociosCore::getDays($cartera, $fechaSaldo);
         
-        $index = '';
-        if ($days) {
-            if ($days<=30) {
+        $index = '30';
+            if ($days<=31) {
                 $index = '30';
             } else {
                 if ($days<=60) {
@@ -2224,7 +2263,6 @@ class SociosCore extends UserComponent
                     }        
                 }
             }
-        }
 
         return $index;
     }
@@ -2321,9 +2359,9 @@ class SociosCore extends UserComponent
     }
 
     /**
-    * Resta meses al periodo
+    * suma meses al periodo
     */
-    public static function addPeriodo($periodo,$numMonth)
+    public static function addPeriodo($periodo, $numMonth)
     {
         $periodo = $periodo;
         $ano = substr($periodo,0,4);
@@ -2393,7 +2431,7 @@ class SociosCore extends UserComponent
         $diff28 = $sum28D - $sum28C;
 
         $saldoContab = $diff13 + $diff13C + $diff28;
-        //throw new SociosException("$saldoContab = $diff13 + $diff13C - abs($diff28);<br>".$queryBase13."<br>".$queryBase13C."<br>".$queryBase28);
+        //throw new SociosException("$saldoContab = $diff13 + $diff13C + $diff28;<br>".$queryBase13."<br>".$queryBase13C."<br>".$queryBase28);
         
         return $saldoContab;
     }
@@ -2416,6 +2454,45 @@ class SociosCore extends UserComponent
         }
 
         return $fieldValue;
+    }
+
+    /**
+     * Lee un archivo excel y devuelve un array multidimencional con los datos del mismo
+     * @param string $file archivo con ruta absoluta
+     * @return array
+     */
+    public static function obtenerDatosDeExcel($file)
+    {
+        Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
+        $arrData = array();
+        
+        $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        $objReader->setReadDataOnly(true);
+        
+        $objPHPExcel = $objReader->load($file);
+        $totalSheets = $objPHPExcel->getSheetCount(); // here 4
+        $allSheetName = $objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
+        $objWorksheet = $objPHPExcel->setActiveSheetIndex(0); // first sheet
+        $highestRow = $objWorksheet->getHighestRow(); // here 5
+        $highestColumn = $objWorksheet->getHighestColumn(); // here 'E'
+        $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);  // here 5
+        for ($row = 1; $row <= $highestRow; ++$row) {
+            for ($col = 0; $col <= $highestColumnIndex; ++$col) {
+                $value = $objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
+                if (is_array($arrData)) {
+                    $arrData[$row-1][$col] = $value;
+                }
+            }
+        }
+        
+        if (!count($arrData)) {
+            throw new SociosException("El archivo esta vacio", 1);
+        }
+        
+        unset($objReader);
+
+        return $arrData;
+        
     }
 
 }

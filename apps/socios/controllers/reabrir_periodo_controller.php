@@ -13,6 +13,8 @@
  * @version		$Id$
  */
 
+Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
+        
 /**
  * Reabrir_PeriodoController
  *
@@ -21,35 +23,28 @@
  */
 class Reabrir_PeriodoController extends ApplicationController {
 
-	public function initialize(){
+	public function initialize()
+	{
 		$controllerRequest = ControllerRequest::getInstance();
-		if($controllerRequest->isAjax()){
+		if ($controllerRequest->isAjax()) {
 			View::setRenderLevel(View::LEVEL_LAYOUT);
 		}
 		parent::initialize();
 	}
 
-	public function indexAction(){
+	public function indexAction()
+	{
 
-		try 
-		{
+		try {
+
 			$this->setParamToView('message', 'Reabre periodos cerrados');
 
-			$datosClub = $this->DatosClub->findFirst();
-			$fechaCierre = $datosClub->getFCierre();
-
-			if ($fechaCierre == '0000-00-00') {
-				$fechaCierre = SociosCore::getCurrentPeriodo();
-			}
-
-			$anteriorCierre = clone $fechaCierre;
-			$anteriorCierre->diffMonths(1);
-			$anteriorCierre->toLastDayOfMonth();
-			$this->setParamToView('anteriorCierre', $anteriorCierre);
-
-			$this->setParamToView('fechaCierre', $fechaCierre);
-		}
-		catch(Exception $e){
+			$periodoActual = SociosCore::getCurrentPeriodo();
+			$periodoAbrir = SociosCore::subPeriodo($periodoActual, 1);
+			
+			$this->setParamToView('periodoActual', $periodoActual);
+			$this->setParamToView('periodoAbrir', $periodoAbrir);
+		} catch (Exception $e) {
 			return array(
 				'status' => 'FAILED',
 				'message' => $e->getMessage()
@@ -58,7 +53,8 @@ class Reabrir_PeriodoController extends ApplicationController {
 		
 	}
 
-	public function reabrirAction(){
+	public function reabrirAction()
+	{
 
 		$this->setResponse('json');
 
@@ -70,60 +66,50 @@ class Reabrir_PeriodoController extends ApplicationController {
 			$allMessages = array();
 			$transaction = TransactionManager::getUserTransaction();
 
-			$datosClub = $this->DatosClub->findFirst();
-			$ultimoCierre = $datosClub->getFCierre();
+			$periodoActual = SociosCore::getCurrentPeriodo();
+			$periodoAbrir = SociosCore::subPeriodo($periodoActual, 1);
+			$yearAbrir = substr($periodoAbrir, 0, 4);
+			$monthAbrir = substr($periodoAbrir, 4, 2);
 
-			$fechaCierre = clone $ultimoCierre;
-			$fechaCierre->diffMonths(1);
-			$fechaCierre->toLastDayOfMonth();
-
-			$periodoCierre = $ultimoCierre->getPeriod();
-
-			$currentPeriod = SociosCore::getCurrentPeriodo();
+			//throw new SociosException("periodoActual: $periodoActual, periodoAbrir: $periodoAbrir", 1);
 
 			//Cierra los periodos mayor a el abierto
-			$periodoObj = EntityManager::get('Periodo')->setTransaction($transaction)->find(array('conditions'=>"periodo >= '$currentPeriod'"));
-			foreach ($periodoObj as $periodo) 
-			{
+			$periodoObj = EntityManager::get('Periodo')->setTransaction($transaction)->find(array('conditions'=>"periodo >= '$periodoActual'"));
+			foreach ($periodoObj as $periodo) {
 				$periodo->setTransaction($transaction);
 				$periodo->setCierre('S');
 				$periodo->setFacturado('N');
-				if ($periodo->save()==false) {
-					foreach ($periodo->getMessages() as $message)
-					{
-						$transaction->rollback('Periodo Cierrar nuevos periodos: '.$message->getMessage());
+				if ($periodo->save() == false) {
+					foreach ($periodo->getMessages() as $message) {
+						$transaction->rollback('Periodo Cierrar nuevos periodos: ' . $message->getMessage());
 					}
 				}
 			}
 			
-			$nuevoPeriodo = SociosCore::subPeriodo($currentPeriod,1);
-			//throw new Exception($nuevoPeriodo);
-
 			//Abre periodo actual
-			$periodoNew = EntityManager::get('Periodo')->setTransaction($transaction)->findFirst(array('conditions'=>"periodo = '$nuevoPeriodo'"));
-			if ($periodoNew!=false) {
+			$periodoNew = EntityManager::get('Periodo')->setTransaction($transaction)->findFirst(array('conditions'=>"periodo = '$periodoAbrir'"));
+			if ($periodoNew != false) {
 				$periodoNew->setTransaction($transaction);
 				$periodoNew->setCierre('N');
 				$periodoNew->setFacturado('N');
-				if ($periodoNew->save()==false) {
-					foreach ($periodoNew->getMessages() as $message)
-					{
-						$transaction->rollback('periodoNew: '.$message->getMessage());
+				if ($periodoNew->save() == false) {
+					foreach ($periodoNew->getMessages() as $message) {
+						$transaction->rollback('periodoNew: ' . $message->getMessage());
 					}
 				}
 			}
 
-			$anteriorCierre = $ultimoCierre;
-			$anteriorCierre->diffMonths(1);
-			$anteriorCierre->toLastDayOfMonth();
+			$ultimoCierre = new Date("$yearAbrir-$monthAbrir-01");
+			$fechaCierre = $ultimoCierre;
+			$fechaCierre->toLastDayOfMonth();
 
-			//throw new Exception($anteriorCierre->getDate());
+			//throw new Exception($fechaCierre->getDate());
 			
-			$datosClub->setFCierre($anteriorCierre);
-			if ($datosClub->save()==false) {
-				foreach ($datosClub->getMessages() as $message)
-				{
-					$transaction->rollback('datosClub: '.$message->getMessage());
+			$datosClub = EntityManager::get("DatosClub")->findFirst();
+			$datosClub->setFCierre($fechaCierre);
+			if ($datosClub->save() == false) {
+				foreach ($datosClub->getMessages() as $message) {
+					$transaction->rollback('datosClub: ' . $message->getMessage());
 				}
 			}
 
@@ -137,8 +123,8 @@ class Reabrir_PeriodoController extends ApplicationController {
 			$transaction->commit();
 			return array(
 				'status' => 'OK',
-				'anteriorCierre' => $anteriorCierre->getLocaleDate('long'),
-				'cierreActual' => $fechaCierre->getLocaleDate('short')
+				'periodoActual' => $periodoActual,
+				'periodoAbrir' => $periodoAbrir
 			);
 
 		}

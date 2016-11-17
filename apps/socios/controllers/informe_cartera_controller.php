@@ -52,19 +52,19 @@ class Informe_CarteraController extends ApplicationController
         try
         {
             Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
-            
-            $span = 13;
+
+            $span      = 13;
             $spanTotal = 5;
-            $iIni = 5;
-            $iFin = 12;
+            $iIni      = 5;
+            $iFin      = 12;
 
-            $fechaLimite = $this->getPostParam('fechaLimite', 'date');
+            $fechaLimite    = $this->getPostParam('fechaLimite', 'date');
 
-            $cuentaInicial = $this->getPostParam('cuentaInicial', 'cuentas');
-            $cuentaFinal = $this->getPostParam('cuentaFinal', 'cuentas');
-            $sociosActivos = $this->getPostParam('activos', 'int');
-            $sociosId = $this->getPostParam('socios_id', 'int');
-            $consolidado = $this->getPostParam('consolidado', 'int');
+            $cuentaInicial  = $this->getPostParam('cuentaInicial', 'cuentas');
+            $cuentaFinal    = $this->getPostParam('cuentaFinal', 'cuentas');
+            $sociosActivos  = $this->getPostParam('activos', 'int');
+            $sociosId       = $this->getPostParam('socios_id', 'int');
+            $consolidado    = $this->getPostParam('consolidado', 'int');
 
             if ($sociosId) {
                 $socios = BackCacher::getSocios($sociosId);
@@ -74,29 +74,31 @@ class Informe_CarteraController extends ApplicationController
             }
 
             //Cuentas de cartera de socios
-            $cuentasLike = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
-            $cuentaSaldoAFavor = Settings::get('cuenta_saldo_a_favor', 'SO');
-            
-            $conditions = array();
-            $conditions[] = "f_emision<='$fechaLimite' AND (cuenta LIKE '$cuentasLike' OR cuenta='$cuentaSaldoAFavor')";
+            $cuentasLike        = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
+            $cuentaSaldoAFavor  = Settings::get('cuenta_saldo_a_favor', 'SO');
+
+            //$conditions     = array("valor != 0");
+            $conditions     = array();
+            $conditions[]   = "f_emision <= '$fechaLimite' AND (cuenta LIKE '$cuentasLike' OR cuenta='$cuentaSaldoAFavor')";
+
 
             if ($sociosId) {
                 $conditions[] = "nit='{$socios->getIdentificacion()}'";
             }
 
             $reportType = $this->getPostParam('reportType', 'alpha');
-            $report = ReportBase::factory($reportType);
+            $report     = ReportBase::factory($reportType);
 
-            $titulo = new ReportText('CARTERA POR EDADES SOCIOS', array(
-                'fontSize' => 16,
+            $titulo     = new ReportText('CARTERA POR EDADES SOCIOS', array(
+                'fontSize'   => 16,
                 'fontWeight' => 'bold',
-                'textAlign' => 'center'
+                'textAlign'  => 'center'
             ));
 
             $titulo2 = new ReportText('Documentos por Vencimiento Hasta: '.$fechaLimite, array(
-                'fontSize' => 11,
+                'fontSize'   => 11,
                 'fontWeight' => 'bold',
-                'textAlign' => 'center'
+                'textAlign'  => 'center'
             ));
 
             $report->setHeader(array($titulo, $titulo2));
@@ -114,63 +116,63 @@ class Informe_CarteraController extends ApplicationController
                 '61 A 90',//9
                 '91 A 120',//10
                 '> 4 MESES',//11
-                'DESDE',//12
-                'DÍAS',//13
+                'DÍAS',//12
+                'CATEGORIZACIÓN'//13
             ));
 
             $report->setCellHeaderStyle(new ReportStyle(array(
-                'textAlign' => 'center',
+                'textAlign'       => 'center',
                 'backgroundColor' => '#eaeaea'
             )));
 
             $leftColumn = new ReportStyle(array(
                 'textAlign' => 'left',
-                'fontSize' => 11
+                'fontSize'  => 11
             ));
 
             $leftColumnBold = new ReportStyle(array(
-                'textAlign' => 'left',
-                'fontSize' => 11,
+                'textAlign'  => 'left',
+                'fontSize'   => 11,
                 'fontWeight' => 'bold'
             ));
 
             $rightColumn = new ReportStyle(array(
                 'textAlign' => 'right',
-                'fontSize' => 11,
+                'fontSize'  => 11,
             ));
 
             $rightColumnBold = new ReportStyle(array(
-                'textAlign' => 'right',
-                'fontSize' => 11,
+                'textAlign'  => 'right',
+                'fontSize'   => 11,
                 'fontWeight' => 'bold'
             ));
 
             $numberFormat = new ReportFormat(array(
-                'type' => 'Number',
+                'type'     => 'Number',
                 'decimals' => 2
             ));
 
-            $report->setColumnStyle(array(0, 1, 2, 3, 4), $leftColumn);
-            $report->setColumnStyle(array(5, 6, 7, 8, 9, 10, 11, 12, 13), $rightColumn);
-            $report->setColumnFormat(array(5, 6, 7, 8, 9, 10, 11, 12, 13), $numberFormat);
+            $report->setColumnStyle(array(0, 1, 2, 3, 4, 13), $leftColumn);
+            $report->setColumnStyle(array(5, 6, 7, 8, 9, 10, 11, 12), $rightColumn);
+            $report->setColumnFormat(array(5, 6, 7, 8, 9, 10, 11, 12), $numberFormat);
 
             $columnaGranTotal = new ReportRawColumn(array(
                 'value' => 'GRAN TOTAL',
                 'style' => $rightColumnBold,
-                'span' => $spanTotal
+                'span'  => $spanTotal
             ));
 
             $columnaBr = new ReportRawColumn(array(
                 'value' => '',
-                'span' => $spanTotal
+                'span'  => $spanTotal
             ));
 
             $report->start(true);
 
-            $cuentaAnterior = '';
+            $cuentaAnterior  = '';
             $terceroAnterior = '';
-            $totalCuenta = array();
-            $totalTercero = array();
+            $totalCuenta     = array();
+            $totalTercero    = array();
 
             $granTotal = array();
             for ($i=$iIni; $i<$iFin; $i++) {
@@ -178,7 +180,7 @@ class Informe_CarteraController extends ApplicationController
             }
 
             $sociosConditionStr = join(' AND ', $conditions);
-            if ($sociosActivos>0) {
+            if ($sociosActivos > 0) {
                 if ($sociosConditionStr) {
                     $sociosConditionStr .= " AND ";
                 }
@@ -186,83 +188,107 @@ class Informe_CarteraController extends ApplicationController
             }
 
             $datos = array();
-            $ultimaCuenta = '';
-            $ultimoTercero = '';
+            $ultimaCuenta    = '';
+            $ultimoTercero   = '';
             $terceroAnterior = '';
-            $nombreTercero = "";
+            $nombreTercero   = "";
 
 
             $carteras = $this->Cartera->find(array($sociosConditionStr, 'order' => 'nit,cuenta,f_emision ASC'));
+
             foreach ($carteras as $cartera) {
+
                 $nombreTercero = "";
-                $codigoCuenta = $cartera->getCuenta();
-                if ($terceroAnterior!=$cartera->getNit()) {
+                $codigoCuenta  = $cartera->getCuenta();
+
+                if ($terceroAnterior != $cartera->getNit()) {
+
                     if ($cuentaAnterior!='') {
+
                         $columnaTotalCuenta = new ReportRawColumn(array(
                             'value' => 'TOTAL CUENTA No. ' . $codigoCuenta,
                             'style' => $rightColumnBold,
                             'span' => $spanTotal
                         ));
+
                         $totales = array($columnaTotalCuenta);
+
                         for ($i=$iIni; $i<$iFin; $i++) {
+
                             if (isset($totalCuenta[$i])) {
+
                                 $totales[$i] = new ReportRawColumn(array(
                                     'value' => $totalCuenta[$i],
                                     'style' => $rightColumnBold,
                                     'format' => $numberFormat
                                 ));
+
                             }
+
                         }
+
                         if ($consolidado!=1) {
                             //$report->addRawRow($totales);
                         }
                     }
 
                     $totalTercero2 = 0;
+
                     //MOSTRAMOS TOTAL DE TERCERO ANTERIOR
                     if ($terceroAnterior!='') {
+
                         $terceroAnt = BackCacher::getTercero($terceroAnterior);
                         if ($terceroAnt) {
-                            $nombreTercero = $terceroAnt->getNombre();
+
+                            $nombreTercero       = $terceroAnt->getNombre();
                             $columnaTotalTercero = new ReportRawColumn(array(
                                 'value' => 'TOTAL: ' . $nombreTercero,
                                 'style' => $rightColumnBold,
-                                'span' => $spanTotal
+                                'span'  => $spanTotal
                             ));
-                            $totales = array($columnaTotalTercero);
+
+                            $totales       = array($columnaTotalTercero);
                             $totalTercero2 = 0;
-                            for ($i=$iIni; $i<$iFin; $i++) {
+
+                            for ($i = $iIni; $i < $iFin; $i++) {
+
                                 $totales[$i] = new ReportRawColumn(array(
-                                    'value' => $totalTercero[$i],
-                                    'style' => $rightColumn,
+                                    'value'  => $totalTercero[$i],
+                                    'style'  => $rightColumn,
                                     'format' => $numberFormat
                                 ));
+
                                 $totalTercero2 += $totalTercero[$i];
                             }
                             if ($totalTercero2!=0) {
                                 $report->addRawRow($totales);
-                            } 
+                            }
                         }
                     }
 
                     $tercero = BackCacher::getTercero($cartera->getNit());
                     if ($tercero) {
+
                         $socios = EntityManager::get('Socios')->findFirst("identificacion='{$tercero->getNit()}'");
                         if ($socios) {
+
                             $porcX = '';
                             if ($socios->getPorcMoraDesfecha()>0) {
                                 $porcX = "(" . intval($socios->getPorcMoraDesfecha()) . "%)";
                             }
                             $nombre =  $socios->getIdentificacion() . ": " . $socios->getNumeroAccion() . " / ".$socios->getNombres() . " " . $socios->getApellidos() . " / " . $socios->getTipoSocios()->getNombre() . " $porcX";
+
                         } else {
                             $nombre = $tercero->getNit().' : '.$tercero->getNombre();
                         }
+
                         $nombreTercero = $nombre;
                         $columnaCuenta = new ReportRawColumn(array(
                             'value' => $nombreTercero,
                             'style' => $leftColumnBold,
                             'span' => $span
                         ));
+
                     } else {
                         $nombreTercero = $cartera->getNit().' : NO EXISTE EL TERCERO';
                         $columnaCuenta = new ReportRawColumn(array(
@@ -280,7 +306,7 @@ class Informe_CarteraController extends ApplicationController
                     $cuentaAnterior = '';
 
                     for ($i=$iIni; $i<$iFin; $i++) {
-                        $totalCuenta[$i] = 0;
+                        $totalCuenta[$i]  = 0;
                         $totalTercero[$i] = 0;
                     }
                 }
@@ -291,19 +317,22 @@ class Informe_CarteraController extends ApplicationController
 
                 $codigoComprob = '';
                 $numeroComprob = 0;
-                $saldoCartera = 0;
+                $saldoCartera  = 0;
+
                 $conditions = "cuenta='$codigoCuenta' AND
                 nit='{$cartera->getNit()}' AND
                 tipo_doc='{$cartera->getTipoDoc()}' AND
                 numero_doc='{$cartera->getNumeroDoc()}' AND
                 fecha<='$fechaLimite'";
+
                 $movis = $this->Movi->find($conditions, "order: nit,cuenta,fecha ASC");
                 foreach ($movis as $movi) {
+
                     if (substr($codigoCuenta, 0, 1)=='1') {
                         if ($movi->getDebCre()=='D') {
                             $codigoComprob = $movi->getComprob();
                             $numeroComprob = $movi->getNumero();
-                            $saldoCartera += $movi->getValor();
+                            $saldoCartera  += $movi->getValor();
                         } else {
                             $saldoCartera -= abs($movi->getValor());
                         }
@@ -311,7 +340,7 @@ class Informe_CarteraController extends ApplicationController
                         if ($movi->getDebCre()=='D') {
                             $codigoComprob = $movi->getComprob();
                             $numeroComprob = $movi->getNumero();
-                            $saldoCartera+=$movi->getValor();
+                            $saldoCartera  += $movi->getValor();
                         } else {
                             $saldoCartera -= abs($movi->getValor());
                         }
@@ -320,24 +349,27 @@ class Informe_CarteraController extends ApplicationController
                 }
                 unset($movis);
 
-                if ($saldoCartera!=0) {
+                if ($saldoCartera != 0) {
 
-                    if ($cuentaAnterior!=$codigoCuenta) {
+                    if ($cuentaAnterior != $codigoCuenta) {
 
                         if ($cuentaAnterior!='') {
+
                             $columnaTotalCuenta = new ReportRawColumn(array(
                                 'value' => 'TOTAL CUENTA No. ' . $cuentaAnterior,
                                 'style' => $rightColumnBold,
-                                'span' => $spanTotal
+                                'span'  => $spanTotal
                             ));
+
                             $totales = array($columnaTotalCuenta);
                             for ($i=$iIni; $i<$iFin; $i++) {
                                 $totales[$i] = new ReportRawColumn(array(
-                                    'value' => $totalCuenta[$i],
-                                    'style' => $rightColumnBold,
+                                    'value'  => $totalCuenta[$i],
+                                    'style'  => $rightColumnBold,
                                     'format' => $numberFormat
                                 ));
                             }
+
                             if ($consolidado!=1) {
                                 //$report->addRawRow($totales);
                             }
@@ -368,40 +400,53 @@ class Informe_CarteraController extends ApplicationController
                             //$totalTercero[$i] = 0;
                         }
                     }
-                    
-                    $day = SociosCore::getCarteraTime($cartera, $fechaLimite);
+
+                    $day  = SociosCore::getCarteraTime($cartera, $fechaLimite);
                     $dias = SociosCore::getDays($cartera, $fechaLimite);
-                    $timecartera = array('30'=>0, '60' => 0, '90' => 0, '120' => 0, '120m' => 0);
-                    $timecartera[$day]=$cartera->getSaldo();
+                    $timecartera = array('30'=> 0, '60' => 0, '90' => 0, '120' => 0, '120m' => 0);
+                    //$timecartera["$day"] = $cartera->getSaldo();
 
-                    $tercero = BackCacher::getTercero($cartera->getNit());
-                    $row = array(
-                        $tercero->getNit() . ": " . $tercero->getNombre(),//0
-                        $codigoCuenta,//1
-                        $codigoComprob . "-" . $numeroComprob,//2
-                        $cartera->getTipoDoc() . "-" . $cartera->getNumeroDoc(),//3
-                        $cartera->getFEmision(),//4
-                        $cartera->getValor(),//5
-                        $saldoCartera,//6
-                        $timecartera['30'],//7
-                        $timecartera['60'],//8
-                        $timecartera['90'],//9
-                        $timecartera['120'],//10
-                        $timecartera['120m'],//11
-                        $cartera->getFVence(),//12
-                        $dias//13
-                    );
+                    $timecartera["$day"] = $saldoCartera;
+        		    $tercero = BackCacher::getTercero($cartera->getNit());
 
-                    if ($consolidado!=1) {
-                        $report->addRow($row);
-                    }
+                    if ($tercero) {
 
-                    //Acumular totales por cuenta y tercero
-                    for ($i=$iIni; $i<$iFin; $i++) {
-                        $totalCuenta[$i]+=$row[$i];
-                        $totalTercero[$i]+=$row[$i];
-                        $granTotal[$i]+=$row[$i];
-                    }
+                            $categorizacion = '';
+
+                            $socios = EntityManager::get('Socios')->findFirst("identificacion='{$tercero->getNit()}'");
+                            if ($socios) {
+                                $categorizacion = $socios->getTipoSocios()->getNombre() . " (" . $socios->getPorcMoraDesfecha() . ")";
+                            }
+
+                            $row = array(
+                                $tercero->getNit() . ": " . $tercero->getNombre(),// . print_r($timecartera,true),
+                                $codigoCuenta,//1
+                                $codigoComprob . "-" . $numeroComprob,//2
+                                $cartera->getTipoDoc() . "-" . $cartera->getNumeroDoc(),//3
+                                $cartera->getFEmision(),//4
+                                $cartera->getValor(),//5
+                                $saldoCartera,//6
+                                $timecartera['30'],//7
+                                $timecartera['60'],//8
+                                $timecartera['90'],//9
+                                $timecartera['120'],//10
+                                $timecartera['120m'],//11
+                                $dias,//12
+                                $categorizacion//13
+                            );
+
+                            if ($consolidado!=1) {
+                                $report->addRow($row);
+                            }
+
+                            //Acumular totales por cuenta y tercero
+                            for ($i=$iIni; $i<$iFin; $i++) {
+                                $totalCuenta[$i]  += $row[$i];
+                                $totalTercero[$i] += $row[$i];
+                                $granTotal[$i]    += $row[$i];
+                            }
+        		      unset($row, $timecartera, $day, $dias);
+        		    }
                 }
 
                 $ultimaCuenta = $codigoCuenta;
@@ -414,7 +459,7 @@ class Informe_CarteraController extends ApplicationController
             $columnaTotalCuenta = new ReportRawColumn(array(
                 'value' => 'TOTAL CUENTA No. ' . $ultimaCuenta,
                 'style' => $rightColumnBold,
-                'span' => $spanTotal
+                'span'  => $spanTotal
             ));
 
             $totales = array($columnaTotalCuenta);
@@ -436,7 +481,7 @@ class Informe_CarteraController extends ApplicationController
                 'style' => $rightColumnBold,
                 'span' => $spanTotal
             ));
-            
+
             $totales = array($columnaTotalTercero);
             $totalTercero2 = 0;
             for ($i=$iIni; $i<$iFin; $i++) {

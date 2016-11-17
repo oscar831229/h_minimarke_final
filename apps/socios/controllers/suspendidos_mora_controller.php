@@ -80,13 +80,14 @@ class Suspendidos_MoraController extends ApplicationController {
 				'NÚMERO DE ACCIÓN',
 				'NOMBRE',
 				'CÉDULA',
+				'OBSERVACIÓN',
 				'ESTADO'
 			));
 			$report->setCellHeaderStyle(new ReportStyle(array(
 				'textAlign' => 'center',
 				'backgroundColor' => '#eaeaea'
 			)));
-			$report->setColumnStyle(array(0,1,2,3,4), new ReportStyle(array(
+			$report->setColumnStyle(array(0,1,2,3,4,5), new ReportStyle(array(
 				'textAlign' => 'center',
 				'fontSize' => 11
 			)));
@@ -117,6 +118,7 @@ class Suspendidos_MoraController extends ApplicationController {
 					$socio->getNumeroAccion(),
 					$socio->getNombres().' '.$socio->getApellidos(),
 					$socio->getIdentificacion(),
+					$suspendidos->getObservacion(),
 					$estado
 				));
 				$i++;

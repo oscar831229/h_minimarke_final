@@ -13,6 +13,7 @@
  * @version		$Id$
  */
 
+Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
 /**
  * Cierre_PeriodoController
  *
@@ -21,9 +22,9 @@
  */
 class Cierre_PeriodoController extends ApplicationController {
 
-	public function initialize(){
+	public function initialize() {
 		$controllerRequest = ControllerRequest::getInstance();
-		if($controllerRequest->isAjax()){
+		if ($controllerRequest->isAjax()) {
 			View::setRenderLevel(View::LEVEL_LAYOUT);
 		}
 		parent::initialize();
@@ -31,21 +32,16 @@ class Cierre_PeriodoController extends ApplicationController {
 
 	public function indexAction()
 	{
-		try
-		{
-			$datosClub = $this->DatosClub->findFirst();
-			$fechaCierre = $datosClub->getFCierre();
+		try {
 
-			$nuevoCierre = clone $fechaCierre;
-			$nuevoCierre->addDays(1);
-			$nuevoCierre->toLastDayOfMonth();
-			$this->setParamToView('proximoCierre', $nuevoCierre);
+			$periodoActual = SociosCore::getCurrentPeriodo();
+			$proximoPeriodo = SociosCore::addPeriodo($periodoActual, 1);
 
-			$this->setParamToView('fechaCierre', $fechaCierre);
-
+			$this->setParamToView('periodoActual', $periodoActual);
+			$this->setParamToView('proximoPeriodo', $proximoPeriodo);
 			$this->setParamToView('message', 'Haga click en "Hacer Cierre" para cerrar el periodo actual');
-		}
-		catch(Exception $e){
+		} catch (Exception $e) {
+
 			return array(
 				'status' => 'FAILED',
 				'message' => $e->getMessage()
@@ -61,7 +57,7 @@ class Cierre_PeriodoController extends ApplicationController {
 			
 			set_time_limit(0);
 			
-			Core::importFromLibrary('Hfos/Socios','SociosCore.php');
+			Core::importFromLibrary('Hfos/Socios','SociosFactura.php');
 
 			$allMessages = array();
 
@@ -69,28 +65,28 @@ class Cierre_PeriodoController extends ApplicationController {
 			
 			#Suspendemos socios
 			$autosupender = Settings::get("autosuspender_usar", 'SO');
-			if ($autosupender=='S') {
+			if ($autosupender == 'S') {
 				$sociosFactura = new SociosFactura(); 
 				$sociosFactura->checkAutoSuspencion();
 			}
 
 			$datosClub = $this->DatosClub->findFirst();
-			$ultimoCierre = $datosClub->getFCierre();
-
-			$ultimoCierre->toLastDayOfMonth();
-			$fechaCierre = clone $ultimoCierre;
-			$fechaCierre->addDays(1);
+			
+			//Periodo actual
+			$periodoActual = $periodo = SociosCore::getCurrentPeriodo();
+			$ano = substr($periodo, 0, 4);
+            $mes = substr($periodo, 4, 2);
+            $fechaPeriodoAbierto = "$ano-$mes-01";
+			$fechaCierre = new Date($fechaPeriodoAbierto);
 			$fechaCierre->toLastDayOfMonth();
-
-			if(Date::isEarlier($fechaCierre, $ultimoCierre)){
-				$transaction->rollback('El periodo ya fue cerrado');
-			}
-
 			$periodoCierre = $fechaCierre->getPeriod();
-			$periodoUltimoCierre = $ultimoCierre->getPeriod();
-
+			$proximoPeriodo = SociosCore::addPeriodo($periodoCierre, 1);
+			//throw new Exception("periodoActual: $periodo, nuevoPeriodo: $nuevoPeriodo", 1);
+			
+			//verificamos el actual periodo
 			SociosCore::checkPeriodo($periodoCierre, $transaction);
-			SociosCore::checkPeriodo($fechaCierre->getPeriod(), $transaction);
+
+			//Cerramos periodo actual
 			$periodo = SociosCore::getCurrentPeriodoObject();
 			if (!$periodo) {
 				throw new SociosException("No se encontró un periodo sin cerrado por favor revisar periodos");
@@ -99,10 +95,9 @@ class Cierre_PeriodoController extends ApplicationController {
 			$periodo->setCierre('S');
 			$periodo->setFacturado('S');
 
-			if ($periodo->save()==false) {
-				foreach ($periodo->getMessages() as $message)
-				{
-					$transaction->rollback('periodo: '.$message->getMessage());
+			if ($periodo->save() == false) {
+				foreach ($periodo->getMessages() as $message) {
+					$transaction->rollback('periodo: ' . $message->getMessage());
 				}
 			}
 
@@ -111,8 +106,8 @@ class Cierre_PeriodoController extends ApplicationController {
 			$proximoCierre = Date::getLastDayOfMonth($nuevoCierre->getMonth(), $nuevoCierre->getYear());
 
 			//creamos periodos
-			$peridoActual = SociosCore::makePeriodo($fechaCierre->getPeriod());
-			$periodoProximo = SociosCore::makePeriodo($proximoCierre->getPeriod());
+			$peridoActual = SociosCore::checkPeriodo($periodoActual);
+			$periodoProximo = SociosCore::checkPeriodo($proximoPeriodo);
 
 			//Cambiano a no cerrado el proximo cierre
 			$peridoNuevo = SociosCore::getCurrentPeriodoObject($nuevoCierre->getPeriod());
@@ -120,70 +115,69 @@ class Cierre_PeriodoController extends ApplicationController {
 			$peridoNuevo->setCierre('N');
 			$peridoNuevo->setFacturado('N');
 
-			if ($peridoNuevo->save()==false) {
-				foreach ($peridoNuevo->getMessages() as $message)
-				{
-					$transaction->rollback('periodoNuevo: '.$message->getMessage());
+			if ($peridoNuevo->save() == false) {
+				foreach ($peridoNuevo->getMessages() as $message) {
+					$transaction->rollback('periodoNuevo: ' . $message->getMessage());
 				}
 			}
 
 			//Guardamos la fecha de cierre
-			
 			$datosClub->setFCierre($fechaCierre->getDate());
-			if ($datosClub->save()==false) {
+			if ($datosClub->save() == false) {
 				foreach ($datosClub->getMessages() as $message)
 				{
-					$transaction->rollback('datos_club: '.$message->getMessage());
+					$transaction->rollback('datos_club: ' . $message->getMessage());
 				}
 			}
 
 			//limpiamos os cargos fijos temporales
 			$limpiarCargoTemp = Settings::Get('limpiar_cargos_temporales', 'SO');
-			if ($limpiarCargoTemp=='S') {
+			if ($limpiarCargoTemp == 'S') {
 				$cargosFijosTemporales = EntityManager::get('CargosFijos')->find(array('conditions'=>"tipo_cargo='T'"));
 				$temporales = array();
-				foreach ($cargosFijosTemporales as $cargo)
-				{
+				foreach ($cargosFijosTemporales as $cargo) {
 					$temporales[]= $cargo->getId();
 				}
-				if(count($temporales)>0){
+				if (count($temporales) > 0) {
 					$cargosSociosDel = EntityManager::get('CargosSocios')->setTransaction($transaction)->delete(array('conditions'=>'cargos_fijos_id IN('.implode(',',$temporales).') AND periodo="'.$periodoCierre.'"'));
 				}
 			}
 
 			//Reporte de suspendidos
 			$url = '';
-			if ($autosupender=='S') {
+			if ($autosupender == 'S') {
 				$sociosReports = new SociosReports();
 				$file = $sociosReports->getReportSuspendidos();
-				$url = 'temp/'.$file;
+				$url = 'temp/' . $file;
 			}
 
 			//Creamos Comprobante de saldos a favor
 			$moverSaldosAFavor = Settings::get('mover_saldoafavor','SO');
-			if ($moverSaldosAFavor=='S') {
+			if ($moverSaldosAFavor == 'S') {
 				$sociosFactura->pasarSaldosAFavor();
 			}
+
+			//Creamos siguiente periodo
+			SociosCore::checkPeriodo($periodoCierre, $transaction);
 			
 			$transaction->commit();
 
+			$nuevoProximoPeriodo = SociosCore::addPeriodo($proximoPeriodo, 1);
 			return array(
 				'status' => 'OK',
-				'proximoCierre' => $proximoCierre->getLocaleDate('long'),
-				'cierreActual' => $fechaCierre->getLocaleDate('short'),
+				'proximoPeriodo' => $nuevoProximoPeriodo,
+				'periodoActual' => $proximoPeriodo,
 				'url' => $url
 			);
-		}
-		catch(SociosException $e){
+		} catch(SociosException $e){
 			return array(
 				'status' => 'FAILED',
 				'message' => $e->getMessage()
 			);
-		}
-		catch(Exception $e){
+		} catch(Exception $e){
 			return array(
 				'status' => 'FAILED',
-				'message' => $e->getMessage()
+				'message' => $e->getMessage() . ", trace: " . print_r($e->getTrace(), true)
 			);
 		}
 	}

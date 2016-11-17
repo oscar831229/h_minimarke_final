@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html>
+    <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+        <style type='text/css'>
+            @media all {
+                @page {
+                    size: auto;   /* auto is the initial value */
+                    margin: 10%;
+                }
+                .page-break	{ display: none; }
+            }
+
+            @media print {
+                @page {
+                    size: auto;
+                }
+                .page-break	{ display: block; page-break-before: always; }
+            }
+            body {
+                background: white;
+                font-size: 13px;
+            }
+            small {
+                font-size: 11px;
+            }
+            table {
+                border-spacing: 0 5px;
+            }
+            .tableLine th {
+                border: 2px solid black;
+            }
+            .tableLine td {
+                border-left: 2px solid black;
+                border-right: 2px solid black;
+            }
+            .bold {
+                font-size: 13px;
+            }
+            .spacingAncho {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            .spacingAlto {
+                padding-top: 5px;
+                padding-bottom: 5px;
+            }
+            .tableLineTop, .tableLineBottom {
+                border-collapse: collapse;
+                border-spacing: 0px;
+                padding: 0;
+            }
+            .tableLineTop {
+                border-top: 2px solid black;
+            }
+            .tableLineBottom {
+                border-bottom: 2px solid black;
+            }
+            .tableLineLeft {
+                border-left: 2px solid black;
+            }
+            .tableLineRight {
+                border-right: 2px solid black;
+            }
+            .lineBottom {
+                border-bottom: 2px solid black;
+            }
+            .lineCubic {
+                border: 2px solid black;
+            }
+            .border2 {
+                border: 2px solid black;
+            }
+            .datos-wepax {
+                color: #AFAEAD;
+            }
+            .numero-factura {
+                font-size: 20px;
+            }
+            .datos-consec {
+                font-size: 10px;
+                padding: 15px;
+            }
+            .resumen-factura {
+                border-bottom: 1px solid #ababab;
+                border-right: 1px solid #ababab;
+            }
+            .resumen-factura th {
+                border-top: 1px solid #ababab;
+                border-left: 1px solid #ababab;
+                padding: 3px;
+                background: #fafafa;
+                font-size: 12px;
+            }
+            .resumen-factura td {
+                border-top: 1px solid #ababab;
+                border-left: 1px solid #ababab;
+                padding: 3px;
+                font-size: 12px;
+            }
+            .resumen-factura2 {
+                border-bottom: 0px solid #ababab;
+                border-right: 0px solid #ababab;
+            }
+            .resumen-factura2 th {
+                border-top: 0px solid #ababab;
+                border-left: 0px solid #ababab;
+                padding: 3px;
+                background: #fafafa;
+                font-size: 12px;
+            }
+            .resumen-factura2 td {
+                border-top: 0px solid #ababab;
+                border-left: 0px solid #ababab;
+                padding: 3px;
+                font-size: 12px;
+            }
+            .paragraph {
+                padding: 5px;
+            }
+            .resumen-factura td.total-label {
+                font-size: 18px;
+            }
+            .resumen-factura td.total-factura {
+                font-size: 18px;
+            }
+            .firma {
+                text-align: center;
+                font-size: 11px;
+                color: #AFAEAD;
+            }
+            .resumen-mail th {
+                font-size: 11px;
+            }
+            .resumen-mail td {
+                font-size: 11px;
+            }
+            .traspaso {
+                font-size: 11px;
+            }
+        </style>
+    </head>
+    <body>

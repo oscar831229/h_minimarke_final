@@ -23,20 +23,14 @@
 		<td valign="top">
 			<table>
 				<tr>
-					<td align="right"><label for="proximoCierre">Fecha al Cerrar</label></td>
-					<td id="proximoCierre"><?php echo $proximoCierre->getLocaleDate('long') ?></td>
+					<td align="right"><label for="proximoPeriodo">Periodo al Cerrar</label></td>
+					<td id="proximoPeriodo"><?php echo $proximoPeriodo ?></td>
+				</tr>
+				<tr>
+					<td align="right"><label for="periodoActual">Periodo Actual</label></td>
+					<td id="periodoActual"><?php echo $periodoActual ?></td>
 				</tr>
 			</table>
-		</td>
-		<td valign="top">
-			<div class="cuadro-cierre">
-				<table>
-					<tr>
-						<td align="right"><b>Último Cierre</b></td>
-						<td id="cierreActual"><?php echo $fechaCierre->getLocaleDate('short') ?></td>
-					</tr>
-				</table>
-			</div>
 		</td>
 	</tr>
 </table>

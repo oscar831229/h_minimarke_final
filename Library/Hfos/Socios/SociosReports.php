@@ -1544,8 +1544,8 @@ class SociosReports extends UserComponent
                 }
 
                 if (!isset($config['consolidado']) || $config['consolidado']!=true) {
-                    if (count($detalleEstadoCuentaObj)<10) {
-                        for ($i=0; $i<(13-count($detalleEstadoCuentaObj)); $i++) {
+                    if (count($detalleEstadoCuentaObj)<=21) {
+                        for ($i=1; $i<=(21-count($detalleEstadoCuentaObj)); $i++) {
                             $contentMoviHtml .= "
                             <tr>
                                 <td align='center'>
@@ -1721,8 +1721,6 @@ class SociosReports extends UserComponent
     public function estadoCuentaConsolidado($config)
     {
         try {
-            gc_enable();
-
             $this->_transaction = TransactionManager::getUserTransaction();
             Core::importFromLibrary('Hfos/Socios', 'SociosEstadoCuenta.php');
 
@@ -1730,6 +1728,15 @@ class SociosReports extends UserComponent
                 throw new SociosException("No se ha definido la fecha generar consolidado");
             }
             $fecha = $config['fecha'];
+            $fechaDate = new Date($fecha);
+            $fechaPeriodo = $fechaDate->getPeriod();
+
+            //verificamos si puede reparar el estado de cuenta
+            $periodo = SociosCore::getCurrentPeriodoObject($fechaPeriodo);
+            $saveEstadoCuentaFlag = true;
+            if ($periodo->getCierre()=='S') {
+                $saveEstadoCuentaFlag = false; 
+            }
 
             if (!$config['reportType']) {
                 throw new SociosException("No se ha definido el tipo de salida a generar consolidado");
@@ -1749,25 +1756,15 @@ class SociosReports extends UserComponent
             $report->setDocumentTitle('Estado de cuenta consolidado con pagos');
             $report->setColumnHeaders(array(
                 'ESTADO DE CUENTA',//0
-                'NO. ACCION',//1
-                'IDENTIFICACION',//2
+                'DERECHO',//1
+                'CC/NIT',//2
                 'NOMBRE',//3
                 'FECHA',//4
                 'SALDO ANTERIOR',//5
-                'CARGOS',//6
-                'INTERESES',//7
-                'PAGOS ANTERIORES',//8
-                '30 DIAS',//9
-                '60 DIAS',//10
-                '90 DIAS',//11
-                '120 DIAS',//12
-                '> 120 DIAS',//13
-                'SALDO ACTUAL',//14
-                'PAGOS DEBITO A LA FECHA',//15
-                'PAGOS CREDITO A LA FECHA',//16
-                'NUEVO SALDO',//17,
-                'CONSUMOS MES',//18
-                'TOTAL CONSUMOS MES'//19
+                'SALDO ACTUAL',//6
+                'PAGOS DB',//7
+                'PAGOS CR',//8
+                'NUEVO SALDO'//9
             ));
 
             $report->setCellHeaderStyle(new ReportStyle(array(
@@ -1780,12 +1777,12 @@ class SociosReports extends UserComponent
                 'fontSize' => 11
             )));
 
-            $report->setColumnStyle(array(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19), new ReportStyle(array(
+            $report->setColumnStyle(array(5, 6, 7, 8, 9), new ReportStyle(array(
                 'textAlign' => 'right',
                 'fontSize' => 11
             )));
 
-            $report->setColumnFormat(array(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19), new ReportFormat(array(
+            $report->setColumnFormat(array(5, 6, 7, 8, 9), new ReportFormat(array(
                 'type' => 'Number',
                 'decimals' => 0
             )));
@@ -1794,23 +1791,14 @@ class SociosReports extends UserComponent
 
             $totales = array();
             $totales['saldoAnt'] = 0;
-            $totales['cargos'] = 0;
-            $totales['interes'] = 0;
-            $totales['pagos1'] = 0;
-            $totales['d30'] = 0;
-            $totales['d60'] = 0;
-            $totales['d90'] = 0;
-            $totales['d120'] = 0;
-            $totales['d120m'] = 0;
             $totales['saldoNuevo'] = 0;
             $totales['pagos2'] = 0;
             $totales['pagos3'] = 0;
             $totales['saldo'] = 0;
-            $totales['consumos'] = 0;
 
             //obtenemos los pagos del mes de la fecha los pagos del periodo
             $fechaObj = new Date($fecha);
-            $consumos = SociosCore::getConsumosPeriodo($fechaObj->getPeriod());
+            //$consumos = SociosCore::getConsumosPeriodo($fechaObj->getPeriod());
             $pagos = SociosCore::getPagosPeriodo($fechaObj->getPeriod());
             $ajustes = SociosCore::getAjustesPeriodo($fechaObj->getPeriod());
 
@@ -1881,7 +1869,7 @@ class SociosReports extends UserComponent
             $num = 0;
             foreach ($sociosObj as $socios) {
                 //Buscamos Consolidados
-                $estadoCuenta= EntityManager::get('EstadoCuenta')->findFirst(array("fecha='$fecha' AND socios_id='{$socios->getSociosId()}'", 'order'=>'numero ASC'));
+                $estadoCuenta = EntityManager::get('EstadoCuenta')->findFirst(array("fecha='$fecha' AND socios_id='{$socios->getSociosId()}'", 'order'=>'numero ASC'));
 
                 if (!$estadoCuenta) {
                     continue;
@@ -1908,26 +1896,11 @@ class SociosReports extends UserComponent
 
                 $saldo = (float) $saldoNuevo + $pagoD - $pagoC;
 
-                //CONSUMOS
-                $consumosDescStr = '';
-                $totalConsumos = 0;
-                if (isset($consumos[$nit])) {
-                    $consumosDesc = array();
-                    foreach ($consumos[$nit]['facturas'] as $numfac => $data) {
-                        $valor = Currency::money($data['valor'], 0);
-                        $consumosDesc[] = "($valor -> $numfac)";
-                        unset($data, $valor);
-                    }
-                    $consumosDescStr = implode(", ", $consumosDesc);
-                    $totalConsumos = $consumos[$nit]['total'];
-                }
-
-
                 //$contentMovi = $this->getContentMovi($dateFechaCorte->getPeriod(), $socios, $options);
                 $contentMovi = $sociosEstadoCuenta->getContentMovi($fecha, $socios, $options);
 
                 //Revisamos los dias de cartera
-                $datos = array(
+                /*$datos = array(
                     'sociosId'    => $socios->getSociosId(),
                     'fecha' => $fecha,
                     'fechaSaldo' => $estadoCuenta->getFechaSaldo(),
@@ -1943,7 +1916,9 @@ class SociosReports extends UserComponent
                 );
 
                 //Guardamos en Tabla Estado de Cartera Consolidado
-                $estadoCuenta = $sociosEstadoCuenta->_saveEstadoCuentaConsolidado($datos);
+                if ($saveEstadoCuentaFlag) {
+                    $estadoCuenta = $sociosEstadoCuenta->_saveEstadoCuentaConsolidado($datos);
+                }*/
 
                 //ROW
                 $report->addRow(array(
@@ -1953,46 +1928,23 @@ class SociosReports extends UserComponent
                     $socios->getNombres()." ".$socios->getApellidos(),//3
                     $fecha,//4
                     $estadoCuenta->getSaldoAnt(),//5
-                    $estadoCuenta->getCargos(),//6
-                    $estadoCuenta->getInteres(),//7
-                    $estadoCuenta->getPagos(),//8
-                    $estadoCuenta->getD30(),//9
-                    $estadoCuenta->getD60(),//10
-                    $estadoCuenta->getD90(),//11
-                    $estadoCuenta->getD120(),//12
-                    $estadoCuenta->getD120m(),//13
-                    $estadoCuenta->getSaldoNuevo(),//14
-                    $pagoD,//15
-                    $pagoC,//16
-                    $saldo,//17
-                    $consumosDescStr,
-                    $totalConsumos
+                    $estadoCuenta->getSaldoNuevo(),//6
+                    $pagoD,//7
+                    $pagoC,//8
+                    $saldo,//9
                 ));
 
                 //TOTALES
-                $totales['saldoAnt'] += $estadoCuenta->getSaldoAnt();
-                $totales['cargos'] += $estadoCuenta->getCargos();
-                $totales['interes'] += $estadoCuenta->getInteres();
-                $totales['pagos1'] += $estadoCuenta->getPagos();
-                $totales['d30'] += $estadoCuenta->getD30();
-                $totales['d60'] += $estadoCuenta->getD60();
-                $totales['d90'] += $estadoCuenta->getD90();
-                $totales['d120'] += $estadoCuenta->getD120();
-                $totales['d120m'] += $estadoCuenta->getD120m();
-                $totales['saldoNuevo'] += $estadoCuenta->getSaldoNuevo();
-                $totales['pagos2'] += $pagoD;
-                $totales['pagos3'] += $pagoC;
-                $totales['saldo'] += $saldo;
-                $totales['consumos'] += $totalConsumos;
+                $totales['saldoAnt'] += (float) $estadoCuenta->getSaldoAnt();
+                $totales['saldoNuevo'] += (float) $estadoCuenta->getSaldoNuevo();
+                $totales['pagos2'] += (float) $pagoD;
+                $totales['pagos3'] += (float) $pagoC;
+                $totales['saldo'] += (float) $saldo;
 
                 $num++;
 
                 unset($estadoCuenta, $socios, $nit, $pagoC, $pagoD, $saldoNuevo, $saldo, $consumosDescStr, $contentMovi, $datos, $totalConsumos);
 
-                if ($i>100) {
-                    gc_collect_cycles();
-                    $i = 0;
-                }
                 $i++;
             }
             unset($sociosObj);
@@ -2005,20 +1957,10 @@ class SociosReports extends UserComponent
                 "",//3
                 "",//4
                 $totales['saldoAnt'],
-                $totales['cargos'],
-                $totales['interes'],
-                $totales['pagos1'],
-                $totales['d30'],
-                $totales['d60'],
-                $totales['d90'],
-                $totales['d120'],
-                $totales['d120m'],
                 $totales['saldoNuevo'],
                 $totales['pagos2'],
                 $totales['pagos3'],
                 $totales['saldo'],
-                '',
-                $totales['consumos']
             ));
 
             unset($estadoCuentaObj);
@@ -2026,8 +1968,6 @@ class SociosReports extends UserComponent
             $report->finish();
             $fileName = $report->outputToFile('public/temp/estado_cuenta_consolidado');
             
-            gc_disable();
-
             return $fileName;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());

@@ -30,15 +30,15 @@
 				<table align="center">
 					<tr>
 						<td>
-							Este proceso genera todos los cargos del periodo  
+							Este proceso previsualiza todos los cargos del periodo  
 							<?php 
 								echo Tag::hiddenField('periodo','value: '.$mes);
 								echo $mes;
 							?>
-							que resume los estados de cuenta del mes actual.
-							<br/>
-							Despu&eacute;s de que este proceso se ha ejecutado es necesario revisar los datos producidos por el sistema 
-							y finalmente Generar el Movimiento de Cargos.
+							agrupados por socios que 
+							seran generados en las facturas del mes actual.
+							<br><br>
+							<b>Nota:</b> Este proceso no causa ni genera facturas.
 						</td>
 					</tr>
 				</table>

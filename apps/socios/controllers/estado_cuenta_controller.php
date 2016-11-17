@@ -33,7 +33,7 @@ class Estado_CuentaController extends ApplicationController
         }
     }
 
-    
+
     /**
      * Vista principal
      *
@@ -41,18 +41,19 @@ class Estado_CuentaController extends ApplicationController
     public function indexAction()
     {
         $periodoStr = SociosCore::getCurrentPeriodo();
-        
+
         $periodo = SociosCore::getCurrentPeriodo();
         $ano = substr($periodo, 0, 4);
         $mes = substr($periodo, 4, 2);
 
         $fechaIniStr = "$ano-$mes-01";
-        //throw new Exception($fechaIniStr);
-        
-        $fechaFinDate = new Date($fechaIniStr);
-        $fechaFinDate->toLastDayOfMonth();
+        $fechaIniDate = new Date($fechaIniStr);
+        $fechaIniDate->toLastDayOfMonth();
 
-        Tag::displayTo("fechaIni", $fechaFinDate->getDate());
+        $fechaFinDate = clone $fechaIniDate;
+        $fechaFinDate->addDays(15);
+
+        Tag::displayTo("fechaIni", $fechaIniDate->getDate());
         Tag::displayTo("fechaFin", $fechaFinDate->getDate());
 
         $this->setParamToView('mes', $periodo);
@@ -66,56 +67,56 @@ class Estado_CuentaController extends ApplicationController
     public function generarAction($reemplazar = true)
     {
         $this->setResponse('json');
-        
+
         try {
 
             $transaction = TransactionManager::getUserTransaction();
-            
+
             $sociosId = $this->getPostParam('sociosId', 'int');
             $fechaIni = $this->getPostParam('fechaIni', 'date');
             $fechaFin = $this->getPostParam('fechaFin', 'date');
-            
+
             $fechaIniDate = new Date($fechaIni);
             $periodo = $fechaIniDate->getPeriod();
-            
+
             //$reportType = $this->getPostParam('reportType', 'alpha');
             $reportType = 'pdf';
-            
+
             $config = array(
                 'reportType'=> $reportType,
                 'sociosId'  => $sociosId,
                 'periodo'   => $periodo,
                 'fechaIni'  => $fechaIni,
                 'fechaFin'  => $fechaFin,
-                'reemplazar' => $reemplazar
+                'reemplaza' => $reemplazar
             );
 
             if (isset($sociosId) && $sociosId) {
                 $config['showDebug'] = true;
             }
-            
+
             //Generamos factura
             $sociosEstadoCuenta = new SociosEstadoCuenta();
             $sociosEstadoCuenta->estadoCuenta($config);
-            
+
             return array(
-                'status'    => 'OK',
-                'message'   => 'El estado de cuenta fue generado correctamente'
+                'status'  => 'OK',
+                'message' => 'El estado de cuenta fue generado correctamente'
             );
 
         } catch (SociosException $e) {
             return array(
-                'status' => 'FAILED',
+                'status'  => 'FAILED',
                 'message' => $e->getMessage()
             );
         } catch (Exception $e) {
             return array(
-                'status' => 'FAILED',
+                'status'  => 'FAILED',
                 'message' => $e->getMessage()
             );
         }
     }
-    
+
     /**
      * Metodo que imprime los estado de cuenta
      *
@@ -123,21 +124,21 @@ class Estado_CuentaController extends ApplicationController
     public function reporteAction()
     {
         $this->setResponse('json');
-        
+
         try {
 
             $transaction = TransactionManager::getUserTransaction();
-            
+
             $sociosId = $this->getPostParam('sociosId', 'int');
             $fechaIni = $this->getPostParam('fechaIni', 'date');
             $fechaFin = $this->getPostParam('fechaFin', 'date');
-            
+
             $fechaIniDate = new Date($fechaIni);
             $periodo = $fechaIniDate->getPeriod();
-            
+
             //$reportType = $this->getPostParam('reportType', 'alpha');
             $reportType = 'pdf';
-            
+
             $config = array(
                 'reportType'=> $reportType,
                 'sociosId'  => $sociosId,
@@ -149,15 +150,15 @@ class Estado_CuentaController extends ApplicationController
             if (isset($sociosId) && $sociosId) {
                 $config['showDebug'] = true;
             }
-            
+
             //Generamos factura
             $sociosReports = new SociosReports();
             $sociosReports->printEstadoCuenta($config);
-            
+
             if (isset($config['file']) && $config['file']==false) {
                 throw new Exception("No hay datos a mostrar", 1);
             }
-            
+
             return array(
                 'status'    => 'OK',
                 'message'   => 'El PDF del estado de cuenta fue generado correctamente',
@@ -183,15 +184,15 @@ class Estado_CuentaController extends ApplicationController
     public function verificarAction()
     {
         $this->setResponse('json');
-        
+
         try {
 
             $transaction = TransactionManager::getUserTransaction();
-            
+
             $sociosId = $this->getPostParam('sociosId', 'int');
             $fechaIni = $this->getPostParam('fechaIni', 'date');
             $fechaFin = $this->getPostParam('fechaFin', 'date');
-            
+
             $query = "fecha>='$fechaIni' AND fecha<='$fechaFin'";
 
             if ($sociosId>0) {

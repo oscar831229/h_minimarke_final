@@ -368,6 +368,30 @@ class SociosController extends HyperFormController
                 //'notSearch' => true,
                 'filters' => array('onechar')
             ),
+            'estado_front' => array(
+                'single' => 'Estado en Front',
+                'type' => 'closed-domain',
+                'size' => 1,
+                'notNull' => true,
+                'maxlength' => 1,
+                'values' => array(
+                    'A' => 'Activo',
+                    'I' => 'Inactivo'
+                ),
+                'filters' => array('onechar')
+            ),
+            'genera_estcue' => array(
+                'single' => 'Genera Estado de Cuenta?',
+                'type' => 'closed-domain',
+                'size' => 1,
+                'notNull' => true,
+                'maxlength' => 1,
+                'values' => array(
+                    'S' => 'Si',
+                    'N' => 'No'
+                ),
+                'filters' => array('onechar')
+            ),
             'cobra' => array(
                 'single' => 'Genera Cobro',
                 'type' => 'closed-domain',

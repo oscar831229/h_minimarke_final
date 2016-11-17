@@ -21,10 +21,18 @@
 <table align="center">
 	<tr>
 		<td valign="top">
-			<table>
+			<table align="left">
 				<tr>
-					<td align="right"><label for="anteriorCierre">Fecha al Reabrir</label></td>
-					<td id="anteriorCierre"><?php if (isset($fechaCierre)) { echo $fechaCierre->getLocaleDate('long');} ?></td>
+					<td align="right">
+						<label for="periodoActual">Periodo Actual</label>
+					</td>
+					<td id="periodoActual"><?php if (isset($periodoActual)) { echo $periodoActual;} ?></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<label for="periodoAbrir">Periodo Al Abrir</label>
+					</td>
+					<td id="periodoAbrir"><?php if (isset($periodoAbrir)) { echo $periodoAbrir;} ?></td>
 				</tr>
 			</table>
 		</td>

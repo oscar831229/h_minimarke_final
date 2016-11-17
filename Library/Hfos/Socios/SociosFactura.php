@@ -190,11 +190,11 @@ class SociosFactura extends UserComponent
 
 
     /**
-     * Metodo que calcula la mora
+     * Metodo que calcula la mora de factura
      * 
      * @param array $config(
      *     SociosId    => 1,
-     *     periodo        => '2011'
+     *     periodo     => '2011'
      * )
      * @param ActiveRecordTransaction $this->_transaction
      * 
@@ -221,12 +221,14 @@ class SociosFactura extends UserComponent
         if ($periodoAnterior==false) {
             throw new Exception("Se esta calculando mora de un periodo no creado ".($periodo-1));
         }
-
+        //throw new Exception("periodo: $periodo, periodoAnt: " . print_r($periodoAnterior, true), 1);
+        
         $config['periodoAnterior'] = $periodoAnterior;
         $fechaFactura = $config['fechaFactura'];
 
         #sacamos saldo de cartera siempre
         $base = $config['saldoAnteriorMora'];
+        //throw new Exception("base: $base", 1);
         
         $ret = 0;
         if ($base>0) {
@@ -241,15 +243,108 @@ class SociosFactura extends UserComponent
 
             //Restamos pagos del periodo
             $fechaActual = new Date($fechaFactura);
-            $existenPagos = SociosCore::getPagosPeriodoXSocioExists($fechaActual->getPeriod(), $nit);
+	    $fechaActual->toLastDayOfMonth();
+	    $lastDay = $fechaActual->getDay();
+	    	
+            $year = substr($fechaFactura, 0, 4);
+	    $month = substr($fechaFactura, 5, 2);
+	    
+	    switch($lastDay) {
+		case '31':
+			$day = "30";
+			break;
+		case '30':
+                        $day = "29";
+                        break;
+		case '29':
+                        $day = "28";
+                        break;
+		case '28':
+                        $day = "27";
+                        break;
+		default:
+			throw new Exception("No se ha definido bien el dia de fact sostenimineto en calculo de saldoAnterio");
+			break;
+	    }
+
+	    $fechaFactura2 = $year . "-" . $month . "-" . $day;
+	    $existenPagos = SociosCore::getPagosPeriodoXSocioExists($fechaActual->getPeriod(), $nit);
             if ($existenPagos==true) {
-                //Si hay pagos tome saldo de tabla cartera
-                $base = EntityManager::get('Cartera')->sum(array("column"=>"saldo", "conditions"=>"nit='$nit' AND DATE_FORMAT(f_emision,'%Y%m')<='$periodoAnterior'"));
+                //throw new Exception("Existen pagos este mes, baseAnt: $base", 1);
+                //CUENTAS SOCIOS
+		$cuentasSocios = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
+
+		//CARGO FIJO CONSUMO MINIMO
+		$ctaConsumos = Settings::get('cuenta_consumos', 'SO');
+		if (!$ctaConsumos) {
+			throw new Exception("La cuenta de consumos no esta parametrizada en configuraci胣");
+		}
+		//DIF TOTAL CUENTAS SOCIOS SIN CONSUMOS
+           	$deb = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='D'")); 
+           	$cre = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='C'"));
+		$diff = $deb - $cre;
+		if ($diff == 0) {
+			$base = 0;
+		} else {
+			if ($diff > 0 ) {
+				$base = $diff;
+			} else {
+				$base = 0;
+			}
+		}
+
+		//CONSUMOS PERIODO ACTUAL
+		$debConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
+                $creConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='C'"));
+                $diffConsumos = $debConsumos - $creConsumos;
+		$base += $diffConsumos;
+		if ($base<0) {
+			$base = 0;
+		}
+
+		//PAGOS Y AJUSTES
+		$comprobArray = array();
+		$comprobAjustes = Settings::get('comprob_ajustes', 'SO');
+                if (!$comprobAjustes) {
+                        throw new Exception("El comprobante de ajuste no esta parametrizado en configuraci?n");
+                }
+		$comprobNCStr = Settings::get('comprob_nc', 'SO');
+                if (!$comprobNCStr) {
+                        throw new Exception("Los comprobantes de nota contable no esta parametrizado en configuraci?n");
+                }
+		$comprobNCArray = explode(",", $comprobNCStr);
+		$comprobPagosStr = Settings::get('comprobs_pagos', 'SO');
+                if (!$comprobPagosStr) {
+                        throw new Exception("Los comprobantes de pagos no esta parametrizado en configuraci?n");
+                }
+		$comprobPagosArray = explode(",", $comprobPagosStr);
+
+		//agregando comprobantes
+		$comprobArray[]=$comprobAjustes;
+		$comprobArray = array_merge($comprobArray, $comprobNCArray);
+		$comprobArray = array_merge($comprobArray, $comprobPagosArray);
+		$comprobStr = "'" . implode("','", $comprobArray) . "'";		
+
+		//buscamos movimiento de este mes
+		$debPagos = 0;
+		//EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
+                $crePagos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='C'"));
+                $diffPagos = $debPagos - $crePagos;
+                $base += $diffPagos;
+                if ($base<0) {
+                        $base = 0;
+                }	
             }
-            //throw new SociosException("base: $base");
+	
+            //throw new SociosException("base: $base, fechaFactura2: $fechaFactura2, fechaFactura: $fechaFactura, deb: $deb, cre: $cre, diff: $diff, creConsumos: $creConsumos, debConsumos: $debConsumos, diffConsumos: $diffConsumos, comprobs: $comprobStr, debPagos: $debPagos, crePagos: $crePagos, diffPagos: $diffPagos");
             
             $ret = $base * $interesMoraPeriodo / 100;
+	    $ret = LocaleMath::round($ret, 0); 
         }
+
+	if ($ret <= 1) {
+	  $ret = 0;
+	}
 
         return $ret;
     }
@@ -386,7 +481,6 @@ class SociosFactura extends UserComponent
      */
     public function obtenerSaldosCartera($configSaldos)
     {
-        gc_enable();
         $saldosCartera = array();
         
         $conditions = 'saldo!=0';
@@ -402,13 +496,21 @@ class SociosFactura extends UserComponent
         }
 
         //Datos DEFAULT
+        if (!isset($configSaldos['tipoDocSocios'])) {
+            $this->addConfigDefault($configSaldos);
+        }
         $tipoDocSocios = $configSaldos['tipoDocSocios'];
         $tipoDocPos = $configSaldos['tipoDocPos'];
 
+        if (!isset($configSaldos['fechaFactura'])) {
+            throw new SociosException("No se ha definido la fecha limite a buscar saldos");
+        }
         $fechaFactura = $configSaldos['fechaFactura'];
 
-        $conditions .= " AND f_emision <= '$fechaFactura' AND tipo_doc IN ('tipoDocPos','tipoDocSocios')";
+        $conditions .= " AND f_emision < '$fechaFactura' AND tipo_doc IN ('$tipoDocPos','$tipoDocSocios')";
 
+        //throw new SociosException($conditions);
+        
         $i=0;
         $numeroMeses = array();
         $carteraObj = EntityManager::get('Cartera')->setTransaction($this->_transaction)->find($conditions);
@@ -428,13 +530,6 @@ class SociosFactura extends UserComponent
                 $numeroMeses[$nit] = array();
             }
             $numeroMeses[$nit][$fechaTempPeriod] = $fechaTempPeriod;
-            
-            if ($i>100) {
-                gc_collect_cycles();
-                $i=0;
-            }
-
-            $i++;
             unset($cartera);
         }
         
@@ -563,22 +658,6 @@ class SociosFactura extends UserComponent
                 $saldoAnterior = 0;
                 $saldoAnteriorMora = 0;
                 $nitSocio = $socios->getIdentificacion();
-                
-                $estadoCuenta = EntityManager::get('EstadoCuenta')->findFirst("socios_id='$sociosId' AND fecha<'{$fechaLimit2->getDate()}'", "order: fecha desc");
-                if ($estadoCuenta) {
-
-                    //Usado en base al estado de cuenta anterior
-                    $saldoAnterior = $estadoCuenta->getSaldoNuevo();
-                    //throw new SociosException($saldoAnterior);
-                    
-                } else {
-                    if (isset($saldosCarteraArray[$nitSocio]) && $saldosCarteraArray[$nitSocio]) {
-                        $saldoAnterior = $saldosCarteraArray[$socios->getIdentificacion()];
-                        $saldoAnteriorMora = $saldoAnterior;
-                    }
-                }
-
-                $saldoAnteriorMora = 0;
 
                 switch ($calcularMoraDe) {
                     case 'F': //Factura
@@ -704,7 +783,8 @@ class SociosFactura extends UserComponent
                     if (!$cargoFijoMora) {
                         throw new SociosException("El cargo fijo seleccionado a la mora no existe");
                     }
-                    
+                    $mora = LocaleMath::round($mora, 0); 
+                    $ivaMora = LocaleMath::round($ivaMora, 0); 
                     $detalleMovimiento = new DetalleMovimiento();
                     $detalleMovimiento->setTransaction($this->_transaction);
                     $detalleMovimiento->setMovimientoId($movimientoId);
@@ -932,7 +1012,7 @@ class SociosFactura extends UserComponent
                     ////////////////////////////////////////////////////
                     // CONSUMOS DE POS DIRECTOS EN HOTEL5
                     ////////////////////////////////////////////////////
-                    $facturasDirectasHotel = $sociosCore->getFacturasDirectas($periodoAbierto, $socios->getIdentificacion());
+                    $facturasDirectasHotel = $sociosCore->getFacturasDirectasAll($periodoAbierto, $socios->getIdentificacion());
 
                     $totalFD = 0;
                     $detalleCM = 'CONSUMO MINIMO';
@@ -1238,7 +1318,7 @@ class SociosFactura extends UserComponent
             //obtenemos datos de cartera
             $diaVenc = $periodo->getDiasPlazo();//Dias de vencimiento de factura
             if (!$diaVenc) {
-                throw new SociosException('No se ha configurado el d铆a de vencimiento de factura en configuraci贸n');
+                throw new SociosException('No se ha configurado el d韆 de vencimiento de factura en configuraci髇');
             }
             $config['diaVenc'] = $diaVenc;
             
@@ -2638,6 +2718,8 @@ class SociosFactura extends UserComponent
     public function getTasaDeMora($fecha = '')
     {
     
+        Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
+
         if (!$fecha) {
             $fecha = date('Y-m-d');
         }
@@ -2646,11 +2728,12 @@ class SociosFactura extends UserComponent
             $this->_transaction = TransactionManager::getUserTransaction();
         }
 
-        $interesMora = EntityManager::get('InteresMora')->setTransaction($this->_transaction)->findFirst(array('conditions'=>'"'.$fecha.'" BETWEEN fecha_inicial AND fecha_final'));
-        if ($interesMora==false) {
+        $fechaDate = new Date($fecha); 
+        $periodo = SociosCore::getCurrentPeriodoObject($fechaDate->getPeriod());
+        if ($periodo == false) {
             throw new SociosException('No se ha asignado el interes de mora para la fecha '.$fecha);
         }
-        return $interesMora->getInteresMensual();
+        return $periodo->getInteresesMora();
     }
 
     /**
@@ -2948,7 +3031,7 @@ class SociosFactura extends UserComponent
 
                             //Creditos/Debitos segun naturaleza de cargo fijo
                             $valor = $detalleMovimiento['valor'];
-                            $valor = LocaleMath::round($valor, 0);
+                            //$valor = LocaleMath::round($valor, 0);
                             $movements[] = array(
                                 'Descripcion' => $detalleMovimiento['descripcion'],
                                 'Nit' => $nitDocumento,
@@ -3140,7 +3223,7 @@ class SociosFactura extends UserComponent
      * )
      * @return Boolean
      */
-    public function ajustarSaldos($config)
+    /*public function ajustarSaldos($config)
     {
 
         $arr_data = array();
@@ -3382,7 +3465,7 @@ class SociosFactura extends UserComponent
             }
         }
         
-    }
+    }*/
     
     /**
      * Ajusta los saldos de contabilidad de un socio por Aura de lso prestamos
@@ -3392,7 +3475,7 @@ class SociosFactura extends UserComponent
      * )
      * @return Boolean
      */
-    public function ajustarPrestamos($config)
+    /*public function ajustarPrestamos($config)
     {
 
         $arr_data = array();
@@ -3568,278 +3651,395 @@ class SociosFactura extends UserComponent
             }
         }
         
-    }
+    }*/
 
     /**
-     * Ajusta los pagos de contabilidad de un socio por Aura
+     * importa los pagos desde un excel y crea comprobantes en contabilidad por Aura
      * @param Array $config (
-     *     file string with path
+     *      fecha string date
+     *      comprob string
+     *      file string with path
      * )
      * @return Boolean
      */
-    public function ajustarPagos($config)
+    public function importarPagos($config)
     {
+        try {
 
-        $date = date('Y-m-d');
-        $file = $config['file'];
-        
-        if (!$file) {
-            throw new SociosException('El archivo no se pudo cargar al servidor');
-        } else {
-
-            if (!preg_match('/\.xlsx$/', $file)) {
-                throw new SociosException('El archivo cargado parece no ser de Microsoft Excel 2007 o superior');
+            if (!isset($config['fecha']) || empty($config['fecha'])) {
+                throw new SociosException("Es necesario dar la fecha a importar pagos", 1);
             }
+            $fecha = $config['fecha'];
 
-            try
-            {
+            if (!isset($config['comprob']) || empty($config['comprob'])) {
+                throw new SociosException("Es necesario dar el comprobante para importar pagos", 1);
+            }
+            $comprob = $config['comprob'];
+
+            if (!isset($config['file']) || empty($config['file'])) {
+                throw new SociosException("Es necesario dar la ruta del archivo a importar pagos", 1);
+            }
+            $file = $config['file'];
+            
+            if (!$file) {
+                throw new SociosException('El archivo no se pudo cargar al servidor');
+            } else {
+
+                if (!preg_match('/\.xlsx$/', $file)) {
+                    throw new SociosException('El archivo cargado parece no ser de Microsoft Excel 2007 o superior');
+                }
+
                 $transaction = TransactionManager::getUserTransaction();
                 
                 Core::importFromLibrary('Hfos/Socios', 'SociosCore.php');
                 $periodo = SociosCore::getCurrentPeriodo();
                 
-                //Cuenta que cruja los ajustes de pagos
-                $cuentaCruce = Settings::get('cuenta_cruce_pagos', 'SO');
-                if (!$cuentaCruce) {
-                    throw new SociosException("La cuenta de cruce de ajuste pagos no esta configurado", 1);
+                //Cuentas de Ajustes '132505%'
+                $cuentasCartera = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
+                if (!$cuentasCartera) {
+                    throw new SociosException("No se ha definido las 'Cuentas de Ajustes' en Configuraci贸n");
                 }
-                
-                Core::importFromLibrary('PHPExcel', 'Classes/PHPExcel.php');
-                $arr_data = array();
-                
-                $objReader = PHPExcel_IOFactory::createReader('Excel2007');
-                $objReader->setReadDataOnly(true);
-                
-                $objPHPExcel = $objReader->load($file);
-                $total_sheets=$objPHPExcel->getSheetCount(); // here 4
-                $allSheetName=$objPHPExcel->getSheetNames(); // array ([0]=>'student',[1]=>'teacher',[2]=>'school',[3]=>'college')
-                $objWorksheet = $objPHPExcel->setActiveSheetIndex(0); // first sheet
-                $highestRow = $objWorksheet->getHighestRow(); // here 5
-                $highestColumn = $objWorksheet->getHighestColumn(); // here 'E'
-                $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);  // here 5
-                for ($row = 1; $row <= $highestRow; ++$row) {
-                    for ($col = 0; $col <= $highestColumnIndex; ++$col) {
-                        $value=$objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
-                        if (is_array($arr_data)) {
-                            $arr_data[$row-1][$col]=$value;
-                        }
-                    }
+
+                //cuenta que va a capital al importar pagos y sobro plata
+                $ctaCapital = Settings::get('capital_importar_pagos', 'SO');
+                if (!$ctaCapital) {
+                    throw new SociosException("No se ha definido la 'Cuenta de Captal' en Configuraci贸n");
                 }
-                
-                if (!count($arr_data)) {
-                    throw new SociosException("El archivo esta vacio", 1);
+
+                //cuenta que va a cruza el movi al importar pagos
+                $ctaCruce = Settings::get('contrapartida_importar_pagos', 'SO');
+                if (!$ctaCruce) {
+                    throw new SociosException("No se ha definido la 'Cuenta de Cruce' en Configuraci贸n");
                 }
-                
-                unset($objReader);
-                
+
+                //forma de pago al importar pagos
+                $formaPagoId = Settings::get('forma_pago_importar_pagos', 'SO');
+                if (!$formaPagoId) {
+                    throw new SociosException("No se ha definido la 'Forma Pago Importar pagos' en Configuraci贸n");
+                }
+
+                //obtnemos orden de cuentas a importar pagos
+                $ctaImportarPagos = EntityManager::get("Configuration")->find(array(
+                    "conditions" => "application='SO' AND name LIKE 'importar_pagos_%' and value!=''",
+                    "order" => "id ASC"
+                ));
+                $ordenCuentas = array();
+                foreach ($ctaImportarPagos as $setting) {
+                    $ordenCuentas[]= $setting->getValue();                
+                }
+                unset($ctaImportarPagos);
+
+                $arrData = SociosCore::obtenerDatosDeExcel($file);
+
                 //Agrupamos los pagos por comprobantes y numero acci贸n este caso para ingresos y pago con tarjeta
                 $data = array();
-                foreach ($arr_data as $line) {
-                    $numeroAccion     = trim($line[0]);
-                    $comprobante     = trim($line[2]);
-                    
-                    if (!isset($data[$comprobante])) {
-                        $data[$comprobante] = array();
+                foreach ($arrData as $line) {
+                    $numeroAccion = trim($line[0]);
+                    $socios = EntityManager::get("Socios")->findFirst("numero_accion='$numeroAccion'");
+                    if (!$socios) {
+                        throw new SociosException("El socios con acci贸n '$numeroAccion' no existe en maestro de socios");
                     }
-                    
-                    if (!isset($data[$comprobante][$numeroAccion])) {
-                        $data[$comprobante][$numeroAccion] = array();
+                    if (!isset($data[$numeroAccion])) {
+                        $data[$numeroAccion] = array();
                     }
-                    
-                    $data[$comprobante][$numeroAccion][] = $line;
-                    
-                    unset($line);
+                    $data[$numeroAccion][] = array(
+                        "socios_id" => $socios->getSociosId(),
+                        "nit" => $socios->getIdentificacion(),
+                        "valor" => $line[1]
+                    );
+                    unset($line, $socios);
                 }
-                unset($arr_data);
+                unset($arrData);
                 
+/*
+1. fecha antigua
+2. Aplicaci贸n en Cuentas,; Interes de Mora, Sostenimiento, Consumo Minimo, Consumos, Cuota regalo de navidad, Si genera saldo aplicar a iria a Sostenimiento.
+*/
+
                 $identity = IdentityManager::getActive();
-                        
-                
-                foreach ($data as $comprob => $comprobArray) {
-                    
-                    foreach ($comprobArray as $numeroAccion => $linesArray) {
-                        
-                        if (!$numeroAccion) {
-                            continue;
+                $aPagar = array();  
+                $sobro = array();      
+                foreach ($data as $numeroAccion => $dataArray) {
+                    foreach ($dataArray as $line) {
+                        $nit = $line["nit"];
+                        $valorPagado = $line["valor"];
+                        $valorPagadoInit = $line["valor"];
+
+                        if (!isset($aPagar[$nit])) {
+                            $aPagar[$nit] = array();
                         }
-                        
-                        //SOLo para mes / Dia / a帽o
-                        $fechaCell = PHPExcel_Style_NumberFormat::toFormattedString($linesArray[0][4], "M/D/YYYY");
-                        $fechaArray = explode('/', $fechaCell);
-                        if (!isset($fechaArray[2])) {
-                            throw new SociosException("Por favor ingresar una fecha en la linea con la accion '$numeroAccion'", 1);
-                        }
-                        $fecha = "{$fechaArray[2]}-{$fechaArray[0]}-{$fechaArray[1]}";
-                        
-                        $aura = new Aura($comprob, 0, $fecha);
-                        
-                        $valorTotal = 0;
-                        $movements = array();
-                            
-                        //throw new SociosException(print_r($linesArray,true), 1);
-                        
-                        foreach ($linesArray as $n => $line) {
-                            #print_r($line);
-                            
-                            $nit = $line[1];
-                            $nit = trim($nit);
-                            $nit = trim($nit, " ");
-                            $nit = str_replace(' ', '', $nit);
-                            
-                            if (!$nit) {
-                                throw new SociosException("El nit no puede ser nulo '$nit' en la linea '$n'", 1);
+
+                        //preparamos el array con las fecha en orden de la ultima a la primera
+                        $sql ="nit='$nit' AND cuenta LIKE '$cuentasCartera%' AND saldo>0 AND f_emision<'$fecha'";
+                        $carteraObj = EntityManager::get("Cartera")->find(array(
+                            "columns" => "f_emision",
+                            "conditions" => $sql,
+                            "order" => "f_emision ASC"
+                        ));
+                        foreach ($carteraObj as $cartera) {
+                            $fecha2 = (string) $cartera->getFEmision()->getDate();
+                            if (!isset($aPagar[$nit][$fecha2])) {
+                                $aPagar[$nit][$fecha2] = array();
                             }
+                            unset($fecha2, $cartera);
+                        }
+                        unset($carteraObj, $sql);
+
+                        //Orden definido en settings de pagos
+                        foreach ($ordenCuentas as $cuenta) {
+                            //buscamos las cuentas de cartera que faltan por pagar
+                            $sql = "nit='$nit' AND cuenta = '$cuenta' AND saldo>0 AND f_emision<'$fecha'";
+                            $carteraObj = EntityManager::get("Cartera")->find(array(
+                                "conditions" => $sql,
+                                "order" => "f_emision ASC"
+                            ));
                             
+                            foreach ($carteraObj as $cartera) {
+                                //Lo que alcanse el pago del socio
+                                if ($valorPagado <= 0) {
+                                    continue;
+                                }
+
+                                //que hay que pagar
+                                $fecha2 = (string) $cartera->getFEmision()->getDate();
+                                if (!isset($aPagar[$nit][$fecha2][$cuenta])) {
+                                    $aPagar[$nit][$fecha2][$cuenta] = array();
+                                }
+                                $temp = array();
+                                foreach ($cartera->getAttributes() as $campo) {
+                                    $temp[$campo] = $cartera->readAttribute($campo);
+                                }
+
+                                //descontamos lo pagado
+                                if ($temp["saldo"] > $valorPagado) {
+                                    $temp["pago"] = $valorPagado;
+                                    $valorPagado = 0;
+                                } else {
+                                    $temp["pago"] = $temp["saldo"];
+                                    $valorPagado -= $temp["saldo"];    
+                                }
+                                $temp["valorPagado"] = $valorPagado;
+                                $temp["valorPagadoInit"] = $valorPagadoInit;
+                            
+                                //new row
+                                $aPagar[$nit][$fecha2][$cuenta][] = $temp;
+                            
+                                unset($cartera, $fecha2, $temp);
+                            }
+                            unset($cuenta, $carteraObj);
+                        }
+
+                        //Otras cuentas que no estan en orden de cuentas
+                        $sql ="nit='$nit' AND cuenta NOT IN (" . implode(",", $ordenCuentas) . ") AND cuenta LIKE '$cuentasCartera%' AND saldo>0 AND f_emision<'$fecha'";
+                        //throw new SociosException($sql);
+                        
+                        $carteraObj = EntityManager::get("Cartera")->find(array(
+                            "conditions" => $sql,
+                            "order" => "f_emision ASC"
+                        ));
+                        
+                        foreach ($carteraObj as $cartera) {
+                            //Lo que alcanse el pago del socio
+                            if ($valorPagado <= 0) {
+                                continue;
+                            }
+                            //miramos que pagar
+                            $fecha2 = (string) $cartera->getFEmision()->getDate();
+                            $cuenta = $cartera->getCuenta();
+                            if (!isset($aPagar[$nit][$fecha2][$cuenta])) {
+                                $aPagar[$nit][$fecha2][$cuenta] = array();
+                            }
+                            $temp = array();
+                            foreach ($cartera->getAttributes() as $campo) {
+                                $temp[$campo] = $cartera->readAttribute($campo);
+                            }
+                            //descontamos lo pagado
+                            if ($temp["saldo"] > $valorPagado) {
+                                $temp["pago"] = $valorPagado;
+                                $valorPagado = 0;
+                            } else {
+                                $temp["pago"] = $temp["saldo"];
+                                $valorPagado -= $temp["saldo"];    
+                            }
+                            $temp["valorPagado"] = $valorPagado;
+                            $temp["valorPagadoInit"] = $valorPagadoInit;
+                            
+                            //New row
+                            $aPagar[$nit][$fecha2][$cuenta][] = $temp;
+
+                            unset($cartera, $fecha2, $cuenta, $temp);
+                        }
+                        unset($carteraObj);
+
+                        //Sobro dinero
+                        if ($valorPagado > 0) {
+                            $sobro[$nit][] = $valorPagado;
+                        }
+
+                        unset($line);
+                    }
+                    unset($dataArray);
+                }
+                unset($data);
+
+                //DEBUG
+                /*echo "aPagar: ";print_r($aPagar);
+                echo "sobro: ";print_r($sobro);
+                exit;*/
+                
+                //Ya teninedo listo todo para apagar en ese orden creamos el aura
+                foreach ($aPagar as $nit => $nitArray) {
+                    $aura = new Aura($comprob, 0, $fecha);
+                    $lastPago = null;
+                    $valorTotal = 0;
+                    foreach ($nitArray as $fecha2 => $fechaArray) {
+                        foreach ($fechaArray as $cuenta => $cuentaArray) {
+                            foreach ($cuentaArray as $pago) {
+                                
+                                //pago
+                                $aura->addMovement(array(
+                                    'Descripcion' => 'IMPORTAR PAGO ' . $fecha,
+                                    'Nit' => $pago['nit'],
+                                    'CentroCosto' => $pago['centro_costo'],
+                                    'Cuenta' => $pago['cuenta'],
+                                    'Valor' => $pago['pago'],
+                                    'BaseGrab' => 0,
+                                    'TipoDocumento' => $pago['tipo_doc'],
+                                    'NumeroDocumento' => $pago['numero_doc'],
+                                    'FechaVence' => $pago['f_vence'],
+                                    'DebCre' => 'C',
+                                    'debug'  => true
+                                ));
+                                $valorTotal += $pago['pago'];
+
+                                $lastPago = $pago;
+                                unset($pago);
+                            }
+                            unset($cuentaArray, $cuenta);
+                        }
+                        unset($fechaArray, $fecha2);
+                    }
+
+                    try {
+
+                        //Agregamos movimiento de lo que sobro
+                        if (isset($sobro[$nit]) == true) {
+                            foreach ($sobro[$nit] as $valorSobro) {
+                                //pago
+                                $aura->addMovement(array(
+                                    'Descripcion' => 'IMPORTAR PAGO (SOBRO)' . $fecha,
+                                    'Nit' => $lastPago['nit'],
+                                    'CentroCosto' => $lastPago['centro_costo'],
+                                    'Cuenta' => $ctaCapital,
+                                    'Valor' => $valorSobro,
+                                    'BaseGrab' => 0,
+                                    'TipoDocumento' => $lastPago['tipo_doc'],
+                                    'NumeroDocumento' => $lastPago['numero_doc'],
+                                    'FechaVence' => $lastPago['f_vence'],
+                                    'DebCre' => 'C',
+                                    'debug'  => true
+                                ));
+                                $valorTotal += $valorSobro;
+                            }
+                        }
+
+                        //CRUCE
+                        $aura->addMovement(array(
+                            'Descripcion' => 'IMPORTAR PAGO (CRUCE)' . $fecha,
+                            'Nit' => $lastPago['nit'],
+                            'CentroCosto' => $lastPago['centro_costo'],
+                            'Cuenta' => $ctaCruce,
+                            'Valor' => $valorTotal,
+                            'BaseGrab' => 0,
+                            'TipoDocumento' => $lastPago['tipo_doc'],
+                            'NumeroDocumento' => $lastPago['numero_doc'],
+                            'FechaVence' => $lastPago['f_vence'],
+                            'DebCre' => 'D',
+                            'debug'  => true
+                        ));
+
+                        //throw new SociosException("valorTotal: " . $valorTotal . ", nit: " . $nit, 1);
+                        
+                        $statusAura = $aura->save(); 
+                        //var_dump($statusAura);exit;
+                        if ($statusAura == true ) {
+                        
+                            //CREAMOS RC
+                            $rc = $aura->getConsecutivo();
+                            
+                            $reccaj = new Reccaj();
+                            $reccaj->setTransaction($transaction);
+                            $reccaj->setNit($nit);
                             $tercero = BackCacher::getTercero($nit);
                             if (!$tercero) {
                                 throw new SociosException("El nit '$nit' no existe en Terceros", 1);
                             }
-                            unset($tercero);
+                            $reccaj->setNombre(strtoupper($tercero->getNombre()));
+                            $reccaj->setDireccion($tercero->getDireccion());
+                            $reccaj->setCiudad($tercero->getLocciu());
+                            $reccaj->setTelefono($tercero->getTelefono());
+                            $reccaj->setFecha($fecha);
+                            $reccaj->setComprob($comprob);
+                            $reccaj->setNumero($rc);
+                            $reccaj->setCodusu($identity['id']);//De session
+                            $reccaj->setObservaciones('PAGO POR OPCION IMPORTAR PAGOS ' . $fecha);
+                            $reccaj->setValor($valorTotal);
+                            $reccaj->setEstado('C');
+                            $reccaj->setRc($rc);
                             
-                            $comprobante     = $line[2];
-                            $cuenta         = $line[3];
-                            $fechaPago         = $line[4];
-                            $valor             = $line[5];
-                            $nroFactura     = $line[6];
-                            
-                            if (!$valor) {
-                                throw new SociosException("El nit '$nit' no puede ingresar un valor cero", 1);
+                            if ($reccaj->save() == false) {
+                                foreach ($reccaj->getMessages() as $message) {
+                                    $transaction->rollback('Reccaj: ' . $message->getMessage());
+                                }
+                            }
+            
+                            $detalleReccaj = new DetalleReccaj();
+                            $detalleReccaj->setTransaction($transaction);
+                            $detalleReccaj->setReccajId($reccaj->getId());
+                            $detalleReccaj->setFormaPagoId($formaPagoId);//PRIMERO
+                            $detalleReccaj->setNumero(1);
+                            $detalleReccaj->setValor($valorTotal);
+                            if ($detalleReccaj->save() == false) {
+                                foreach ($detalleReccaj->getMessages() as $message) {
+                                    $transaction->rollback('DetalleReccaj: ' . $message->getMessage());
+                                }
                             }
 
-                            if (!$nroFactura) {
-                                throw new SociosException("El Nro. Factura '$nroFactura' no puede estar vacio", 1);
-                            }
 
-                            //Validamos si existe esa factura en cartera a ese socio
-                            $cartera = EntityManager::get("Cartera")->findFirst("nit='$nit' AND tipo_doc='CXS' AND numero_doc='$nroFactura'");
-                            if ($cartera==false) {
-                                throw new SociosException("El Nro. Factura '$nroFactura' del nit '$nit' no existe en cartera");
+                            //IMPORTAR PAGOS REGISTRO
+                            $importarPagos = new ImportarPagos();
+                            $importarPagos->setTransaction($transaction);
+                            $importarPagos->setFecha($fecha);
+                            $importarPagos->setComprob($comprob);
+                            $importarPagos->setNumero($rc);
+                            $importarPagos->setNit($lastPago['nit']);
+                            $importarPagos->setValor($valorTotal);
+                            $importarPagos->setUsuariosId($identity['id']);
+                            $importarPagos->setDateCreate(date("Y-m-d H:i:s"));
+                            if ($importarPagos->save() == false) {
+                                foreach ($importarPagos->getMessages() as $message) {
+                                    $transaction->rollback('importarPagos: ' . $message->getMessage());
+                                }
                             }
                             
-                            #Buscamos socios solo activos
-                            $socios = EntityManager::get('Socios')->setTransaction($transaction)->findFirst("numero_accion='$numeroAccion' AND identificacion='$nit' AND estados_socios_id=1");
-                            if ($socios==false) {
-                                throw new SociosException("El socio con accion '$numeroAccion' y cedula '$nit' no existe o no esta activo");
-                            }
-                            unset($socios);
-                            
-                            $movements[] = array(
-                                'Descripcion'    => 'AJUSTE PAGO '.$date,
-                                'Nit'            => $nit,
-                                'CentroCosto'    => 130,
-                                'Cuenta'        => $cuenta,
-                                'Valor'            => $valor,
-                                'BaseGrab'        => 0,
-                                'TipoDocumento'    => 'CXS',
-                                'NumeroDocumento' => $nroFactura,
-                                'FechaVence'    => $date,
-                                'DebCre'        => 'C',
-                                'debug'            => true
-                            );
-                            
-                            $valorTotal += $valor;
-                            
-                            unset($line, $cuenta, $valor);
+                        } else {
+                            throw new SociosException("Aura not save");
                         }
-                        
-                        unset($linesArray);
-                        
-                        //CRUCE DE CUENTAS
-                        $movements[] = array(
-                            'Descripcion'    => 'AJUSTE PAGO '.$date,
-                            'Nit'            => $nit,
-                            'CentroCosto'    => 130,
-                            'Cuenta'        => $cuentaCruce,
-                            'Valor'            => $valorTotal,
-                            'BaseGrab'        => 0,
-                            'TipoDocumento'    => 'CXS',
-                            'NumeroDocumento' => $nroFactura,
-                            'FechaVence'    => $date,
-                            'DebCre'        => 'D',
-                            'debug'            => true
-                        );
-
-                        //Make Comprob
-                        foreach ($movements as $movement) {
-                            #print_r($movement);
-                            $aura->addMovement($movement);
-                        }
-                        
-                        //throw new SociosException(print_r($movements,true), 1);
-                        
-                        $aura->save();
-                        
-                        $rc = $aura->getConsecutivo();
-                        
-                        $observacion = 'PAGO POR OPCION AJUSTE DE PAGOS';
-                        
-                        $reccaj = new Reccaj();
-                        $reccaj->setTransaction($transaction);
-                        $reccaj->setNit($nit);
-                        $tercero = BackCacher::getTercero($nit);
-                        if (!$tercero) {
-                            throw new SociosException("El nit '$nit' no existe en Terceros", 1);
-                        }
-                        $reccaj->setNombre(strtoupper($tercero->getNombre()));
-                        $reccaj->setDireccion($tercero->getDireccion());
-                        $reccaj->setCiudad($tercero->getLocciu());
-                        $reccaj->setTelefono($tercero->getTelefono());
-                        $reccaj->setFecha($date);
-                        $reccaj->setComprob($comprob);
-                        $reccaj->setNumero($rc);
-                        $reccaj->setCodusu($identity['id']);//De session
-                        $reccaj->setObservaciones($observacion);
-                        $reccaj->setValor($valorTotal);
-                        $reccaj->setEstado('C');
-                        $reccaj->setRc($rc);
-                        
-                        if ($reccaj->save()==false) {
-                            foreach ($reccaj->getMessages() as $message) {
-                                $transaction->rollback('Reccaj: '.$message->getMessage());
-                            }
-                        }
-        
-                        $detalleReccaj = new DetalleReccaj();
-                        $detalleReccaj->setTransaction($transaction);
-                        $detalleReccaj->setReccajId($reccaj->getId());
-                        $detalleReccaj->setFormaPagoId(1);//PRIMERO
-                        $detalleReccaj->setNumero(1);
-                        $detalleReccaj->setValor($valorTotal);
-                        if ($detalleReccaj->save()==false) {
-                            foreach ($detalleReccaj->getMessages() as $message) {
-                                $transaction->rollback('DetalleReccaj: '.$message->getMessage());
-                            }
-                        }
-
-                        //Creamos historial de ajuste
-                        $identity = IdentityManager::getActive();
-                        $ajustePagos = EntityManager::get('AjustePagos', true)->setTransaction($transaction);
-                        $ajustePagos->setComprob($comprob);
-                        $ajustePagos->setNumero($rc);
-                        $ajustePagos->setFechaHora(date('Y-m-d H:i:s'));
-                        $ajustePagos->setPeriodo($periodo);
-                        $ajustePagos->setUsuariosId($identity['id']);
-                        if (!$ajustePagos->save()) {
-                            foreach ($ajustePagos->getMessages() as $message) {
-                                throw new SociosException($message->getMessage());
-                            }
-                        }
-                
-                        unset($aura, $detalleReccaj, $reccaj);
+                    } catch(AuraException $e) {
+                        throw new SociosException($e->getMessage());
                     }
-                    unset($comprob);
+                    unset($nitArray, $nit, $aura, $reccaj, $detalleReccaj);
                 }
-                unset($data, $comprobArray);
-                
+                unset($aPagar, $sobro);
+
                 $transaction->commit();
                 return true;
-                
             }
-            catch(Exception $e) {
-                throw new SociosException('Ocurrio un error al subir el archivo. '.$e->getMessage().' '.print_r($e, true));
-            }
+            return false;
+        } catch(Exception $e) {
+            throw new SociosException($e->getMessage()/*. ", trace: " . print_r($e->getTrace(), true)*/ );
+            return false;
         }
-        
     }
 
     /**
@@ -3889,8 +4089,14 @@ class SociosFactura extends UserComponent
             }
             
             $periodo = SociosCore::getCurrentPeriodo();
+            $ano = substr($periodo, 0, 4);
+            $mes = substr($periodo, 4, 2);
+            $fechaIni = "$ano-$mes-01";
+            $fechaFin = new Date("$ano-$mes-01");
+            $fechaFin->getLastDayOfMonth();
+
             $cuentasCargosFijos = $this->_getCuentasCargosFijos();
-            $configSaldos = array('cuentas'=>$cuentasCargosFijos);
+            $configSaldos = array('cuentas'=>$cuentasCargosFijos, 'fechaFactura' => $fechaIni);
             $saldosPorNit = $this->obtenerSaldosCartera($configSaldos);
             $saldosPorNitMeses = $saldosPorNit['numeroMeses'];
             $identity = IdentityManager::getActive();
@@ -3898,20 +4104,33 @@ class SociosFactura extends UserComponent
             $sociosObj = EntityManager::get('Socios')->setTransaction($this->_transaction)->find(array("group"=>"socios_id"));
             foreach ($sociosObj as $socios) {
                 $nit = $socios->getIdentificacion();
+
+                //Contamos meses de diferencia al periodo actual
+                $difMonths = 0; 
+                if (isset($saldosPorNitMeses[$nit])) {
+                    foreach ($saldosPorNitMeses[$nit] as $p) {
+                        $difMonths += Date::diffMonthsPeriod($p, $periodo);
+                    }
+                }
+
+                if (isset($saldosPorNit[$nit]) && $saldosPorNit[$nit] > 0 && $difMonths >= $mesesAutosuspension) {
+                    //throw new SociosException($difMonths . ":$periodo,mesesAutosuspension: $mesesAutosuspension, ".print_r($saldosPorNitMeses['1020751393'], true));
             
-                if (isset($saldosPorNit[$nit]) && $saldosPorNit[$nit]>0 && count($saldosPorNitMeses[$nit])>=$mesesAutosuspension) {
                     $socios->setEstadosSociosId($estadoAutosuspension);
                     if (!$socios->save()) {
                         foreach ($socios->getMessages() as $message) {
                             throw new SociosException($message->getMessage());
                         }
                     } else {
+                        $msg = 'Suspendido Automaticamente por falta de pago en periodo ' . $periodo . 
+                        ', numero de meses sin pago: ' . $difMonths. ', total a pagar: $'.$saldosPorNit[$socios->getIdentificacion()];
+                        
                         //Si cambio estado crear registro de suspendido
                         $suspendido = EntityManager::get('Suspendidos', true)->setTransaction($this->_transaction);
                         $suspendido->setSociosId($socios->getSociosId());
                         $suspendido->setPeriodo($periodo);
                         $suspendido->setUsuariosId($identity['id']);
-                        $suspendido->setObservacion('Suspendido Automaticamente por falta de pago en periodo '.$periodo.', $'.$saldosPorNit[$socios->getIdentificacion()]);
+                        $suspendido->setObservacion($msg);
                         if (!$suspendido->save()) {
                             foreach ($suspendido->getMessages() as $message) {
                                 throw new SociosException($message->getMessage());
@@ -3923,16 +4142,10 @@ class SociosFactura extends UserComponent
                         $asignacionEstados->setSociosId($socios->getSociosId());
                         $asignacionEstados->setEstadosSociosId($estadoAutosuspension);
                         
-                        $ano = substr($periodo, 0, 4);
-                        $mes = substr($periodo, 4, 2);
-                        $fechaIni = "$ano-$mes-01";
-                        $fechaFin = new Date("$ano-$mes-01");
-                        $fechaFin->getLastDayOfMonth();
-                        
                         $asignacionEstados->setFechaIni($fechaIni);
                         $asignacionEstados->setFechaFin($fechaFin->getDate());
                         
-                        $asignacionEstados->setObservaciones('Suspendido Automaticamente por falta de pago en periodo '.$periodo.', $'.$saldosPorNit[$socios->getIdentificacion()]);
+                        $asignacionEstados->setObservaciones($msg);
                         if (!$asignacionEstados->save()) {
                             foreach ($asignacionEstados->getMessages() as $message) {
                                 throw new SociosException($message->getMessage());
@@ -3941,9 +4154,8 @@ class SociosFactura extends UserComponent
                     }
                 }
             }
-        }
-        catch(Exception $e) {
-            $this->_transaction->rollback('Ocurrio un problema. '.$e->getMessage());
+        } catch (Exception $e) {
+            $this->_transaction->rollback('Ocurrio un problema. ' . $e->getMessage() . ", Trace: " . print_r($e->getTrace(), true));
         }
     }
 
@@ -3957,13 +4169,11 @@ class SociosFactura extends UserComponent
             
             $periodo = SociosCore::getCurrentPeriodo();
             $cuentasCargosFijos = $this->_getCuentasCargosFijos();
-            $configSaldos = array('cuentas'=>$cuentasCargosFijos);
-            $saldosPorNit = $this->obtenerSaldosCartera($configSaldos);
-
             $suspendidosObj = EntityManager::get('Suspendidos')->setTransaction($this->_transaction)->find(array("periodo='$periodo'"));
+            
             foreach ($suspendidosObj as $suspendidos) {
                 $socios = BackCacher::getSocios($suspendidos->getSociosId());
-                if ($socios!=false) {
+                if ($socios != false) {
                     $socios->setTransaction($this->_transaction);
                     $socios->setEstadosSociosId(1);//Activo
                     if (!$socios->save()) {
@@ -3974,9 +4184,8 @@ class SociosFactura extends UserComponent
                 }
                 $suspendidos->setTransaction($this->_transaction)->delete();
             }
-        }
-        catch(Exception $e) {
-            throw new SociosException('Ocurrio un problema. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new SociosException('Ocurrio un problema. ' . $e->getMessage() . print_r($e->getTrace(), true));
         }
     }
 

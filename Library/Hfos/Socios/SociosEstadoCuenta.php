@@ -79,8 +79,10 @@ class SociosEstadoCuenta extends UserComponent
     }
 
     /**
-    * Genera el reporte de socios suspendidos en el period actual
-    */
+     * Genera el reporte de socios suspendidos en el period actual
+     *
+     * @param  array $config
+     */
     public function estadoCuenta(&$config)
     {
         try {
@@ -92,7 +94,7 @@ class SociosEstadoCuenta extends UserComponent
                 //throw new Exception("NOT isEarlier", 1);
                 $status = $this->_makeEstadoCuenta($config);
             }
-            
+
         } catch (Exception $e) {
             throw new Exception($e->getMessage()/*.'trace: '.print_r($e, true)*/);
         }
@@ -187,7 +189,7 @@ class SociosEstadoCuenta extends UserComponent
             //verificamos si no se ha hecho un abono a cartera por pago despues de generar factura
             $conditionsReccaj = "cedula='{$socios->getIdentificacion()}' AND nota like '%{$facturasHotel->getPrefac()}-{$facturasHotel->getNumfac()}' AND estado='A'";
             //throw new Exception($conditionsReccaj);
-            
+
             $abonoCarteraObj = EntityManager::get('ReccajHotel')->find(array(
                 'conditions' => $conditionsReccaj,
                 'columns' => 'numrec'
@@ -272,7 +274,7 @@ class SociosEstadoCuenta extends UserComponent
 
         //CARGOS
         foreach ($carteraObj as $cartera) {
-            
+
             //CARGOS
             $invoObj = EntityManager::get('Invoicer')->findFirst("numero='{$cartera->getNumeroDoc()}' AND fecha_emision>='{$cartera->getFEmision()}'");
             if (!$invoObj) {
@@ -281,7 +283,7 @@ class SociosEstadoCuenta extends UserComponent
             }
 
             //throw new Exception("Error Processing Request", 1);
-            
+
 
             if (Date::isEarlier($dateFechaCorte, $invoObj->getFechaEmision()) && $dateFechaCorte!=$invoObj->getFechaEmision()) {
                 unset($cartera, $invoObj);
@@ -359,7 +361,7 @@ class SociosEstadoCuenta extends UserComponent
             if ($movi) {
                 if (Date::isEarlier($dateFechaCorte, $movi->getFecha())) {
                     //throw new Exception("$dateFechaCorte,{$movi->getFecha()}");
-                    
+
                     unset($movi, $key);
                     continue;
                 }
@@ -628,7 +630,7 @@ class SociosEstadoCuenta extends UserComponent
             //verificamos si no se ha hecho un abono a cartera por pago despues de generar factura
             $conditionsReccaj = "cedula='{$socios->getIdentificacion()}' AND nota like '%{$facturasHotel->getPrefac()}-{$facturasHotel->getNumfac()}' AND estado='A'";
             //throw new Exception($conditionsReccaj);
-            
+
             $abonoCarteraObj = EntityManager::get('ReccajHotel')->find(array(
                 'conditions' => $conditionsReccaj,
                 'columns' => 'numrec'
@@ -731,7 +733,7 @@ class SociosEstadoCuenta extends UserComponent
             foreach ($detInvoObj as $invo) {
 
                 $key = $invo->getId();
-                
+
                 if (isset($tabuDetNumDoc[$key])) {
                     unset($invo, $key);
                     continue;
@@ -777,7 +779,7 @@ class SociosEstadoCuenta extends UserComponent
 
         $conditionsCargosAjs = "nit='{$socios->getIdentificacion()}' AND month(fecha)='$month2' AND year(fecha)='$year2' AND comprob IN('$comprobAjustes' $comprobNcStr)  AND (cuenta LIKE '$cuentasAjsEstadoCuenta%' OR cuenta = '$cuentaSaldoAFavor')";
         //throw new SociosException($conditionsCargosAjs);
-        
+
         $moviObj = EntityManager::get('Movi')->find(array(
             "conditions" => $conditionsCargosAjs,
             'columns' => 'deb_cre,comprob, numero,fecha, nit,cuenta, tipo_doc, numero_doc,descripcion,valor'
@@ -806,7 +808,7 @@ class SociosEstadoCuenta extends UserComponent
             }
 
             //throw new SociosException($conditionsMovi2);
-            
+
 
             $movi2Obj = EntityManager::get('Movi')->find(array(
                 'conditions' => $conditionsMovi2,
@@ -838,14 +840,14 @@ class SociosEstadoCuenta extends UserComponent
         //////////////////////////////////////
         // ABONOS
         //////////////////////////////////////
-        
+
         $abonosTabu = array();
-        
+
         //ABONOS
         $conditionsAbonos = "nit='{$socios->getIdentificacion()}' AND deb_cre='C' AND month(fecha)='$month2' AND year(fecha)='$year2' AND comprob IN('$comprobsPagosAs') AND (cuenta LIKE '$cuentasAjsEstadoCuenta%' OR cuenta = '$cuentaSaldoAFavor')";
-        
+
         //throw new SociosException($conditionsAbonos);
-        
+
         $moviObj = EntityManager::get('Movi')->find(array(
             "conditions" => $conditionsAbonos,
             'columns' => 'deb_cre,comprob, numero,fecha, nit,cuenta, tipo_doc, numero_doc,descripcion,valor'
@@ -874,7 +876,7 @@ class SociosEstadoCuenta extends UserComponent
 
                 //Buscamos detalle reccaj
                 $detReccajObj = EntityManager::get('DetalleReccaj')->find("reccaj_id='{$reccaj->getId()}' AND forma_pago_id>0", "columns: forma_pago_id,valor");
-                
+
                 //Para varias formas de pago armamos
                 $desc = array();
                 $totTemp = 0;
@@ -939,16 +941,16 @@ class SociosEstadoCuenta extends UserComponent
                 unset($detReccajObj);
             }
             unset($movi, $key, $reccaj);
-            
+
         }
         unset($cartera, $moviObj, $carteraObj);
 
         //throw new SociosException(print_r($content, true));
-            
+
         return $content;
     }
-    
-    
+
+
 
     /**
     * Guarda la informacion de estado de cuenta
@@ -1112,7 +1114,7 @@ class SociosEstadoCuenta extends UserComponent
         );
 
         gc_enable();
-        
+
         $i=0;
         $carteraObj = EntityManager::get('Cartera')->find("nit='$nit' AND f_emision < '$fechaSaldo' ");
         foreach ($carteraObj as $cartera) {
@@ -1160,7 +1162,7 @@ class SociosEstadoCuenta extends UserComponent
         gc_disable();
 
         return $ret;
-    }    
+    }
 
     //////////////////////////////////////////////////
     //Validación de Estados de cuenta Vs Contabilidad
@@ -1181,6 +1183,12 @@ class SociosEstadoCuenta extends UserComponent
             if (!$config['reportType']) {
                 throw new SociosException("No se ha definido el tipo de salida a generar la validación");
             }
+
+            $sociosId = false;
+            if (isset($config['sociosId']) && $config['sociosId']>0){
+                $sociosId = $config['sociosId'];
+            }
+
             $reportType = $config['reportType'];
 
             $report = ReportBase::factory($reportType);
@@ -1233,7 +1241,11 @@ class SociosEstadoCuenta extends UserComponent
             $totales['diff'] = 0;
 
             //Socios
-            $sociosObj = EntityManager::get('Socios')->find(array("1=1", 'column'=>'socios_id,cobra', 'order'=>"CAST(numero_accion AS SIGNED) ASC"));
+            $query = 'socios_id>0';
+            if ($sociosId>0) {
+                $query = "socios_id = '$sociosId'";
+            }
+            $sociosObj = EntityManager::get('Socios')->find(array($query, 'column'=>'socios_id,cobra', 'order'=>"CAST(numero_accion AS SIGNED) ASC"));
 
             $num = 0;
             foreach ($sociosObj as $socios) {
@@ -1252,6 +1264,7 @@ class SociosEstadoCuenta extends UserComponent
 
                 //Diff
                 $diff = $saldoSocios - $saldoContab;
+                //throw new Exception("({$estadoCuenta->getFecha()}) $diff = $saldoSocios - $saldoContab", 1);
 
                 if ($diff==0) {
                     continue;
@@ -1322,7 +1335,10 @@ class SociosEstadoCuenta extends UserComponent
             $monthA = "0".$monthA;
         }
 
-        $estadoCuentaObj = EntityManager::get('EstadoCuenta')->find("socios_id='{$socios->getSociosId()}' AND month(fecha)='$month' AND year(fecha)='$year'");
+        $query = "socios_id='{$socios->getSociosId()}' AND month(fecha)='$month' AND year(fecha)='$year'";
+        //throw new Exception($query);
+
+        $estadoCuentaObj = EntityManager::get('EstadoCuenta')->find($query);
         foreach ($estadoCuentaObj as $estadoCuenta) {
             //Sacar estado de cuenta atras para revisar el correcto
             $estadoCuentaAtras = EntityManager::get('EstadoCuenta')->findFirst("socios_id='{$socios->getSociosId()}' AND month(fecha)<='$monthA' AND year(fecha)<='$yearA'", "order: fecha DESC");
@@ -1352,22 +1368,24 @@ class SociosEstadoCuenta extends UserComponent
 
     /**
      * Crea estado de cuenta con la version de febero 28 ed 2014
-     * @param  [type] $config [description]
-     * @return [type]         [description]
+     * @param  array $config
      */
     private function _makeEstadoCuenta(&$config)
     {
 
         try {
-            gc_enable();
-
             $totales = array();
             $transaction = TransactionManager::getUserTransaction();
-            $datosClub = EntityManager::get('DatosClub')->findFirst();
+            $datosClub   = EntityManager::get('DatosClub')->findFirst();
             $consecutivo = EntityManager::get('Consecutivos')->findFirst();
 
             if (!isset($config['sociosId']) || $config['sociosId']<=0) {
-                $sociosObj = EntityManager::get('Socios')->find(array("conditions" => "1=1", "order" => "CAST(numero_accion AS SIGNED) ASC"));
+                $sociosObj = EntityManager::get('Socios')->find(
+                    array(
+                        "conditions" => "1=1",
+                        "order"      => "CAST(numero_accion AS SIGNED) ASC"
+                    )
+                );
             } else {
                 $sociosObj = EntityManager::get('Socios')->find("socios_id='{$config['sociosId']}'");
                 if (!count($sociosObj)) {
@@ -1382,15 +1400,18 @@ class SociosEstadoCuenta extends UserComponent
 
             $periodoInt = $config["periodo"];
 
+            //validamos si contabildiad esta abierta
+            self::checkPeriod($periodoInt);
+
             $year = substr($periodoInt, 0, 4);
             $month = (int) substr($periodoInt, 4, 2);
             if ($month<10) {
-                $month = "0".$month;
+                $month = "0" . $month;
             }
 
             $day = $periodoObj->getDiaFactura();
             if ($day<10) {
-                $day = "0".$day;
+                $day = "0" . $day;
             }
 
             $fechaCorte = $config['fechaIni'];
@@ -1403,14 +1424,9 @@ class SociosEstadoCuenta extends UserComponent
             $year2L = substr($peridoSub2, 0, 4);
             $month2L = (int) substr($peridoSub2, 4, 2);
 
-            //throw new SociosException($peridoSub2);
-
             $fechaLimitShow = new Date("$year2L-$month2L-01");
             $fechaLimitShow->toLastDayOfMonth();
-            //throw new SociosException($fechaLimitShow->getDate());
-
             $fechaLimitShow->addDays(1);
-            //throw new SociosException($fechaLimitShow->getDate());
 
             $fLimitShowLPeriod = $fechaLimitShow->getPeriod();
             $year2LP = substr($fLimitShowLPeriod, 0, 4);
@@ -1469,8 +1485,6 @@ class SociosEstadoCuenta extends UserComponent
 
             $comprobsPagosA = explode(', ', $comprobsPagos);
             $comprobsPagosAs = implode("', '", $comprobsPagosA);
-            //throw new Exception($comprobsPagosAs);
-            
 
             //Cuenta de saldo a favor
             $cuentaSaldoAFavor = Settings::get('cuenta_saldo_a_favor', 'SO');
@@ -1479,20 +1493,28 @@ class SociosEstadoCuenta extends UserComponent
             }
 
             $options = array(
-                'tipoDocSocios' => $tipoDocSocios,
                 'tipoDocPos' => $tipoDocPos,
-                'cuentasAjsEstadoCuenta' => $cuentasAjsEstadoCuenta,
-                'comprobAjustes' => $comprobAjustes,
                 'comprobNcStr' => $comprobNcStr,
+                'tipoDocSocios' => $tipoDocSocios,
+                'comprobAjustes' => $comprobAjustes,
                 'comprobsPagosAs' => $comprobsPagosAs,
-                'cuentaSaldoAFavor' => $cuentaSaldoAFavor
+                'cuentaSaldoAFavor' => $cuentaSaldoAFavor,
+                'cuentasAjsEstadoCuenta' => $cuentasAjsEstadoCuenta
             );
 
             ///RECORREMOS SOCIOS A GENERAR
             $i = 0;
             foreach ($sociosObj as $socios) {
 
+                //Validacion de solo socios que generan estado de cuenta
+                if ($socios->getGeneraEstcue() != 'S') {
+                    $this->_cleanEstadoCuenta($dateFechaCorte->getPeriod(), $socios, $options);
+        		    continue;
+                }
+
                 $sociosId = $socios->getSociosId();
+
+                $this->validaDuplicados($config["fechaIni"], $sociosId);
 
                 $location = BackCacher::getLocation($socios->getCiudadCasa());
                 if (!$location) {
@@ -1510,13 +1532,14 @@ class SociosEstadoCuenta extends UserComponent
                 //$contentMovi = $this->getContentMovi($dateFechaCorte->getPeriod(), $socios, $options);
                 $contentMovi = $this->getContentMovi($fechaCorte, $socios, $options);
 
-                if (count($contentMovi)<=0) {
+                //Si no tiene movimiento ó no debería generar estado de cuenta limpie estado de cuenta
+                if (count($contentMovi)<=0 || $socios->getGeneraEstcue()=='N') {
+
                     //limpia estado de cuenta si existe cuando se calcula de nuevo y no tiene movimiento
                     if (isset($config['reemplaza']) && $config['reemplaza']==true) {
                         $this->_cleanEstadoCuenta($dateFechaCorte->getPeriod(), $socios, $options);
                     }
                     if (isset($config['showDebug'])==true && $config['showDebug']==true) {
-                        ob_end_clean();
                         throw new SociosException("El estado de cuenta no tiene movimiento a mostrar");
                     }
                     continue;
@@ -1534,7 +1557,6 @@ class SociosEstadoCuenta extends UserComponent
                     unset($content, $valorCargo, $valorAbono);
                 }
 
-                //$periodoIni2 = $config["periodo"] - 1;
                 $periodoIni2 = SociosCore::subPeriodo($config["periodo"], 1);
                 $year2 = substr($periodoIni2, 0, 4);
                 $month2 = (int) substr($periodoIni2, 4, 2);
@@ -1659,8 +1681,41 @@ class SociosEstadoCuenta extends UserComponent
     }
 
     /**
+     * Valida si un socios tiene mas de un estado de cuenta este mes
+     *
+     * @param  date $fechaIni
+     * @param  integer $sociosId
+     */
+    private function validaDuplicados($fechaIni, $sociosId)
+    {
+        $dateIni = new Date($fechaIni);
+        $dateIni->toFirstDayOfMonth();
+
+        $dateFin = clone $dateIni;
+        $dateFin->toLastDayOfMonth();
+
+        $estadoCuentas = EntityManager::get('EstadoCuenta')->find(
+            "socios_id='$sociosId' AND fecha>='$dateIni' AND fecha<='$dateFin'",
+            "order: fecha ASC"
+        );
+        if (count($estadoCuentas)) {
+            $fechas = array();
+            foreach ($estadoCuentas as $estadoCuenta) {
+                if ($fechaIni != $estadoCuenta->getFecha()) {
+                    $fechas[]= $estadoCuenta->getFecha();
+                }
+            }
+            if (count($fechas)) {
+                $socio = BackCacher::getSocios($sociosId);
+                throw new Exception("El socio '" . $socio->getNumeroAccion() . " : " . $socio->getNombres() . " " . $socio->getApellidos() .
+                    "' tiene otro estado de cuenta este mes: '" . join(",", $fechas) . "'", 1);
+            }
+        }
+    }
+
+    /**
      * Make estado de cuenta viejos es decir menores a febereo 01 de 2014
-     * 
+     *
      * @param  [type] $config [description]
      * @return [type]         [description]
      */
@@ -1712,7 +1767,7 @@ class SociosEstadoCuenta extends UserComponent
 
 
             //throw new SociosException($fechaCorte);
-            
+
             $dateFechaLimite = new Date($fechaCorte);
             $dateFechaLimite->addDays($diaVenc);
             $lastDayOfMonth = date::getLastDayOfMonth($month, $year);
@@ -1948,4 +2003,25 @@ class SociosEstadoCuenta extends UserComponent
             throw new SociosException($e->getMessage());
         }
     }
+
+    /**
+     * Valida si un periodo esta abierto y si se puede guardar en contabilidad
+     *
+     * @param  integer $period
+     */
+    public static function checkPeriod($period)
+	{
+        $fechaCierre = EntityManager::get('Empresa')->findFirst()->getFCierrec();
+		if ($fechaCierre) {
+			$dateC = new Date($fechaCierre);
+
+			$year  = substr($period, 0, 4);
+			$month = substr($period, 4, 2);
+			$dateS = new Date($year . "-" . $month . "-01");
+
+			if (Date::isEarlier($dateS, $dateC)) {
+				throw new AuraException("El periodo '$period' es menor al actual cierre contable '$fechaCierre', no se pueden guardar comprobantes");
+			}
+		}
+	}
 }

@@ -52,7 +52,7 @@ class Facturas_GeneradasController extends ApplicationController
 
         try {
 
-            $transaction        = TransactionManager::getUserTransaction();
+            $transaction = TransactionManager::getUserTransaction();
 
             //Parametros de busqueda
             $periodoStr= $this->getPostParam('periodo', 'int');
@@ -81,13 +81,13 @@ class Facturas_GeneradasController extends ApplicationController
             $report->setHeader($headers);
             $report->setDocumentTitle('Informe de Facturas Generadas');
             $report->setColumnHeaders(array(
-                'NUM.',//0
-                'NO. ACCIÓN',//1
+                'IT',//0
+                'NO. DERECHO',//1
                 'NOMBRE',//2
-                'CÉDULA',//3
+                'CC y/o NIT',//3
                 'NO. FACTURA',//4
                 'FECHA',//5
-                'COMPROB',//6
+                'CPBTE No.',//6
                 'CONCEPTO',//7
                 'TIPO', //8
                 'VALOR',//9
@@ -97,11 +97,11 @@ class Facturas_GeneradasController extends ApplicationController
                 'textAlign' => 'center',
                 'backgroundColor' => '#eaeaea'
             )));
-            $report->setColumnStyle(array(0,1,2,3,4,5,6,7,8,10), new ReportStyle(array(
+            $report->setColumnStyle(array(0,1,2,4,5,6,7,8,10), new ReportStyle(array(
                 'textAlign' => 'center',
                 'fontSize' => 11
             )));
-            $report->setColumnStyle(array(9), new ReportStyle(array(
+            $report->setColumnStyle(array(9,3), new ReportStyle(array(
                 'textAlign' => 'right',
                 'fontSize' => 11
             )));
@@ -124,6 +124,11 @@ class Facturas_GeneradasController extends ApplicationController
 
             //Buscamos segun periodo
             $facturaObj = EntityManager::get('Factura')->find(array("periodo='$periodoStr' AND estado='D'"));
+
+            if (!count($facturaObj)) {
+                throw new SociosException("No hay facturas que mostrar en el periodo '$periodoStr'");
+            }
+
             foreach ($facturaObj as $factura) {
 
                 $sociosId = $factura->getSociosId();

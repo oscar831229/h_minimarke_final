@@ -15,6 +15,7 @@
 
 Core::importFromLibrary('Hfos/Socios','SociosCore.php');
 Core::importFromLibrary('Hfos/Socios','SociosReports.php');
+Core::importFromLibrary('Hfos/Socios','SociosEstadoCuenta.php');
 
 /**
  * FacturarController
@@ -22,7 +23,7 @@ Core::importFromLibrary('Hfos/Socios','SociosReports.php');
  * Controlador de generacion de facturas mensuales
  *
  */
-class FacturarController extends HyperFormController 
+class FacturarController extends HyperFormController
 {
 	static protected $_config = array(
 		'model' => 'Invoicer',
@@ -176,7 +177,7 @@ class FacturarController extends HyperFormController
 				'size' => 10,
 				'maxlength' => 14,
 				'notNull' => true,
-				'readOnly' => true, 
+				'readOnly' => true,
 				'notBrowse' => true,
 				'notSearch' => true,
 				'filters' => array('comprob')
@@ -224,7 +225,7 @@ class FacturarController extends HyperFormController
 					'size' => 46,
 					'maxlength' => 250,
 					'filters' => array('upper')
-				),				
+				),
 				'valor' => array(
 					'single' => 'Valor',
 					'notNull' => true,
@@ -278,27 +279,27 @@ class FacturarController extends HyperFormController
 			$this->setParamToView('sociosId', $sociosId);
 		}
 	}
-	
+
 	public function erroresAction()
 	{
 
 	}
-	
+
 	/**
 	 * Generar facturas mensuales a socios
-	 * 
+	 *
 	 */
 	public function generarAction()
 	{
 		$this->setResponse('json');
-		
+
 		set_time_limit(0);
-		
+
 		try {
 
 			$debug=true;
 			$transaction = TransactionManager::getUserTransaction();
-				
+
 			//periodo actual
 			$periodo = SociosCore::getCurrentPeriodo();
 
@@ -314,7 +315,8 @@ class FacturarController extends HyperFormController
 
 
 			$sociosFactura = new SociosFactura();
-			
+			SociosEstadoCuenta::checkPeriod($periodo);
+
 			//Recalculamos movimientos
 			$configMovi = array(
 				'periodo' => $periodo,
@@ -337,17 +339,17 @@ class FacturarController extends HyperFormController
 			//preparamos movimientos a factura
 			$sociosFactura->generarCargosSocios($configMovi);
 			$sociosFactura->generarMovimiento($configMovi);
-			
-			//Buscamos socios			
+
+			//Buscamos socios
 			$sociosObj = $this->Socios->find(array(
-				"columns"=>'socios_id', 
+				"columns"=>'socios_id',
 				'order'=>'CAST(numero_accion AS SIGNED) ASC'
 			));
-			foreach ($sociosObj as $socios) 
+			foreach ($sociosObj as $socios)
 			{
 
 				$sociosId = $socios->getSociosId();
-				
+
 				//Crea la(s) factura(s)
 				$configFactura = array(
 					'periodo'	=> $periodo,
@@ -362,14 +364,14 @@ class FacturarController extends HyperFormController
 				);
 
 				$sociosFactura->generarFactura($configFactura);
-				
+
 				unset($socios);
 			}
-			
+
 			unset($sociosObj);
-			
+
 			$transaction->commit();
-				
+
 			return array(
 				'status' => 'OK',
 				'message' => 'La facturación fue generada exitosamente en la fecha "'.$fechaFactura.'".'
@@ -385,34 +387,34 @@ class FacturarController extends HyperFormController
 		catch(Exception $e) {
 			return array(
 				'status'	=> 'FAILED',
-				'message'	=> "generarAction: ".$e->getMessage()
+				'message'	=> "generarAction: " . $e->getMessage()
 			);
 		}
 	}
-	
+
 	/**
 	 * Metodo que imprime la(s) factura(s)
 	 */
 	public function reporteFacturaAction()
 	{
 		$this->setResponse('json');
-		
+
 		set_time_limit(0);
-		
-		try 
+
+		try
 		{
 			$transaction = TransactionManager::getUserTransaction();
 
 			$sociosId = $this->getPostParam('sociosId', 'int');
 			$fechaFactura = $this->getPostParam('dateIni','date');
-			
+
 			if (!$fechaFactura) {
 				return array(
 					'status' => 'FAILED',
 					'message' => 'Es necesario dar la fecha de la factura'
 				);
 			}
-			
+
 			$config = array(
 				'reportType' => 'pdf',
 				'fechaFactura' => $fechaFactura,
@@ -439,28 +441,35 @@ class FacturarController extends HyperFormController
 			);
 		}
 	}
-	
+
 	/**
 	 * Recorre facturas generadas en el periodo actual y borra su movimiento contable
 	 */
 	public function borrarAction()
 	{
 		$this->setResponse('json');
-		
+
 		set_time_limit(0);
-		
-		try 
+
+		try
 		{
-			
+
 			$transaction = TransactionManager::getUserTransaction();
-			
+
 			//fecha de factura
 			$fechaFactura = $this->getPostParam('dateIni','date');
-			
+			$date = new Date($fechaFactura);
+			//periodo actual
+                        $periodo = SociosCore::getCurrentPeriodo();
+
+			if (intval($date->getPeriod())<intval($periodo)) {
+				throw new SociosException("No se puede borrar periodos ya cerrados");
+			}
+
 			$sociosIdArray = array();
 			$nitsArray = array();
 			$facturaObj = EntityManager::get("Factura")->find(array("conditions"=>"fecha_factura='$fechaFactura'",'columns'=>'socios_id'));
-			foreach ($facturaObj as $factura) 
+			foreach ($facturaObj as $factura)
 			{
 				$socio = BackCacher::getSocios($factura->getSociosId());
 				if ($socio) {
@@ -480,9 +489,9 @@ class FacturarController extends HyperFormController
 
 			$sociosFactura = new SociosFactura();
 			$status = $sociosFactura->anularFacturasPeriodo($config);
-			
+
 			$transaction->commit();
-					
+
 			return array(
 				'status' => 'OK',
 				'message' => 'Se borraron las facturas de la fecha "'.$fechaFactura.'" con su movimiento contable.'
@@ -513,9 +522,9 @@ class FacturarController extends HyperFormController
 		{
     	    Core::importFromLibrary('Hfos/Socios','SociosCore.php');
 			Core::importFromLibrary('Hfos/Socios','SociosReports.php');
-			
+
 			$periodo = SociosCore::getCurrentPeriodo();
-				
+
 			//Buscamos Facturas y comparamos si existe en delivery
 			$sociosReports = new SociosReports();
 			$sociosReports->checkDelivery();
@@ -613,14 +622,14 @@ class FacturarController extends HyperFormController
 			if (!isset($config->hfos->socios_ip)) {
 				throw new Exception('No se ha configurado en config.ini la ip del servidor de socios');
 			}
-			
+
 			$server = $config->hfos->socios_ip;
-			
+
 			$configSend = Settings::get('send_factura', 'SO');
 			if (!$configSend) {
 				throw new Exception("No se ha configurado el 'Resumen de Correo de Factura' en configuración para enviar al correo del socio.");
 			}
-			
+
 			$numfacArray = $this->getPostParam('numfac', 'int');
 			if (!count($numfacArray)) {
 				throw new Exception("Debe elegir facturas a enviar", 1);
@@ -632,15 +641,15 @@ class FacturarController extends HyperFormController
 
 			Core::importFromLibrary('Hfos/Socios','SociosReports.php');
 			Core::importFromLibrary('Hfos/Delivery','Delivery.php');
-			
+
 			$periodo = SociosCore::getCurrentPeriodo();
 			$sociosReports = new SociosReports();
 			$delivery = new DeliveryHfos();
 
 			//$temp = array($numfacArray[0]);
 
-			//foreach ($temp as $numfac) 
-			foreach ($numfacArray as $numfac) 
+			//foreach ($temp as $numfac)
+			foreach ($numfacArray as $numfac)
 			{
 				$factura = EntityManager::get('Factura')->findFirst("numero='$numfac'");
 				if (!$factura) {
@@ -660,30 +669,30 @@ class FacturarController extends HyperFormController
 				$message = $configSend.' Descargalo <a href="http://'.$server.'/s/public/temp/'.$filePdf.'">aqui</a>';
                 //throw new Exception(print_r($config, true));
 				$status = $delivery->send(
-					0, 
-					array($socios->getCorreo1(), $socios->getNombres().' '.$socios->getApellidos()), 
-					'Factura Periodo '.$periodo, 
+					0,
+					array($socios->getCorreo1(), $socios->getNombres().' '.$socios->getApellidos()),
+					'Factura Periodo '.$periodo,
 					$message, $from='cartera@clubpayande.com',
 					array('attachments' => array(KEF_ABS_PATH.'/public/temp/'.$filePdf))
 				);
-				
+
 				if (!$status) {
-					throw new Exception('Factura no enviada: '.$delivery->getLastError());	
+					throw new Exception('Factura no enviada: '.$delivery->getLastError());
 				}
-				
+
 				if ($socios->getCorreo2()) {
 					$status = $delivery->send(
-						0, 
-						array($socios->getCorreo2(), $socios->getNombres().' '.$socios->getApellidos()), 
-						'Factura Periodo '.$periodo, 
+						0,
+						array($socios->getCorreo2(), $socios->getNombres().' '.$socios->getApellidos()),
+						'Factura Periodo '.$periodo,
 						$message, $from='cartera@clubpayande.com',
 						array('attachments' => array(KEF_ABS_PATH.'/public/temp/'.$filePdf))
 					);
 				}
-				
+
 				//$status = $delivery->send(0, array('carvajaldiazeduar@gmail.com', 'Eduar Carvajal'), 'Factura Periodo '.$periodo, 'Estimado Socios, estamos enviando un link de su factura a su correo. Link: http://'.$server.'/s/public/temp/'.$filePdf, $from='cartera@clubpayande.com', $extra);
 				if (!$status) {
-					throw new Exception('Factura no enviada: '.$delivery->getLastError());	
+					throw new Exception('Factura no enviada: '.$delivery->getLastError());
 				}
 			}
 			$transaction->commit();
@@ -707,9 +716,12 @@ class FacturarController extends HyperFormController
 
 		$dateIni = "$year-$month-01";
 		$dateIniObj = new Date($dateIni);
-		$dateFin = $dateIniObj->getLastDayOfMonth();
-		Tag::displayTo('dateIni',$dateIni);
-		Tag::displayTo('dateFin',$dateFin->getDate());
+		$dateIniObj->toLastDayOfMonth();
+		$dateFinObj = clone $dateIniObj;
+		$dateFinObj->addDays(15);
+
+		Tag::displayTo('dateIni',$dateIniObj->getDate());
+		Tag::displayTo('dateFin',$dateFinObj->getDate());
 
 		//Personal
 		$this->setParamToView('personal', $personal);
@@ -721,9 +733,9 @@ class FacturarController extends HyperFormController
 	public function selectfechaAction($type=false,$personal=false)
 	{
 		$this->setResponse('view');
-		
+
 		$facturasObj = EntityManager::get('Factura')->find(array("conditions"=>"1=1","columns"=>"fecha_factura","group"=>"fecha_factura",'order'=>'fecha_factura DESC'));
-		
+
 		$this->setParamToView('facturasObj',$facturasObj);
 
 		$title = "????";
@@ -760,7 +772,7 @@ class FacturarController extends HyperFormController
 		try
 		{
 			$request = $this->getRequestInstance();
-			
+
 			if($request->isSetRequestParam('item')){
 				$item = $request->getParamPost('item', 'alpha');
 			} else {
@@ -796,8 +808,8 @@ class FacturarController extends HyperFormController
 			{
 				if (isset($action[$i])) {
 					if ($action[$i]=='add') {
-						
-						
+
+
 						$detalleInvoicer = new DetalleInvoicer();
 						$detalleInvoicer->setTransaction($transaction);
 						$detalleInvoicer->setFacturasId($record->getId());
@@ -810,7 +822,7 @@ class FacturarController extends HyperFormController
 						$detalleInvoicer->setTotal($valor[$i]+$iva[$i]);
 
 						if(!$detalleInvoicer->save()) {
-							foreach ($detalleInvoicer->getMessages() as $msg) 
+							foreach ($detalleInvoicer->getMessages() as $msg)
 							{
 								throw new Exception("detalleInvoicer:".$msg->getMessage());
 							}
@@ -825,7 +837,7 @@ class FacturarController extends HyperFormController
 			$this->appendMessage($e->getMessage());
 			return false;
 		}
-		
+
 	}
 
 	public function beforeDelete() {
