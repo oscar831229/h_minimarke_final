@@ -34,9 +34,12 @@ var EstadoCuentaValidacion = Class.create(HfosProcessContainer, {
 	_getReporte: function(printButton) {
 		var fecha = this.selectOne('#fecha');
 		var reportType = this.selectOne('#reportType');
+		var sociosId = this.selectOne('#sociosId');
+		
 		new HfosAjax.JsonRequest('estado_cuenta_validacion/reporte', {
 			parameters: {
 				'fecha': fecha.getValue(),
+				'sociosId': sociosId.getValue(),
 				'reportType': reportType.getValue()
 			},
 			onCreate: function(){

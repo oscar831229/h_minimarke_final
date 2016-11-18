@@ -177,7 +177,8 @@ class Socorro extends UserComponent
 		$bodyMessage->setCharset('utf-8');
 		$message->attach($bodyMessage);
 
-		$recipients->addTo('andres.gutierrez@bhteck.com', 'Andres Felipe Gutierrez');
+		$recipients->addTo('hugo.ramirez@bhteck.com', 'Hugo Ramirez');
+		//$recipients->addTo('andres.gutierrez@bhteck.com', 'Andres Felipe Gutierrez');
 		$recipients->addTo('eduar.carvajal@bhteck.com', 'Eduar Carvajal');
 
 		$response = ControllerResponse::getInstance();

@@ -1318,7 +1318,7 @@ class SociosFactura extends UserComponent
             //obtenemos datos de cartera
             $diaVenc = $periodo->getDiasPlazo();//Dias de vencimiento de factura
             if (!$diaVenc) {
-                throw new SociosException('No se ha configurado el día de vencimiento de factura en configuración');
+                throw new SociosException('No se ha configurado el dÃ­a de vencimiento de factura en configuraciÃ³n');
             }
             $config['diaVenc'] = $diaVenc;
             

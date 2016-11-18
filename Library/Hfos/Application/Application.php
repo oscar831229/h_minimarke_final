@@ -118,13 +118,13 @@ class Hfos_Application
 		'FC' => array(
 			'facturas', 'reimprimir'
 		),
-		'SO' => array(
-			'socios', 'cambio_accion', 'asignacion_cargos_grupo', 'cargos_socios', 'movimiento_cargos', 'facturar',
-			'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir', 'ajuste-saldos', 'ajuste-prestamos',
-			'prestamos-socios', 'ajuste-pagos', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
-			'informe-convenios', 'estado_cuenta', 'estado_cuenta_consolidado', 'pagos-periodo',
-			'estado_cuenta_validacion'
-		),
+		 'SO' => array(
+                'socios', 'cambio_accion', 'asignacion_cargos_grupo', 'cargos_socios', 'movimiento_cargos', 'facturar',
+                'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir',
+                'prestamos-socios', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
+                'informe-convenios', 'estado_cuenta', 'estado_cuenta_consolidado', 'pagos-periodo',
+                'estado_cuenta_validacion', 'informe_rc', 'importar-pagos'
+        ),
 		'TC' => array(
 			'contratos', 'reservas', 'proyeccion', 'abono_contrato', 'abono_reserva',
 			'socios_aldia', 'propietarios', 'cambio_contratos', 'cuenta_cobro'

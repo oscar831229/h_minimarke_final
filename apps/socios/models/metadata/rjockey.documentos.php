@@ -1,0 +1,1 @@
+a:8:{i:0;a:3:{i:0;s:6:"codigo";i:1;s:11:"nom_documen";i:2;s:7:"cartera";}i:1;a:1:{i:0;s:6:"codigo";}i:2;a:2:{i:0;s:11:"nom_documen";i:1;s:7:"cartera";}i:3;a:3:{i:0;s:6:"codigo";i:1;s:11:"nom_documen";i:2;s:7:"cartera";}i:4;a:3:{s:6:"codigo";s:7:"char(3)";s:11:"nom_documen";s:11:"varchar(70)";s:7:"cartera";s:7:"char(1)";}i:5;a:0:{}i:6;a:0:{}i:7;a:0:{}}

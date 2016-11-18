@@ -1,0 +1,1 @@
+a:8:{i:0;a:2:{i:0;s:6:"codigo";i:1;s:6:"nombre";}i:1;a:1:{i:0;s:6:"codigo";}i:2;a:1:{i:0;s:6:"nombre";}i:3;a:2:{i:0;s:6:"codigo";i:1;s:6:"nombre";}i:4;a:2:{s:6:"codigo";s:12:"decimal(2,0)";s:6:"nombre";s:11:"varchar(70)";}i:5;a:1:{s:6:"codigo";b:1;}i:6;a:0:{}i:7;a:0:{}}

@@ -61,7 +61,7 @@ var EstadoCuenta = Class.create(HfosProcessContainer, {
 							if (response.count>0) {
 								//Validamos si borra o deja anterior
 								new HfosModal.confirm({
-									title: 'Generar Esatdos de Cuenta',
+									title: 'Generar Estados de Cuenta',
 									message: 'Parece que existe(n) un(os) estado de cuenta igual con la misma fecha. Desea reemplazarlo(s)?(Total: '+response.count+')',
 									onAccept: function() {
 										this._generarEstadosCuenta(facturarForm, response.count);

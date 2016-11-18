@@ -1,6 +1,6 @@
 <?php
 
-class Periodo extends ActiveRecord {
+class Periodo extends RcsRecord {
 
 	/**
 	 * @var string

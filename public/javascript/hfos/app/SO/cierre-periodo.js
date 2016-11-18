@@ -24,13 +24,13 @@ var CierrePeriodo = Class.create(HfosProcessContainer, {
 	 *
 	 * @constructor
 	 */
-	initialize: function(container){
+	initialize: function(container) {
 		this.setContainer(container);
 		var cerrarButton = this.getElement('importButton');
 		cerrarButton.observe('click', this._cierreContable.bind(this, cerrarButton));
 	},
 
-	_cierreContable: function(cerrarButton){
+	_cierreContable: function(cerrarButton) {
 		cerrarButton.disable();
 		this.setIgnoreTermSignal(true);
 		var cierreForm = this.getElement('cierreForm');
@@ -45,8 +45,8 @@ var CierrePeriodo = Class.create(HfosProcessContainer, {
 					this.getMessages().error(response.message);
 				} else {
 					this.getMessages().success('Se realizó el cierre correctamente');
-					this.selectOne('#proximoCierre').update(response.proximoCierre);
-					this.selectOne('#cierreActual').update(response.cierreActual);
+					this.selectOne('#proximoPeriodo').update(response.proximoPeriodo);
+					this.selectOne('#periodoActual').update(response.periodoActual);
 					
 					if(typeof response.url != "undefined" && response.url){
 						window.open($Kumbia.path+response.url);

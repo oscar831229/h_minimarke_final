@@ -91,6 +91,8 @@ var Factura = Class.create(HfosProcessContainer, {
 		if (currentState=='new' || currentState=='edit') {
 
 		} else {
+			this._hyperForm.getElement("newButton").hide();
+
 			this._hyperForm.addControlButton({
 				className: "import2Button",
 				value: "Generar Facturas",

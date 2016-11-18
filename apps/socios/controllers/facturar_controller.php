@@ -15,7 +15,6 @@
 
 Core::importFromLibrary('Hfos/Socios','SociosCore.php');
 Core::importFromLibrary('Hfos/Socios','SociosReports.php');
-Core::importFromLibrary('Hfos/Socios','SociosEstadoCuenta.php');
 
 /**
  * FacturarController
