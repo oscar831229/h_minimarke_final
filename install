@@ -16,6 +16,8 @@ cd public
 mkdir temp
 chmod 777 temp
 
+ln -s /tmp/ out
+
 cp index.config.php.dist index.config.php
 echo $dirPath
 echo $gitPath

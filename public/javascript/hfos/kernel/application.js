@@ -193,7 +193,7 @@ var HfosApplication = Class.create({
    	 * @this {HfosApplication}
 	 */
 	_checkStability: function(){
-		if(Hfos.getMode()!='production'){
+		/*if(Hfos.getMode()!='production'){
 			if(window.location.host!='localhost'&&window.location.host!='127.0.0.1'){
 				new HfosModal.alert({
 					title: 'Modo desarrollo y pruebas',
@@ -203,7 +203,7 @@ var HfosApplication = Class.create({
 					'Consulte con soporte técnico para ajustar la configuración.'
 				});
 			}
-		}
+		}*/
 	},
 
 	/**

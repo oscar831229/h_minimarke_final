@@ -666,9 +666,9 @@ class HyperForm extends UserComponent
 
 		$report->finish();
 		$reportName = Router::getController().'-'.mt_rand(0, 100000);
-		$fileName = $report->outputToFile('public/temp/'.$reportName);
+		$fileName = $report->outputToFile(sys_get_temp_dir() . '/' . $reportName);
 
-		return Core::getInstancePath().'temp/'.$fileName;
+		return Core::getInstancePath() . 'out/' . $fileName;
 
 	}
 
