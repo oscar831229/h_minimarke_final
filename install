@@ -7,6 +7,8 @@ dirPath=`pwd`
 gitPath="/opt/local/apache2/htdocs/h/"
 
 cd $dirPath
+chmod -R 777 apps/pos2/logs/
+
 mkdir Library/Mpdf/tmp
 chmod -R 777 Library/Mpdf/tmp
 
