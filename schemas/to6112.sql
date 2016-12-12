@@ -19,6 +19,19 @@ alter table niif drop column cuenta_niif;
 alter table niif add column usa_revelacion char(1) null;
 update niif set usa_revelacion = 'S';
 
+CREATE TABLE `saldos_niif` (
+  `cuenta` char(12) NOT NULL,
+  `nit` varchar(20) NOT NULL,
+  `ano_mes` decimal(6,0) NOT NULL,
+  `debe` decimal(14,2) NOT NULL,
+  `haber` decimal(14,2) NOT NULL,
+  `saldo` decimal(14,2) NOT NULL,
+  `base_grab` decimal(14,2) DEFAULT NULL,
+  PRIMARY KEY (`cuenta`,`nit`,`ano_mes`),
+  KEY `l_anon` (`ano_mes`),
+  KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 create table saldosn_niif like saldosn;
 alter table saldosn_niif add column depre char(1) not null default 'N';
 
