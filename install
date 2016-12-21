@@ -34,7 +34,7 @@ function setIni {
             sed -i "s|pjockey|pos|" app.ini
             sed -i "s|hjockey|hotel2|" app.ini
             sed -i "s|rjockey|ramocol|" app.ini
-            sed -i "s|ijockey|hfos_identity" app.ini
+            sed -i "s|ijockey|hfos_identity|" app.ini
         else
             sed -i "s|jockey|$instance|" app.ini
         fi
@@ -44,7 +44,7 @@ function setIni {
             sed -i "s|pjockey|pos|" config.ini
             sed -i "s|hjockey|hotel2|" config.ini
             sed -i "s|rjockey|ramocol|" config.ini
-            sed -i "s|ijockey|hfos_identity" config.ini
+            sed -i "s|ijockey|hfos_identity|" config.ini
         else
             sed -i "s|jockey|$instance|" config.ini
         fi
@@ -54,7 +54,7 @@ function setIni {
             sed -i "s|pjockey|pos|" environment.ini
             sed -i "s|hjockey|hotel2|" environment.ini
             sed -i "s|rjockey|ramocol|" environment.ini
-            sed -i "s|ijockey|hfos_identity" environment.ini
+            sed -i "s|ijockey|hfos_identity|" environment.ini
         else
             sed -i "s|jockey|$instance|" environment.ini
         fi
