@@ -129,12 +129,14 @@ class ExcluirController extends ApplicationController {
 				$sqlWhere = "WHERE $where";
 			}
 			$query = "
-				SELECT comprob,numero,DATE_FORMAT(fecha, \"%m/%d/%Y\"),cuenta,nit,centro_costo,valor,deb_cre,REPLACE(descripcion, '|', ''),tipo_doc,numero_doc,base_grab,conciliado,IF(f_vence IS NULL,DATE_FORMAT(fecha, \"%m/%d/%Y\"),DATE_FORMAT(f_vence, \"%m/%d/%Y\")),numfol INTO OUTFILE '".KEF_ABS_PATH.$path."'   FIELDS TERMINATED BY '|' OPTIONALLY ENCLOSED BY ''   LINES TERMINATED BY '\n'   FROM $schema.$modelTableName ".$sqlWhere;
+				SELECT comprob,numero,DATE_FORMAT(fecha, \"%m/%d/%Y\"),cuenta,nit,centro_costo,valor,deb_cre,REPLACE(descripcion, '|', ''),tipo_doc,numero_doc,base_grab,conciliado,IF(f_vence IS NULL,DATE_FORMAT(fecha, \"%m/%d/%Y\"),DATE_FORMAT(f_vence, \"%m/%d/%Y\")),numfol INTO OUTFILE '/tmp/".$fileName."'   FIELDS TERMINATED BY '|' OPTIONALLY ENCLOSED BY ''   LINES TERMINATED BY '\n'   FROM $schema.$modelTableName ".$sqlWhere;
 
 			//throw new Exception($query);
 			$listQuery = $db->query($query);
 
 			move_uploaded_file("/tmp/".$fileName, KEF_ABS_PATH.$path);
+			copy("/tmp/".$fileName, KEF_ABS_PATH.$path);
+			
 			sleep(10);
 
 			return array(
