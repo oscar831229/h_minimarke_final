@@ -133,15 +133,12 @@ class ExcluirController extends ApplicationController {
 
 			//throw new Exception($query);
 			$listQuery = $db->query($query);
-
-			move_uploaded_file("/tmp/".$fileName, KEF_ABS_PATH.$path);
-			copy("/tmp/".$fileName, KEF_ABS_PATH.$path);
 			
 			sleep(10);
 
 			return array(
 				'status' => 'OK',
-				'file' => 'temp/'.$fileName
+				'file' => 'out/'.$fileName
 			);
 		}
 		catch(Exception $e){
