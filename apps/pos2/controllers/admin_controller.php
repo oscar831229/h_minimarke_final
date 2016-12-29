@@ -16,7 +16,7 @@
 /**
  * AdminController
  *
- * Controlador que administra el ingreso a la secciÃ³n administrativa
+ * Controlador que administra el ingreso a la sección administrativa
  *
  */
 class AdminController extends ApplicationController
@@ -41,7 +41,7 @@ class AdminController extends ApplicationController
 		$pass = $this->getPostParam('pass', 'alpha');
 		$usuario = $this->UsuariosPos->findFirst("clave='$pass' AND estado='A'");
 		if ($usuario) {
-			if ($usuario->perfil == 'Administradores') {
+			if ($usuario->perfil == 'Administradores' || $usuario->perfil == 'JefeDeAyB') {
 				Flash::success('Bienvenido ' . $usuario->nombre);
 				Session::set('auth', 'admin');
 				Session::set('usuarioId', $usuario->id);
