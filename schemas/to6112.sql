@@ -88,3 +88,13 @@ CREATE TABLE depre_niif (
   `periodo` INT NOT NULL,
   `usuario_id` INT NOT NULL,
   PRIMARY KEY (`comprob`, `numero`));
+
+
+CREATE TABLE `retecompras` (
+  `codigo` int(11) NOT NULL,
+  `descripcion` varchar(145) COLLATE utf8_unicode_ci NOT NULL,
+  `cuenta` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `base_retencion` decimal(13,0) NOT NULL DEFAULT '0',
+  `porce_retencion` decimal(5,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`codigo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
