@@ -1,3 +1,6 @@
 apps/identity/security/data/*
+public/index.config.php
 apps/*/config/*.ini
+apps/*/logs/*
 public/temp
+public/out
