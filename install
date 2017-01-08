@@ -71,13 +71,17 @@ setIni pos2
 cd "$dirPath/schemas"
 
 if [[ -z "$instance" ]]; then
-    echo "mysql -uroot -p ramocol < to6110.sql"
-    mysql -uroot -p "ramocol" < to6110.sql
-    mysql -uroot -p "ramocol" < to6111.sql
-    mysql -uroot -p "ramocol" < to6112.sql
-else 
-    echo "mysql -uroot -p r$instance < to6110.sql"
-    mysql -uroot -p "r$instance" < to6110.sql
-    mysql -uroot -p "r$instance" < to6111.sql
-    mysql -uroot -p "r$instance" < to6112.sql
+    echo "mysql -uroot -p ramocol < to61*.sql"
+    mysql -uroot -p ramocol -f < to6110.sql
+    mysql -uroot -p ramocol -f < to6111.sql
+    mysql -uroot -p ramocol -f < to6112.sql
+else
+    echo "mysql -uroot -p r$instance -f < to6110.sql"
+    mysql -uroot -phea101 r$instance -f < to6110.sql
+    mysql -uroot -phea101 r$instance -f < to6111.sql
+    mysql -uroot -phea101 r$instance -f < to6112.sql
 fi
+
+echo "Se cambio la clave a la defecto"
+cd $dirPath
+php scripts/hfos/change_password.php --login admin --password 2fe05187361
