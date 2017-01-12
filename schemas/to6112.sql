@@ -98,17 +98,3 @@ CREATE TABLE `retecompras` (
   `porce_retencion` decimal(5,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-
-# INVE
-alter table movihead drop column ivad;
-alter table movihead drop column ivam;
-
-CREATE TABLE moviivas (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  comprob char(3) NOT NULL,
-  almacen decimal(2,0) NOT NULL,
-  numero int(11) NOT NULL,
-  porcentaje decimal(5,3) NOT NULL,
-  valor decimal(14,2) NOT NULL
-);

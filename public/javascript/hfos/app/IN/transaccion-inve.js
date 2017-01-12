@@ -44,6 +44,12 @@ var TransaccionInve = Class.create({
 
 	// Campos de Impuestos
 	_totales: [
+		'iva16r',
+		'iva16d',
+		'iva10r',
+		'iva10d',
+		'iva5r',
+		'iva5d',
 		'retencion',
 		'ica',
 		'horti',
@@ -1010,7 +1016,7 @@ var TransaccionInve = Class.create({
 		var totalNeto = this._hyperGrid.getSummatory('valor');
 
 		// No colocar el IMPO aqui
-		/*var impuestosDebito = ['iva16d', 'iva10d', 'iva5d'];
+		var impuestosDebito = ['iva16d', 'iva10d', 'iva5d'];
 		for (var i = 0; i < impuestosDebito.length; i++) {
 			var field = this._form.selectOne('#' + impuestosDebito[i]);
 			if (field !== null){
@@ -1033,7 +1039,7 @@ var TransaccionInve = Class.create({
 			} else {
 				alert('No encontrado en la vista: ' + impuestosCredito[i])
 			}
-		};*/
+		};
 
 		/*total = totalNeto + impuestos;
 

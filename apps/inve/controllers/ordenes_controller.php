@@ -178,6 +178,54 @@ class OrdenesController extends HyperFormController {
 				'model' => 'Movih1',
 				'tabName' => 'Totales',
 				'fields' => array(
+					'iva16r' => array(
+						'single' => 'IVA 19% Retenido',
+						'type' => 'decimal',
+						'notNull' => false,
+						'size' => 10,
+						'maxlength' => 10,
+						'filters' => array('decimal')
+					),
+					'iva16d' => array(
+						'single' => 'IVA 19% Descontable',
+						'type' => 'decimal',
+						'notNull' => false,
+						'size' => 10,
+						'maxlength' => 10,
+						'filters' => array('decimal')
+					),
+					'iva10r' => array(
+						'single' => 'IVA 10% Retenido',
+						'type' => 'decimal',
+						'notNull' => false,
+						'size' => 10,
+						'maxlength' => 10,
+						'filters' => array('decimal')
+					),
+					'iva10d' => array(
+						'single' => 'IVA 10% Descontable',
+						'type' => 'decimal',
+						'notNull' => false,
+						'size' => 10,
+						'maxlength' => 10,
+						'filters' => array('decimal')
+					),
+					'iva5r' => array(
+						'single' => 'IVA 5% Retenido',
+						'type' => 'decimal',
+						'notNull' => false,
+						'size' => 10,
+						'maxlength' => 10,
+						'filters' => array('decimal')
+					),
+					'iva5d' => array(
+						'single' => 'IVA 5% Descontable',
+						'type' => 'decimal',
+						'notNull' => false,
+						'size' => 10,
+						'maxlength' => 10,
+						'filters' => array('decimal')
+					),
 					'retencion' => array(
 						'single' => 'Retención',
 						'type' => 'decimal',
@@ -291,8 +339,6 @@ class OrdenesController extends HyperFormController {
 		$this->setParamToView('criteriosActivos', $criterios);
 
 		//Valores predeterminados para la pestaña de totales
-		Tag::displayTo('iva19r', 0);
-		Tag::displayTo('iva19d', 0);
 		Tag::displayTo('iva16r', 0);
 		Tag::displayTo('iva16d', 0);
 		Tag::displayTo('iva10r', 0);
@@ -366,8 +412,8 @@ class OrdenesController extends HyperFormController {
 		$fields = array(
 			'retencion' => 'retencion',
 			'ica' => 'ica',
-			'iva' => 'iva19d',
-			'descuento' => 'iva19r',
+			'iva' => 'iva16d',
+			'descuento' => 'iva16r',
 			'ivad' => 'iva10d',
 			'ivam' => 'iva10r',
 			'total_neto' => 'total_neto'
@@ -425,8 +471,6 @@ class OrdenesController extends HyperFormController {
 			}
 
 			$totales = array(
-				'Iva19R' => $request->getParamPost('iva19r', 'float'),
-				'Iva19D' => $request->getParamPost('iva19d', 'float'),
 				'Iva16R' => $request->getParamPost('iva16r', 'float'),
 				'Iva16D' => $request->getParamPost('iva16d', 'float'),
 				'Iva10R' => $request->getParamPost('iva10r', 'float'),
