@@ -142,30 +142,17 @@ class ReferenciasController extends HyperFormController
 			),
 			'iva' => array(
 				'single' => 'Porcentaje IVA',
-				'type' => 'closed-domain',
-				'values' => array(
-					'0' => '0 %',
-					'5' => '5 %',
-					'10' => '10 %',
-					'16' => '16 %'
-				),
-				'useDummy' => false,
-				'align' => 'right',
+				'type' => 'int',
+				'size' => 5,
+				'maxlength' => 5,
 				'notSearch' => true,
 				'notBrowse' => true,
-				'filters' => array('float')
+				'filters' => array('int')
 			),
 			'iva_venta' => array(
 				'single' => 'Porcentaje IVA Venta',
-				'type' => 'closed-domain',
-				'values' => array(
-					'0' => '0 %',
-					'5' => '5 %',
-					'10' => '10 %',
-					'16' => '16 %'
-				),
-				'useDummy' => false,
-				'align' => 'right',
+				'type' => 'int',
+				'size' => 5,
 				'notSearch' => true,
 				'notBrowse' => true,
 				'filters' => array('int')
@@ -431,5 +418,4 @@ class ReferenciasController extends HyperFormController
 		parent::setConfig(self::$_config);
 		parent::initialize();
 	}
-
 }

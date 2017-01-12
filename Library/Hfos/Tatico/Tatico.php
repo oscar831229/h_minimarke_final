@@ -517,8 +517,6 @@ class Tatico extends UserComponent
 		$movihead->setCentroCosto($movement['CentroCosto']);
 		$movihead->setUsuariosId($identity['id']);
 		$movihead->setIva(0);
-		$movihead->setIvad(0);
-		$movihead->setIvam(0);
 		$movihead->setIca(0);
 		$movihead->setDescuento(0);
 		$movihead->setRetencion(0);
@@ -1104,8 +1102,8 @@ class Tatico extends UserComponent
 
 				$movihead->setRetencion($movement['Totales']['Retencion']);
 				$movihead->setIca($movement['Totales']['Ica']);
-				$movihead->setIva($movement['Totales']['Iva16D']);
-				$movihead->setDescuento($movement['Totales']['Iva16R']);
+				$movihead->setIva($movement['Totales']['Iva19D']);
+				$movihead->setDescuento($movement['Totales']['Iva19R']);
 				$movihead->setIvad($movement['Totales']['Iva10D']);
 				$movihead->setIvam($movement['Totales']['Iva10R']);
 				$movihead->setCree($movement['Totales']['Cree']);
@@ -1139,8 +1137,8 @@ class Tatico extends UserComponent
 				$fields = array(
 					'retencion' => 'retencion',
 					'ica' => 'ica',
-					'iva' => 'iva16d',
-					'descuento' => 'iva16r',
+					'iva' => 'iva19d',
+					'descuento' => 'iva19r',
 					'ivad' => 'iva10d',
 					'ivam' => 'iva10r',
 					'cree' => 'cree',
@@ -1462,23 +1460,23 @@ class Tatico extends UserComponent
 				$this->_throwException('No se han definido las cuentas de contabilización para el regímen "'.$tercero->getTipoRegimen().'"');
 			}
 
-			//IVA Descontable 16%
+			//IVA Descontable 19%
 			if ($movihead->getIva() > 0) {
 
-				$cuentaIva16D = $regimenCuentas->getCtaIva16d();
-				$cuentaIva = BackCacher::getCuenta($cuentaIva16D);
-				if ($cuentaIva==false) {
-					$this->_throwException('La cuenta de IVA 16% descontable asociada al comprobante "'.$movement['Comprobante'].'" no existe');
+				$cuentaIva19D = $regimenCuentas->getCtaIva19d();
+				$cuentaIva = BackCacher::getCuenta($cuentaIva19D);
+				if ($cuentaIva == false) {
+					$this->_throwException('La cuenta de IVA 19% descontable asociada al comprobante "'.$movement['Comprobante'].'" no existe');
 				} else {
 					if ($cuentaIva->getEsAuxiliar()!='S') {
-						$this->_throwException('La cuenta de IVA 16% descontable asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
+						$this->_throwException('La cuenta de IVA 19% descontable asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
 					}
 				}
 
-				if (!isset($cuentasDebitos[$cuentaIva16D])) {
-					$cuentasDebitos[$cuentaIva16D] = $movihead->getIva();
+				if (!isset($cuentasDebitos[$cuentaIva19D])) {
+					$cuentasDebitos[$cuentaIva19D] = $movihead->getIva();
 				} else {
-					$cuentasDebitos[$cuentaIva16D]+= $movihead->getIva();
+					$cuentasDebitos[$cuentaIva19D]+= $movihead->getIva();
 				}
 
 				$saldoCartera += $movihead->getIva();
@@ -1538,19 +1536,19 @@ class Tatico extends UserComponent
 
 			if ($calcularIVARetenido) {
 				if ($movihead->getDescuento() > 0) {
-					$cuentaIva16R = $regimenCuentas->getCtaIva16r();
-					$cuentaIva = BackCacher::getCuenta($cuentaIva16R);
+					$cuentaIva19R = $regimenCuentas->getCtaIva19r();
+					$cuentaIva = BackCacher::getCuenta($cuentaIva19R);
 					if ($cuentaIva==false) {
-						$this->_throwException('La cuenta de IVA 16% retenido asociada al comprobante "'.$movement['Comprobante'].'" no existe');
+						$this->_throwException('La cuenta de IVA 19% retenido asociada al comprobante "'.$movement['Comprobante'].'" no existe');
 					} else {
 						if ($cuentaIva->getEsAuxiliar()!='S') {
-							$this->_throwException('La cuenta de IVA 16% retenido asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
+							$this->_throwException('La cuenta de IVA 19% retenido asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
 						}
 					}
-					if (!isset($cuentasCreditos[$cuentaIva16R])) {
-						$cuentasCreditos[$cuentaIva16R] = $movihead->getDescuento();
+					if (!isset($cuentasCreditos[$cuentaIva19R])) {
+						$cuentasCreditos[$cuentaIva19R] = $movihead->getDescuento();
 					} else {
-						$cuentasCreditos[$cuentaIva16R]+= $movihead->getDescuento();
+						$cuentasCreditos[$cuentaIva19R]+= $movihead->getDescuento();
 					}
 					$saldoCartera-=$movihead->getDescuento();
 				}
@@ -3137,8 +3135,8 @@ class Tatico extends UserComponent
 			$fields = array(
 				'retencion' => 'retencion',
 				'ica' => 'ica',
-				'iva' => 'iva16d',
-				'descuento' => 'iva16r',
+				'iva' => 'iva19d',
+				'descuento' => 'iva19r',
 				'ivad' => 'iva10d',
 				'ivam' => 'iva10r',
 				'cree' => 'cree',
@@ -3364,8 +3362,8 @@ class Tatico extends UserComponent
 
 		$result = array();
 		$tablaDetalle = array();
-		$ivas = array(0 => 0, 7 => 0, 10 => 0, 16 => 0, 5 => 0);
-		$ivasImpo = array(0 => 0, 7 => 0, 10 => 0, 16 => 0, 5 => 0);
+		$ivas = array(0 => 0, 7 => 0, 10 => 0, 16 => 0, 19 => 0, 5 => 0);
+		$ivasImpo = array(0 => 0, 7 => 0, 10 => 0, 16 => 0, 19 => 0, 5 => 0);
 		$result['status'] = 'OK';
 		$result['total_neto'] = 0;
 		$result['total_neto_base'] = 0;
@@ -3563,6 +3561,11 @@ class Tatico extends UserComponent
 			$result['iva16r'] = 0;
 		}
 
+		if (!isset($result['iva19d'])) {
+			$result['iva19d'] = 0;
+			$result['iva19r'] = 0;
+		}
+
 		$calcularIVARetenido = false;
 		if ($terceroHotel->getEstadoNit() == 'C') {
 			if ($tercero->getEstadoNit() == 'S') {
@@ -3593,6 +3596,7 @@ class Tatico extends UserComponent
 				$result['iva5r'] = 0;
 				$result['iva10r'] = 0;
 				$result['iva16r'] = 0;
+				$result['iva19r'] = 0;
 				if (self::$_taxesDebug==true) {
 					$messages['ivad'] = 'No se calcula IVA retenido porque el total de la orden ó entrada no supera el mínimo de retención de ' . $baseRetencion;
 				}
@@ -3601,6 +3605,7 @@ class Tatico extends UserComponent
 				$result['iva5r'] = LocaleMath::round($result['iva5d'] * $porcIvaRetenido/100, 2);
 				$result['iva10r'] = LocaleMath::round($result['iva10d'] * $porcIvaRetenido/100, 2);
 				$result['iva16r'] = LocaleMath::round($result['iva16d'] * $porcIvaRetenido/100, 2);
+				$result['iva19r'] = LocaleMath::round($result['iva19d'] * $porcIvaRetenido/100, 2);
 				if (self::$_taxesDebug==true) {
 					$messages['ivad'] = 'Se calcula el '.$porcIvaRetenido.'% de IVA retenido porque el total de la orden ó entrada supera el mínimo de retención de ' . $baseRetencion;
 				}
@@ -3609,6 +3614,7 @@ class Tatico extends UserComponent
 			$result['iva5r'] = 0;
 			$result['iva10r'] = 0;
 			$result['iva16r'] = 0;
+			$result['iva19r'] = 0;
 		}
 
 		$porcIvaDescontable = Settings::get('porc_iva_des');
@@ -3616,19 +3622,21 @@ class Tatico extends UserComponent
 		$result['iva5d'] = LocaleMath::round($result['iva5d'], 2);
 		$result['iva10d'] = LocaleMath::round($result['iva10d'], 2);
 		$result['iva16d'] = LocaleMath::round($result['iva16d'], 2);
+		$result['iva19d'] = LocaleMath::round($result['iva19d'], 2);
 
 		//Descontamos impo al costo y gasto
 		$result['iva5d'] -= LocaleMath::round($ivasImpo[5], 2);
 		$result['iva10d'] -= LocaleMath::round($ivasImpo[10], 2);
 		$result['iva16d'] -= LocaleMath::round($ivasImpo[16], 2);
+		$result['iva19d'] -= LocaleMath::round($ivasImpo[19], 2);
 
-		if ($result['iva5d']>0 || $result['iva10d']>0 || $result['iva16d']>0) {
+		if ($result['iva5d']>0 || $result['iva10d']>0 || $result['iva16d']>0 || $result['iva19d']>0) {
 			if (self::$_taxesDebug==true) {
 				$messages['ivad'] = 'Se calcula el total de IVA descontable porque el proveedor es regímen común ó simplificado';
 			}
 		}
 
-		if ($ivasImpo[5]>0 || $ivasImpo[10]>0 || $ivasImpo[16]>0) {
+		if ($ivasImpo[5]>0 || $ivasImpo[10]>0 || $ivasImpo[16]>0|| $ivasImpo[19]>0) {
 			if (self::$_taxesDebug == true) {
 				$messages['ivad'] = 'Se calcula el Impoconsumo porque algunas referencias estan al costo o al gasto';
 			}
@@ -3667,12 +3675,13 @@ class Tatico extends UserComponent
 			}
 		}
 
-		$result['impuestos'] = ($result['iva5d'] + $result['iva10d'] + $result['iva16d']) -
-						       ($result['iva5r'] + $result['iva10r'] + $result['iva16r']);
+		$result['impuestos'] = ($result['iva5d'] + $result['iva10d'] + $result['iva16d'] + $result['iva19d']) -
+						       ($result['iva5r'] + $result['iva10r'] + $result['iva16r'] + $result['iva19r']);
+
 		$result['impuestos'] = LocaleMath::round($result['impuestos'], 2);
 
-		$result['saldo'] = ($result['iva5d'] + $result['iva10d'] + $result['iva16d']) -
-						   ($result['iva5r'] + $result['iva10r'] + $result['iva16r']) -
+		$result['saldo'] = ($result['iva5d'] + $result['iva10d'] + $result['iva16d'] + $result['iva19d']) -
+						   ($result['iva5r'] + $result['iva10r'] + $result['iva16r'] + $result['iva19r']) -
 						   ($result['cree'] + $result['horti'] + $result['retencion'] + $result['ica']);
 		$result['saldo'] = LocaleMath::round($result['saldo'], 2);
 
@@ -3800,12 +3809,14 @@ class Tatico extends UserComponent
 				$html.='</table>';
 
 				$html.='<table cellspacing="0" class="detalleCalculo">
+					<tr><td align="right" width="50%">Total IVA 19%</td><td align="right">'.Currency::number($ivas[19]).'</td></tr>
 					<tr><td align="right" width="50%">Total IVA 16%</td><td align="right">'.Currency::number($ivas[16]).'</td></tr>
 					<tr><td align="right">Total IVA 10%</td><td align="right">'.Currency::number($ivas[10]).'</td></tr>
 					<tr><td align="right">Total IVA 5%</td><td align="right">'.Currency::number($ivas[7]).'</td></tr>';
 
 				$totalImpuestos = ($result['iva16d'] + $result['iva10d'] + $result['iva5d']) - ($result['iva16r'] + $result['iva10r'] + $result['iva5r']);
 				$html.='
+					<tr><td align="right" width="50%">IVA 19% Retenido</td><td align="right">'.Currency::number($result['iva19r']).'</td></tr>
 					<tr><td align="right" width="50%">IVA 16% Retenido</td><td align="right">'.Currency::number($result['iva16r']).'</td></tr>
 					<tr><td align="right">IVA 10% Retenido</td><td align="right">'.Currency::number($result['iva10r']).'</td></tr>
 					<tr><td align="right">IVA 5% Retenido</td><td align="right">'.(@Currency::number($result['iva5r'])).'</td></tr>
@@ -3819,6 +3830,7 @@ class Tatico extends UserComponent
 					<tr><td align="right">IVA Mayor Valor Costo/Gasto 5%</td><td align="right">'.(@Currency::number($ivasImpo[5])).'</td></tr>
 					<tr><td align="right">IVA Mayor Valor Costo/Gasto 10%</td><td align="right">'.(@Currency::number($ivasImpo[10])).'</td></tr>
 					<tr><td align="right">IVA Mayor Valor Costo/Gasto 16%</td><td align="right">'.(@Currency::number($ivasImpo[16])).'</td></tr>
+					<tr><td align="right">IVA Mayor Valor Costo/Gasto 19%</td><td align="right">'.(@Currency::number($ivasImpo[19])).'</td></tr>
 				</table>';
 
 				$html.='<table cellspacing="0" class="detalleCalculo">
@@ -4288,8 +4300,8 @@ class Tatico extends UserComponent
 			if ($tipoComprob=='O' || $tipoComprob=='E') {
 				$content.= str_repeat('-', 86)."\r\n";
 				$content.= str_repeat(" ", 15)."TOTAL COMPRA :".sprintf('%14s', Currency::number($movihead->getTotalNeto(), 2));
-				$content.= str_repeat(" ", 15)."VALOR IVA 16%:".sprintf('%14s', Currency::number($movihead->getIva(), 2));
-				$content.= str_repeat(" ", 12)."RETEIVA 16%  :".sprintf('%14s', Currency::number($movihead->getDescuento(), 2))."\r\n";
+				$content.= str_repeat(" ", 15)."VALOR IVA 19%:".sprintf('%14s', Currency::number($movihead->getIva(), 2));
+				$content.= str_repeat(" ", 12)."RETEIVA 19%  :".sprintf('%14s', Currency::number($movihead->getDescuento(), 2))."\r\n";
 				$content.= str_repeat(" ", 15)."VALOR IVA 10%:".sprintf('%14s', Currency::number($movihead->getIvad(), 2));
 				$content.= str_repeat(" ", 12)."RETEIVA 10%  :".sprintf('%14s', Currency::number($movihead->getIvam(), 2))."\r\n";
 				$content.= str_repeat(" ", 15)."VALOR IVA 5%:".sprintf('%14s', Currency::number($movih1->getIva5(), 2));
@@ -4335,8 +4347,8 @@ class Tatico extends UserComponent
 			$content.= "<br/><table class='detalle' cellspacing='0' cellpadding='0'>";
 			if ($tipoComprob == 'O' || $tipoComprob == 'E') {
 				$content.= "<tr><td align='right'>TOTAL COMPRA</td><td align='right'>".Currency::number($movihead->getTotalNeto(), 2)."</td></tr>";
-				$content.= "<tr><td align='right'>VALOR IVA 16%</td><td align='right'>".Currency::number($movihead->getIva(), 2)."</td></tr>";
-				$content.= "<tr><td align='right'>RETEIVA 16%</td><td align='right'>".Currency::number($movihead->getDescuento(), 2)."</td></tr>";
+				$content.= "<tr><td align='right'>VALOR IVA 19%</td><td align='right'>".Currency::number($movihead->getIva(), 2)."</td></tr>";
+				$content.= "<tr><td align='right'>RETEIVA 19%</td><td align='right'>".Currency::number($movihead->getDescuento(), 2)."</td></tr>";
 				$content.= "<tr><td align='right'>VALOR IVA 10%</td><td align='right'>".Currency::number($movihead->getIvad(), 2)."</td></tr>";
 				$content.= "<tr><td align='right'>RETEIVA 10%</td><td align='right'>".Currency::number($movihead->getIvam(), 2)."</td></tr>";
 				$content.= "<tr><td align='right'>VALOR IVA 5%</td><td align='right'>".Currency::number($movih1->getIva5(), 2)."</td></tr>";
