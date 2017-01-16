@@ -87,8 +87,8 @@ CREATE TABLE depre_niif (
   `numero` INT NOT NULL,
   `periodo` INT NOT NULL,
   `usuario_id` INT NOT NULL,
-  PRIMARY KEY (`comprob`, `numero`));
-
+  PRIMARY KEY (`comprob`, `numero`)
+);
 
 CREATE TABLE `retecompras` (
   `codigo` int(11) NOT NULL,

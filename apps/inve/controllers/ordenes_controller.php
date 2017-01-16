@@ -156,16 +156,10 @@ class OrdenesController extends HyperFormController {
 				'iva' => array(
 					'single' => 'Iva',
 					'notNull' => true,
-					'type' => 'closed-domain',
-					'values' => array(
-						'0' => '0 %',
-						'5' => '5 %',
-						'10' => '10 %',
-						'16' => '16 %'
-					),
-					'useDummy' => false,
+					'type' => 'int',
+					'size' => 5,
 					'align' => 'right',
-					'filters' => array('float')
+					'filters' => array('int')
 				)
 			),
 			'keys' => array(
@@ -185,7 +179,7 @@ class OrdenesController extends HyperFormController {
 				'tabName' => 'Totales',
 				'fields' => array(
 					'iva16r' => array(
-						'single' => 'IVA 16% Retenido',
+						'single' => 'IVA 19% Retenido',
 						'type' => 'decimal',
 						'notNull' => false,
 						'size' => 10,
@@ -193,7 +187,7 @@ class OrdenesController extends HyperFormController {
 						'filters' => array('decimal')
 					),
 					'iva16d' => array(
-						'single' => 'IVA 16% Descontable',
+						'single' => 'IVA 19% Descontable',
 						'type' => 'decimal',
 						'notNull' => false,
 						'size' => 10,
