@@ -35,7 +35,7 @@ class IncluirController extends ApplicationController
 
 	public function indexAction()
 	{
-		$this->setParamToView('message', 'Adjunte un archivo para ser incluido como parte del movimiento de este mes');
+		$this->setParamToView('message', 'Adjunte un archivo para ser incluido como parte del movimiento de este mes, se deben usar un archivo con formato <b>"TXT"</b> separado por <b>"|"</b> los campos son en este orden: <b>"comprobante (3 chars), numero (num), fecha (MM/DD/YYYY), cuenta (str), nit (str), centro_costo(num), valor (num), deb_cre (str 1), descripcion (str), tipo_doc (str 3), numero_doc (num), base_grab (num), conciliado (str 1), f_vence (MM/DD/YYYY), numfol (num), cuenta_movi (str)"</b> y si es para <b>movimiento niif</b> agrege un ultimo campo que es <b>"cuenta contable normal no la niif"</b>');
 	}
 
 	private function _getFormatDate($transaction, $fecha, $numberLine)
@@ -97,13 +97,14 @@ class IncluirController extends ApplicationController
 			$numberLine = 1;
 			$lines = array();
 			$content = $archivo->getContentData();
-
+			$count = count($fields);
+			
 			foreach (explode("\n", $content) as $line) {
 				if (trim($line)) {
 
 					$fields = explode('|', $line);
-					if (count($fields) != 14 && count($fields) != 15) {
-						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo ' . count($fields));
+					if (count($fields) != 15) {
+						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count . ' columnas');
 					}
 
 					$fields[2]  = $this->_getFormatDate($transaction, $fields[2], $numberLine);
@@ -142,7 +143,7 @@ class IncluirController extends ApplicationController
 
 				if ($recep->save()==false) {
 					foreach ($recep->getMessages() as $message)	{
-						throw new Exception($message->getMessage() . ' en la lÃ­nea ' . $numberLine . print_r($line, true));
+						throw new Exception($message->getMessage() . ' en la línea ' . $numberLine . print_r($line, true));
 					}
 				}
 				$numberLine++;
@@ -209,13 +210,13 @@ class IncluirController extends ApplicationController
 			$numberLine = 1;
 			$lines = array();
 			$content = $archivo->getContentData();
-
+			$count = count($fields);
 			foreach (explode("\n", $content) as $line) {
 				if (trim($line)) {
 
 					$fields = explode('|', $line);
-					if (count($fields) != 14 && count($fields) != 15) {
-						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo ' . count($fields));
+					if (count($fields) != 16) {
+						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count. " columnas");
 					}
 
 					$fields[2]  = $this->_getFormatDate($this->transaction, $fields[2], $numberLine);
