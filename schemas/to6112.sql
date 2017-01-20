@@ -13,6 +13,9 @@ alter table cuentas modify column porc_retenc decimal(6,3) not null;#solo porcen
 alter table cuentas add column cuenta_niif varchar(16) null;
 update cuentas set cuenta_niif = cuenta;
 
+
+create table recepniif like recep;
+
 create table niif like cuentas;
 insert into niif select * from cuentas;
 alter table niif drop column cuenta_niif;

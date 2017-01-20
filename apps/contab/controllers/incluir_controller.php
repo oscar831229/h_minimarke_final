@@ -97,12 +97,12 @@ class IncluirController extends ApplicationController
 			$numberLine = 1;
 			$lines = array();
 			$content = $archivo->getContentData();
-			$count = count($fields);
-			
 			foreach (explode("\n", $content) as $line) {
 				if (trim($line)) {
 
 					$fields = explode('|', $line);
+					$count = count($fields);
+			
 					if (count($fields) != 15) {
 						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count . ' columnas');
 					}
@@ -210,11 +210,12 @@ class IncluirController extends ApplicationController
 			$numberLine = 1;
 			$lines = array();
 			$content = $archivo->getContentData();
-			$count = count($fields);
 			foreach (explode("\n", $content) as $line) {
 				if (trim($line)) {
 
 					$fields = explode('|', $line);
+					$count = count($fields);
+			
 					if (count($fields) != 16) {
 						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count. " columnas");
 					}
