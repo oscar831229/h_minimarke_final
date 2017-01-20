@@ -101,3 +101,16 @@ CREATE TABLE `retecompras` (
   `porce_retencion` decimal(5,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `saldos_niif` (
+  `cuenta` char(12) NOT NULL,
+  `nit` varchar(20) NOT NULL,
+  `ano_mes` decimal(6,0) NOT NULL,
+  `debe` decimal(14,2) NOT NULL,
+  `haber` decimal(14,2) NOT NULL,
+  `saldo` decimal(14,2) NOT NULL,
+  `base_grab` decimal(14,2) DEFAULT NULL,
+  PRIMARY KEY (`cuenta`,`nit`,`ano_mes`),
+  KEY `l_anon` (`ano_mes`),
+  KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
