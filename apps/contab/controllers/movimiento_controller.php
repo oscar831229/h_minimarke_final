@@ -314,7 +314,11 @@ public function buscarAction()
 		$fechaComprobante = null;
 		$movimientos = array();
 		$tokenId = IdentityManager::getTokenId();
-		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'");
+		$movis = $this->Movi->find(array(
+				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'",
+				"order" => "createdTime ASC"
+			)
+		);
 		foreach ($movis as $movi) {
 			$cuenta = BackCacher::getCuenta($movi->getCuenta());
 			if($cuenta!=false){

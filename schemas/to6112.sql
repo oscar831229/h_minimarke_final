@@ -114,3 +114,20 @@ CREATE TABLE `saldos_niif` (
   KEY `l_anon` (`ano_mes`),
   KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+#Order field
+alter table movitemp add column createdTime int null;
+alter table movitemp add index created (createdTime);
+alter table movitemp change createdTime createdTime int not null AUTO_INCREMENT;
+
+alter table movitempniif add column createdTime int null;
+alter table movitempniif add index created (createdTime);
+alter table movitemp change createdTime createdTime int not null AUTO_INCREMENT;
+
+alter table movi add column createdTime int null;
+alter table movi add index created (createdTime);
+alter table movi change createdTime createdTime int not null AUTO_INCREMENT;
+
+alter table movi_niif add column createdTime int null;
+alter table movi_niif add index created (createdTime);
+alter table movi_niif change createdTime createdTime int not null AUTO_INCREMENT;

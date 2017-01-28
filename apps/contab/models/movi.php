@@ -90,6 +90,10 @@ class Movi extends ActiveRecord {
 	 */
 	protected $numfol;
 
+	/**
+	 * @var integer
+	 */
+	protected $createdTime;
 
 	/**
 	 * Metodo para establecer el valor del campo comprob
@@ -332,5 +336,11 @@ class Movi extends ActiveRecord {
 		return $this->numfol;
 	}
 
-}
+	public function getCreatedTime(){
+		return $this->createdTime;
+	}
 
+	public function setCreatedTime($createdTime){
+		$this->createdTime = $createdTime;
+	}
+}

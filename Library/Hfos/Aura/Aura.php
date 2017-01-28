@@ -794,6 +794,7 @@ class Aura extends UserComponent
 		try {
 			$movi = new Movi();
 			$movi->setTransaction($this->_transaction);
+			$movi->setCreatedTime(0);
 			$movi->setComprob($movement['Comprobante']);
 			$movi->setNumero($movement['Numero']);
 			$movi->setFecha((string)$movement['Fecha']);
