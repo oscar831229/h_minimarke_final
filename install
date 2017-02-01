@@ -72,9 +72,9 @@ cd "$dirPath/schemas"
 
 if [[ -z "$instance" ]]; then
     echo "mysql -uroot -p ramocol < to61*.sql"
-    mysql -uroot -p ramocol -f < to6110.sql
-    mysql -uroot -p ramocol -f < to6111.sql
-    mysql -uroot -p ramocol -f < to6112.sql
+    mysql -uroot -phea101 ramocol -f < to6110.sql
+    mysql -uroot -phea101 ramocol -f < to6111.sql
+    mysql -uroot -phea101 ramocol -f < to6112.sql
 else
     echo "mysql -uroot -p r$instance -f < to6110.sql"
     mysql -uroot -phea101 r$instance -f < to6110.sql
