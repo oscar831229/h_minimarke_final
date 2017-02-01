@@ -116,18 +116,22 @@ CREATE TABLE `saldos_niif` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 #Order field
+alter table movitemp drop column createdTime;
 alter table movitemp add column createdTime int null;
 alter table movitemp add index created (createdTime);
-alter table movitemp change createdTime createdTime INT NULL;
+alter table movitemp change createdTime createdTime INT NOT NULL AUTO_INCREMENT;
 
+alter table movitempniif drop column createdTime;
 alter table movitempniif add column createdTime int null;
 alter table movitempniif add index created (createdTime);
-alter table movitemp change createdTime createdTime INT NULL;
+alter table movitemp change createdTime createdTime INT NOT NULL AUTO_INCREMENT;
 
+alter table movi drop column createdTime;
 alter table movi add column createdTime int null;
 alter table movi add index created (createdTime);
-alter table movi change createdTime createdTime INT NULL;
+alter table movi change createdTime createdTime INT NOT NULL AUTO_INCREMENT;
 
+alter table movi_niif drop column createdTime;
 alter table movi_niif add column createdTime int null;
 alter table movi_niif add index created (createdTime);
-alter table movi_niif change createdTime createdTime INT NULL;
+alter table movi_niif change createdTime createdTime INT NOT NULL AUTO_INCREMENT;

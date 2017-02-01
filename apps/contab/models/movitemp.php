@@ -111,6 +111,10 @@ class Movitemp extends ActiveRecord
 	 */
 	protected $checksum;
 
+	/**
+	 * @var integer
+	 */
+	protected $createdTime;
 
 	/**
 	 * Metodo para establecer el valor del campo sid
@@ -443,6 +447,14 @@ class Movitemp extends ActiveRecord
 	public function getChecksum()
 	{
 		return $this->checksum;
+	}
+
+	public function getCreatedTime(){
+		return $this->createdTime;
+	}
+
+	public function setCreatedTime($createdTime){
+		$this->createdTime = $createdTime;
 	}
 
 	/**

@@ -748,9 +748,7 @@ class AuraNiif extends UserComponent
 			if (isset($movement['Numfol'])) {
 				$movi->setNumfol($movement['Numfol']);
 			}
-			if (!$movi->getCreatedTime()){
-				$movi->setCreatedTime(time());
-			}
+
 			if ($movi->save() == false) {
 				if ($this->_externalTransaction == true) {
 					foreach ($movi->getMessages() as $message) {

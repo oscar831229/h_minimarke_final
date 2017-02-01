@@ -623,6 +623,7 @@ public function buscarAction()
 				$moviTemp->setNumero($numero);
 				$moviTemp->setConsecutivo($consecutivo);
 				$moviTemp->setFecha($aura->getDefaultFecha());
+				$moviTemp->setCreatedTime(0);
 				$moviTemp->setEstado('A');
 			}
 
