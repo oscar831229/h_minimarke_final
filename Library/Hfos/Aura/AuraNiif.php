@@ -234,7 +234,7 @@ class AuraNiif extends UserComponent
 	 * @var boolean
 	 */
 	private $_superaLimiteRetencion = false;
-
+	
 	/**
 	 * Indica si la fecha supera el limite de presentación de IVA
 	 *
@@ -1740,7 +1740,8 @@ class AuraNiif extends UserComponent
 			foreach ($recepNiif->getAttributes() as $field) {
 				$moviNiif->writeAttribute($field, $recepNiif->readAttribute($field));
 			}
-			$moviNiif->save();
+			$moviNiif->setCreatedTime(0);
+            $moviNiif->save();
 			
 			$this->saldoscNiifProcess($moviNiif);
 
