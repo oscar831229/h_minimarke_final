@@ -15,6 +15,7 @@
 
 Core::importFromLibrary('Hfos/Socios','SociosCore.php');
 Core::importFromLibrary('Hfos/Socios','SociosReports.php');
+Core::importFromLibrary('Hfos/Socios','SociosEstadoCuenta.php');
 
 /**
  * FacturarController
@@ -161,7 +162,7 @@ class FacturarController extends HyperFormController
 				'filters' => array('int')
 			),
 			'iva16' => array(
-				'single' => 'Iva 16',
+				'single' => 'Iva 19',
 				'type' => 'int',
 				'size' => 10,
 				'maxlength' => 10,

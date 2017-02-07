@@ -1740,8 +1740,7 @@ class AuraNiif extends UserComponent
 			foreach ($recepNiif->getAttributes() as $field) {
 				$moviNiif->writeAttribute($field, $recepNiif->readAttribute($field));
 			}
-			$moviNiif->setCreatedTime(0);
-            $moviNiif->save();
+			$moviNiif->save();
 			
 			$this->saldoscNiifProcess($moviNiif);
 

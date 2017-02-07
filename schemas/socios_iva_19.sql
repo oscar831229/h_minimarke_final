@@ -1,0 +1,1 @@
+update cargos_fijos set porcentaje_iva=19.00 where porcentaje_iva = 16.00;

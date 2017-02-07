@@ -922,9 +922,9 @@ class SociosReports extends UserComponent
                 );
 
                 $options2['rows'][$facturaId][] = array(
-                    'descripcion'     => $financiacion->getDescripcion(),
+                    'descripcion'   => $financiacion->getDescripcion(),
                     'valor'         => LocaleMath::round($financiacion->getValor()),
-                    'mora'             => LocaleMath::round($financiacion->getMora()),
+                    'mora'          => LocaleMath::round($financiacion->getMora()),
                     'total'         => LocaleMath::round($financiacion->getTotal())
                 );
 

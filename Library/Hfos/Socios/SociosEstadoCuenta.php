@@ -1606,7 +1606,11 @@ class SociosEstadoCuenta extends UserComponent
                 $valorAPagarMora = $valorAPagar;
                 if ($socios->getPorcMoraDesfecha()>0) {
                     $baseValor = $basePorcentaje * $socios->getPorcMoraDesfecha() / 100;
-                    $ivaBase = $baseValor * 16 /100;
+
+                    $porcIvaMora = Settings::get("socios_porc_iva_mora", "SO");
+                    $porcIvaMora = intval($porcIvaMora);
+
+                    $ivaBase = $baseValor * $porcIvaMora /100;
                     if ($valorAPagar>0) {
                         $valorAPagarMora +=  ($baseValor + $ivaBase);
                     }
@@ -1938,7 +1942,11 @@ class SociosEstadoCuenta extends UserComponent
                 $valorAPagarMora = $valorAPagar;
                 if ($socios->getPorcMoraDesfecha()>0) {
                     $baseValor = $basePorcentaje * $socios->getPorcMoraDesfecha() / 100;
-                    $ivaBase = $baseValor * 16 /100;
+
+                    $porcIvaMora = Settings::get("socios_porc_iva_mora", "SO");
+                    $porcIvaMora = intval($porcIvaMora);
+                    
+                    $ivaBase = $baseValor * $porcIvaMora /100;
                     if ($valorAPagar>0) {
                         $valorAPagarMora +=  ($baseValor + $ivaBase);
                     }

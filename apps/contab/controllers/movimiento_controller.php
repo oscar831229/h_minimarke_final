@@ -316,7 +316,7 @@ public function buscarAction()
 		$tokenId = IdentityManager::getTokenId();
 		$movis = $this->Movi->find(array(
 				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'",
-				"order" => "createdTime ASC"
+				"order" => "comprob,numero ASC"
 			)
 		);
 		foreach ($movis as $movi) {
@@ -623,7 +623,6 @@ public function buscarAction()
 				$moviTemp->setNumero($numero);
 				$moviTemp->setConsecutivo($consecutivo);
 				$moviTemp->setFecha($aura->getDefaultFecha());
-				$moviTemp->setCreatedTime(0);
 				$moviTemp->setEstado('A');
 			}
 

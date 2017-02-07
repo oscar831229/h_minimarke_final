@@ -532,7 +532,6 @@ class Aura extends UserComponent
 					$movitemp = new Movitemp();
 					$movitemp->setTransaction($this->_transaction);
 					$movitemp->setSid($tokenId);
-					$moviTemp->setCreatedTime(0);
 					$movitemp->setConsecutivo($consecutivo);
 					foreach($movi->getAttributes() as $attribute){
 						$movitemp->writeAttribute($attribute, $movi->readAttribute($attribute));
@@ -795,7 +794,6 @@ class Aura extends UserComponent
 		try {
 			$movi = new Movi();
 			$movi->setTransaction($this->_transaction);
-			$movi->setCreatedTime(0);
 			$movi->setComprob($movement['Comprobante']);
 			$movi->setNumero($movement['Numero']);
 			$movi->setFecha((string)$movement['Fecha']);
@@ -834,8 +832,6 @@ class Aura extends UserComponent
 				$movi->setNumfol($movement['Numfol']);
 			}
 
-			$movi->setCreatedTime(0);
-			
 			if($movi->save()==false){
 				if($this->_externalTransaction==true){
 					foreach ($movi->getMessages() as $message) {
@@ -1605,7 +1601,6 @@ class Aura extends UserComponent
 			$moviTemp = new Movitemp();
 			$moviTemp->setTransaction($transaction);
 			$moviTemp->setSid($tokenId);
-			$moviTemp->setCreatedTime(0);
 			$moviTemp->setConsecutivo($consecutivo);
 			foreach($movi->getAttributes() as $attribute){
 				$moviTemp->writeAttribute($attribute, $movi->readAttribute($attribute));

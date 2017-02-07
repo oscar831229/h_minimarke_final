@@ -2120,7 +2120,11 @@ class SociosCore extends UserComponent
 
         if ($socios->getPorcMoraDesfecha()>0) {
             $baseValor = $basePorcentaje * $socios->getPorcMoraDesfecha() / 100;
-            $ivaBase = $baseValor * 16 /100;
+            
+            $porcIvaMora = Settings::get("socios_porc_iva_mora", "SO");
+            $porcIvaMora = intval($porcIvaMora);
+            
+            $ivaBase = $baseValor * $porcIvaMora /100;
             $total +=  ($baseValor + $ivaBase);
         }
 
@@ -2151,7 +2155,7 @@ class SociosCore extends UserComponent
             throw new SociosException("Debe indicar el periodo a buscar pagos");
         }
 
-        $year2 = substr($periodo, 0,4);
+        $year2  = substr($periodo, 0,4);
         $month2 = substr($periodo, 4,2);
 
         $cuentasAjsEstadoCuenta = SociosCore::getCuentaAjusteEstadoCuenta();
@@ -2174,7 +2178,7 @@ class SociosCore extends UserComponent
             throw new SociosException("Es necesario dar los comprobantes de pagos en configuración");
         }
 
-        $comprobsPagosA = explode(',',$comprobsPagos);
+        $comprobsPagosA = explode(',', $comprobsPagos);
         $comprobsPagosAs = implode("','", $comprobsPagosA);
 
         //Cuenta de saldo a favor
@@ -2195,8 +2199,7 @@ class SociosCore extends UserComponent
             'columns' => 'deb_cre,comprob,numero,fecha,nit,cuenta,tipo_doc,numero_doc,descripcion,valor'
         ));
 
-        foreach ($moviObj as $movi)
-        {
+        foreach ($moviObj as $movi) {
             $pagos[] = SociosCore::modelToArray($movi);
             unset($movi);
         }
@@ -2211,7 +2214,7 @@ class SociosCore extends UserComponent
      * @param  [type] $fecha2 [description]
      * @return [type]         [description]
      */
-    public static function diffDiasFechas($fechaHoy,$fechaAnterior)
+    public static function diffDiasFechas($fechaHoy, $fechaAnterior)
     {
         $date1 = strtotime($fechaAnterior);
         $date2 = strtotime($fechaHoy);
@@ -2231,7 +2234,7 @@ class SociosCore extends UserComponent
         $date1 = strtotime((string) $fechaSaldo);
         $date2 = strtotime((string) $cartera->getFEmision());
         $dateDiff = $date1 - $date2;
-        $days = floor($dateDiff/(60*60*24));    
+        $days = floor($dateDiff/(60*60*24));
         return (int) $days;
     }
 
@@ -2269,7 +2272,7 @@ class SociosCore extends UserComponent
 
     /**
     * Obtiene un listado de cuentas que usa los cargos fijos para cartera
-    * 
+    *
     * @return array
     */
     public static function getCuentasCargosFijos()
@@ -2277,17 +2280,14 @@ class SociosCore extends UserComponent
         try {
             $cuentas = array();
             $cargosFijosObj = EntityManager::get('CargosFijos')->find(array("columns"=>"cuenta_consolidar","group"=>"cuenta_consolidar"));
-            foreach ($cargosFijosObj as $cargosFijos) 
-            {
+            foreach ($cargosFijosObj as $cargosFijos) {
                 $cuentas[]= $cargosFijos->getCuentaConsolidar();
             }
             
             return $cuentas;
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             throw new SociosException($e->getMessage());
         }
-        
     }
 
     /**

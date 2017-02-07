@@ -243,103 +243,103 @@ class SociosFactura extends UserComponent
 
             //Restamos pagos del periodo
             $fechaActual = new Date($fechaFactura);
-	    $fechaActual->toLastDayOfMonth();
-	    $lastDay = $fechaActual->getDay();
-	    	
+    	    $fechaActual->toLastDayOfMonth();
+    	    $lastDay = $fechaActual->getDay();
+    	    	
             $year = substr($fechaFactura, 0, 4);
-	    $month = substr($fechaFactura, 5, 2);
-	    
-	    switch($lastDay) {
-		case '31':
-			$day = "30";
-			break;
-		case '30':
-                        $day = "29";
-                        break;
-		case '29':
-                        $day = "28";
-                        break;
-		case '28':
-                        $day = "27";
-                        break;
-		default:
-			throw new Exception("No se ha definido bien el dia de fact sostenimineto en calculo de saldoAnterio");
-			break;
-	    }
+    	    $month = substr($fechaFactura, 5, 2);
+    	    
+    	    switch($lastDay) {
+        		case '31':
+        			$day = "30";
+        			break;
+        		case '30':
+                    $day = "29";
+                    break;
+        		case '29':
+                    $day = "28";
+                    break;
+        		case '28':
+                    $day = "27";
+                    break;
+        		default:
+        			throw new Exception("No se ha definido bien el dia de fact sostenimineto en calculo de saldoAnterio");
+        			break;
+    	    }
 
-	    $fechaFactura2 = $year . "-" . $month . "-" . $day;
-	    $existenPagos = SociosCore::getPagosPeriodoXSocioExists($fechaActual->getPeriod(), $nit);
+    	    $fechaFactura2 = $year . "-" . $month . "-" . $day;
+    	    $existenPagos = SociosCore::getPagosPeriodoXSocioExists($fechaActual->getPeriod(), $nit);
             if ($existenPagos==true) {
                 //throw new Exception("Existen pagos este mes, baseAnt: $base", 1);
                 //CUENTAS SOCIOS
-		$cuentasSocios = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
+                $cuentasSocios = Settings::get('cuenta_ajustes_estado_cuenta', 'SO');
 
-		//CARGO FIJO CONSUMO MINIMO
-		$ctaConsumos = Settings::get('cuenta_consumos', 'SO');
-		if (!$ctaConsumos) {
-			throw new Exception("La cuenta de consumos no esta parametrizada en configuraciÃn");
-		}
-		//DIF TOTAL CUENTAS SOCIOS SIN CONSUMOS
-           	$deb = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='D'")); 
-           	$cre = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='C'"));
-		$diff = $deb - $cre;
-		if ($diff == 0) {
-			$base = 0;
-		} else {
-			if ($diff > 0 ) {
-				$base = $diff;
-			} else {
-				$base = 0;
-			}
-		}
+        		//CARGO FIJO CONSUMO MINIMO
+        		$ctaConsumos = Settings::get('cuenta_consumos', 'SO');
+        		if (!$ctaConsumos) {
+        			throw new Exception("La cuenta de consumos no esta parametrizada en configuraciÃn");
+        		}
+        		//DIF TOTAL CUENTAS SOCIOS SIN CONSUMOS
+                   	$deb = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='D'")); 
+                   	$cre = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta!='$ctaConsumos' AND deb_cre='C'"));
+        		$diff = $deb - $cre;
+        		if ($diff == 0) {
+        			$base = 0;
+        		} else {
+        			if ($diff > 0 ) {
+        				$base = $diff;
+        			} else {
+        				$base = 0;
+        			}
+        		}
 
-		//CONSUMOS PERIODO ACTUAL
-		$debConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
+        		//CONSUMOS PERIODO ACTUAL
+        		$debConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
                 $creConsumos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha<'$year-$month-01' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='C'"));
                 $diffConsumos = $debConsumos - $creConsumos;
-		$base += $diffConsumos;
-		if ($base<0) {
-			$base = 0;
-		}
+        		$base += $diffConsumos;
+        		if ($base<0) {
+        			$base = 0;
+        		}
 
-		//PAGOS Y AJUSTES
-		$comprobArray = array();
-		$comprobAjustes = Settings::get('comprob_ajustes', 'SO');
-                if (!$comprobAjustes) {
-                        throw new Exception("El comprobante de ajuste no esta parametrizado en configuraci?n");
-                }
-		$comprobNCStr = Settings::get('comprob_nc', 'SO');
-                if (!$comprobNCStr) {
-                        throw new Exception("Los comprobantes de nota contable no esta parametrizado en configuraci?n");
-                }
-		$comprobNCArray = explode(",", $comprobNCStr);
-		$comprobPagosStr = Settings::get('comprobs_pagos', 'SO');
+        		//PAGOS Y AJUSTES
+        		$comprobArray = array();
+        		$comprobAjustes = Settings::get('comprob_ajustes', 'SO');
+                        if (!$comprobAjustes) {
+                                throw new Exception("El comprobante de ajuste no esta parametrizado en configuraci?n");
+                        }
+        		$comprobNCStr = Settings::get('comprob_nc', 'SO');
+                        if (!$comprobNCStr) {
+                                throw new Exception("Los comprobantes de nota contable no esta parametrizado en configuraci?n");
+                        }
+        		$comprobNCArray = explode(",", $comprobNCStr);
+        		$comprobPagosStr = Settings::get('comprobs_pagos', 'SO');
                 if (!$comprobPagosStr) {
-                        throw new Exception("Los comprobantes de pagos no esta parametrizado en configuraci?n");
+                    throw new Exception("Los comprobantes de pagos no esta parametrizado en configuraci?n");
                 }
-		$comprobPagosArray = explode(",", $comprobPagosStr);
+        		$comprobPagosArray = explode(",", $comprobPagosStr);
 
-		//agregando comprobantes
-		$comprobArray[]=$comprobAjustes;
-		$comprobArray = array_merge($comprobArray, $comprobNCArray);
-		$comprobArray = array_merge($comprobArray, $comprobPagosArray);
-		$comprobStr = "'" . implode("','", $comprobArray) . "'";		
+        		//agregando comprobantes
+        		$comprobArray[]=$comprobAjustes;
+        		$comprobArray = array_merge($comprobArray, $comprobNCArray);
+        		$comprobArray = array_merge($comprobArray, $comprobPagosArray);
+        		$comprobStr = "'" . implode("','", $comprobArray) . "'";		
 
-		//buscamos movimiento de este mes
-		$debPagos = 0;
-		//EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
+        		//buscamos movimiento de este mes
+        		$debPagos = 0;
+        		//EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='D'"));
                 $crePagos = EntityManager::get('Movi')->sum(array("column"=>"valor", "conditions"=>"nit='$nit' AND fecha>'$year-$month-01' AND fecha<'$fechaFactura2' AND cuenta LIKE '$cuentasSocios%' AND cuenta='$ctaConsumos' AND deb_cre='C'"));
                 $diffPagos = $debPagos - $crePagos;
                 $base += $diffPagos;
                 if ($base<0) {
                         $base = 0;
-                }	
+                }
             }
 	
             //throw new SociosException("base: $base, fechaFactura2: $fechaFactura2, fechaFactura: $fechaFactura, deb: $deb, cre: $cre, diff: $diff, creConsumos: $creConsumos, debConsumos: $debConsumos, diffConsumos: $diffConsumos, comprobs: $comprobStr, debPagos: $debPagos, crePagos: $crePagos, diffPagos: $diffPagos");
             
             $ret = $base * $interesMoraPeriodo / 100;
-	    $ret = LocaleMath::round($ret, 0); 
+	        $ret = LocaleMath::round($ret, 0);
         }
 
 	if ($ret <= 1) {
@@ -721,8 +721,11 @@ class SociosFactura extends UserComponent
                     
                     $mora = LocaleMath::round($mora, 0);
 
+                    $porcIvaMora = Settings::get("socios_porc_iva_mora", "SO");
+                    $porcIvaMora = intval($porcIvaMora);
+
                     //Calculamos el iva de la mora
-                    $ivaMora = $mora * 16 / 100;
+                    $ivaMora = $mora * $porcIvaMora / 100;
                     $ivaMora = LocaleMath::round($ivaMora, 0);
                 }
                 
@@ -783,8 +786,8 @@ class SociosFactura extends UserComponent
                     if (!$cargoFijoMora) {
                         throw new SociosException("El cargo fijo seleccionado a la mora no existe");
                     }
-                    $mora = LocaleMath::round($mora, 0); 
-                    $ivaMora = LocaleMath::round($ivaMora, 0); 
+                    $mora = LocaleMath::round($mora, 0);
+                    $ivaMora = LocaleMath::round($ivaMora, 0);
                     $detalleMovimiento = new DetalleMovimiento();
                     $detalleMovimiento->setTransaction($this->_transaction);
                     $detalleMovimiento->setMovimientoId($movimientoId);
@@ -972,8 +975,6 @@ class SociosFactura extends UserComponent
                                 throw new SociosException('POS:'.$message->getMessage());
                             }
                         }
-                        
-                            
                     }
                 }
                 
@@ -1081,7 +1082,6 @@ class SociosFactura extends UserComponent
                         }
                     }
                     //throw new SociosException($totalCM);
-                    
                 }
 
                 ////////////////////////
@@ -1360,12 +1360,12 @@ class SociosFactura extends UserComponent
                 }
             }
             
-            unset($periodo,$config,$periodoAnterior,$movimientoBorrado,$fechaVenc,$date,$comprobFactura);
+            unset($periodo, $config, $periodoAnterior, $movimientoBorrado, $fechaVenc, $date, $comprobFactura);
             
             return true;
         }
         catch (Exception $e) {
-            throw new SociosException("generarMovimiento: ".$e->getMessage());
+            throw new SociosException("generarMovimiento: " . $e->getMessage());
         }
     }
 
@@ -2009,7 +2009,6 @@ class SociosFactura extends UserComponent
                             $resumenVenta['16'] = 0;
                         }
                         $resumenVenta['16']+=$baseIva;
-                        
                     } else {
 
                         if ($ico>0) {

@@ -481,7 +481,12 @@ class SettingsController extends ApplicationController
                         'maxlength'     => 46,
                         'filters'       => array('upper')
                     ),
-
+                    'socios_porc_iva_mora' => array(
+                        'description'   => 'Porcentaje IVA de Mora',
+                        'type'          => 'int',
+                        'size'          => 2,
+                        'filters'       => array('int')
+                    )
                 ),
                 'Factura' => array(
                     'dia_venc' => array(
@@ -557,7 +562,7 @@ class SettingsController extends ApplicationController
                             'N' => 'NO'
                         ),
                         'filters' => array('alpha')
-                    ),
+                    )
                 ),
                 'Email' => array(
                     'send_factura' => array(

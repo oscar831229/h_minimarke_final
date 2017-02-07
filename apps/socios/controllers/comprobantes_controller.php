@@ -53,7 +53,7 @@ class ComprobantesController extends HyperFormController {
 				'filters' => array('int')
 			),
 			'cta_iva' => array(
-				'single' => 'Cuenta IVA 16% Descontable',
+				'single' => 'Cuenta IVA 19% Descontable',
 				'type' => 'cuenta',
 				'notBrowse' => true,
 				'notSearch' => true,
@@ -67,7 +67,7 @@ class ComprobantesController extends HyperFormController {
 				'filters' => array('cuentas')
 			),
 			'cta_cartera' => array(
-				'single' => 'Cuenta IVA 16% Retenido',
+				'single' => 'Cuenta IVA 19% Retenido',
 				'type' => 'cuenta',
 				'notBrowse' => true,
 				'notSearch' => true,

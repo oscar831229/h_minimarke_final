@@ -1,0 +1,28 @@
+[application]
+;mode = development 
+mode = production
+name = Socios
+code = SO
+icon = shipping.png
+dbdate = YYYY-MM-DD
+debug = On
+charset = utf8
+collate = utf8_unicode_ci
+
+[collector]
+probability = 75
+
+[entities]
+autoInitialize = Off
+
+[hfos]
+uniqueid = hfos
+hostname = hfos
+back_db = rjockey
+front_db = hjockey
+pos_db = pjockey
+socios = sjockey
+identity = ijockey
+socios_ip = 127.0.0.1
+charset = utf8
+collate = utf8_unicode_ci

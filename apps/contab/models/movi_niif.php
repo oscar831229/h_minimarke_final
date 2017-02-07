@@ -93,11 +93,6 @@ class MoviNiif extends ActiveRecord {
 	protected $nota_nic;
 
 	/**
-	 * @var integer
-	 */
-	protected $createdTime;
-	
-	/**
 	 * Metodo para establecer el valor del campo comprob
 	 * @param string $comprob
 	 */
@@ -392,14 +387,6 @@ class MoviNiif extends ActiveRecord {
 	 */
 	public function getNotaNic(){
 		return $this->nota_nic;
-	}
-
-	public function getCreatedTime(){
-		return $this->createdTime;
-	}
-
-	public function setCreatedTime($createdTime){
-		$this->createdTime = $createdTime;
 	}
 }
 

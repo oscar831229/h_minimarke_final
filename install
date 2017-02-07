@@ -35,6 +35,7 @@ function setIni {
             sed -i "s|hjockey|hotel2|" app.ini
             sed -i "s|rjockey|ramocol|" app.ini
             sed -i "s|ijockey|hfos_identity|" app.ini
+            sed -i "s|sjockey|hfos_socios|" app.ini
         else
             sed -i "s|jockey|$instance|" app.ini
         fi
@@ -45,6 +46,7 @@ function setIni {
             sed -i "s|hjockey|hotel2|" config.ini
             sed -i "s|rjockey|ramocol|" config.ini
             sed -i "s|ijockey|hfos_identity|" config.ini
+            sed -i "s|sjockey|hfos_socios|" config.ini
         else
             sed -i "s|jockey|$instance|" config.ini
         fi
@@ -55,6 +57,7 @@ function setIni {
             sed -i "s|hjockey|hotel2|" environment.ini
             sed -i "s|rjockey|ramocol|" environment.ini
             sed -i "s|ijockey|hfos_identity|" environment.ini
+            sed -i "s|sjockey|hfos_socios|" environment.ini
         else
             sed -i "s|jockey|$instance|" environment.ini
         fi
@@ -67,6 +70,7 @@ setIni default
 setIni contab
 setIni identity
 setIni pos2
+setIni socios
 
 cd "$dirPath/schemas"
 

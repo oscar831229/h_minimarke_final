@@ -122,11 +122,6 @@ class Movitempniif extends ActiveRecord
 	protected $numero_movi;
 
 	/**
-	 * @var integer
-	 */
-	protected $createdTime;
-
-	/**
 	 * Metodo para establecer el valor del campo sid
 	 * @param string $sid
 	 */
@@ -493,14 +488,6 @@ class Movitempniif extends ActiveRecord
 	public function setNumeroMovi($numeroMovi)
 	{
 		return $this->numero_movi = $numeroMovi;
-	}
-
-	public function getCreatedTime(){
-		return $this->createdTime;
-	}
-
-	public function setCreatedTime($createdTime){
-		$this->createdTime = $createdTime;
 	}
 
 	/**
