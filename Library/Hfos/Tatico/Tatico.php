@@ -3492,7 +3492,9 @@ class Tatico extends UserComponent
 		$baseRetencion = Settings::get('base_retencion');
 		if ($usarRetecompras == 'N' || !$usarRetecompras) {
 			//Usa procentaje de lineas
-			$porcCompra = $linea->getPorcCompra();
+			if ($linea) {
+				$porcCompra = $linea->getPorcCompra();
+			}
 		} else {
 			//Usa la base de retencion y porcentaje de retencion en base al retecompras del tercero
 			if ($tercero->getRetecomprasId() > 0) {
