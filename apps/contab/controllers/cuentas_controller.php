@@ -219,11 +219,11 @@ class CuentasController extends HyperFormController {
 			'porc_retenc' => array(
 				'single' => 'Porcentaje de Retención',
 				'type' => 'text',
-				'size' => 3,
-				'maxlength' => 3,
+				'size' => 6,
+				'maxlength' => 6,
 				'notBrowse' => true,
 				'notSearch' => true,
-				'filters' => array('double')
+				'filters' => array('float')
 			),
 			'cta_iva' => array(
 				'single' => 'Cuenta Iva',

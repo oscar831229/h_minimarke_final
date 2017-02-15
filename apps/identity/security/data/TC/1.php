@@ -43,16 +43,16 @@
   ),
   'contratos' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'proyeccion' => 
   array (
-    'index' => true,
-    'generar' => true,
+    'index' => false,
+    'generar' => false,
   ),
   'cambio_contratos' => 
   array (
@@ -61,13 +61,13 @@
   ),
   'abono_reserva' => 
   array (
-    'index' => true,
-    'abono' => true,
+    'index' => false,
+    'abono' => false,
   ),
   'abono_contrato' => 
   array (
-    'index' => true,
-    'abono' => true,
+    'index' => false,
+    'abono' => false,
   ),
   'recibos_pagos' => 
   array (
@@ -84,28 +84,28 @@
   ),
   'socios_aldia' => 
   array (
-    'index' => true,
-    'generar' => true,
+    'index' => false,
+    'generar' => false,
   ),
   'cartera_edades' => 
   array (
-    'index' => true,
-    'generar' => true,
+    'index' => false,
+    'generar' => false,
   ),
   'proyeccion_cartera' => 
   array (
-    'index' => true,
-    'generar' => true,
+    'index' => false,
+    'generar' => false,
   ),
   'cartera_consolidada' => 
   array (
-    'index' => true,
-    'generar' => true,
+    'index' => false,
+    'generar' => false,
   ),
   'propietarios' => 
   array (
-    'index' => true,
-    'generar' => true,
+    'index' => false,
+    'generar' => false,
   ),
   'empresa' => 
   array (
@@ -205,31 +205,31 @@
   ),
   'motivo_desistimiento' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'formas_pago' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'derecho_afiliacion' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'settings' => 
   array (
-    'index' => true,
-    'save' => true,
+    'index' => false,
+    'save' => false,
   ),
 );

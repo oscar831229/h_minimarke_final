@@ -4,3 +4,4 @@ apps/*/config/*.ini
 apps/*/logs/*
 public/temp
 public/out
+Library/Mpdf/ttfontdata
