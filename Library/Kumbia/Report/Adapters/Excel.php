@@ -175,7 +175,16 @@ class ExcelReport extends ReportAdapter implements ReportInterface
 		$this->_prepareHead();
 		$this->_renderPages();
 		$this->_prepareFooter();
-		return $this->_output;
+		
+		ob_start();
+		$writer = PHPExcel_IOFactory::createWriter($this->_excel, 'Excel2007');
+		$writer->save('php://output');
+		$out = ob_get_contents();
+		ob_clean();
+
+		header("Content-type:  application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		echo $out;
+		exit;
 	}
 
 	/**

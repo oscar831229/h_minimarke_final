@@ -465,12 +465,13 @@ class HyperForm extends UserComponent
 				);
 
 			} else {
-				$url = self::_makeReport($reportType, $config, $results,$controller);
+				return self::_makeReport($reportType, $config, $results, $controller);
+				/*$url = self::_makeReport($reportType, $config, $results,$controller);
 				return array(
 					'status' => 'OK',
 					'type' => $reportType,
 					'url' => $url
-				);
+				);*/
 			}
 		} else {
 			return array(
@@ -490,7 +491,7 @@ class HyperForm extends UserComponent
 	 * @param	ActiveRecordResulset $results
 	 * @return	array
 	 */
-	protected static function _makeReport($reportType, $config, $results,$controller)
+	protected static function _makeReport($reportType, $config, $results, $controller)
 	{
 
 		$report = ReportBase::factory($reportType);
@@ -499,8 +500,15 @@ class HyperForm extends UserComponent
 		if ($reportType == "csv") {
 			$reportName = Router::getController() . '-' . mt_rand(0, 100000);
 			$fileName = $reportName . ".csv";
-			$report->outputToFileCsv('public/temp/' . $fileName, $config["model"], $fileName);
-			return Core::getInstancePath() . 'temp/' . $fileName;
+			//$report->outputToFileCsv('public/temp/' . $fileName, $config["model"], $fileName);
+			//return Core::getInstancePath() . 'temp/' . $fileName;
+			return $report->outputToFileCsv(
+				'public/temp/' . $fileName,
+				$config["model"],
+				$fileName,
+				false,
+				false
+			);
 		}
 
 		//Otros metodos
@@ -567,7 +575,7 @@ class HyperForm extends UserComponent
   			'fontWeight' => 'bold'
   		));
 
-		$report->start(true);
+		$report->start(false);
 
 		$numberRows = 0;
 		$totalRows = 0;
@@ -665,11 +673,13 @@ class HyperForm extends UserComponent
 		}
 
 		$report->finish();
-		$reportName = Router::getController().'-'.mt_rand(0, 100000);
-		$fileName = $report->outputToFile(sys_get_temp_dir() . '/' . $reportName);
+		//$reportName = Router::getController().'-'.mt_rand(0, 100000);
+		//$fileName = $report->outputToFile(sys_get_temp_dir() . '/' . $reportName);
 
-		return Core::getInstancePath() . 'out/' . $fileName;
-
+		//return Core::getInstancePath() . 'out/' . $fileName;
+		//
+		
+		echo $report->getOutput();
 	}
 
 	private static function _getRecordDetails($config, $record, $controller)
@@ -1574,19 +1584,19 @@ class HyperForm extends UserComponent
 				$transaction->commit();
 				if($record->operationWasInsert()==true){
 					return array(
-						'status' => 'OK',
-						'message' => $message,
-						'type' => 'insert',
-						'primary' => join('&', $primaryKey),
-						'data' => self::_getRecordDetails($config, $record, $controller)
+						'status' 	=> 'OK',
+						'message' 	=> $message,
+						'type' 		=> 'insert',
+						'primary' 	=> join('&', $primaryKey),
+						'data' 		=> self::_getRecordDetails($config, $record, $controller)
 					);
 				} else {
 					return array(
-						'status' => 'OK',
-						'message' => $message,
-						'type' => 'update',
-						'primary' => join('&', $primaryKey),
-						'data' => self::_getRecordDetails($config, $record, $controller)
+						'status' 	=> 'OK',
+						'message' 	=> $message,
+						'type' 		=> 'update',
+						'primary' 	=> join('&', $primaryKey),
+						'data' 		=> self::_getRecordDetails($config, $record, $controller)
 					);
 				}
 			} else {
@@ -1631,15 +1641,15 @@ class HyperForm extends UserComponent
 					$message.= join(', ', $other);
 				}
 				return array(
-					'status' => 'FAILED',
+					'status'  => 'FAILED',
 					'message' => $message,
-					'fields' => $fields
+					'fields'  => $fields
 				);
 			}
 		}
 		catch(TransactionFailed $e){
 			return array(
-				'status' => 'FAILED',
+				'status'  => 'FAILED',
 				'message' => $e->getMessage()
 			);
 		}

@@ -150,7 +150,7 @@ class CsvReport extends ReportAdapter implements ReportInterface {
 	 * @param	string $path
 	 * @return	boolean
 	 */
-	public function outputToFileCsv($path, $tableName, $fileName, $where=false){
+	public function outputToFileCsv($path, $tableName, $fileName, $where=false, $write = true){
 			
 		$db = DbBase::rawConnect();
 
@@ -171,18 +171,35 @@ class CsvReport extends ReportAdapter implements ReportInterface {
 		if ($where) {
 			$sqlWhere = "WHERE $where";
 		}
-		$query = "SELECT * INTO OUTFILE '".KEF_ABS_PATH.$path."'
-			FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-			LINES TERMINATED BY '\n'
-			FROM $schema.$modelTableName ".$sqlWhere." ORDER BY 1 ASC";
-		
-		//throw new Exception($query);
-		$listQuery = $db->query($query);
+
+		if ($write === true) {
 			
-		if(move_uploaded_file("/tmp/".$fileName, KEF_ABS_PATH.$path)){
-			return basename('/'.$path);
+			$query = "SELECT * INTO OUTFILE '".KEF_ABS_PATH.$path."'
+				FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+				LINES TERMINATED BY '\n'
+				FROM $schema.$modelTableName ".$sqlWhere." ORDER BY 1 ASC";
+			
+			//throw new Exception($query);
+			$listQuery = $db->query($query);
+			
+			if(move_uploaded_file("/tmp/".$fileName, KEF_ABS_PATH.$path)){
+				return basename('/'.$path);
+			}
+		} else {
+			$query = "SELECT * FROM $schema.$modelTableName ".$sqlWhere." ORDER BY 1 ASC";
+			
+			$output = "";
+			$attributes = null;
+			$listQuery = $db->query($query);
+			$db->setFetchMode($db::DB_ASSOC);
+			while ($record = $db->fetchArray($listQuery)) {
+				$output .= implode("|", array_values($record)) . PHP_EOL;
+			}
+
+			header('Content-type: text/plain');
+			echo $output;
+			exit;
 		}
-		
 	}
 
 	/**

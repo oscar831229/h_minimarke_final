@@ -178,7 +178,20 @@ class PdfReport extends ReportAdapter implements ReportInterface {
 			$this->_renderPages();
 		}
 		$this->_prepareFooter();
-		return $this->_output;
+
+		header("Content-type:  application/pdf");
+
+		require_once 'Library/Mpdf/mpdf.php';
+		file_put_contents("/tmp/a", $this->_output);
+		$pdf = new mPDF();
+		//$pdf->useOnlyCoreFonts = false;
+		//$pdf->SetDisplayMode('fullpage');
+		$pdf->tMargin = 10;
+		$pdf->lMargin = 10;
+		$pdf->ignore_invalid_utf8 = true;
+		$pdf->writeHTML($this->_output);
+		echo $pdf->Output();
+		exit;
 	}
 
 	/**
@@ -216,7 +229,7 @@ class PdfReport extends ReportAdapter implements ReportInterface {
 	 *
 	 */
 	private function _prepareHead(){
-		if($this->_started==false){
+		if($this->_started==true){
 			$output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 			$output.= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
 			$output.= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
@@ -273,7 +286,7 @@ class PdfReport extends ReportAdapter implements ReportInterface {
 		if($this->_implicitFlush==true){
 			fwrite($this->_tempFile, $output);
 		} else {
-			$this->_output = $output;
+			$this->_output .= $output;
 		}
 	}
 
