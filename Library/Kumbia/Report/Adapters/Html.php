@@ -229,7 +229,7 @@ class HtmlReport extends ReportAdapter implements ReportInterface {
 	 *
 	 */
 	private function _prepareHead(){
-		if($this->_started==true){
+		//if($this->_started==true){
 			$output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 			$output.= "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
 			$output.= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
@@ -270,7 +270,7 @@ class HtmlReport extends ReportAdapter implements ReportInterface {
 			$this->_appendToOutput("\t\t</style>\n");
 			$this->_appendToOutput("\t</head>\n");
 			$this->_appendToOutput("\t<body>\n");
-		}
+		//}
 	}
 
 	protected function _prepareFooter(){
