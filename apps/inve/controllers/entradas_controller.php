@@ -186,7 +186,7 @@ class EntradasController extends HyperFormController
 				'model' => 'Movih1',
 				'tabName' => 'Totales',
 				'fields' => array(
-					'iva16r' => array(
+					'iva10r' => array(
 						'single' => 'IVA 19% Retenido',
 						'type' => 'decimal',
 						'notNull' => false,
@@ -194,7 +194,7 @@ class EntradasController extends HyperFormController
 						'maxlength' => 10,
 						'filters' => array('decimal')
 					),
-					'iva16d' => array(
+					'iva10d' => array(
 						'single' => 'IVA 19% Descontable',
 						'type' => 'decimal',
 						'notNull' => false,
@@ -202,16 +202,16 @@ class EntradasController extends HyperFormController
 						'maxlength' => 10,
 						'filters' => array('decimal')
 					),
-					'iva10r' => array(
-						'single' => 'IVA 10% Retenido',
+					'iva16r' => array(
+						'single' => 'IVA 16% Retenido',
 						'type' => 'decimal',
 						'notNull' => false,
 						'size' => 10,
 						'maxlength' => 10,
 						'filters' => array('decimal')
 					),
-					'iva10d' => array(
-						'single' => 'IVA 10% Descontable',
+					'iva16d' => array(
+						'single' => 'IVA 16% Descontable',
 						'type' => 'decimal',
 						'notNull' => false,
 						'size' => 10,

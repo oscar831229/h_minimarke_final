@@ -1462,16 +1462,16 @@ class Tatico extends UserComponent
 				$this->_throwException('No se han definido las cuentas de contabilización para el regímen "'.$tercero->getTipoRegimen().'"');
 			}
 
-			//IVA Descontable 19%
+			//IVA Descontable 16%
 			if ($movihead->getIva() > 0) {
 
 				$cuentaIva16D = $regimenCuentas->getCtaIva16d();
 				$cuentaIva = BackCacher::getCuenta($cuentaIva16D);
 				if ($cuentaIva == false) {
-					$this->_throwException('La cuenta de IVA 19% descontable asociada al comprobante "'.$movement['Comprobante'].'" no existe');
+					$this->_throwException('La cuenta de IVA 16% descontable asociada al comprobante "'.$movement['Comprobante'].'" no existe');
 				} else {
 					if ($cuentaIva->getEsAuxiliar()!='S') {
-						$this->_throwException('La cuenta de IVA 19% descontable asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
+						$this->_throwException('La cuenta de IVA 16% descontable asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
 					}
 				}
 
@@ -1489,10 +1489,10 @@ class Tatico extends UserComponent
 				$cuentaIva10D = $regimenCuentas->getCtaIva10d();
 				$cuentaIva = BackCacher::getCuenta($cuentaIva10D);
 				if ($cuentaIva == false) {
-					$this->_throwException('La cuenta de IVA 10% descontable asociada al comprobante "'.$movement['Comprobante'].'" no existe');
+					$this->_throwException('La cuenta de IVA 19% descontable asociada al comprobante "'.$movement['Comprobante'].'" no existe');
 				} else {
 					if ($cuentaIva->getEsAuxiliar() != 'S') {
-						$this->_throwException('La cuenta de IVA 10% descontable asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
+						$this->_throwException('La cuenta de IVA 19% descontable asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
 					}
 				}
 				if (!isset($cuentasDebitos[$cuentaIva10D])) {
@@ -1562,10 +1562,10 @@ class Tatico extends UserComponent
 					$cuentaIva10R = $regimenCuentas->getCtaIva10r();;
 					$cuentaIva = BackCacher::getCuenta($cuentaIva10R);
 					if ($cuentaIva==false) {
-						$this->_throwException('La cuenta de IVA 10% retenido asociada al comprobante "'.$movement['Comprobante'].'" no existe');
+						$this->_throwException('La cuenta de IVA 19% retenido asociada al comprobante "'.$movement['Comprobante'].'" no existe');
 					} else {
 						if ($cuentaIva->getEsAuxiliar()!='S') {
-							$this->_throwException('La cuenta de IVA 10% retenido asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
+							$this->_throwException('La cuenta de IVA 19% retenido asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
 						}
 					}
 					if (!isset($cuentasCreditos[$cuentaIva10R])) {
@@ -1583,10 +1583,10 @@ class Tatico extends UserComponent
 					$cuentaIva10R = $regimenCuentas->getCtaIva10r();;
 					$cuentaIva = BackCacher::getCuenta($cuentaIva10R);
 					if ($cuentaIva==false) {
-						$this->_throwException('La cuenta de IVA 10% retenido asociada al comprobante "'.$movement['Comprobante'].'" no existe');
+						$this->_throwException('La cuenta de IVA 19% retenido asociada al comprobante "'.$movement['Comprobante'].'" no existe');
 					} else {
 						if ($cuentaIva->getEsAuxiliar()!='S') {
-							$this->_throwException('La cuenta de IVA 10% retenido asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
+							$this->_throwException('La cuenta de IVA 19% retenido asociada al comprobante "'.$movement['Comprobante'].'" no es auxiliar');
 						}
 					}
 					if (!isset($cuentasCreditos[$cuentaIva10R])) {
@@ -3488,6 +3488,13 @@ class Tatico extends UserComponent
 			unset($item);
 		}
 
+		if (isset($result['iva19r'])) {
+			$result['iva10r'] = $result['iva19r'];
+		}
+		if (isset($result['iva19d'])) {
+			$result['iva10d'] = $result['iva19d'];
+		}
+
 		$porcCompra = 0;
 		$baseRetencion = Settings::get('base_retencion');
 		if ($usarRetecompras == 'N' || !$usarRetecompras) {
@@ -3803,25 +3810,64 @@ class Tatico extends UserComponent
 				$html.='</table>';
 
 				$html.='<table cellspacing="0" class="detalleCalculo">
-					<tr><td align="right" width="50%">Total IVA 19%</td><td align="right">'.Currency::number($ivas[16]).'</td></tr>
-					<tr><td align="right">Total IVA 10%</td><td align="right">'.Currency::number($ivas[10]).'</td></tr>
-					<tr><td align="right">Total IVA 5%</td><td align="right">'.Currency::number($ivas[7]).'</td></tr>';
+					<tr>
+						<td align="right">Total IVA 19%</td>
+						<td align="right">'.Currency::number($ivas[10]).'</td>
+					</tr>
+					<tr>
+						<td align="right" width="50%">Total IVA 16%</td>
+						<td align="right">'.Currency::number($ivas[16]).'</td>
+					</tr>
+					<tr>
+						<td align="right">Total IVA 5%</td>
+						<td align="right">'.Currency::number($ivas[7]).'</td>
+					</tr>';
 
 				$totalImpuestos = ($result['iva16d'] + $result['iva10d'] + $result['iva5d']) - ($result['iva16r'] + $result['iva10r'] + $result['iva5r']);
 				$html.='
-					<tr><td align="right" width="50%">IVA 19% Retenido</td><td align="right">'.Currency::number($result['iva16r']).'</td></tr>
-					<tr><td align="right">IVA 10% Retenido</td><td align="right">'.Currency::number($result['iva10r']).'</td></tr>
-					<tr><td align="right">IVA 5% Retenido</td><td align="right">'.(@Currency::number($result['iva5r'])).'</td></tr>
-					<tr><td align="right">IVA 16% Descontable</td><td align="right">'.Currency::number($result['iva16d']).'</td></tr>
-					<tr><td align="right">IVA 10% Descontable</td><td align="right">'.Currency::number($result['iva10d']).'</td></tr>
-					<tr><td align="right">IVA 5% Descontable</td><td align="right">'.(@Currency::number($result['iva5d'])).'</td></tr>
-					<tr><td align="right"><b>Total Impuestos</b></td><td align="right">'.Currency::number($totalImpuestos).'</td></tr>
+					<tr>
+						<td align="right">IVA 19% Retenido</td>
+						<td align="right">'.Currency::number($result['iva10r']).'</td>
+					</tr>
+					<tr>
+						<td align="right" width="50%">IVA 16% Retenido</td>
+						<td align="right">'.Currency::number($result['iva16r']).'</td>
+					</tr>
+					<tr>
+						<td align="right">IVA 5% Retenido</td>
+						<td align="right">'.(@Currency::number($result['iva5r'])).'</td>
+					</tr>
+					<tr>
+						<td align="right">IVA 19% Descontable</td>
+						<td align="right">'.Currency::number($result['iva10d']).'</td>
+					</tr>
+					<tr>
+						<td align="right">IVA 16% Descontable</td>
+						<td align="right">'.Currency::number($result['iva16d']).'</td>
+					</tr>
+					<tr>
+						<td align="right">IVA 5% Descontable</td>
+						<td align="right">'.(@Currency::number($result['iva5d'])).'</td>
+					</tr>
+					<tr>
+						<td align="right"><b>Total Impuestos</b></td>
+						<td align="right">'.Currency::number($totalImpuestos).'</td>
+					</tr>
 				</table>
 
 				<table cellspacing="0" class="detalleCalculo">
-					<tr><td align="right">IVA Mayor Valor Costo/Gasto 5%</td><td align="right">'.(@Currency::number($ivasImpo[5])).'</td></tr>
-					<tr><td align="right">IVA Mayor Valor Costo/Gasto 10%</td><td align="right">'.(@Currency::number($ivasImpo[10])).'</td></tr>
-					<tr><td align="right">IVA Mayor Valor Costo/Gasto 19%</td><td align="right">'.(@Currency::number($ivasImpo[16])).'</td></tr>
+					<tr>
+						<td align="right">IVA Mayor Valor Costo/Gasto 19%</td>
+						<td align="right">'.(@Currency::number($ivasImpo[10])).'</td>
+					</tr>
+					<tr>
+						<td align="right">IVA Mayor Valor Costo/Gasto 16%</td>
+						<td align="right">'.(@Currency::number($ivasImpo[16])).'</td>
+					</tr>
+					<tr>
+						<td align="right">IVA Mayor Valor Costo/Gasto 5%</td>
+						<td align="right">'.(@Currency::number($ivasImpo[5])).'</td>
+					</tr>
 				</table>';
 
 				$html.='<table cellspacing="0" class="detalleCalculo">
