@@ -44,12 +44,12 @@ class Regimen_CuentasController extends HyperFormController
 				'filters' => array('onechar')
 			),
 			'cta_iva10d' => array(
-				'single' => 'Cuenta IVA Descontable 10%',
+				'single' => 'Cuenta IVA Descontable 19%',
 				'type' => 'Cuenta',
 				'filters' => array('alpha')
 			),
 			'cta_iva16d' => array(
-				'single' => 'Cuenta IVA Descontable 19%',
+				'single' => 'Cuenta IVA Descontable 16%',
 				'type' => 'Cuenta',
 				'filters' => array('alpha')
 			),
@@ -59,13 +59,13 @@ class Regimen_CuentasController extends HyperFormController
 				'filters' => array('alpha')
 			),
 			'cta_iva10r' => array(
-				'single' => 'Cuenta IVA Retenido 10%',
+				'single' => 'Cuenta IVA Retenido 19%',
 				'type' => 'Cuenta',
 				'filters' => array('alpha'),
 				'notBrowse' => true,
 			),
 			'cta_iva16r' => array(
-				'single' => 'Cuenta IVA Retenido 19%',
+				'single' => 'Cuenta IVA Retenido 16%',
 				'type' => 'Cuenta',
 				'filters' => array('alpha'),
 				'notBrowse' => true,

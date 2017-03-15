@@ -516,7 +516,7 @@ class Tatico extends UserComponent
 		$movihead->setFecha($movement['Fecha']);
 		$movihead->setCentroCosto($movement['CentroCosto']);
 		$movihead->setUsuariosId($identity['id']);
-		$movihead->setIva(0);		
+		$movihead->setIva(0);
 		$movihead->setIvad(0);
 		$movihead->setIvam(0);
 		$movihead->setIca(0);
@@ -571,6 +571,8 @@ class Tatico extends UserComponent
 
 			//Almacenar los Ivas
 			$movih1 = new Movih1();
+			$movih1->setTransaction($this->_transaction);
+			
 			foreach ($movih1->getAttributes() as $attribute) {
 				$movih1->writeAttribute($attribute, 0);
 				unset($attribute);
@@ -618,6 +620,7 @@ class Tatico extends UserComponent
 			$movilin = $this->Movilin->findFirst('comprob="'.$movement['Comprobante'].'" AND almacen="'.$movement['Almacen'].'" AND numero="'.$movement['Numero'].'" AND item="'.$movement['ItemTarget'].'"');
 			if ($movilin == false) {
 				$movilin = new Movilin();
+				$movilin->setTransaction($this->_transaction);
 				$movilin->setComprob($movement['Comprobante']);
 				$movilin->setAlmacen($movement['Almacen']);
 				$movilin->setNumero($movement['Numero']);
@@ -691,6 +694,7 @@ class Tatico extends UserComponent
 			$movilin = $this->Movilin->findFirst('comprob="'.$movement['Comprobante'].'" AND almacen="'.$movement['Almacen'].'" AND numero="'.$movement['Numero'].'" AND item="'.$detail['Item'].'"');
 			if ($movilin==false) {
 				$movilin = new Movilin();
+				$movilin->setTransaction($this->_transaction);
 				$movilin->setComprob($movement['Comprobante']);
 				$movilin->setAlmacen($movement['Almacen']);
 				$movilin->setNumero($movement['Numero']);
