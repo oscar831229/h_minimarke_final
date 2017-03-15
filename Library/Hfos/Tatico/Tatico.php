@@ -1351,8 +1351,10 @@ class Tatico extends UserComponent
 
 				//Retención
 				if ($movihead->getRetencion() > 0) {
+
 					if ($tercero->getAutoRet() == 'N') {
-						if ($usarRetecompras == "S" || $linea->getPorcCompra()>0) {
+
+						if ($usarRetecompras == "S" || $linea->getPorcCompra() > 0) {
 
 							//Usa la cuenta de retencion de retecompras
 							if ($tercero->getRetecomprasId() > 0) {
@@ -3504,7 +3506,9 @@ class Tatico extends UserComponent
 			}
 		} else {
 			//Usa la base de retencion y porcentaje de retencion en base al retecompras del tercero
+			
 			if ($tercero->getRetecomprasId() > 0) {
+
 				$retecompras = EntityManager::get('Retecompras')->findFirst($tercero->getRetecomprasId());
 				if (!$retecompras) {
 					$messages['retencion'] = "No se ha definido una retención de compras en el tercero correctamente";
@@ -3660,8 +3664,14 @@ class Tatico extends UserComponent
 				$messages['retencion'] = 'No se calcula retención porque el proveedor es autoretenedor';
 				$messages['ica'] = 'No se calcula ICA porque el proveedor es autoretenedor';
 			}
-			$result['ica'] = 0;
-			$result['retencion'] = 0;
+
+			if (!isset($result['ica'])) {
+				$result['ica'] = 0;
+			}
+
+			if (!isset($result['retencion'])) {
+				$result['retencion'] = 0;
+			}
 		}
 
 		if ($tercero->getEstadoNit()!='G' && $tercero->getPorceCree() > 0) {
@@ -3871,8 +3881,18 @@ class Tatico extends UserComponent
 				</table>';
 
 				$html.='<table cellspacing="0" class="detalleCalculo">
-					<tr><td align="right" width="50%"><b>Total ICA</b></td><td align="right">'.Currency::number($result['ica']).'</td></tr>
-					<tr><td align="right"><b>Total Retención ' . $porceRetencionTemp . '</b></td><td align="right">'.Currency::number($result['retencion']).'</td></tr>';
+					<tr>
+						<td align="right" width="50%"><b>Total ICA</b></td>
+						<td align="right">'.Currency::number($result['ica']).'</td>
+					</tr>
+					<tr>
+						<td align="right">
+							<b>Total Retención ' . $porceRetencionTemp . '</b>
+						</td>
+						<td align="right">'.Currency::number($result['retencion']).'</td>
+					</tr>';
+
+
 				if ($hortifruticula=='S') {
 					$html.='<tr><td align="right"><b>Total Ret. Hortifrutícula</b></td><td align="right">'.Currency::number($result['horti']).'</td></tr>';
 				}
