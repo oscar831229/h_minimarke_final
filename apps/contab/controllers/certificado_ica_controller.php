@@ -107,7 +107,8 @@ class Certificado_IcaController extends ApplicationController {
 			$icaObj = EntityManager::get("Ica")->find(array('columns'=>'cuenta'));
 			foreach ($icaObj as $cuentaIca)
 			{
-				$cuentasIca[]= $cuentaIca->getCuenta();
+				$codigoCuenta = $cuentaIca->getCuenta();
+				$cuentasIca[$codigoCuenta]= $codigoCuenta;
 				unset($cuentaIca);
 			}
 			unset($icaObj);
@@ -126,12 +127,12 @@ class Certificado_IcaController extends ApplicationController {
 				$baseICA[$numeroNit] = array();
 
 				$totalIca = 0;
-				$consitionMoviICA = "nit='$numeroNit' AND fecha>='$fechaInicial' AND fecha<='$fechaFinal' AND cuenta IN(".implode(",",$cuentasIca).")";
+				$conditionMoviICA = "nit='$numeroNit' AND fecha>='$fechaInicial' AND fecha<='$fechaFinal' AND cuenta IN(".implode(",",array_values($cuentasIca)).")";
 				//throw new Exception(print_r($cuentasIca,true));
 
 				$baseICA[$numeroNit]['valor'] = 0;
 
-				$moviObj = EntityManager::get("Movi")->find(array('conditions'=>$consitionMoviICA, 'columns' => 'valor,deb_cre'));
+				$moviObj = EntityManager::get("Movi")->find(array('conditions'=>$conditionMoviICA, 'columns' => 'valor,deb_cre'));
 				foreach ($moviObj as $movi)
 				{
 					if($movi->getDebCre()=='D'){
@@ -173,6 +174,10 @@ class Certificado_IcaController extends ApplicationController {
 			{
 				$codigoCuenta = $cuenta->getCuenta();
 				$porcIva = $cuenta->getPorcIva();
+
+				if (isset($cuentasIca[$codigoCuenta])) {
+					continue;
+				}
 
 				if ($nitInicial&&$nitFinal) {
 					$saldosns = EntityManager::get("Saldosn")->find("nit>='$nitInicial' AND nit<='$nitFinal' AND cuenta='$codigoCuenta' AND ano_mes=0");
