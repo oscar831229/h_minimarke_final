@@ -121,5 +121,4 @@ alter table movitemp drop column createdTime;
 alter table movi_niif drop column createdTime;
 alter table movitempniif drop column createdTime;
 
-#changes cuentas
-alter table cuentas change porc_retenc porc_retenc DECIMAL(7,4) null;
+alter table inve add column rodizo char(1) null default 'N';
