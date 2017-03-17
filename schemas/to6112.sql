@@ -121,4 +121,4 @@ alter table movitemp drop column createdTime;
 alter table movi_niif drop column createdTime;
 alter table movitempniif drop column createdTime;
 
-alter table inve add column rodizo char(1) null default 'N';
+alter table inve add column rodizio char(1) null default 'N';
