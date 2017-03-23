@@ -107,8 +107,8 @@ class IncluirController extends ApplicationController
 						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count . ' columnas');
 					}
 
-					$fields[2]  = $this->_getFormatDate($transaction, $fields[2], $numberLine);
-					$fields[13] = $this->_getFormatDate($transaction, $fields[13], $numberLine);
+					$fields[2]  = $this->_getFormatDate($this->transaction, $fields[2], $numberLine);
+					$fields[13] = $this->_getFormatDate($this->transaction, $fields[13], $numberLine);
 					$lines[]    = $fields;
 
 				}
@@ -117,7 +117,7 @@ class IncluirController extends ApplicationController
 			}
 
 			$numberLine = 1;
-			$deleteStatus = $this->Recep->setTransaction($transaction)->deleteAll();
+			$deleteStatus = $this->Recep->setTransaction($this->transaction)->deleteAll();
 
 			foreach ($lines as $line) {
 				$recep = new Recep();
