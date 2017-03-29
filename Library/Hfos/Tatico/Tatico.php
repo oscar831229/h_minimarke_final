@@ -4408,10 +4408,10 @@ class Tatico extends UserComponent
 			$content.= "<br/><table class='detalle' cellspacing='0' cellpadding='0'>";
 			if ($tipoComprob == 'O' || $tipoComprob == 'E') {
 				$content.= "<tr><td align='right'>TOTAL COMPRA</td><td align='right'>".Currency::number($movihead->getTotalNeto(), 2)."</td></tr>";
-				$content.= "<tr><td align='right'>VALOR IVA 19%</td><td align='right'>".Currency::number($movihead->getIva(), 2)."</td></tr>";
-				$content.= "<tr><td align='right'>RETEIVA 19%</td><td align='right'>".Currency::number($movihead->getDescuento(), 2)."</td></tr>";
-				$content.= "<tr><td align='right'>VALOR IVA 10%</td><td align='right'>".Currency::number($movihead->getIvad(), 2)."</td></tr>";
-				$content.= "<tr><td align='right'>RETEIVA 10%</td><td align='right'>".Currency::number($movihead->getIvam(), 2)."</td></tr>";
+				$content.= "<tr><td align='right'>VALOR IVA 19%</td><td align='right'>".Currency::number($movihead->getIvad(), 2)."</td></tr>";
+				$content.= "<tr><td align='right'>RETEIVA 19%</td><td align='right'>".Currency::number($movihead->getIvam(), 2)."</td></tr>";
+				$content.= "<tr><td align='right'>VALOR IVA 16%</td><td align='right'>".Currency::number($movihead->getIva(), 2)."</td></tr>";
+				$content.= "<tr><td align='right'>RETEIVA 16%</td><td align='right'>".Currency::number($movihead->getDescuento(), 2)."</td></tr>";
 				$content.= "<tr><td align='right'>VALOR IVA 5%</td><td align='right'>".Currency::number($movih1->getIva5(), 2)."</td></tr>";
 				$content.= "<tr><td align='right'>RETEIVA 5%</td><td align='right'>".Currency::number($movih1->getRetIva5(), 2)."</td></tr>";
 				$content.= "<tr><td align='right'>VR RETENCIÓN</td><td align='right'>".Currency::number($movihead->getRetencion(), 2)."</td></tr>";
