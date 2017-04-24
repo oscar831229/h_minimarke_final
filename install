@@ -7,16 +7,16 @@ dirPath=`pwd`
 gitPath="/opt/local/apache2/htdocs/h/"
 
 cd $dirPath
-chmod -R 777 apps/pos2/logs/
+chmod 777 -R apps/pos2/logs/
 
 mkdir Library/Mpdf/tmp
-chmod -R 777 Library/Mpdf/tmp
+chmod 777 -R Library/Mpdf/tmp
 
 chmod -R 777 apps/identity/security/data
 
 cd public
 mkdir temp
-chmod 777 temp
+chmod 777 -R temp
 
 ln -s /tmp/ out
 
