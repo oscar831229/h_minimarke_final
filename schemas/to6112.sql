@@ -32,7 +32,7 @@ CREATE TABLE `saldos_niif` (
   `base_grab` decimal(14,2) DEFAULT NULL,
   PRIMARY KEY (`cuenta`,`nit`,`ano_mes`),
   KEY `l_anon` (`ano_mes`),
-  KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`) USING BTREE
+  KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 create table saldosn_niif like saldosn;
@@ -58,7 +58,7 @@ CREATE TABLE `movibackup` (
   `f_vence` date DEFAULT NULL,
   `deleted_time` date NOT NULL,
   `usuarios_id` int(11) NOT NULL,
-  KEY `contab_1_index` (`comprob`,`numero`,`nit`,`fecha`,`deb_cre`,`cuenta`,`tipo_doc`,`numero_doc`) USING BTREE
+  KEY `contab_1_index` (`comprob`,`numero`,`nit`,`fecha`,`deb_cre`,`cuenta`,`tipo_doc`,`numero_doc`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table movitempniif like movitemp;
@@ -112,7 +112,7 @@ CREATE TABLE `saldos_niif` (
   `base_grab` decimal(14,2) DEFAULT NULL,
   PRIMARY KEY (`cuenta`,`nit`,`ano_mes`),
   KEY `l_anon` (`ano_mes`),
-  KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`) USING BTREE
+  KEY `contab_2_index` (`nit`,`cuenta`,`ano_mes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 #Remove Unused field
