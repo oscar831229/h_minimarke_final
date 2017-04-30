@@ -609,6 +609,15 @@ class Movimiento_niifController extends ApplicationController
 				$moviTemp->setEstado('A');
 			}
 
+			if ($movement['Cuenta']) {
+				$cuentas = BackCacher::getCuentaNiif($movement['Cuenta']);
+				if ($cuentas->getPideNit() == 'S' && empty($movement['Nit'])) {
+					return array(
+						'status' => 'FAILED',
+						'message' => 'El nit es requerido'
+					);
+				}
+			}
 			$moviTemp->setCuenta($movement['Cuenta']);
 			$moviTemp->setValor($movement['Valor']);
 			$moviTemp->setDescripcion($movement['Descripcion']);

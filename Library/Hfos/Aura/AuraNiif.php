@@ -1359,9 +1359,9 @@ class AuraNiif extends UserComponent
 		$fechaCierre = new Date($fechaCierre);
 		$periodoCierre = $fechaCierre->getPeriod();
 		
-		$this->initializeSaldoscNiif($periodoCierre);
+		//$this->initializeSaldoscNiif($periodoCierre);
 
-		$this->initializeSaldosnNiif($periodoCierre);
+		//$this->initializeSaldosnNiif($periodoCierre);
 
 		$this->agregarSaldosNiifSoloDeMoviNiif($fechaCierre);
 
@@ -1596,7 +1596,8 @@ class AuraNiif extends UserComponent
         $period = $fechaPeriodo->getPeriod();
         //throw new Exception("$fechaPeriodo: $period, cuenta='$cuentasNiif' AND ano_mes='$period'", 1); 
 		
-		$saldosc = $this->SaldoscNiif->findFirst("cuenta='{$moviNiif->getCuenta()}' AND ano_mes='$period'");
+		$saldosc = $this->SaldoscNiif->setTransaction($this->_transaction)
+		->findFirst("cuenta='{$moviNiif->getCuenta()}' AND ano_mes='$period'");
 		if($saldosc==false){
 			$saldosc = new SaldoscNiif();
 			$saldosc->setTransaction($this->_transaction);
@@ -1640,6 +1641,9 @@ class AuraNiif extends UserComponent
 					);
 				}
 			}
+		}
+		if ($moviNiif->getCuenta() == '414005001001') {
+			//throw new Exception(print_r($saldosc, 1));
 		}
 		unset($saldosc);
     }

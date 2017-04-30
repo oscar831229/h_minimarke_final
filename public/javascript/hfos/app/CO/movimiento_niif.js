@@ -824,6 +824,9 @@ var MovimientoNiif = Class.create(HfosProcessContainer, {
 			onCreate: function(){
 				Hfos.getUI().blockInput();
 			},
+			onException: function(e, transport){
+				HfosException.show(e, transport);
+			},
 			onSuccess: function(saveButton, position, response){
 				var cuentaElement = this.select('input.cuenta')[position];
 				if (typeof cuentaElement != "undefined"){

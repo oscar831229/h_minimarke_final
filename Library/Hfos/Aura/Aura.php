@@ -528,6 +528,8 @@ class Aura extends UserComponent
 				$this->Movitemp->setTransaction($this->_transaction);
 				$this->Movitemp->deleteAll($conditions);
 				$movis = $this->Movi->find("comprob='{$this->_defaultComprob}' AND numero='$this->_defaultNumero'");
+
+				$movitemps = array();
 				foreach($movis as $movi){
 					$movitemp = new Movitemp();
 					$movitemp->setTransaction($this->_transaction);
@@ -543,26 +545,30 @@ class Aura extends UserComponent
 					}
 					$consecutivo++;
 					unset($movi);
+
+					$movitemps[]= $movitemp;
 				}
+				
 				if($this->_cleaned==false){
 					$this->_delete();
 					$this->_cleaned = true;
 				}
-				foreach($this->Movitemp->find($conditions) as $movitemp){
+
+				foreach($movitemps as $movitemp){
 					$this->addMovement(array(
-						'Fecha' => $movitemp->getFecha(),
-						'Cuenta' => $movitemp->getCuenta(),
-						'Nit' => $movitemp->getNit(),
+						'Fecha'  	  => $movitemp->getFecha(),
+						'Cuenta' 	  => $movitemp->getCuenta(),
+						'Nit' 	 	  => $movitemp->getNit(),
 						'CentroCosto' => $movitemp->getCentroCosto(),
-						'Valor' => $movitemp->getValor(),
-						'DebCre' => $movitemp->getDebCre(),
+						'Valor'  	  => $movitemp->getValor(),
+						'DebCre' 	  => $movitemp->getDebCre(),
 						'Descripcion' => $movitemp->getDescripcion(),
 						'TipoDocumento' => $movitemp->getTipoDoc(),
 						'NumeroDocumento' => $movitemp->getNumeroDoc(),
-						'BaseGrab' => $movitemp->getBaseGrab(),
-						'Conciliado' => $movitemp->getConciliado(),
-						'FechaVence' => $movitemp->getFVence(),
-						'Numfol' => $movitemp->getNumfol()
+						'BaseGrab' 	  => $movitemp->getBaseGrab(),
+						'Conciliado'  => $movitemp->getConciliado(),
+						'FechaVence'  => $movitemp->getFVence(),
+						'Numfol' 	  => $movitemp->getNumfol()
 					));
 				}
 				$this->_loaded = true;
