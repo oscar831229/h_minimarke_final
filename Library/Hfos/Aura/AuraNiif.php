@@ -378,32 +378,32 @@ class AuraNiif extends UserComponent
 				if ($this->_activeAction == null) {
 					if ($this->_exists == false) {
 						if (!self::checkPermission($identity['id'], $codigoComprobante, 'A')) {
-							throw new AuraNiifException('No tiene permiso para adicionar comprobantes de "'.$comprob->getNomComprob().'"');
+							throw new AuraNiifException('No tiene permiso para adicionar comprobantes de "' . $comprob->getNomComprob() . '"');
 						}
 					} else {
 						if (!self::checkPermission($identity['id'], $codigoComprobante, 'M')) {
-							throw new AuraNiifException('No tiene permiso para actualizar comprobantes de "'.$comprob->getNomComprob().'"');
+							throw new AuraNiifException('No tiene permiso para actualizar comprobantes de "' . $comprob->getNomComprob() . '"');
 						}
 					}
 				} else {
 					switch($this->_activeAction) {
 						case self::OP_CREATE:
 							if (!self::checkPermission($identity['id'], $codigoComprobante, 'A')) {
-								throw new AuraNiifException('No tiene permiso para adicionar comprobantes de "'.$comprob->getNomComprob().'"');
+								throw new AuraNiifException('No tiene permiso para adicionar comprobantes de "' . $comprob->getNomComprob() . '"');
 							}
 							break;
 						case self::OP_UPDATE:
 							if (!self::checkPermission($identity['id'], $codigoComprobante, 'M')) {
-								throw new AuraNiifException('No tiene permiso para actualizar comprobantes de "'.$comprob->getNomComprob().'"');
+								throw new AuraNiifException('No tiene permiso para actualizar comprobantes de "' . $comprob->getNomComprob() . '"');
 							}
 							break;
 						case self::OP_DELETE:
 							if (!self::checkPermission($identity['id'], $codigoComprobante, 'D')) {
-								throw new AuraNiifException('No tiene permiso para eliminar comprobantes de "'.$comprob->getNomComprob().'"');
+								throw new AuraNiifException('No tiene permiso para eliminar comprobantes de "' . $comprob->getNomComprob() . '"');
 							}
 							break;
 						default:
-							throw new AuraNiifException('Acción inválida en realizar: '.$this->_activeAction);
+							throw new AuraNiifException('Acción inválida en realizar: ' . $this->_activeAction);
 					}
 				}
 
@@ -627,7 +627,7 @@ class AuraNiif extends UserComponent
 		}
 
 		if ($movement['DebCre'] !== 'D' && $movement['DebCre'] !==  'C') {
-			throw new AuraNiifException('El campo naturaleza debe ser "C" ó "D" en la línea '.$this->_linea);
+			throw new AuraNiifException('El campo naturaleza debe ser "C" ó "D" en la línea ' . $this->_linea);
 		}
 
 		if (substr($movement['Cuenta'], 9, 3) === '000') {
@@ -642,7 +642,7 @@ class AuraNiif extends UserComponent
 
 		$cuenta = $this->_getCuenta($movement['Cuenta']);
 		if ($cuenta  ==  false) {
-			throw new AuraNiifException('No existe la cuenta niif "'.$movement['Cuenta'].'" ó no es auxiliar, en la línea '.$this->_linea);
+			throw new AuraNiifException('No existe la cuenta niif "' . $movement['Cuenta'].'" ó no es auxiliar, en la línea ' . $this->_linea);
 		}
 
 		if ($cuenta->getPideNit() == 'S') {
@@ -662,7 +662,7 @@ class AuraNiif extends UserComponent
 				}
 			}
 			if ($nitErrado == true) {
-				throw new AuraNiifException('Tercero requerido, la cuenta "'.$movement['Cuenta'].'"('.$cuenta->getNombre().') solicita tercero, en la línea '.$this->_linea.' ('.$movement['Nit'].')');
+				throw new AuraNiifException('Tercero requerido, la cuenta "' . $movement['Cuenta'].'"(' . $cuenta->getNombre() . ') solicita tercero, en la línea ' . $this->_linea.' (' . $movement['Nit'].')');
 			}
 			unset($nitErrado);
 		} else {
@@ -670,11 +670,11 @@ class AuraNiif extends UserComponent
 		}
 
 		if ($movement['Valor']<0) {
-			throw new AuraNiifException('El valor "'.$movement['Valor'].'" es inválido  en la línea '.$this->_linea);
+			throw new AuraNiifException('El valor "' . $movement['Valor'].'" es inválido  en la línea ' . $this->_linea);
 		} else {
 			$movement['Valor'] = LocaleMath::round($movement['Valor'], 2);
 			if (strlen($movement['Valor'])>=17) {
-				throw new AuraNiifException('La base de datos no podrá almacenar el valor "'.$movement['Valor'].'" en la línea '.$this->_linea);
+				throw new AuraNiifException('La base de datos no podrá almacenar el valor "' . $movement['Valor'].'" en la línea ' . $this->_linea);
 			}
 		}
 
@@ -722,9 +722,9 @@ class AuraNiif extends UserComponent
 			if (isset($movement['Folio'])) {
 				if ($movement['Folio']!=0) {
 					if (isset($movement['Descripcion'])) {
-						$movement['Descripcion'].=' F'.$movement['Folio'];
+						$movement['Descripcion'].=' F' . $movement['Folio'];
 					} else {
-						$movement['Descripcion'] = ' F'.$movement['Folio'];
+						$movement['Descripcion'] = ' F' . $movement['Folio'];
 					}
 					$movi->setNumfol($movement['Folio']);
 				}
@@ -752,11 +752,11 @@ class AuraNiif extends UserComponent
 			if ($movi->save() == false) {
 				if ($this->_externalTransaction == true) {
 					foreach ($movi->getMessages() as $message) {
-						$this->_transaction->rollback('Movi: ' . $message->getMessage().'. '.$movi->inspect().'. '.print_r($movement, true), $message->getCode());
+						$this->_transaction->rollback('Movi: ' . $message->getMessage() . '. ' . $movi->inspect() . '. '.print_r($movement, true), $message->getCode());
 					}
 				} else {
 					foreach ($movi->getMessages() as $message) {
-						throw new AuraNiifException('Movi: ' . $message->getMessage().'. '.$movi->inspect().'. '.print_r($movement, true), $message->getCode());
+						throw new AuraNiifException('Movi: ' . $message->getMessage() . '. ' . $movi->inspect() . '. '.print_r($movement, true), $message->getCode());
 					}
 				}
 			}
@@ -805,11 +805,11 @@ class AuraNiif extends UserComponent
 					if ($saldosNiif->save() == false) {
 						if ($this->_externalTransaction == true) {
 							foreach ($saldosNiif->getMessages() as $message) {
-								$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
+								$this->_transaction->rollback('SaldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . '. '.print_r($movement, true), $message->getCode());
 							}
 						} else {
 							foreach ($saldosNiif->getMessages() as $message) {
-								throw new AuraNiifException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'. '.print_r($movement, true), $message->getCode());
+								throw new AuraNiifException('SaldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . '. '.print_r($movement, true), $message->getCode());
 							}
 						}
 					}
@@ -880,11 +880,11 @@ class AuraNiif extends UserComponent
 				if($cartera->save()==false){
 					if($this->_externalTransaction==true){
 						foreach($cartera->getMessages() as $message){
-							$this->_transaction->rollback('Cartera Niif: '.$message->getMessage(), $message->getCode());
+							$this->_transaction->rollback('Cartera Niif: ' . $message->getMessage(), $message->getCode());
 						}
 					} else {
 						foreach($cartera->getMessages() as $message){
-							throw new AuraException('Cartera Niif: '.$message->getMessage(), $message->getCode());
+							throw new AuraException('Cartera Niif: ' . $message->getMessage(), $message->getCode());
 						}
 					}
 				}
@@ -933,9 +933,9 @@ class AuraNiif extends UserComponent
 			$identity = IdentityManager::getActive();
 			if (!self::checkPermission($identity['id'], $this->_defaultComprob, 'D')) {
 				if ($comprob == false) {
-					throw new AuraNiifException('No existe el comprobante "'.$this->_defaultComprob.'"');
+					throw new AuraNiifException('No existe el comprobante "' . $this->_defaultComprob.'"');
 				} else {
-					throw new AuraNiifException('No tiene permiso para eliminar comprobantes de "'.$comprob->getNomComprob().'"');
+					throw new AuraNiifException('No tiene permiso para eliminar comprobantes de "' . $comprob->getNomComprob() . '"');
 				}
 			}
 		}
@@ -955,7 +955,7 @@ class AuraNiif extends UserComponent
 
 				$cuenta = $this->_getCuenta($movi->getCuenta());
 				if ($cuenta == false) {
-					throw new AuraNiifException('La cuenta "'.$movi->getCuenta().'" antes existía pero ya no existe. No se puede borrar el comprobante');
+					throw new AuraNiifException('La cuenta "' . $movi->getCuenta() . '" antes existía pero ya no existe. No se puede borrar el comprobante');
 				}
 
 				if ($cuenta->getPideNit() == 'S') {
@@ -974,11 +974,11 @@ class AuraNiif extends UserComponent
 						if ($saldosNiif->save() == false) {
 							if ($this->_externalTransaction == true) {
 								foreach ($movi->getMessages() as $message) {
-									$this->_transaction->rollback('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'.', $message->getCode());
+									$this->_transaction->rollback('SaldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . '.', $message->getCode());
 								}
 							} else {
 								foreach ($saldosNiif->getMessages() as $message) {
-									throw new AuraNiifException('SaldosNiif: '.$message->getMessage().'. '.$saldosNiif->inspect().'.', $message->getCode());
+									throw new AuraNiifException('SaldosNiif: ' . $message->getMessage() . '. ' . $saldosNiif->inspect() . '.', $message->getCode());
 								}
 							}
 						}
@@ -1119,11 +1119,11 @@ class AuraNiif extends UserComponent
 				if ($comprob->save() == false) {
 					if ($this->_externalTransaction == true) {
 						foreach ($comprob->getMessages() as $message) {
-							$this->_transaction->rollback('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
+							$this->_transaction->rollback('Tipo Comprobante: ' . $message->getMessage(), $message->getCode());
 						}
 					} else {
 						foreach ($comprob->getMessages() as $message) {
-							throw new AuraNiifException('Tipo Comprobante: '.$message->getMessage(), $message->getCode());
+							throw new AuraNiifException('Tipo Comprobante: ' . $message->getMessage(), $message->getCode());
 						}
 					}
 				}
@@ -1168,11 +1168,11 @@ class AuraNiif extends UserComponent
 		if ($grab->save() == false) {
 			if ($this->_externalTransaction == true) {
 				foreach ($grab->getMessages() as $message) {
-					$this->_transaction->rollback('GrabNiif: '.$message->getMessage(), $message->getCode());
+					$this->_transaction->rollback('GrabNiif: ' . $message->getMessage(), $message->getCode());
 				}
 			} else {
 				foreach ($grab->getMessages() as $message) {
-					throw new AuraNiifException('GrabNiif: '.$message->getMessage(), $message->getCode());
+					throw new AuraNiifException('GrabNiif: ' . $message->getMessage(), $message->getCode());
 				}
 			}
 		}
@@ -1359,13 +1359,25 @@ class AuraNiif extends UserComponent
 		$fechaCierre = new Date($fechaCierre);
 		$periodoCierre = $fechaCierre->getPeriod();
 		
-		//$this->initializeSaldoscNiif($periodoCierre);
+		// Limpia registros del cierre
+		$this->initializeSaldoscNiif($periodoCierre);
+		$this->initializeSaldosnNiif($periodoCierre);
 
-		//$this->initializeSaldosnNiif($periodoCierre);
-
+		// Genera movimiento con solo movi_niif
 		$this->agregarSaldosNiifSoloDeMoviNiif($fechaCierre);
 
+		// recalcula movimiento niif por movis
 		$this->createMoviNiifByMovis($movis);
+	}
+
+	public function getFechaSaldosIniciales($periodoCierre)
+	{
+		$this->periodoSaldoInicial = Settings::get('period_saldos_ini_niif', 'CO');
+		if (!$this->periodoSaldoInicial) {
+			throw new Exception("No se ha definido la configuración del periodo del saldos inicial NIIF", 1);
+		}
+
+		return Date::periodToDate($periodoCierre);
 	}
 
 	/**
@@ -1377,11 +1389,13 @@ class AuraNiif extends UserComponent
 	{
 		$periodoUltimoCierre = Date::subPeriodo($periodoCierre, 1);
 
+		$fechaSaldosIniciales = $this->getFechaSaldosIniciales($periodoCierre);
+
 		// Limpiamos este periodo
 		$this->SaldoscNiif->setTransaction($this->_transaction)->deleteAll("ano_mes='$periodoCierre'");
 		
 		// Creamos saldoscNiif base de anterior periodo a este nuevo periodo
-		$conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0)";
+		$conditions = "ano_mes='$periodoUltimoCierre' AND ano_mes>'$fechaSaldosIniciales'";
         $saldoscNiifObj = $this->SaldoscNiif->setTransaction($this->_transaction)->find($conditions);
         foreach ($saldoscNiifObj as $saldocNiifAnterior) {
             $saldocNiif = new SaldoscNiif();
@@ -1394,7 +1408,7 @@ class AuraNiif extends UserComponent
             $saldocNiif->setDepre('N');
             if ($saldocNiif->save()==false) {
                 foreach ($saldocNiif->getMessages() as $message) {
-                    $this->_transaction->rollback('SaldosNiif por Cuenta: '.$message->getMessage().'. '.$saldocNiif->inspect());
+                    $this->_transaction->rollback('SaldosNiif por Cuenta: ' . $message->getMessage() . '. ' . $saldocNiif->inspect());
                 }
             }
             unset($saldocNiifAnterior, $saldocNiif);
@@ -1410,12 +1424,13 @@ class AuraNiif extends UserComponent
 	public function initializeSaldosnNiif($periodoCierre)
 	{
 		$periodoUltimoCierre = Date::subPeriodo($periodoCierre, 1);
-
+		$fechaSaldosIniciales = $this->getFechaSaldosIniciales($periodoCierre);
+		
 		// Limpiamos este periodo
 		$this->SaldosnNiif->setTransaction($this->_transaction)->deleteAll("ano_mes='$periodoCierre'");
 
 		// Creamos saldosnNiif base de anterior periodo a este nuevo periodo
-		$conditions = "ano_mes='$periodoUltimoCierre' AND (haber!=0 OR debe!=0 OR saldo!=0 OR base_grab!=0)";
+		$conditions = "ano_mes='$periodoUltimoCierre' AND ano_mes>'$fechaSaldosIniciales'";
 		$saldosnNiifObj = $this->SaldosNiif->setTransaction($this->_transaction)->find($conditions);
         foreach ($saldosnNiifObj as $saldonAnterior) {
             $saldosnNiif = new SaldosnNiif();
@@ -1430,10 +1445,10 @@ class AuraNiif extends UserComponent
             $saldosnNiif->setDepre('N');
             if ($saldosnNiif->save()==false) {
                 foreach ($saldosnNiif->getMessages() as $message) {
-                    throw new Exception('Saldos Niif por Nit: '.$message->getMessage().'. '.$saldosnNiif->inspect());
+                    throw new Exception('Saldos Niif por Nit: ' . $message->getMessage() . '. ' . $saldosnNiif->inspect());
                 }
             }
-            unset($saldosnNiif,$saldonAnterior);
+            unset($saldosnNiif, $saldonAnterior);
         }
         unset($conditions, $saldosnNiifObj);
 	} 
@@ -1450,7 +1465,9 @@ class AuraNiif extends UserComponent
 
 		$periodoUltimoCierre = Date::subPeriodo($periodoCierre, 1);
 
-		$fechaUltimoCierre = substr($periodoUltimoCierre, 0, 4) . '-' . substr($periodoUltimoCierre, 4, 2) . '-01';
+		$fechaUltimoCierre = substr($periodoUltimoCierre, 0, 4) . '-' . 
+		substr($periodoUltimoCierre, 4, 2) . '-01';
+		
 		$fechaUltimoCierre = new Date($fechaUltimoCierre);
 		$fechaUltimoCierre->toLastDayOfMonth();
 		$ultimoCierre = $fechaUltimoCierre->getDate();
@@ -1531,7 +1548,6 @@ class AuraNiif extends UserComponent
 
             $period = null;
             foreach ($movis as $movi) {
-            	
             	if ($period === null) {
             		$fechaPeriodo = new Date($movi->getFecha());
             		$period = Date::subPeriodo($fechaPeriodo->getPeriod(), 1);
@@ -1547,7 +1563,6 @@ class AuraNiif extends UserComponent
                 }
 
                 if ($cuenta) {
-
                     $moviNiif = new MoviNiif();
                     $moviNiif->setTransaction($this->_transaction);
 
@@ -1583,7 +1598,7 @@ class AuraNiif extends UserComponent
 
     /**
      * Incrementa o decrementa saldos de una cuenta auxiliar
-     * 
+     *
      * @param MoviNiif $moviNiif
      */
     public function saldoscNiifProcess($moviNiif)
@@ -1629,22 +1644,20 @@ class AuraNiif extends UserComponent
 			if($this->_externalTransaction==true){
 				foreach($saldosc->getMessages() as $message){
 					$this->_transaction->rollback(
-						'SaldoscNiif: '.$message->getMessage().'. '.$saldosc->inspect(),
+						'SaldoscNiif: ' . $message->getMessage() . '. ' . $saldosc->inspect(),
 						$message->getCode()
 					);
 				}
 			} else {
 				foreach($saldosc->getMessages() as $message){
 					throw new AuraNiifException(
-						'SaldoscNiif: '.$message->getMessage().'. '.$saldosc->inspect(),
+						'SaldoscNiif: ' . $message->getMessage() . '. ' . $saldosc->inspect(),
 						$message->getCode()
 					);
 				}
 			}
 		}
-		if ($moviNiif->getCuenta() == '414005001001') {
-			//throw new Exception(print_r($saldosc, 1));
-		}
+
 		unset($saldosc);
     }
 
@@ -1698,14 +1711,14 @@ class AuraNiif extends UserComponent
 				if($this->_externalTransaction==true){
 					foreach($saldosn->getMessages() as $message){
 						$this->_transaction->rollback(
-							'SaldosnNiif: '.$message->getMessage().'. '.$saldosn->inspect(),
+							'SaldosnNiif: ' . $message->getMessage() . '. ' . $saldosn->inspect(),
 							$message->getCode()
 						);
 					}
 				} else {
 					foreach($saldosn->getMessages() as $message){
 						throw new AuraNiifException(
-							'SaldosnNiif: '.$message->getMessage().'. '.$saldosn->inspect(), 
+							'SaldosnNiif: ' . $message->getMessage() . '. ' . $saldosn->inspect(), 
 							$message->getCode()
 						);
 					}

@@ -1905,4 +1905,17 @@ class Date extends Object
         
         return $newdate;
     }
+
+    public static function periodToDate($periodo)
+    {
+    	$ano = substr($periodo, 0, 4);
+        $mes = substr($periodo, 4, 2);
+        
+        $fecha = "$ano-$mes-01";
+
+        $date = new Date($fecha);
+        $date->toLastDayOfMonth();
+
+        return $date->getDate();
+    }
 }
