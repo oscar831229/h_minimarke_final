@@ -326,7 +326,7 @@ class OrderController extends ApplicationController
 				),
 				'conditions' =>
 					"{#MenusItems}.menus_id=$id AND
-					 {#SalonMenusItems}.salon_id = '".$this->salon_id."' AND
+					 {#SalonMenusItems}.salon_id = '" . $this->salon_id . "' AND
 					 {#SalonMenusItems}.estado = 'A' AND
 					 {#MenusItems}.estado = 'A'",
 				'order' => array('{#MenusItems}.nombre')
@@ -340,7 +340,7 @@ class OrderController extends ApplicationController
 				}
 				$menuItems[] = array(
 					'id' => $menuItem->id,
-					'nombre' => $menuItem->nombre_pedido,
+					'nombre' => utf8_decode($menuItem->nombre_pedido),
 					'valor' => $valor,
 					'modifiers' => $this->MenusItemsModifiers->count("menus_items_id='{$menuItem->id}'")
 				);

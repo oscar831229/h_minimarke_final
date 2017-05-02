@@ -1,0 +1,1 @@
+a:8:{i:0;a:3:{i:0;s:2:"id";i:1;s:7:"detalle";i:2;s:5:"costo";}i:1;a:1:{i:0;s:2:"id";}i:2;a:2:{i:0;s:7:"detalle";i:1;s:5:"costo";}i:3;a:3:{i:0;s:2:"id";i:1;s:7:"detalle";i:2;s:5:"costo";}i:4;a:3:{s:2:"id";s:7:"char(1)";s:7:"detalle";s:11:"varchar(45)";s:5:"costo";s:7:"char(1)";}i:5;a:0:{}i:6;a:0:{}i:7;a:0:{}}

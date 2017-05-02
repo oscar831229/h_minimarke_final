@@ -220,7 +220,7 @@ class Socorro extends UserComponent
 			Core::importFromActiveApp('controllers/socorro_controller.php');
 			Router::routeTo(array('controller' => 'socorro', 'action' => 'index'));
 			$socorroController = new SocorroController();
-			$socorroController->setResponse('');
+			$socorroController->setResponse('view');
 			$socorroController->setControllerName('socorro');
 			$socorroController->setActionName('index');
 			$socorroController->setAllParameters(Router::getAllParameters());
