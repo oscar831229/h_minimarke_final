@@ -340,7 +340,7 @@ class OrderController extends ApplicationController
 				}
 				$menuItems[] = array(
 					'id' => $menuItem->id,
-					'nombre' => utf8_decode($menuItem->nombre_pedido),
+					'nombre' => utf8_encode(utf8_decode($menuItem->nombre_pedido)),
 					'valor' => $valor,
 					'modifiers' => $this->MenusItemsModifiers->count("menus_items_id='{$menuItem->id}'")
 				);
