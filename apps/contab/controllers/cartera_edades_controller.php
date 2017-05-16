@@ -62,7 +62,7 @@ class Cartera_EdadesController extends ApplicationController
 
 			$orden = $this->getPostParam('orden', 'onechar');
 
-			$conditions = array();
+			$conditions = array("saldo!=0");
 			$conditions[] = "f_emision<='$fechaLimite'";
 			if($cuentaInicial!=''&&$cuentaFinal!=''){
 				$conditions[] = "cuenta>='$cuentaInicial' AND cuenta<='$cuentaFinal'";
