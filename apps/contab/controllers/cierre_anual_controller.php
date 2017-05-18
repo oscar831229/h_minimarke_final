@@ -103,6 +103,8 @@ class Cierre_AnualController extends ApplicationController {
 
 			$periodCierreDate = new Date($fechaCierre);
 			$usarCierreNiif = ($periodoIniNiif < $periodCierreDate->getPeriod());
+			//Desactivar cierre niiif
+			$usarCierreNiif = false;
 
 			if ($usarCierreNiif) {
 				if ($this->MoviNiif->count("comprob='$comprobCierreNiif' AND fecha='$fechaCierre'") == 0) {
