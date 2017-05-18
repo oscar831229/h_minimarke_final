@@ -89,12 +89,19 @@ class SettingsController extends ApplicationController
                 'NIIF' => array(
                     'period_saldos_ini_niif' => array(
                         'type' => 'int',
+                        "size" => 7,
+                        "maxlength" => 6,
                         'description' => 'Periodo saldos iniciales NIIF',
                         'filters' => array('int')
                     ),
                     'comprob_saldos_init_niif' => array(
                         'type' => 'comprob',
                         'description' => 'Comprobante saldos iniciales NIIF',
+                        'filters' => array('comprob')
+                    ),
+                    'comprob_cierre_niif' => array(
+                        'type' => 'comprob',
+                        'description' => 'Comprobante de cierre NIIF',
                         'filters' => array('comprob')
                     ),
                     'comprob_depre_niif' => array(
@@ -666,9 +673,8 @@ class SettingsController extends ApplicationController
         parent::initialize();
     }
 
-    public function indexAction(){
+    public function indexAction() {
         $this->setResponse('view');
-
 
         $code = CoreConfig::getAppSetting('code');
         foreach($this->Configuration->find("application='$code'") as $configuration){
@@ -677,16 +683,13 @@ class SettingsController extends ApplicationController
 
         $types = array();
         if (isset(self::$_settings[$code]['activeTabs']) && self::$_settings[$code]['activeTabs']==true) {
-            foreach (self::$_settings[$code]['tabs'] as $fieldset => $data)
-            {
-                foreach ($data as $name => $setting)
-                {
+            foreach (self::$_settings[$code]['tabs'] as $fieldset => $data) {
+                foreach ($data as $name => $setting) {
                     $types[$setting['type']] = true;
                 }
             }
         } else {
-            foreach (self::$_settings[$code] as $name => $setting)
-            {
+            foreach (self::$_settings[$code] as $name => $setting) {
                 $types[$setting['type']] = true;
             }
         }
@@ -723,7 +726,7 @@ class SettingsController extends ApplicationController
             foreach ($settings as $fieldset => $data) {
                 foreach ($data as $name => $setting) {
                     $configuration = $this->Configuration->findFirst("application='$code' AND name='$name'");
-                    if ($configuration==false) {
+                    if ($configuration == false) {
                         $configuration = new Configuration();
                         $configuration->setApplication($code);
                         $configuration->setName($name);
@@ -732,10 +735,10 @@ class SettingsController extends ApplicationController
                     $configuration->setValue($value);
                     $configuration->setTipo($setting['type']);
                     $configuration->setDescription($setting['description']);
-                    if ($configuration->save()==false) {
+                    if ($configuration->save() == false) {
                         foreach ($configuration->getMessages() as $message) {
                             return array(
-                                'status' => 'FAILED',
+                                'status'  => 'FAILED',
                                 'message' => $message->getMessage().' - '.$name
                             );
                         }
@@ -745,7 +748,7 @@ class SettingsController extends ApplicationController
         } else {
             foreach ($settings as $name => $setting) {
                 $configuration = $this->Configuration->findFirst("application='$code' AND name='$name'");
-                if ($configuration==false) {
+                if ($configuration == false) {
                     $configuration = new Configuration();
                     $configuration->setApplication($code);
                     $configuration->setName($name);
@@ -754,10 +757,10 @@ class SettingsController extends ApplicationController
                 $configuration->setValue($value);
                 $configuration->setTipo($setting['type']);
                 $configuration->setDescription($setting['description']);
-                if ($configuration->save()==false) {
+                if ($configuration->save() == false) {
                     foreach ($configuration->getMessages() as $message) {
                         return array(
-                            'status' => 'FAILED',
+                            'status'  => 'FAILED',
                             'message' => $message->getMessage() . ' - ' . $name
                         );
                     }
