@@ -1558,7 +1558,7 @@ class AuraNiif extends UserComponent
                 $cuenta = BackCacher::getCuenta($cuentaMovi);
 
                 $cuentaNiif = $cuenta->getCuentaNiif();
-                if (!$cuentaNiif && $this->debug == true) {
+                if (!$cuentaNiif && $this->_debug == true) {
                     throw new AuraNiifException("La cuenta '$cuentaMovi' no tiene parametrizada la cuenta NIIF");
                 }
 
