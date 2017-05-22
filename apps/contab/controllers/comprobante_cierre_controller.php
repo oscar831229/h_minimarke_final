@@ -85,6 +85,20 @@ class Comprobante_CierreController extends ApplicationController
 				}
 			}
 
+			$comprobCierreNiif = Settings::get('comprob_cierre_niif');
+			if ($comprobCierreNiif == '') {
+				throw new Exception('No se ha configurado el comprobante de cierre NIIF');
+			} else {
+				$comprobNiif = $this->Comprob->findFirst("codigo='$comprobCierreNiif'");
+				if ($comprobNiif == false) {
+					throw new Exception('El comprobante de cierre NIIF "' + $comprobCierreNiif + '" configurado no existe');
+				}
+			}
+
+			if ($comprobCierre == $comprobCierreNiif) {
+				throw new Exception("El comprobante de cierre anual no puede ser el mismo que el comprobante de cierre anual NIIF");
+			}
+
 			$ultimoCierre = clone $fechaCierre;
 			$ultimoCierre->addMonths(1);
 			$ultimoCierre->toLastDayOfMonth();
