@@ -279,12 +279,15 @@ class AuraNiif extends UserComponent
 		}
 
 		$this->_externalTransaction = TransactionManager::hasUserTransaction();
+		TransactionManager::getAutomaticTransaction();
 		$this->_transaction = TransactionManager::getUserTransaction();
+
 		$this->MoviNiif->setTransaction($this->_transaction);
 		$this->Movitempniif->setTransaction($this->_transaction);
 		$this->Nits->setTransaction($this->_transaction);
 		$this->SaldosNiif->setTransaction($this->_transaction);
 		$this->_activeAction = $activeAction;
+
 		if ($codigoComprobante!='') {
 			$numero = $this->_addComprobante($codigoComprobante, $numero);
 			$this->_defaultComprob = $codigoComprobante;
@@ -673,8 +676,8 @@ class AuraNiif extends UserComponent
 			throw new AuraNiifException('El valor "' . $movement['Valor'].'" es inválido  en la línea ' . $this->_linea);
 		} else {
 			$movement['Valor'] = LocaleMath::round($movement['Valor'], 2);
-			if (strlen($movement['Valor'])>=17) {
-				throw new AuraNiifException('La base de datos no podrá almacenar el valor "' . $movement['Valor'].'" en la línea ' . $this->_linea);
+			if (strlen($movement['Valor'])>=20) {
+				throw new AuraNiifException('NIIF: La base de datos no podrá almacenar el valor "' . $movement['Valor'].'" en la línea ' . $this->_linea);
 			}
 		}
 
@@ -1821,6 +1824,13 @@ class AuraNiif extends UserComponent
 
             $this->saldosnNiifProcess($moviNiif);
 		}
+	}
+
+	
+
+	public function setExternalTransaction($flag)
+	{
+		$this->_externalTransaction = $flag;
 	}
 }
 

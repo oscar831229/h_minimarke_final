@@ -748,8 +748,8 @@ class Aura extends UserComponent
 			throw new AuraException('El valor "'.$movement['Valor'].'" es inválido  en la línea '.$this->_linea);
 		} else {
 			$movement['Valor'] = LocaleMath::round($movement['Valor'], 2);
-			if(strlen($movement['Valor'])>=17){
-				throw new AuraException('La base de datos no podrá almacenar el valor "'.$movement['Valor'].'" en la línea '.$this->_linea);
+			if(strlen($movement['Valor'])>=20){
+				throw new AuraException('AURA: La base de datos no podrá almacenar el valor "'.$movement['Valor'].'" en la línea '.$this->_linea);
 			}
 		}
 
@@ -1655,4 +1655,18 @@ class Aura extends UserComponent
 		return self::getModel('PermisosComprob')->count("usuarios_id='$identityId' AND comprob='$comprob' AND popcion='$type'");
 	}
 
+	public function getTransaction()
+	{
+		return $this->_transaction;
+	}
+
+	public function setExternalTransaction($flag)
+	{
+		$this->_externalTransaction = $flag;
+	}
+
+	public function setTransaction($transaction)
+	{
+		$this->_transaction = $transaction;
+	}
 }
