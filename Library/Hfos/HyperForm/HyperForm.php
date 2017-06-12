@@ -755,6 +755,7 @@ class HyperForm extends UserComponent
 							}
 						}
 						$fieldValue = (string) call_user_func_array(array($className, 'getDetail'), array($value));
+						$fieldValue = utf8_encode($fieldValue);
 						break;
 				}
 				$data[] = array(
