@@ -35,7 +35,7 @@ var HfosCommunications = Class.create({
 	listen: function()
 	{
 		var time = 20000;
-		if (window.location.host.include('bhteck.com')) {
+		if (window.location.host.include('bhteck.net')) {
 			time *= 15;
 		} else {
 			if (window.location.host.include('wepax.com.co')) {

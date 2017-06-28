@@ -36,7 +36,7 @@ class HfosDelivery {
 	{
 		try {
 
-			$http = new HttpRequest('http://delivery.bhteck.com/'.$action, HttpRequest::METH_POST);
+			$http = new HttpRequest('http://delivery.bhteck.net/'.$action, HttpRequest::METH_POST);
 			
 			$http->setOptions(array('timeout' => 60, 'connecttimeout' => 30, 'dns_cache_timeout' => 30));
 			$http->setPostFields($post);

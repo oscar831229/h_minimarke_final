@@ -35,7 +35,7 @@ class Socorro extends UserComponent
 			<table cellspacing="0" width="100%">
 				<tr>
 					<td colspan="2" bgcolor="#292931">
-						<img src="http://www.bhteck.com/img/magenta.png?'.$subject.'" alt="Magenta Support System" width="320" height"70"/>
+						<img src="http://www.bhteck.net/img/magenta.png?'.$subject.'" alt="Magenta Support System" width="320" height"70"/>
 					</td>
 				</tr>
 				<tr>
@@ -178,7 +178,7 @@ class Socorro extends UserComponent
 		$message->attach($bodyMessage);
 
 		$recipients->addTo('hugo.ramirez@bhteck.com', 'Hugo Ramirez');
-		//$recipients->addTo('andres.gutierrez@bhteck.com', 'Andres Felipe Gutierrez');
+		$recipients->addTo('andres.gutierrez@bhteck.com', 'Andres Felipe Gutierrez');
 		$recipients->addTo('eduar.carvajal@bhteck.com', 'Eduar Carvajal');
 
 		$response = ControllerResponse::getInstance();
