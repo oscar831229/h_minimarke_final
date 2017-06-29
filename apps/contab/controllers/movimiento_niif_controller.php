@@ -195,9 +195,9 @@ class Movimiento_niifController extends ApplicationController
 			$conditions[] = 'numero = \'' . $numero . '\'';
 		}
 		if (count($conditions) > 0) {
-			$movis = $this->MoviNiif->find(array(join(' AND ', $conditions), 'columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
+			$movis = $this->MoviNiif->find(array(join(' AND ', $conditions), 'columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc'));
 		} else {
-			$movis = $this->MoviNiif->find(array('columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc', 'limit' => 50));
+			$movis = $this->MoviNiif->find(array('columns' => 'comprob,numero,fecha', 'group' => 'comprob,numero,fecha', 'order' => 'fecha desc,numero desc'));
 		}
 		if (count($movis) == 1) {
 			$movi = $movis->getFirst();
