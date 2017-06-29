@@ -1545,7 +1545,7 @@ class AuraNiif extends UserComponent
             "conditions" => $condition
         ));
 
-        if ($movis && count($movis)) {
+        if (count($movis)) {
 
             $this->MoviNiif->setTransaction($this->_transaction)->deleteAll($condition);
 
@@ -1561,7 +1561,7 @@ class AuraNiif extends UserComponent
                 $cuenta = BackCacher::getCuenta($cuentaMovi);
 
                 $cuentaNiif = $cuenta->getCuentaNiif();
-                if (!$cuentaNiif && $this->_debug == true) {
+                if (!$cuentaNiif) {
                     throw new AuraNiifException("La cuenta '$cuentaMovi' no tiene parametrizada la cuenta NIIF");
                 }
 
@@ -1581,7 +1581,7 @@ class AuraNiif extends UserComponent
 
                     if (!$moviNiif->save()) {
                         foreach ($moviNiif->getMessages() as $message) {
-                            throw new AuraNiifException($message->getMessage());
+                            throw new AuraNiifException("createMoviNiifByMovi: ".$message->getMessage().PHP_EOL."".print_r($moviNiif, 1));
                         }
                     }
 
