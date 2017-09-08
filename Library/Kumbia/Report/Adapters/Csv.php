@@ -193,10 +193,13 @@ class CsvReport extends ReportAdapter implements ReportInterface {
 			$listQuery = $db->query($query);
 			$db->setFetchMode($db::DB_ASSOC);
 			while ($record = $db->fetchArray($listQuery)) {
-				$output .= implode("|", array_values($record)) . PHP_EOL;
+				$output .= '"' . implode('","', array_values($record)) .'"'. "\n" . PHP_EOL;
 			}
 
-			header('Content-type: text/plain');
+			header("Content-type: text/csv");
+			header("Content-Disposition: attachment; filename=report.csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
 			echo $output;
 			exit;
 		}

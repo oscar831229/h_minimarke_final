@@ -502,6 +502,12 @@ class HyperForm extends UserComponent
 			$fileName = $reportName . ".csv";
 			//$report->outputToFileCsv('public/temp/' . $fileName, $config["model"], $fileName);
 			//return Core::getInstancePath() . 'temp/' . $fileName;
+			
+			header("Content-type: text/csv");
+			header("Content-Disposition: attachment; filename=search.csv");
+			header("Pragma: no-cache");
+			header("Expires: 0");
+
 			return $report->outputToFileCsv(
 				'public/temp/' . $fileName,
 				$config["model"],
@@ -2265,6 +2271,7 @@ class HyperForm extends UserComponent
 					}
 				}
 				Flash::success('Se importó correctamente el archivo');
+				return;
 			}
 
 			if (!preg_match('/\.xlsx$/', $archivo->getFileName())) {
