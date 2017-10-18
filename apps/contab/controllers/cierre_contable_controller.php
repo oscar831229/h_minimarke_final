@@ -253,7 +253,7 @@ class Cierre_ContableController extends ApplicationController
                     if (count($messages)) {
                         $allMessages[] = array(
                             'comprob'  => $movi->getComprob(),
-                            'numero'   => $movi->getComprob(),
+                            'numero'   => $movi->getNumero(),
                             'messages' => $messages
                         );
                     }
@@ -318,7 +318,7 @@ class Cierre_ContableController extends ApplicationController
                 $report->setDocumentTitle('Incosistencias Movimiento Cierre Contable');
                 $report->setColumnHeaders(array(
                     'COMPROBANTE',
-                    'NÃšMERO',
+                    'NÚMERO',
                     'NOVEDAD'
                 ));
 
