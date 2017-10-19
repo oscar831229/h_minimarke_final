@@ -53,6 +53,7 @@ class Libro_AuxiliarController extends ApplicationController
 
 		try {
 
+			$tipo = $this->getPostParam('tipo');
 			$fechaInicial = $this->getPostParam('fechaInicial', 'date');
 			$fechaFinal = $this->getPostParam('fechaFinal', 'date');
 
@@ -160,18 +161,34 @@ class Libro_AuxiliarController extends ApplicationController
 			} else {
 				$cuentas = $this->Cuentas->find("cuenta>='$cuentaInicial' AND cuenta<='$cuentaFinal' AND es_auxiliar='S'", "order: cuenta");
 			}
+
+			if ($tipo == 'M') {
+				$moviModel = $this->Movi;
+				$saldoscModel = $this->Saldosc; 
+			} else {
+				$moviModel = $this->MoviNiif;
+				$saldoscModel = $this->SaldoscNiif; 					
+			}
+
 			foreach($cuentas as $cuenta){
 
 				$saldoCuenta = 0;
-				$codigoCuenta = $cuenta->getCuenta();
-				$saldosc = $this->Saldosc->findFirst("cuenta='$codigoCuenta' AND ano_mes='$periodoAnterior'");
+				if ($tipo == 'M') {
+					$saldoscModel = $this->Saldosc; 
+					$codigoCuenta = $cuenta->getCuenta();
+				} else {
+					$saldoscModel = $this->SaldoscNiif; 					
+					$codigoCuenta = $cuenta->getCuentaNiif();
+				}
+
+				$saldosc = $saldoscModel->findFirst("cuenta='$codigoCuenta' AND ano_mes='$periodoAnterior'");
 				//echo "<br>saldosc: ","cuenta='$codigoCuenta' AND ano_mes='$periodoAnterior'";
 				if($saldosc!=false){
 					$saldoCuenta = $saldosc->getSaldo();
 				}
 				$conditions = "cuenta='$codigoCuenta' AND fecha>'$fechaIn' AND fecha<'$fechaInicial'";
 				//echo "<br>movi: ",$conditions;
-				$movis = $this->Movi->find($conditions);
+				$movis = $moviModel->find($conditions);
 				foreach($movis as $movi){
 					if($movi->getDebCre()=='D'||$movi->getDebCre()=='0'){
 						$saldoCuenta+=$movi->getValor();
@@ -192,7 +209,7 @@ class Libro_AuxiliarController extends ApplicationController
 					}
 				}
 				//echo "<br>movi2: ",$conditions;
-				$movis = $this->Movi->find($conditions, 'order: fecha, comprob, numero, numfol');
+				$movis = $moviModel->find($conditions, 'order: fecha, comprob, numero, numfol');
 				if($saldoCuenta!=0||count($movis)>0){
 
 					$columnaCuenta = new ReportRawColumn(array(
@@ -215,8 +232,13 @@ class Libro_AuxiliarController extends ApplicationController
 
 					$totalDebitos = 0;
 					$totalCreditos = 0;
-					foreach($movis as $movi){
-						$cuenta = BackCacher::getCuenta($movi->getCuenta());
+					foreach ($movis as $movi) {
+						if ($tipo == 'M') {
+							$cuenta = BackCacher::getCuenta($movi->getCuenta());
+						} else {
+							$cuenta = BackCacher::getCuentaNiif($movi->getCuenta());
+						}
+
 						if($cuenta==false){
 							$nombreCuenta = 'NO EXISTE CUENTA';
 						} else {
