@@ -54,7 +54,7 @@ class Libro_DiarioController extends ApplicationController
 
         try
         {
-
+            $tipo = $this->getPostParam('tipo');
             $fechaInicial = $this->getPostParam('fechaInicial', 'date');
             $fechaFinal = $this->getPostParam('fechaFinal', 'date');
 
@@ -71,7 +71,12 @@ class Libro_DiarioController extends ApplicationController
             $reportType = $this->getPostParam('reportType', 'alpha');
             $report = ReportBase::factory($reportType);
 
-            $titulo = new ReportText('LIBRO DIARIO', array(
+            if ($tipo == 'M') {
+                $title = 'LIBRO DIARIO';
+            } else {
+                $title = 'LIBRO DIARIO NIIF';
+            }
+            $titulo = new ReportText($title, array(
                 'fontSize' => 16,
                 'fontWeight' => 'bold',
                 'textAlign' => 'center'
@@ -145,11 +150,18 @@ class Libro_DiarioController extends ApplicationController
             } else {
                 $diarios = $this->Diarios->find(array("codigo>=$diarioInicial AND codigo<=$diarioFinal", 'order' => 'codigo'));
             }
+
+            if ($tipo == 'M') {
+                $moviModel = $this->Movi;
+            } else { 
+                $moviModel = $this->MoviNiif;
+            }
+
             foreach ($diarios as $diario) {
                 $codigoDiario = $diario->getCodigo();
                 foreach ($this->Comprob->find(array("diario='$codigoDiario'", 'order' => 'codigo')) as $comprob) {
                     $conditions = "comprob='{$comprob->getCodigo()}' AND numero>0 AND fecha>='$fechaInicial' AND fecha<='$fechaFinal'";
-                    foreach ($this->Movi->find(array($conditions, 'columns' => 'cuenta,valor,deb_cre')) as $movi) {
+                    foreach ($moviModel->find(array($conditions, 'columns' => 'cuenta,valor,deb_cre')) as $movi) {
                         $codigoCuenta = substr($movi->getCuenta(), 0, 4);
                         if (!isset($libro[$codigoDiario][$codigoCuenta])) {
                             $libro[$codigoDiario][$codigoCuenta] = array(
@@ -193,7 +205,12 @@ class Libro_DiarioController extends ApplicationController
                 $totalDiarioDebitos = 0;
                 $totalDiarioCreditos = 0;
                 foreach ($libroDiario as $codigoCuenta => $libroCuenta) {
-                    $cuenta = BackCacher::getCuenta($codigoCuenta);
+                    if ($tipo == 'M') {
+                        $cuenta = BackCacher::getCuenta($codigoCuenta);
+                    } else {
+                        $cuenta = BackCacher::getCuentaNiif($codigoCuenta);
+                    }
+
                     if ($cuenta==false) {
                         $report->addRow(array(
                             $codigoCuenta,

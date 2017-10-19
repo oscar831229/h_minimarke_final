@@ -25,6 +25,13 @@
 		<td valign="top">
 			<table>
 				<tr>
+					<td align="right"><label for="tipo">Tipo</label></td>
+					<td><?php echo Tag::selectStatic('tipo', array(
+						'M' => 'NORMAL',
+						'N' => 'NIIF'
+					)) ?></td>
+				</tr>
+				<tr>
 					<td align="right"><label for="diarioInicial">Diario Inicial</label></td>
 					<td><?php echo Tag::select('diarioInicial', $diarios, 'using: codigo,nombre', 'useDummy: yes') ?></td>
 				</tr>
