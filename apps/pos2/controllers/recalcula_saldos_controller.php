@@ -72,7 +72,8 @@ class Recalcula_SaldosController extends ApplicationController
 		$this->setResponse('view');
 
 		try {
-			echo Tatico::showKardex($codigoItem, $codigoAlmacen, $fecha);
+			//echo Tatico::showKardex($codigoItem, $codigoAlmacen, $fecha);
+			echo TaticoKardex::show($codigoItem, $codigoAlmacen, $fecha);
 		}
 		catch(TaticoException $e){
 			Flash::error($e->getMessage());
