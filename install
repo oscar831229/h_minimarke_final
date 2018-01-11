@@ -7,20 +7,18 @@ dirPath=`pwd`
 gitPath="/opt/local/apache2/htdocs/h/"
 
 cd $dirPath
-chmod 777 -R apps/pos2/logs/
+chmod -R 777 apps/pos2/logs/
 
 mkdir Library/Mpdf/tmp
-chmod 777 -R Library/Mpdf/tmp
+chmod -R 777 Library/Mpdf/tmp
 
 chmod -R 777 apps/identity/security/data
 
-cd public
-mkdir temp
-chmod 777 -R temp
-
 ln -s /tmp/ out
+sudo chmod -R 777 public/temp
 
 cp index.config.php.dist index.config.php
+
 echo $dirPath
 echo $gitPath
 sed -i "s|$gitPath|$dirPath/|" index.config.php

@@ -70,10 +70,10 @@ class PayController extends ApplicationController
 
 	public function loadAccountAction($id = null)
 	{
+		$cuentas = array();
 		$this->setResponse('view');
 		if ($id) {
 			$this->cuentas = explode('-', $id);
-			$cuentas = array();
 			foreach ($this->cuentas as $key => $value) {
 				$cuentas[] = explode(':', $value);
 			}
