@@ -105,7 +105,7 @@ class MovimientoController extends ApplicationController
 		$tokenId = IdentityManager::getTokenId();
 		$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
 		
-		foreach ($this->Movitemp->find($conditions, 'order: consecutivo') as $movi) {
+		foreach ($this->Movitemp->find($conditions, 'order: consecutivo ASC') as $movi) {
 
 			$codigoCuenta = $movi->getCuenta();
 			$cuenta = BackCacher::getCuenta($codigoCuenta);
@@ -267,7 +267,7 @@ public function buscarAction()
 
 
 		$movimientos = array();
-		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'");
+		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'", "order: consecutivo ASC");
 		foreach ($movis as $movi) {
 			$codigoCuenta = $movi->getCuenta();
 			$cuenta = BackCacher::getCuenta($codigoCuenta);
@@ -316,7 +316,7 @@ public function buscarAction()
 		$tokenId = IdentityManager::getTokenId();
 		$movis = $this->Movi->find(array(
 				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'",
-				"order" => "comprob,numero ASC"
+				"order" => "consecutivo ASC"
 			)
 		);
 		foreach ($movis as $movi) {
@@ -335,10 +335,10 @@ public function buscarAction()
 				);
 				$moviTemp = new Movitemp();
 				$moviTemp->setSid($tokenId);
-				$moviTemp->setConsecutivo($consecutivo);
 				foreach($movi->getAttributes() as $attribute){
 					$moviTemp->writeAttribute($attribute, $movi->readAttribute($attribute));
 				}
+				$moviTemp->setConsecutivo($consecutivo);
 				$moviTemp->setEstado('A');
 				$moviTemp->save();
 				$consecutivo++;
@@ -640,6 +640,7 @@ public function buscarAction()
 			if($controllerRequest->isSetPostParam('baseGravable')){
 				$moviTemp->setBaseGrab($baseGravable);
 			}
+
 			if($moviTemp->save()==false){
 				foreach($moviTemp->getMessages() as $message){
 					return array(
@@ -742,15 +743,15 @@ public function buscarAction()
 
 				$conditionsTemp = "comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
 				$conditionsMovi = "comprob='$codigoComprobante' AND numero='$numero'";
-				$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo', 'group: sid');
-				$moviObj = $this->Movi->find($conditionsMovi, 'order: numero');
+				$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo ASC', 'group: sid');
+				$moviObj = $this->Movi->find($conditionsMovi, 'order: consecutivo ASC');
 				if (count($sIdObj) > 1 || count($moviObj)) {
 
 					$numeroComprob = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
 
 					//Aumentar el consecutivo de movitemp
 					$conditionsTemp = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-					$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo', 'group: sid');
+					$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo ASC', 'group: sid');
 					foreach ($sIdObj as $moviTemp)
 					{
 						$moviTemp->setNumero($numeroComprob);
@@ -764,7 +765,7 @@ public function buscarAction()
 
 
 			$conditions = "sid='$tokenId' AND comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
-			foreach ($this->Movitemp->find($conditions, 'order: consecutivo') as $moviTemp) {
+			foreach ($this->Movitemp->find($conditions, 'order: consecutivo ASC') as $moviTemp) {
 				$aura->addMovement(array(
 					'Fecha' => $moviTemp->getFecha(),
 					'FechaVence' => $moviTemp->getFVence(),
@@ -777,7 +778,8 @@ public function buscarAction()
 					'NumeroDocumento' => $moviTemp->getNumeroDoc(),
 					'BaseGrab' => $moviTemp->getBaseGrab(),
 					'Folio' => $moviTemp->getNumfol(),
-					'DebCre' => $moviTemp->getDebCre()
+					'DebCre' => $moviTemp->getDebCre(),
+					'Consecutivo' => $moviTemp->getConsecutivo()
 				));
 			}
 
@@ -870,22 +872,25 @@ public function buscarAction()
 		$report->start(true);
 
 		$parameters = array("comprob='$codigoComprobante' AND numero='$numero'");
-		switch ($orden) {
+		/*switch ($orden) {
 			case 'F':
-			$parameters['order'] = "numfol, cuenta, deb_cre";
+			$parameters['order'] = "numfol, cuenta, deb_cre, consecutivo ASC";
 			break;
 			case 'C':
-			$parameters['order'] = "cuenta, deb_cre";
+			$parameters['order'] = "cuenta, deb_cre, consecutivo ASC";
 			break;
 			case 'N':
-			$parameters['order'] = "deb_cre, cuenta";
+			$parameters['order'] = "deb_cre, cuenta, consecutivo ASC";
 			break;
 			case 'S':
 			break;
 			default:
-			$parameters['order'] = "numfol, cuenta, deb_cre";
+			$parameters['order'] = "numfol, cuenta, deb_cre, consecutivo ASC";
 			break;
-		}
+		}*/
+
+		$parameters['order'] = "consecutivo ASC";
+			
 
 		$debitos = 0;
 		$creditos = 0;

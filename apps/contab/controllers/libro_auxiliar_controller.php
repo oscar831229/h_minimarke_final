@@ -330,7 +330,6 @@ class Libro_AuxiliarController extends ApplicationController
 					unset($saldoCuenta);
 					unset($columnaTotalDebitos);
 					unset($columnaTotalCreditos);
-
 				}
 			}
 

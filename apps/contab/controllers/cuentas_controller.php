@@ -204,7 +204,7 @@ class CuentasController extends HyperFormController {
 			),
 			'contrapartida' => array(
 				'single' => 'Contrapartida',
-				'type' => 'cuenta',
+				'type'   => 'text',
 				'notBrowse' => true,
 				'notSearch' => true,
 				'filters' => array('cuentas')

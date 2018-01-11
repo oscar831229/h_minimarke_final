@@ -45,7 +45,7 @@ class IncluirController extends ApplicationController
 		} else {
 			if (trim($fecha)) {
 				if (!preg_match('#^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$#', $fecha)) {
-					throw new Exception('El formato de fecha (mm/dd/yyyy) ' . $fecha . ' es incorrecto en la lÃ­nea ' . $numberLine . ' del archivo');
+					throw new Exception('El formato de fecha (mm/dd/yyyy) ' . $fecha . ' es incorrecto en la línea ' . $numberLine . ' del archivo');
 				}
 			}
 		}
@@ -55,8 +55,9 @@ class IncluirController extends ApplicationController
 	public function subirAction()
 	{
 		$this->setResponse('view');
-
 		try {
+
+			$this->transaction = TransactionManager::getUserTransaction("");
 
 			$archivo = $this->getFileParam('archivo');
 			if ($archivo==false) {
@@ -64,10 +65,8 @@ class IncluirController extends ApplicationController
 				return;
 			}
 
-			$this->transaction = TransactionManager::getUserTransaction();
-
-			if (!in_array($archivo->getFileType(), array('text/csv', 'text/plain'))) {
-				$message = 'Tipo de archivo incorrecto debe ser un archivo de texto separado por "|" ' . $archivo->getFileType();
+			if (!strstr($archivo->getFileName(), '.txt')) {
+				$message = 'Tipo de archivo incorrecto debe ser un archivo de texto separado por "|" ' . $archivo->getFileName();
 				$this->transaction->rollback($message);
 			}
 
@@ -79,10 +78,11 @@ class IncluirController extends ApplicationController
 					$this->importToMoviNiif($archivo);
 				}
 			}
+			$this->transaction->commit();
 		} catch (Exception $e) {
-			Flash::error($e->getMessage());
+			Flash::error($e->getMessage() . print_r($e->getTrace(), 1).print_r($_FILES, 1));
+			//$this->transaction->rollback($e->getMessage());
 		}
-
 	}
 
 	/**
@@ -93,109 +93,105 @@ class IncluirController extends ApplicationController
 	private function importToMovi($archivo)
 	{
 
-		try {
-			$numberLine = 1;
-			$lines = array();
-			$content = $archivo->getContentData();
-			foreach (explode("\n", $content) as $line) {
-				if (trim($line)) {
+		$numberLine = 1;
+		$lines = array();
+		$content = $archivo->getContentData();
+		foreach (explode("\n", $content) as $line) {
+			if (trim($line)) {
 
-					$fields = explode('|', $line);
-					$count = count($fields);
-			
-					if (count($fields) != 15) {
-						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count . ' columnas');
-					}
-
-					$fields[2]  = $this->_getFormatDate($this->transaction, $fields[2], $numberLine);
-					$fields[13] = $this->_getFormatDate($this->transaction, $fields[13], $numberLine);
-					$lines[]    = $fields;
-
-				}
-				$numberLine++;
-				unset($line);
-			}
-
-			$numberLine = 1;
-			$deleteStatus = $this->Recep->setTransaction($this->transaction)->deleteAll();
-
-			foreach ($lines as $line) {
-				$recep = new Recep();
-				$recep->setTransaction($this->transaction);
-				$recep->setComprob($this->filter($line[0], 'comprob'));
-				$recep->setNumero($this->filter($line[1], 'int'));
-				$recep->setFecha($this->filter($line[2], 'date'));
-				$recep->setCuenta($this->filter($line[3], 'cuentas'));
-				$recep->setNit($this->filter($line[4], 'terceros'));
-				$recep->setCentroCosto($this->filter($line[5], 'int'));
-				$recep->setValor($this->filter($line[6], 'double'));
-				$recep->setDebCre($this->filter($line[7], 'onechar'));
-				$recep->setDescripcion($this->filter($line[8], 'striptags', 'extraspaces'));
-				$recep->setTipoDoc($this->filter($line[9], 'documento'));
-				$recep->setNumeroDoc($this->filter($line[10], 'int'));
-				$recep->setBaseGrab($this->filter($line[11], 'double'));
-				$recep->setConciliado(null);
-				$fVence = $line[13];
-				if (empty($fVence)) {
-					$fVence = $line[2];
-				}
-				$recep->setFVence($this->filter($fVence, 'date'));
-
-				if ($recep->save()==false) {
-					foreach ($recep->getMessages() as $message)	{
-						throw new Exception($message->getMessage() . ' en la línea ' . $numberLine . print_r($line, true));
-					}
-				}
-				$numberLine++;
-				unset($line,$recep,$fVence);
-			}
-
-			$lastKey = '';
-			$numberLine = 1;
-			$fechaAnterior = '';
-
-			$receps = $this->Recep->setTransaction($this->transaction)->find(array('order' => 'comprob,numero,fecha'));
-
-			foreach ($receps as $recep) {
-
-				$key = $recep->getComprob() . "-" . $recep->getNumero();
-
-				if ($lastKey!=$key) {
-					if (isset($aura)) {
-						$aura->save();
-						Flash::success('Se grabó el comprobante ' . $key);
-					}
-					$lastKey = $key;
-
-					//$aura = new Aura($recep->getComprob(), $recep->getNumero(), (string) $recep->getFecha(), Aura::OP_CREATE);
-					$aura = new Aura($recep->getComprob(), $recep->getNumero(), (string) $recep->getFecha());
-					$aura->setActiveLine($numberLine);
+				$fields = explode('|', $line);
+				$count = count($fields);
+		
+				if (count($fields) != 15) {
+					$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count . ' columnas');
 				}
 
-				$aura->addMovement(array(
-					'Nit'			=> $recep->getNit(),
-					'Fecha' 		=> (string) $recep->getFecha(),
-					'Valor' 		=> $recep->getValor(),
-					'Cuenta' 		=> $recep->getCuenta(),
-					'DebCre' 		=> $recep->getDebCre(),
-					'BaseGrasb' 	=> $recep->getBaseGrab(),
-					'FechaVence' 	=> (string) $recep->getFVence(),
-					'Conciliado' 	=> $recep->getConciliado(),
-					'Descripcion' 	=> $recep->getDescripcion(),
-					'CentroCosto' 	=> $recep->getCentroCosto(),
-					'TipoDocumento' => $recep->getTipoDoc(),
-					'NumeroDocumento' => $recep->getNumeroDoc()
-				));
+				$fields[2]  = $this->_getFormatDate($this->transaction, $fields[2], $numberLine);
+				$fields[13] = $this->_getFormatDate($this->transaction, $fields[13], $numberLine);
+				$lines[]    = $fields;
 
-				$numberLine++;
 			}
-			if (isset($aura)) {
-				$aura->save();
-				Flash::success('Se grabó el comprobante ' . $key);
+			$numberLine++;
+			unset($line);
+		}
+
+		$numberLine = 1;
+		//$deleteStatus = $this->Recep->setTransaction($this->transaction)->deleteAll();
+		$deleteStatus = $this->Recep->deleteAll();
+
+		foreach ($lines as $line) {
+			$recep = new Recep();
+			//$recep->setTransaction($this->transaction);
+			$recep->setComprob($this->filter($line[0], 'comprob'));
+			$recep->setNumero($this->filter($line[1], 'int'));
+			$recep->setFecha($this->filter($line[2], 'date'));
+			$recep->setCuenta($this->filter($line[3], 'cuentas'));
+			$recep->setNit($this->filter($line[4], 'terceros'));
+			$recep->setCentroCosto($this->filter($line[5], 'int'));
+			$recep->setValor($this->filter($line[6], 'double'));
+			$recep->setDebCre($this->filter($line[7], 'onechar'));
+			$recep->setDescripcion($this->filter($line[8], 'striptags', 'extraspaces'));
+			$recep->setTipoDoc($this->filter($line[9], 'documento'));
+			$recep->setNumeroDoc($this->filter($line[10], 'int'));
+			$recep->setBaseGrab($this->filter($line[11], 'double'));
+			$recep->setConciliado(null);
+			$fVence = $line[13];
+			if (empty($fVence)) {
+				$fVence = $line[2];
 			}
-			$this->transaction->commit();
-		} catch(Exception $e) {
-			Flash::error($e->getMessage());
+			$recep->setFVence($this->filter($fVence, 'date'));
+
+			if ($recep->save()==false) {
+				foreach ($recep->getMessages() as $message)	{
+					throw new Exception($message->getMessage() . ' en la línea ' . $numberLine . print_r($line, true));
+				}
+			}
+			$numberLine++;
+			unset($line,$recep,$fVence);
+		}
+
+		$lastKey = '';
+		$numberLine = 1;
+		$fechaAnterior = '';
+
+		//$receps = $this->Recep->setTransaction($this->transaction)->find(array('order' => 'comprob,numero,fecha'));
+		$receps = $this->Recep->find(array('order' => 'comprob,numero,fecha'));
+
+		foreach ($receps as $recep) {
+
+			$key = $recep->getComprob() . "-" . $recep->getNumero();
+
+			if ($lastKey!=$key) {
+				if (isset($aura)) {
+					$aura->save();
+					Flash::success('Se grabó el comprobante ' . $key);
+				}
+				$lastKey = $key;
+
+				//$aura = new Aura($recep->getComprob(), $recep->getNumero(), (string) $recep->getFecha(), Aura::OP_CREATE);
+				$aura = new Aura($recep->getComprob(), $recep->getNumero(), (string) $recep->getFecha());
+				$aura->setActiveLine($numberLine);
+			}
+
+			$aura->addMovement(array(
+				'Nit'			=> $recep->getNit(),
+				'Fecha' 		=> (string) $recep->getFecha(),
+				'Valor' 		=> $recep->getValor(),
+				'Cuenta' 		=> $recep->getCuenta(),
+				'DebCre' 		=> $recep->getDebCre(),
+				'BaseGrasb' 	=> $recep->getBaseGrab(),
+				'FechaVence' 	=> (string) $recep->getFVence(),
+				'Conciliado' 	=> $recep->getConciliado(),
+				'Descripcion' 	=> $recep->getDescripcion(),
+				'CentroCosto' 	=> $recep->getCentroCosto(),
+				'TipoDocumento' => $recep->getTipoDoc(),
+				'NumeroDocumento' => $recep->getNumeroDoc()
+			));
+
+			$numberLine++;
+		}
+		if ($aura->save()) {
+			Flash::success('Se grabó el comprobante ' . $key);
 		}
 	}
 
@@ -206,97 +202,91 @@ class IncluirController extends ApplicationController
 	 */
 	private function importToMoviNiif($archivo)
 	{
-		try {
-			$numberLine = 1;
-			$lines = array();
-			$content = $archivo->getContentData();
-			foreach (explode("\n", $content) as $line) {
-				if (trim($line)) {
+		$numberLine = 1;
+		$lines = array();
+		$content = $archivo->getContentData();
+		foreach (explode("\n", $content) as $line) {
+			if (trim($line)) {
 
-					$fields = explode('|', $line);
-					$count = count($fields);
-			
-					if (count($fields) != 16) {
-						$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count. " columnas");
-					}
-
-					$fields[2]  = $this->_getFormatDate($this->transaction, $fields[2], $numberLine);
-					$fields[13] = $this->_getFormatDate($this->transaction, $fields[13], $numberLine);
-
-					$lines[]= $fields;
-
+				$fields = explode('|', $line);
+				$count = count($fields);
+		
+				if (count($fields) != 16) {
+					$this->transaction->rollback('El número de colúmnas es incorrecto en la línea ' . $numberLine . ' del archivo hay ' . $count. " columnas");
 				}
-				$numberLine++;
-				unset($line);
+
+				$fields[2]  = $this->_getFormatDate($this->transaction, $fields[2], $numberLine);
+				$fields[13] = $this->_getFormatDate($this->transaction, $fields[13], $numberLine);
+
+				$lines[]= $fields;
+
+			}
+			$numberLine++;
+			unset($line);
+		}
+
+		$numberLine = 1;
+
+		$empresa = $this->Empresa->findFirst();
+		$deleteStatus = EntityManager::get("Recepniif")->setTransaction($this->transaction)->deleteAll();
+
+		foreach ($lines as $line) {
+
+			$cuentas = BackCacher::getCuentaNiif($line[3]);
+			if (!$cuentas) {
+				throw new \Exception("La cuenta NIIF '{$line[3]}' no existe", 1);
+			} else {
+				if ($cuentas->getEsAuxiliar() == 'N') {
+					throw new \Exception("La cuenta NIIF '{$line[3]}' no es auxiliar", 1);
+				}
 			}
 
-			$numberLine = 1;
+			$recep = new Recepniif();
+			$recep->setTransaction($this->transaction);
+			$recep->setComprob($this->filter($line[0], 'comprob'));
+			$recep->setNumero($this->filter($line[1], 'int'));
+			$recep->setFecha($this->filter($line[2], 'date'));
+			$recep->setCuenta($this->filter($line[3], 'cuentas'));
+			$recep->setNit($this->filter($line[4], 'terceros'));
+			$recep->setCentroCosto($this->filter($line[5], 'int'));
+			$recep->setValor($this->filter($line[6], 'double'));
+			$recep->setDebCre($this->filter($line[7], 'onechar'));
+			$recep->setDescripcion($this->filter($line[8], 'striptags', 'extraspaces'));
+			$recep->setTipoDoc($this->filter($line[9], 'documento'));
+			$recep->setNumeroDoc($this->filter($line[10], 'int'));
+			$recep->setBaseGrab($this->filter($line[11], 'double'));
+			$recep->setConciliado(null);
+			$fVence = $line[13];
+			if (empty($fVence)) {
+				$fVence = $line[2];
+			}
+			$recep->setFVence($this->filter($fVence, 'date'));
 
-			$empresa = $this->Empresa->findFirst();
-			$deleteStatus = EntityManager::get("Recepniif")->setTransaction($this->transaction)->deleteAll();
-
-			foreach ($lines as $line) {
-
-				$cuentas = BackCacher::getCuentaNiif($line[3]);
-				if (!$cuentas) {
-					throw new \Exception("La cuenta NIIF '{$line[3]}' no existe", 1);
-				} else {
-					if ($cuentas->getEsAuxiliar() == 'N') {
-						throw new \Exception("La cuenta NIIF '{$line[3]}' no es auxiliar", 1);
-					}
-				}
-
-				$recep = new Recepniif();
-				$recep->setTransaction($this->transaction);
-				$recep->setComprob($this->filter($line[0], 'comprob'));
-				$recep->setNumero($this->filter($line[1], 'int'));
-				$recep->setFecha($this->filter($line[2], 'date'));
-				$recep->setCuenta($this->filter($line[3], 'cuentas'));
-				$recep->setNit($this->filter($line[4], 'terceros'));
-				$recep->setCentroCosto($this->filter($line[5], 'int'));
-				$recep->setValor($this->filter($line[6], 'double'));
-				$recep->setDebCre($this->filter($line[7], 'onechar'));
-				$recep->setDescripcion($this->filter($line[8], 'striptags', 'extraspaces'));
-				$recep->setTipoDoc($this->filter($line[9], 'documento'));
-				$recep->setNumeroDoc($this->filter($line[10], 'int'));
-				$recep->setBaseGrab($this->filter($line[11], 'double'));
-				$recep->setConciliado(null);
-				$fVence = $line[13];
-				if (empty($fVence)) {
-					$fVence = $line[2];
-				}
-				$recep->setFVence($this->filter($fVence, 'date'));
-
-				if ($recep->getFecha() < $empresa->getFCierrec()) {
-					throw new Exception("El movimiento a importar tiene fecha en el pasado, debe abrir el periodo");
-				}
-
-				if ($recep->save()==false) {
-					foreach ($recep->getMessages() as $message)	{
-						throw new Exception($message->getMessage() . ' en la lÃ­nea ' . $numberLine . print_r($line, true));
-					}
-				}
-				$numberLine++;
-				unset($line,$recep,$fVence);
+			if ($recep->getFecha() < $empresa->getFCierrec()) {
+				throw new Exception("El movimiento a importar tiene fecha en el pasado, debe abrir el periodo");
 			}
 
-			$lastKey = '';
-			$numberLine = 1;
-			$fechaAnterior = '';
-
-			$receps = $this->Recepniif->setTransaction($this->transaction)->find(array('order' => 'comprob,numero,fecha', 'group' => 'comprob,numero'));
-
-			$auraNiif = new AuraNiif();
-            $auraNiif->setTransaction($this->transaction);
-			foreach ($receps as $recep) {
-				$auraNiif->insertMoviNiifByRecepNiif($recep->getComprob(), $recep->getNumero());
-				$numberLine++;
+			if ($recep->save()==false) {
+				foreach ($recep->getMessages() as $message)	{
+					throw new Exception($message->getMessage() . ' en la lÃ­nea ' . $numberLine . print_r($line, true));
+				}
 			}
-			$this->transaction->commit();
-		} catch(Exception $e) {
-			Flash::error($e->getMessage());
-			$this->transaction->rollback();
-   		}
+			$numberLine++;
+			unset($line,$recep,$fVence);
+		}
+
+		$lastKey = '';
+		$numberLine = 1;
+		$fechaAnterior = '';
+
+		$receps = $this->Recepniif->setTransaction($this->transaction)->find(array('order' => 'comprob,numero,fecha', 'group' => 'comprob,numero'));
+
+		$auraNiif = new AuraNiif();
+        $auraNiif->setTransaction($this->transaction);
+		foreach ($receps as $recep) {
+			$auraNiif->insertMoviNiifByRecepNiif($recep->getComprob(), $recep->getNumero());
+			$numberLine++;
+		}
 	}
 
 }

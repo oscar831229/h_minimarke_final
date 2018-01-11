@@ -111,6 +111,8 @@ class Movitemp extends ActiveRecord
 	 */
 	protected $checksum;
 
+	protected $time;
+
 	/**
 	 * Metodo para establecer el valor del campo sid
 	 * @param string $sid
