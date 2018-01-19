@@ -838,6 +838,10 @@ class Aura extends UserComponent
 				$movi->setNumfol($movement['Numfol']);
 			}
 
+			if(isset($movement['Consecutivo'])){
+				$movi->setConsecutivo($movement['Consecutivo']);
+			}
+
 			if($movi->save()==false){
 				if($this->_externalTransaction==true){
 					foreach ($movi->getMessages() as $message) {
