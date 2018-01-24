@@ -1152,6 +1152,7 @@ class Tatico extends UserComponent
 					'total_neto' => 'total_neto',
 					'saldo' => 'saldo',
 				);
+				file_put_contents("/tmp/e", print_r($movement, 1), FILE_APPEND);
 				$response = self::getTaxes($movement['Detail'], $movement['Almacen'], $tipoComprob, $movement['Nit']);
 				if ($response['status'] == 'OK') {
 					foreach ($fields as $field => $nameField) {
@@ -3405,19 +3406,24 @@ class Tatico extends UserComponent
 			$ivaIncluido = Settings::get('iva_incluido');
 			if ($ivaIncluido == 'S' || !$ivaIncluido) {
 				if ($inve->getProdTrib() != 'D') {
-					$valorIva = LocaleMath::round($item['Valor'] - ($item['Valor'] / (1 + $item['Iva']/100)), 2);
+					$base = $item['Valor'] / (1 + ($item['Iva']/100));
+					$valorIva = LocaleMath::round($base * $item["Iva"] / 100, 2);
 				} else {
 					$valorIva = LocaleMath::round($item['Iva'] * $item['Valor']/100, 2);
 				}
 			} else {
 				$valorIva = LocaleMath::round($item['Iva'] * $item['Valor']/100, 2);
+
+				if ($inve->getProdTrib() == 'D') {
+					$result['iva' . $item['Iva'] . 'd'] += $valorIva;
+				}
+				if (!isset($ivas[$item['Iva']])) {
+					$ivas[$item['Iva']] = 0;
+				}
+				$ivas[$item['Iva']] += $valorIva;
 			}
 
-			$result['iva' . $item['Iva'] . 'd'] += $valorIva;
-			if (!isset($ivas[$item['Iva']])) {
-				$ivas[$item['Iva']] = 0;
-			}
-			$ivas[$item['Iva']] += $valorIva;
+			file_put_contents("/tmp/e", print_r($item, 1) . ", valorIva: " .$valorIva, FILE_APPEND);
 
 			//Validamos si se usa o no la tabla retecompras
 			if ($usarRetecompras == 'N') {
@@ -3460,7 +3466,7 @@ class Tatico extends UserComponent
 			}
 
 			$result['total_neto'] += $item['Valor'];
-
+			
 			if ($ivaIncluido == 'S' || !$ivaIncluido) {
 				if ($inve->getProdTrib() != 'D') {
 					$valorBase = ($item['Valor'] / (1 + $item['Iva']/100));
@@ -3470,6 +3476,7 @@ class Tatico extends UserComponent
 			} else {
 				$valorBase = $item['Valor'];
 			}
+			
 			$result['total_neto_base'] += $valorBase;
 
 			if (self::$_taxesDebug == true) {
@@ -3917,6 +3924,11 @@ class Tatico extends UserComponent
 
 			$result['file'] = $fileName;
 		}
+
+		/*return array(
+			'status' => 'FAILED',
+			'message' => print_r($result, 1)
+		);*/
 
 		return $result;
 	}
