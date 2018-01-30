@@ -15,14 +15,15 @@
 
 class ReportsController extends ApplicationController {
 
-	public $fecha_final;
-	public $fecha_inicial;
-	public $salon_id;
-	public $centro_costo;
 	public $comandaInicial;
+	public $fecha_inicial;
+	public $centro_costo;
 	public $comandaFinal;
-	public $tipoItem;
+	public $fecha_final;
 	public $usuarioId;
+	public $salon_id;
+	public $tipoItem;
+	public $tipo;
 
 	public function initialize(){
 		$this->setPersistance(true);
@@ -119,6 +120,14 @@ class ReportsController extends ApplicationController {
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
 		$this->fecha_final = $this->filter($fechaFinal, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
+	}
+
+	public function funcionariosHtmlAction($usuarioId, $tipo, $fechaInicial, $fechaFinal){
+		$this->setResponse('view');
+		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
+		$this->fecha_final = $this->filter($fechaFinal, 'date');
+		$this->usuarioId = $this->filter($usuarioId, 'int');
+		$this->tipo = $this->filter($tipo, 'striptags');
 	}
 
 	public function cuadreCajaTodosHtmlAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal=''){

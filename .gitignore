@@ -5,3 +5,4 @@ apps/*/logs/*
 public/temp
 public/out
 Library/Mpdf/ttfontdata
+apps/pos2/models/metadata/

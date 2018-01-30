@@ -1,0 +1,247 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+<html>
+<head>
+<meta http-equiv='Content-type' content='text/html; charset=UTF-8' />
+<style type='text/css'>
+
+h3 {
+	margin: 0px;
+	margin-top: 10px;
+	margin-bottom: 2px;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+table {
+	border-right: 1px solid #969696;
+	border-bottom: 1px solid #969696;
+}
+
+td, th {
+	font-size: 11px;
+	border-left: 1px solid #969696;
+	border-top: 1px solid #969696;
+	font-family: Verdana;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+th {
+	background: #eaeaea;
+	font-family: Verdana
+}
+
+table tr:nth-child(even) {
+	background: #fafafa;
+}
+
+table tr:nth-child(odd) {
+	background: #ffffff;
+}
+
+</style>
+</head>
+<body>
+
+<div style='font-size:12px;font-family:Verdana'>
+<?php
+
+$Datos->findFirst();
+echo "<b>".$Datos->getNombreCadena()."</b><br>\n";
+echo "<b>".$Datos->getDocumento()." No. : ".$Datos->getNit()."</b><br>\n";
+echo i18n::strtoupper($Datos->getNombreHotel())."<br>\n";
+echo "REPORTE DE CONSUMO DE FUNCIONARIOS<br>";
+if($fecha_inicial == $fecha_final){
+	echo "Fecha: {$fecha_inicial} <br>";
+} else {
+	echo "Fecha: {$fecha_inicial} - {$fecha_final}<br>\n";
+}
+
+$conditions = "{#Factura}.tipo IN ('U', 'C', 'P') AND {#Factura}.fecha>='$fecha_inicial' AND {#Factura}.fecha<='$fecha_final'";
+
+$iva = 0;
+$total = 0;
+$valor = 0;
+$propina = 0;
+$cantidad = 0;
+
+$query = new ActiveRecordJoin(array(
+	'entities' => array('Factura'),
+	'conditions' => $conditions,
+	'fields' => array(
+		'{#Factura}.fecha',
+		'{#Factura}.cedula',
+		'{#Factura}.nombre',
+		'{#Factura}.total',
+		'{#Factura}.prefijo_facturacion',
+		'{#Factura}.consecutivo_facturacion',
+		'{#Factura}.subtotal',
+		'{#Factura}.total_iva',
+		'{#Factura}.propina',
+		'{#Factura}.estado',
+	),
+	'order' => array('{#Factura}.fecha, {#Factura}.consecutivo_facturacion')
+));
+
+$clientes = [];
+foreach($query->getResultSet() as $factura){
+
+	$cedula = $factura->cedula;
+	if (!isset($clientes[$cedula])) {
+		$clientes[$cedula] = [
+			"headers" => [
+				"cedula" => $cedula,
+				"nombre" => $factura->nombre,
+				"estado" => $factura->estado
+			],
+			"body" => []
+		];
+	}
+
+	$detConditions = "prefijo_facturacion='{$factura->prefijo_facturacion}' AND consecutivo_facturacion='{$factura->consecutivo_facturacion}'";
+	$detQuery = new ActiveRecordJoin(array(
+		'entities' => array('DetalleFactura'),
+		'conditions' => $detConditions,
+		'fields' => array(
+			'{#DetalleFactura}.cantidad',
+			'{#DetalleFactura}.total',
+			'{#DetalleFactura}.menus_items_id',
+			'{#DetalleFactura}.menus_items_nombre',
+		),
+		'order' => array('{#DetalleFactura}.id')
+	));
+
+	foreach($detQuery->getResultSet() as $detalle){
+		$itemId = $detalle->menus_items_id;
+
+		$code = $factura->fecha . $itemId;
+
+		$orden = $factura->prefijo_facturacion. '-'. $factura->consecutivo_facturacion;
+
+		if (!isset($clientes[$cedula]["body"][$code])) {
+			$clientes[$cedula]["body"][$code] = [
+				"fecha" 	=> $factura->fecha,
+				"cantidad" 	=> $detalle->cantidad,
+				"detalle" 	=> $detalle->menus_items_nombre,
+				"valor" 	=> $detalle->total,
+				"numero"    => $orden,
+			];  
+		} else {
+			$clientes[$cedula]["body"][$code]["cantidad"] += $detalle->cantidad;
+			$clientes[$cedula]["body"][$code]["valor"] += $detalle->total;
+			$clientes[$cedula]["body"][$code]["numero"] .= ", ".$orden;
+		}
+	}
+}
+
+if (!count($clientes)) {
+	die("<br/><h1>No existen registros</h1>");
+	exit;
+}
+
+if (isset($_GET["debug"])) {
+	echo "<pre>";
+	print_r($clientes);
+	echo "</pre>";
+	exit;
+}
+
+foreach ($clientes as $cedula => $row) {
+	$headers = $row["headers"];
+
+	echo '
+		<br/><br/>
+
+		<b>Cedula:</b>
+		'.$headers["cedula"].'
+
+		<b>Nombre:</b>
+		'.$headers["nombre"].'
+
+		<br/><br/>
+		<table width="700" cellspacing="0">
+			<tr>';				
+				if ($tipo == 'D') {
+					echo '
+					<th>Fecha</th>
+					<th>Cantidad</th>
+					<th>Detalle del Consumo</th>
+					<th>Valor</th>
+					<th>Nro. Orden</th>
+					<th>Estado</th>';
+				} else {
+					echo '
+					<th>Cantidad</th>
+					<th>Detalle del Consumo</th>
+					<th>Valor</th>
+					<th>Estado</th>';
+				}
+				
+	echo '	</tr>';
+
+	$totalValor = 0;
+	$totalCantidad = 0;
+	
+	foreach ($row["body"] as $row2) {		
+		echo "<tr>";
+		if ($tipo == 'D') {
+			echo "<td align='center'>",  $row2["fecha"],    "</td>";
+			echo "<td align='right'>", $row2["cantidad"], "</td>";
+			echo "<td align='left'>",  $row2["detalle"],  "</td>";
+			echo "<td align='right'>", Currency::money($row2["valor"], 2),    "</td>";
+			echo "<td align='center'>",  $row2["numero"],   "</td>";
+		} else {
+			echo "<td align='right'>", $row2["cantidad"], "</td>";
+			echo "<td align='left'>",  $row2["detalle"],  "</td>";
+			echo "<td align='right'>", Currency::money($row2["valor"], 2),    "</td>";
+		}
+
+		if ($headers["estado"] == 'A') {
+			echo "<td align='center'>ACTIVA</td>";
+		} else {
+			echo "<td align='center'>INACTIVA</td>";
+		}
+		echo "</tr>";
+
+		$totalValor += $row2["valor"];
+		$totalCantidad += $row2["cantidad"];
+	}
+
+	if ($tipo == 'D') {
+		echo '	<tr>
+			<td>&nbsp;</td>
+			<td align="right"><b>'.$totalCantidad.'</b></td>
+			<td>&nbsp;</td>
+			<td align="right"><b>'.Currency::money($totalValor, 2).'</b></td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>';
+	} else {
+		echo '	<tr>
+			<td align="right"><b>'.$totalCantidad.'</b></td>
+			<td>&nbsp;</td>
+			<td align="right"><b>'.Currency::money($totalValor, 2).'</b></td>
+			<td>&nbsp;</td>
+		</tr>';
+	}
+	echo '</table>';
+}
+
+?>
+</body>
+</html>
