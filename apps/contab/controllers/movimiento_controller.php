@@ -267,7 +267,7 @@ public function buscarAction()
 
 
 		$movimientos = array();
-		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'", "order: consecutivo ASC");
+		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'");
 		foreach ($movis as $movi) {
 			$codigoCuenta = $movi->getCuenta();
 			$cuenta = BackCacher::getCuenta($codigoCuenta);
