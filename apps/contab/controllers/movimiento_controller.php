@@ -743,7 +743,7 @@ public function buscarAction()
 				$conditionsTemp = "comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
 				$conditionsMovi = "comprob='$codigoComprobante' AND numero='$numero'";
 				$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo ASC', 'group: sid');
-				$moviObj = $this->Movi->find($conditionsMovi, 'order: consecutivo ASC');
+				$moviObj = $this->Movi->find($conditionsMovi);
 				if (count($sIdObj) > 1 || count($moviObj)) {
 
 					$numeroComprob = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
