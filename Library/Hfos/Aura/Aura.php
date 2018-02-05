@@ -839,7 +839,7 @@ class Aura extends UserComponent
 			}
 
 			if(isset($movement['Consecutivo'])){
-				$movi->setConsecutivo($movement['Consecutivo']);
+				#$movi->setConsecutivo($movement['Consecutivo']);
 			}
 
 			if($movi->save()==false){
