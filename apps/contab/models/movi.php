@@ -91,11 +91,6 @@ class Movi extends ActiveRecord {
 	protected $numfol;
 
 	/**
-	 * @var integer
-	 */
-	protected $consecutivo;
-
-	/**
 	 * Metodo para establecer el valor del campo comprob
 	 * @param string $comprob
 	 */
@@ -334,21 +329,5 @@ class Movi extends ActiveRecord {
 	 */
 	public function getNumfol(){
 		return $this->numfol;
-	}
-
-	/**
-	 * Devuelve el valor del campo f_vence
-	 * @return Date
-	 */
-	public function getConsecutivo(){
-		return $this->consecutivo;
-	}
-
-	/**
-	 * Devuelve el valor del campo numfol
-	 * @return integer
-	 */
-	public function setConsecutivo($consecutivo){
-		$this->consecutivo = $consecutivo;
 	}
 }
