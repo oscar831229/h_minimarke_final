@@ -315,8 +315,7 @@ public function buscarAction()
 		$movimientos = array();
 		$tokenId = IdentityManager::getTokenId();
 		$movis = $this->Movi->find(array(
-				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'",
-				"order" => "consecutivo ASC"
+				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'"
 			)
 		);
 		foreach ($movis as $movi) {
