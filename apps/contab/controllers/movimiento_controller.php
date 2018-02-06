@@ -888,7 +888,7 @@ public function buscarAction()
 			break;
 		}*/
 
-		$parameters['order'] = "consecutivo ASC";
+		#$parameters['order'] = "consecutivo ASC";
 			
 
 		$debitos = 0;
