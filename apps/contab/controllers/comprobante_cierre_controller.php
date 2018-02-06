@@ -335,7 +335,7 @@ class Comprobante_CierreController extends ApplicationController
 		}
 
 		$balance = 0;
-		$cierreAnual = [];
+		$cierreAnual = array();
 		$numeroMovimientos = 0;
 		
 		$primerDia = Date::getFirstDayOfMonth(12, $fechaCierre->getYear());
