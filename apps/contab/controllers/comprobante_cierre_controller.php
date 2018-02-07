@@ -266,15 +266,15 @@ class Comprobante_CierreController extends ApplicationController
 
 			if($numeroMovimientos>0){
 
-				$status = $this->cierreEjercicioAnualNiif($cuentaInicial, $cuentaFinal, $fechaCierre, $codigoEjercicio, $codigoCentroDefecto, $centroDefecto);
+				#$status = $this->cierreEjercicioAnualNiif($cuentaInicial, $cuentaFinal, $fechaCierre, $codigoEjercicio, $codigoCentroDefecto, $centroDefecto);
 				
-				if ($status == true) {
+				#if ($status == true) {
 					$aura->save();
 
 					return array(
 						'status' => 'OK'
 					);
-				}
+				#}
 			}
 
 			throw new Exception("No se encontro movimiento a cerrar", 1);
