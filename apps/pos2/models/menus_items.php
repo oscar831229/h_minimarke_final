@@ -20,6 +20,7 @@ class MenusItems extends ActiveRecord
 	public $menus_id;
 	public $nombre;
 	public $nombre_pedido;
+	public $codigo_barras;
 	public $tipo;
 	public $image;
 	public $valor;

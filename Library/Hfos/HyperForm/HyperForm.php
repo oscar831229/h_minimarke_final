@@ -2259,7 +2259,8 @@ class HyperForm extends UserComponent
 
 					//IGNORE
 					$query = "LOAD DATA INFILE '/tmp/" . $archivo->getFileName() . "' IGNORE INTO TABLE $schema.$modelTableName
-						FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+						COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+						ESCAPED BY '\"'
 						LINES TERMINATED BY '\n'";
 
 					try {

@@ -368,12 +368,18 @@ class OrderController extends ApplicationController
 			salon_menus_items.valor, menus_items.valor) as valor
 			FROM menus_items, salon_menus_items
 			WHERE
-			menus_items.nombre LIKE '%$text%' AND
+			(
+				menus_items.codigo_barras = '$text' 
+				OR
+				menus_items.nombre LIKE '%$text%'
+			)
+			AND
 			salon_menus_items.menus_items_id = menus_items.id AND
-			salon_menus_items.salon_id='".$this->salon_id."' AND
-			salon_menus_items.estado='A' AND
-			menus_items.estado='A'
+			salon_menus_items.salon_id = '{$this->salon_id}' AND
+			salon_menus_items.estado = 'A' AND
+			menus_items.estado = 'A'
 			ORDER BY menus_items.nombre";
+			
 			foreach($this->MenusItems->findAllBySql($sql) as $menuItem){
 				$nombre = str_ireplace($text, '<span class="highlight">'.$text.'</span>', $menuItem->nombre_pedido);
 				$menuItems[] = array(

@@ -192,6 +192,7 @@ class Menus_ItemsController extends StandardForm
 
 		$this->setFormCaption('Items de Menús');
 		$this->setCaption('menus_id', 'Menu');
+		$this->setCaption('codigo_barras', 'Código de Barras');
 		$this->setCaption('cambio_precio', 'Permite Cambio Precio');
 		$this->setCaption('valor', 'Precio Base');
 		$this->setCaption('image', 'Imagen');

@@ -1,0 +1,251 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$Datos->findFirst();
+
+function center($text, $size){
+	if(i18n::strlen($text)>=$size){
+		return i18n::substr($text, 0, $size);
+	}
+	$spaces = str_repeat(" ", ($size-i18n::strlen($text))/2);
+	return $spaces.$text.$spaces;
+}
+
+?>
+<html>
+<head>
+<style type='text/css'>
+	td, span, div, th, pre {
+		font-family: 'Lucida Console', 'Courier New';
+		font-size: 12px;
+	}
+	body {
+		margin: 0px;
+	}
+</style>
+</head>
+<body>
+<div align="center">
+<?php
+
+echo $Datos->getNombreCadena(), '<br/>';
+echo $Datos->getDocumento(), " No. : ", $Datos->getNit(), '<br/>';
+echo i18n::strtoupper($Datos->getNombreHotel()), '<br/>';
+echo "CUADRE xx  DE CAJA<br/>";
+if($fecha_inicial==$fecha_final){
+	echo "Fecha: {$fecha_inicial}<br/>" ;
+} else {
+	echo "Fecha: {$fecha_inicial} - {$fecha_final}<br/>" ;
+}
+echo 'Cajero: ', i18n::strtoupper(Session::getData('usuarios_nombre')), '<br/>';
+
+if($salon_id!='@'){
+	if($Salon->find($salon_id)){
+		echo "Ambiente: {$Salon->nombre} <br/>";
+	}
+}
+echo center("Fecha Impresión: ".Date::now(), 40)."\n";
+
+?>
+</div>
+<table width='270'>
+<?php
+
+$total = 0;
+$total_iva = 0;
+$total_propina = 0;
+$tipo_venta = "";
+if($salon_id=='@'){
+	$conditions = "fecha >= '$fecha_inicial' AND fecha <= '$fecha_final' AND usuarios_id = '".Session::getData("usuarios_id")."' and estado = 'A'";
+} else {
+	$conditions = "fecha >= '$fecha_inicial' AND fecha <= '$fecha_final' AND
+			usuarios_id = '".Session::getData("usuarios_id")."' AND
+			salon_id = '$salon_id' AND estado = 'A'";
+}
+
+$totalTipoVenta = 0;
+$formasPago = array();
+$facturas = $Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutivo_facturacion", "columns: tipo_venta,prefijo_facturacion,consecutivo_facturacion,tipo,nombre,total,total_iva");
+foreach($facturas as $factura){
+	if($tipo_venta!=$factura->tipo_venta){
+		if($tipo_venta!=''){
+			echo "<tr><td colspan='3'>---------------------------------------</td></tr>";
+			echo '<tr><td align="right" colspan="2">TOTAL</td><td align="right">', Currency::number($totalTipoVenta, 0), '</td></tr>';
+			$totalTipoVenta = 0;
+		}
+		$tipoVenta = $TipoVenta->findFirst("id='$factura->tipo_venta'");
+		if($tipoVenta){
+			echo "<tr><td colspan='3'><br/>{$tipoVenta->detalle}:</td></tr>";
+		} else {
+			echo "<tr><td colspan='3'>DESCONOCIDO:</td></tr>";
+		}
+		echo "<tr>
+			<td align='center'>Número</td>
+			<td align='center'>Descripción</td>
+			<td align='center'>Valor</td>
+			</tr>";
+		$tipo_venta = $factura->tipo_venta;
+	}
+
+	$propina = "";
+	$descripcion = "";
+	$conditions = "account_master_id='{$factura->account_master_id}' AND prefijo='$factura->prefijo_facturacion' AND numero='$factura->consecutivo_facturacion'";
+	$cuenta = $AccountCuentas->findFirst($conditions);
+	if($cuenta){
+		if($factura->tipo_venta=='P'||$factura->tipo_venta=='H'){
+			$habitacion = $HabitacionHistorico->findFirst($cuenta->habitacion_id);
+			$factura->total = $factura->total;
+			if($habitacion){
+				$descripcion = "(".$habitacion->numhab.")";
+			}
+		}
+		if($cuenta->propina>0){
+			$propina = "<br>(".$cuenta->propina.")";
+		}
+	}
+	echo "<tr>";
+	echo "<td align='center'>{$factura->prefijo_facturacion}-{$factura->consecutivo_facturacion}&nbsp;</td>";
+	echo "<td align='left'>{$factura->nombre} {$descripcion}</td>";
+	echo "<td align='right'>", Currency::number($factura->total), " {$propina}</td>";
+	echo "</tr>";
+	if($factura->tipo_venta=='F'){
+		$conditions = "prefijo_facturacion='{$factura->prefijo_facturacion}' AND consecutivo_facturacion='{$factura->consecutivo_facturacion}' AND tipo='{$factura->tipo}'";
+		foreach($PagosFactura->find($conditions) as $pagoFactura){
+			$formaPago = $pagoFactura->getFormasPago();
+			if($formaPago!=false){
+				$detalle = $formaPago->detalle;
+			} else {
+				$detalle = 'MONEDA NACIONAL';
+			}
+			echo '<tr><td></td><td colspan="2"> + ', $detalle, '</td></tr>';
+			if(!isset($formasPago[$detalle])){
+				$formasPago[$detalle] = 0;
+			}
+			$formasPago[$detalle]+=$pagoFactura->pago;
+		}
+	}
+	$total += $factura->total;
+	$total_iva += $factura->total_iva;
+	$totalTipoVenta+=$factura->total;
+}
+if($tipo_venta!=''){
+	echo "<tr><td colspan='3'>---------------------------------------</td></tr>";
+	echo '<tr><td align="right" colspan="2">TOTAL&nbsp;</td><td align="right">', Currency::number($totalTipoVenta, 0), '</td></tr>';
+}
+
+?>
+</table>
+<div style='pading: 20px; width:280px' align='right'>
+<?php
+
+if(count($formasPago)){
+	echo '<table width="270">';
+	echo "<tr><td colspan='2'>---------------------------------------</td></tr>";
+	echo "<tr><td colspan='2'>RESUMEN FORMAS DE PAGO</td></tr>";
+	foreach($formasPago as $detalle => $valor){
+		echo '<tr><td align="right">', $detalle, '</td><td align="right">&nbsp;', Currency::number($valor, 0), '</td></tr>';
+	}
+	echo '</table>';
+}
+
+?>
+<pre>
+----------------------------------------
+</pre>
+<div style='pading: 20px; width:280px' align='right'>
+TOTAL PROPINA : <?php echo Currency::number($total_propina, 0) ?><br>
+TOTAL IVA : <?php echo Currency::number($total_iva) ?><br>
+TOTAL : <?php echo Currency::number($total) ?>
+</div>
+<div style='pading: 20px; width:280px' align='left'>
+----------------------------------------
+<br/><br/>
+Facturas/Ordenes anulados:
+</div>
+<table width='270'>
+<?php
+
+$totalTipoVenta = 0;
+$tipo_venta = "";
+$conditions = "fecha >= '$fecha_inicial' AND fecha <= '$fecha_final' AND usuarios_id = '".
+	Session::getData("usuarios_id")."' AND estado = 'N'";
+foreach($Factura->find($conditions, "order: tipo_venta") as $factura){
+	if($tipo_venta!=$factura->tipo_venta){
+		if($tipo_venta!=''){
+			echo '<tr><td colspan="3">---------------------------------------</td></tr>';
+		}
+		$totalTipoVenta = 0;
+		$TipoVenta->findFirst("id='$factura->tipo_venta'");
+		echo "<tr><td colspan='3'>{$TipoVenta->detalle}:</td></tr>";
+		echo "<tr>
+		<td align='center'>Número</td>
+		<td align='center'>Descripción</td>
+		<td align='center'>Valor</td>
+		</tr>";
+		$tipo_venta = $factura->tipo_venta;
+	}
+	if($factura->tipo_venta=='P'||$factura->tipo_venta=='H'){
+		if($cuenta = $AccountCuentas->findFirst("numero='$factura->consecutivo_facturacion'")){
+			$habitacion = $Habitacion->find($cuenta->habitacion_id);
+			$factura->total = $factura->total + $cuenta->propina;
+			if($habitacion){
+				$descripcion = "(".$habitacion->numhab.")";
+			} else {
+				$descripcion = "";
+			}
+		} else {
+			$descripcion = "";
+		}
+	} else {
+		$descripcion = "";
+	}
+	echo "<tr>";
+	echo "<td align='center'>{$factura->consecutivo_facturacion}</td>";
+	echo "<td align='left'>{$factura->nombre} {$descripcion}</td>";
+	echo "<td align='right'>", Currency::number($factura->total), "</td>";
+	if($factura->tipo_venta=='F'){
+		$conditions = "prefijo_facturacion='{$factura->prefijo_facturacion}' AND consecutivo_facturacion='{$factura->consecutivo_facturacion}' AND tipo='{$factura->tipo}'";
+		foreach($PagosFactura->find($conditions) as $pagoFactura){
+			$formaPago = $pagoFactura->getFormasPago();
+			if($formaPago!=false){
+				echo '<tr><td></td><td> + ', $formaPago->detalle, '</td></tr>';
+			} else {
+				echo '<tr><td></td><td> + MONEDA NACIONAL</td></tr>';
+			}
+		}
+	}
+	echo "</tr>";
+}
+
+?>
+</table>
+<pre><?php
+ $sqla ="select valor from pquinta.cambiore where cajero = '1' ;  ";
+$resulta = $conn->query($sqla);
+while ($row   = $resulta->fetch_array(MYSQLI_ASSOC)){
+                       $w_valor =   $row["valor"] ;
+}
+
+	echo "<td align='center'>{$w_valor}</td>";
+
+
+if(!$Factura->getCount()){
+	echo center("NO HAY FACTURAS/ORDENES ANULADOS\n", 35);
+}
+?>
+----------------------------------------
+</pre>
+</body>
+</html>

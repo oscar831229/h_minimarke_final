@@ -46,7 +46,7 @@
   'referencias' => 
   array (
     'queryByItem' => true,
-    'queryByName' => true,
+    'queryByName' => false,
   ),
   'conceptos' => 
   array (
@@ -64,11 +64,11 @@
   ),
   'reimprimir' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'terceros' => 
   array (
-    'crear' => true,
+    'crear' => false,
   ),
   'consecutivos' => 
   array (

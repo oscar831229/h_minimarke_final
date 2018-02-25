@@ -43,7 +43,7 @@ function center($text, $size){
 echo $Datos->getNombreCadena(), '<br/>';
 echo $Datos->getDocumento(), " No. : ", $Datos->getNit(), '<br/>';
 echo i18n::strtoupper($Datos->getNombreHotel()), '<br/>';
-echo "CUADRE DE CAJA<br/>";
+echo "CUADRE xx  DE CAJA<br/>";
 if($fecha_inicial==$fecha_final){
 	echo "Fecha: {$fecha_inicial}<br/>" ;
 } else {
@@ -232,6 +232,19 @@ foreach($Factura->find($conditions, "order: tipo_venta") as $factura){
 ?>
 </table>
 <pre><?php
+// $sqla ="select valor from pquinta.cambiore where cajero = '1' ;  ";
+//$resulta = $conn->query($sqla);
+//while ($row   = $resulta->fetch_array(MYSQLI_ASSOC)){
+//                      $w_valor =   $row["valor"] ;
+//}
+//$w_valor = '2000000';
+//			echo '<tr><td colspan="3">$w_valor</td></tr>';
+//	echo center("Valor Rembolsos = \n".$w_valor,28);
+//echo '<tr><td align="right" colspan="1">Valor Rembolsos;</td><td align="right">', Currency::number($w_valor, 0), '</td></tr>';
+//echo '<tr><td align="right" colspan="1">Valor Cambio Rembolsos:</td><td align="left">', Currency::number($w_valor, 0), '</td></tr><br>';
+//	echo "<tr><td align='center'>{$w_valor}</td></tr>";
+
+
 if(!$Factura->getCount()){
 	echo center("NO HAY FACTURAS/ORDENES ANULADOS\n", 35);
 }

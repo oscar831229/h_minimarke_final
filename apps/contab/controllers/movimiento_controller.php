@@ -267,7 +267,7 @@ public function buscarAction()
 
 
 		$movimientos = array();
-		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'", "order: consecutivo ASC");
+		$movis = $this->Movi->find("comprob='$codigoComprobante' AND numero='$numero'");
 		foreach ($movis as $movi) {
 			$codigoCuenta = $movi->getCuenta();
 			$cuenta = BackCacher::getCuenta($codigoCuenta);
@@ -315,8 +315,7 @@ public function buscarAction()
 		$movimientos = array();
 		$tokenId = IdentityManager::getTokenId();
 		$movis = $this->Movi->find(array(
-				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'",
-				"order" => "consecutivo ASC"
+				"conditions" => "comprob='$codigoComprobante' AND numero='$numero'"
 			)
 		);
 		foreach ($movis as $movi) {
@@ -744,7 +743,7 @@ public function buscarAction()
 				$conditionsTemp = "comprob='$codigoComprobante' AND numero='$numero' AND estado='A'";
 				$conditionsMovi = "comprob='$codigoComprobante' AND numero='$numero'";
 				$sIdObj = $this->Movitemp->find($conditionsTemp, 'order: consecutivo ASC', 'group: sid');
-				$moviObj = $this->Movi->find($conditionsMovi, 'order: consecutivo ASC');
+				$moviObj = $this->Movi->find($conditionsMovi);
 				if (count($sIdObj) > 1 || count($moviObj)) {
 
 					$numeroComprob = $this->Movi->maximum(array('numero', 'conditions' => "comprob='$codigoComprobante'"))+1;
@@ -889,7 +888,7 @@ public function buscarAction()
 			break;
 		}*/
 
-		$parameters['order'] = "consecutivo ASC";
+		#$parameters['order'] = "consecutivo ASC";
 			
 
 		$debitos = 0;

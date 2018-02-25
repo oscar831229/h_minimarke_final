@@ -110,6 +110,23 @@ $tipos = array(
 	'P' => 'PLAN'
 );
 
+function getHabitacion($id)
+{
+	$query = new ActiveRecordJoin(array(
+		'entities' => array('Habitacion'),
+		'conditions' => "id='$id'"
+	));
+
+	$habitaciones = array();
+	foreach($query->getResultSet() as $habitacion){
+		return $id ." - ".$habitacion->nombre;
+	}
+
+	return null;
+} 
+
+
+
 foreach($tipos as $tipo => $detalle){
 	echo '<h3>', $detalle, '</h3>';
 
@@ -118,6 +135,7 @@ foreach($tipos as $tipo => $detalle){
 	<tr>
 		<th>Código</th>
 		<th>Grupo Men&uacute;</th>
+		<th>Nro. Habitaci&oacute;n/Nombre</th>
 		<th>Descripción</th>
 		<th>Cantidad</th>
 		<th>Porc. Costo</th>
@@ -127,18 +145,21 @@ foreach($tipos as $tipo => $detalle){
 	</tr>
 <?php
 
-	$conditions = "{#AccountMaster}.estado = 'L' AND {#Account}.estado = 'L'";
+	/*$conditions = "{#AccountMaster}.estado = 'L' AND {#Account}.estado = 'L'";
 	if($fecha_inicial==$fecha_final){
 		$conditions.= " AND date({#AccountMaster}.hora) = '$fecha_inicial'";
 	} else {
 		$conditions.= " AND date({#AccountMaster}.hora) >= '$fecha_inicial' AND date({#AccountMaster}.hora) <= '$fecha_final'";
 	}
+
 	if($salon_id!='@'){
 		$conditions.=" AND {#AccountMaster}.salon_id = '$salon_id'";
 	}
+	
 	if($tipoItem!='@'){
 		$conditions.=" AND {#MenusItems}.tipo = '$tipoItem'";
 	}
+	
 	$conditions.=" AND {#AccountCuentas}.tipo_venta = '$tipo' AND {#AccountCuentas}.estado = 'L'";
 	$query = new ActiveRecordJoin(array(
 		'entities' => array('AccountMaster', 'Account', 'MenusItems', 'Menus', 'AccountCuentas'),
@@ -146,7 +167,9 @@ foreach($tipos as $tipo => $detalle){
 		'groupFields' => array(
 			'menu' => '{#Menus}.nombre',
 					  '{#MenusItems}.nombre',
-					  '{#MenusItems}.id'
+					  '{#MenusItems}.id',
+					  '{#AccountCuentas}.habitacion_id'
+
 		),
 		'sumatory' => array(
 			'{#Account}.cantidad',
@@ -155,9 +178,44 @@ foreach($tipos as $tipo => $detalle){
 			'total' => 'if({#Account}.descuento>0, ({#Account}.total-{#Account}.total*{#Account}.descuento/100)*{#Account}.cantidad, {#Account}.total*{#Account}.cantidad)',
 		),
 		'order' => array('{#Menus}.nombre', '{#MenusItems}.nombre')
+	));*/
+
+	$conditions = "{#Factura}.estado = 'A'";
+	if($fecha_inicial==$fecha_final){
+		$conditions.= " AND {#Factura}.fecha = '$fecha_inicial'";
+	} else {
+		$conditions.= " AND {#Factura}.fecha >= '$fecha_inicial' AND {#Factura}.fecha <= '$fecha_final'";
+	}
+
+	if($salon_id!='@'){
+		$conditions.=" AND {#Factura}.salon_id = '$salon_id'";
+	}
+
+	if($tipoItem!='@'){
+		$conditions.=" AND {#Factura}.tipo = '$tipoItem'";
+	}
+
+	$conditions.=" AND {#Factura}.tipo_venta = '$tipo'";
+	$query = new ActiveRecordJoin(array(
+		'entities' => array('Factura', 'DetalleFactura', 'MenusItems', 'Menus'),
+		'conditions' => $conditions,
+		'groupFields' => array(
+			'menu' => '{#Menus}.nombre',
+					  '{#MenusItems}.nombre',
+					  '{#MenusItems}.id',
+					  '{#Factura}.habitacion_id'
+
+		),
+		'sumatory' => array(
+			'{#DetalleFactura}.cantidad',
+			'costo' => '{#MenusItems}.costo*{#DetalleFactura}.cantidad',
+			'valor' => 'if({#DetalleFactura}.descuento>0, ({#DetalleFactura}.valor-{#DetalleFactura}.valor*{#DetalleFactura}.descuento/100)*{#DetalleFactura}.cantidad, {#DetalleFactura}.valor*{#DetalleFactura}.cantidad)',
+			'total' => 'if({#DetalleFactura}.descuento>0, ({#DetalleFactura}.total-{#DetalleFactura}.total*{#DetalleFactura}.descuento/100)*{#DetalleFactura}.cantidad, {#DetalleFactura}.total*{#DetalleFactura}.cantidad)',
+		),
+		'order' => array('{#Menus}.nombre', '{#MenusItems}.nombre')
 	));
 
-	//echo $query->getSQLQuery();
+	echo $query->getSQLQuery();
 
 	$costo = 0;
 	$total = 0;
@@ -165,18 +223,19 @@ foreach($tipos as $tipo => $detalle){
 	$cantidad = 0;
 	foreach($query->getResultSet() as $item){
 		echo "<tr>";
-		echo "<td align='left'>", $item->id, "</td>";
-		echo "<td align='left'>", $item->menu, "</td>";
-		echo "<td align='left'>", $item->nombre, "</td>";
-		echo "<td align='right'>", $item->cantidad, "</td>";
-		if($item->valor!=0){
-			echo "<td align='right'>", (LocaleMath::round($item->costo*100/$item->valor, 2)), "</td>";
-		} else {
-			echo "<td align='right'>0</td>";
-		}
-		echo "<td align='right'>", Currency::number($item->costo, 2), "</td>";
-		echo "<td align='right'>", Currency::number($item->valor, 2), "</td>";
-		echo "<td align='right'>", Currency::number($item->total, 2), "</td>";
+			echo "<td align='left'>", $item->id, "</td>";
+			echo "<td align='left'>", $item->menu, "</td>";
+			echo "<td align='left'>", ($item->habitacion_id > 0) ? getHabitacion($item->habitacion_id) : "&nbsp;" , "</td>";
+			echo "<td align='left'>", $item->nombre, "</td>";
+			echo "<td align='right'>", $item->cantidad, "</td>";
+			if($item->valor!=0){
+				echo "<td align='right'>", (LocaleMath::round($item->costo*100/$item->valor, 2)), "</td>";
+			} else {
+				echo "<td align='right'>0</td>";
+			}
+			echo "<td align='right'>", Currency::number($item->costo, 2), "</td>";
+			echo "<td align='right'>", Currency::number($item->valor, 2), "</td>";
+			echo "<td align='right'>", Currency::number($item->total, 2), "</td>";
 		echo "</tr>";
 		$costo += $item->costo;
 		$valor += $item->valor;

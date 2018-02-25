@@ -89,6 +89,10 @@ class AuraController extends WebServiceController implements Transactionable {
 			if (isset($tercero['Locciu']) && !$tercero['Locciu']) {
 				$tercero['Locciu'] = 127591;
 			}
+			if (isset($tercero['Email']) && !$tercero['Email']) {
+				$tercero['Email'] = 127591;
+			}
+
 			$nit->setLocciu($tercero['Locciu']);
 			$nit->setAutoret($tercero['Autoret']);
 			if($nit->save()==false){

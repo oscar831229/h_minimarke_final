@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 /**
  * Hotel Front-Office Solution
@@ -69,6 +69,16 @@ class TercerosController extends HyperFormController
 					'E' => 'EXTRANJERO'
 				),
 				'filters' => array('alpha')
+			),
+			'email' => array(
+				'single' => 'Email',
+				'type' => 'text',
+				'size' => 50,
+				'maxlength' => 50,
+				'notBrowse' => true,
+				'notSearch' => true,
+				'notNull'	=> false,
+				'filters' => array('striptags', 'extraspaces')
 			),
 			'direccion' => array(
 				'single' => 'Dirección',

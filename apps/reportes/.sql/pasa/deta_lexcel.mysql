@@ -1,0 +1,65 @@
+-- MySQL dump 10.13  Distrib 5.5.55, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: hsalitre
+-- ------------------------------------------------------
+-- Server version	5.5.55-0ubuntu0.14.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `deta_lexcel`
+--
+
+DROP TABLE IF EXISTS `deta_lexcel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `deta_lexcel` (
+  `seriexl` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `seriemanual` int(11) NOT NULL,
+  `descripcionc1` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `valor_activo1` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `valor_activo2` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `descripcionc2` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `valor_pasivo1` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `valor_pasivo2` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `fecha` date NOT NULL,
+  `usuario` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `estado` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `grupo` char(2) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `totalin` text COLLATE utf8_unicode_ci,
+  `reporte` int(4) DEFAULT NULL,
+  PRIMARY KEY (`seriexl`),
+  UNIQUE KEY `seriexl` (`seriexl`),
+  KEY `index_sm` (`seriemanual`)
+) ENGINE=InnoDB AUTO_INCREMENT=127 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `deta_lexcel`
+--
+
+LOCK TABLES `deta_lexcel` WRITE;
+/*!40000 ALTER TABLE `deta_lexcel` DISABLE KEYS */;
+INSERT INTO `deta_lexcel` VALUES (64,9,'ACTIVO','','','PASIVOS Y PATRIMONIOS NETO','','','0000-00-00',NULL,'L','L',NULL,1),(65,11,'ACTIVO CORRIENTES','','','PASIVOS CORRIENTES ','','','0000-00-00',NULL,'L','L',NULL,1),(66,12,'   Efectivo y equivalentes en efectivo (Nota 4) ','1440000000.00','13000000.00','   Prestamos (Nota 5) ','30000000.00','25000000.00','0000-00-00',NULL,'L','2',NULL,1),(67,1,'COMPAÑIA COLOMBIANA PYME S.A.','','','','','','0000-00-00',NULL,'L','L',NULL,1),(68,2,'','','','','','','0000-00-00',NULL,'L','L',NULL,1),(69,3,'Estados de situacíon Financiera','','','','','','0000-00-00',NULL,'L','L',NULL,1),(70,4,'(En miles de pesos Colombianos, al 31 de diciembre de 2018)','','','','','','0000-00-00',NULL,'L','L',NULL,1),(71,5,'','','','','','','0000-00-00',NULL,'L','L',NULL,1),(72,6,'','','','','','','0000-00-00',NULL,'L','L',NULL,1),(73,7,' ','31 de diciembre ','1 de enero ','','31 de diciembre','1 de enero','0000-00-00',NULL,'L','L',NULL,1),(74,8,' ','    2018    ','   2017   ','','    2018    ','   2017    ','0000-00-00',NULL,'L','L',NULL,1),(75,10,'','       ','       ','','        ','      ','0000-00-00',NULL,'L','L',NULL,1),(76,13,'   Cuentas comerciales por cobrar y otras cuentas por cobrar (Nota 5)','50000000.00','30000000.00','   Cuentas comerciales por pagar y otras cuentas por pagar (Nota 16)','1000000.00','1000000.00','0000-00-00',NULL,'L','2',NULL,1),(77,14,'   Arrendamiento financiero por Cobrar (Nota 6)','0.00','1000000.00','  Obligaciones por arrendamiento financiero (Nota 17)','0.00','30000000.00','0000-00-00',NULL,'L','2',NULL,1),(78,15,'   Inventarios (Nota 7)','70000000.00','100000.00','   Beneficios a empleados (Nota 19)','0.00','1000000.00','0000-00-00',NULL,'L','2',NULL,1),(79,16,'   Otros activos (Nota 14)','610000000.00','500100000.00','   Provisiones (Nota 20)','380000000.00','200000000.00','0000-00-00',NULL,'L','2',NULL,1),(80,17,'   ','0.00','0.00','   Otros pasivos (Nota 21)','100000000.00','1000000.00','0000-00-00',NULL,'L','3',NULL,1),(81,18,'  ','_________________________','_________________________','   ','_________________________','_________________________','0000-00-00',NULL,'L','L',NULL,1),(82,19,'       Total activos corrientes',' ','  ','       Total pasivos corrientes','  ','   ','0000-00-00',NULL,'L','L',NULL,1),(83,20,'   ','_________________________','_________________________','   ','_________________________','_________________________','0000-00-00',NULL,'L','L',NULL,1),(84,21,'ACTIVOS NO CORRIENTES:','','','PASIVOS NO CORRIENTES','','','0000-00-00',NULL,'L','L',NULL,1),(85,22,'   Cuentas comerciales por cobrar y otras cuentas por cobrar (Nota 5) ','20000.00','10000.00','   Préstamos (Nota 15)','5000.00','6000.00','0000-00-00',NULL,'L','L',NULL,1),(86,23,'   Arrendamiento financiero por cobrar (Nota 6)','3000.00','10000.00','   Cuentas comerciales por pagar y otras cuentas por pagar (Nota 16)','0.00','2006000.00','0000-00-00',NULL,'L','L',NULL,1),(87,24,'   Inversiones en subsidiarias (Nota 8)','563000.00','70000.00','   )','','','0000-00-00',NULL,'L','L',NULL,1),(88,25,'   Inversiones en asociadas (Nota 9)','9000000.00','3310000.00','   Obligaciones por arrendamiento financiero (Nota 17)','0.00','3998000.00','0000-00-00',NULL,'L','L',NULL,1),(89,26,'   Propiedad, planta y equipo (Nota 10)','2000000000.00','109000000.00','   ','','','0000-00-00',NULL,'L','L',NULL,1),(90,27,'   Propiedades de inversión (Nota 11)','70000000.00','4800000.00','   Beneficios a empleados (Nota 19)','5000000.00','30000000.00','0000-00-00',NULL,'L','L',NULL,1),(91,28,'   Crédito mercantil (Nota 12)','2800000.00','1000000.00','   ','','','0000-00-00',NULL,'L','L',NULL,1),(92,29,'   Activos intangibles (Nota 13)','200000000.00','120000000.00','   Otros pasivos (Nota 21)','300000.00','1500000.00','0000-00-00',NULL,'L','L',NULL,1),(93,30,'   Impuestos diferidos (Nota 27)','30000000.00','800000.00','   ','','','0000-00-00',NULL,'L','L',NULL,1),(94,31,'   Otros activos (Nota 14)','300000000000.00','210000000000.00','   Impuestos diferidos (Nota 27)','1144100000.00','1300000.00','0000-00-00',NULL,'L','L',NULL,1),(95,32,'   ','','','   ','0','','0000-00-00',NULL,'L','L',NULL,1),(96,33,'   Total activos no corrientes','8838000000.00','60200000.00','   Total pasivos no corrientes','1144100000.00','1300000.00','0000-00-00',NULL,'L','L',NULL,1),(97,34,'   ','_________________________','_________________________','   ','_________________________','_________________________','0000-00-00',NULL,'L','L',NULL,1),(98,35,'   ','    ','','   Total pasivos','960000000.00','960000000.00','0000-00-00',NULL,'L','L',NULL,1),(99,36,'   ',' ','','   ','_________________________','_________________________','0000-00-00',NULL,'L','L',NULL,1),(100,37,'   ','  ','  ','   PATRIMONIO NETO','9000000.00','800000000.00','0000-00-00',NULL,'L','L',NULL,1),(101,38,'   ','  ','  ','    Capital emitido (Nota 22)','99000000.00','8800000000.00','0000-00-00',NULL,'L','L',NULL,1),(102,39,'   ','  ','  ','    Reservas (Nota 23)','10000000.00','110000000.00','0000-00-00',NULL,'L','L',NULL,1),(103,40,'   ','  ','  ','    Ganancias acumuladas','70000000.00','6000000.00','0000-00-00',NULL,'L','L',NULL,1),(104,41,'   ','  ','  ',' ',' ','','0000-00-00',NULL,'L','L',NULL,1),(105,42,'   ','  ','  ','       Total patrimonio neto','2210000000.00','1110000000.00','0000-00-00',NULL,'L','L',NULL,1),(106,43,'   ',' ','','   ','_________________________','_________________________','0000-00-00',NULL,'L','L',NULL,1),(107,44,'        Total activos','99900000.00','652777999.00','       Total pasivos y patrimonio','922222245.00','958155555.00','0000-00-00',NULL,'L','L',NULL,1),(108,45,'   ','_________________________','_________________________','   ','_________________________','_________________________','0000-00-00',NULL,'L','L',NULL,1),(109,46,'Las notas adjuntas forman parte integral de estos estados financieros',' ','','','','','0000-00-00',NULL,'L','L',NULL,1),(110,47,'   ','  ','  ','   ',' ',' ','0000-00-00',NULL,'L','L',NULL,1),(111,48,'   ','  ','  ','   ',' ',' ','0000-00-00',NULL,'L','L',NULL,1),(112,49,'   ','  ','  ','   ',' ',' ','0000-00-00',NULL,'L','L',NULL,1),(113,50,'   ','  ','  ','   ',' ',' ','0000-00-00',NULL,'L','L',NULL,1),(114,51,'                   ____________________','____________________','  ','____________________','','','0000-00-00',NULL,'L','L',NULL,1),(115,52,'                            Nombre','           Nombre ','  ','           Nombre ','','','0000-00-00',NULL,'L','L',NULL,1),(116,53,'                   Representante Legal   ','    Contador Público','  ','     Revisor Fiscal','','','0000-00-00',NULL,'L','L',NULL,1),(117,54,'                      ','Tarjeta profesional No.','  ',' Tarjeta profesional No.','','','0000-00-00',NULL,'L','L',NULL,1),(118,55,'                      ','  ','  ','  (Ver mi opinión adjunto)','','','0000-00-00',NULL,'L','L',NULL,1);
+/*!40000 ALTER TABLE `deta_lexcel` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2018-02-04 22:54:07

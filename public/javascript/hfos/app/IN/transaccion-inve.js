@@ -713,6 +713,8 @@ var TransaccionInve = Class.create({
 				return;
 			} else {
 				var cantidadBase = this._hyperGrid.getField('cantidad').getValue();
+				var iva = this._hyperGrid.getField('iva').getValue();
+				cantidad = cantidad / (1 + iva / 100); 
 				if (cantidad > cantidadBase) {
 					if (this._wasLoaded == true) {
 						this._hyperForm.getMessages().error('La cantidad a entregar no puede superar la cantidad pedida');
