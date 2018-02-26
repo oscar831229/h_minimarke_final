@@ -122,13 +122,6 @@ alter table movi_niif drop column createdTime;
 alter table movitempniif drop column createdTime;
 
 alter table inve add column rodizio char(1) null default 'N';
-<<<<<<< HEAD
-
-alter table movitemp drop primary key;
 
 alter table nits add column email varchar(200) null;
-alter table movi add column consecutivo int null;
-alter table movitemp add column consecutivo int null; 
-=======
 alter table movi drop column consecutivo;
->>>>>>> 33170694502e84e78a2d9909c4368eefb6c4d370
