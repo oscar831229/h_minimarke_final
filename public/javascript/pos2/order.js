@@ -101,7 +101,13 @@ var Pedido = Class.create({
 			button.update(items[i].nombre);
 			button.observe('click', this.addItemToAccount.bind(this, button, items[i]));
 			this._menuDetailsElement.appendChild(button);
+
+			if (items.length == 1) {
+				//alert(items.length);
+				this.addItemToAccount(button, items[0]);
+			}
 		};
+		
 		this.adjustItemsList(items);
 	},
 
