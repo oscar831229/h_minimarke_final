@@ -196,10 +196,13 @@ class Menus_ItemsController extends StandardForm
 		$this->setCaption('cambio_precio', 'Permite Cambio Precio');
 		$this->setCaption('valor', 'Precio Base');
 		$this->setCaption('image', 'Imagen');
+		$this->setCaption('porcentaje_iva', '% IVA');
+		$this->setCaption('porcentaje_impoconsumo', '% IMPO');
+						
 		//$this->setTypeImage('image');
 		$this->setHidden('image', 'nombre_pedido');
-		$this->notBrowse('descontar', 'cambio_precio', 'porcentaje_servicio', 'porcentaje_iva', 'porcentaje_impoconsumo', 'tipo');
-		$this->notReport('image', 'descontar', 'cambio_precio', 'porcentaje_servicio', 'porcentaje_iva', 'porcentaje_impoconsumo');
+		$this->notBrowse('descontar', 'cambio_precio', 'porcentaje_servicio', 'tipo');
+		$this->notReport('image', 'descontar', 'cambio_precio', 'porcentaje_servicio');
 
 		$this->setTextUpper('nombre');
 
@@ -230,6 +233,11 @@ class Menus_ItemsController extends StandardForm
 		$this->setComboStatic('cubierto', array(
 			array('S', 'SI'),
 			array('N', 'NO')
+		));
+		
+		$this->setComboStatic('controlado', array(
+			array(1, 'SI'),
+			array(0, 'NO')
 		));
 
 		$this->setComboStatic('estado', array(

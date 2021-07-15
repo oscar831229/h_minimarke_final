@@ -1,0 +1,2 @@
+create index pos_index_1 USING BTREE ON factura(prefijo_facturacion,consecutivo_facturacion,cedula,fecha,tipo,tipo_venta,estado);
+create index pos_index_2 USING BTREE ON detalle_factura(prefijo_facturacion,tipo);

@@ -105,9 +105,13 @@ class InterfasePOS4 extends UserComponent {
 	 * @param	int $numfac
 	 * @return 	Factura
 	 */
-	private function _getFactura($prefac, $numfac){
+	private function _getFactura($prefac, $numfac, $fecha = ''){
 		if(!isset($this->_facturas[$prefac][$numfac])){
 			$conditions = "prefijo_facturacion='{$prefac}' AND consecutivo_facturacion='{$numfac}'";
+
+			if(!empty($fecha))
+				$conditions .= " AND fecha='{$fecha}'";
+
 			$factura = $this->Factura->findFirst(array($conditions, 'columns' => 'prefijo_facturacion,consecutivo_facturacion,tipo,estado,usuarios_id'));
 			$this->_facturas[$prefac][$numfac] = $factura;
 		} else {
@@ -198,7 +202,7 @@ class InterfasePOS4 extends UserComponent {
 	public function getItemsToDownload($fechaProceso){
 		$numero = 0;
 		foreach($this->Invepos->find("fecha='$fechaProceso' AND estado='N'") as $invepos){
-			$factura = $this->_getFactura($invepos->getPrefac(), $invepos->getNumfac());
+			$factura = $this->_getFactura($invepos->getPrefac(), $invepos->getNumfac(), $fechaProceso);
 			if($factura!=false){
 				if($factura->estado=='N'){
 					$this->_anulaDescargaFactura($factura, $invepos);
@@ -244,7 +248,7 @@ class InterfasePOS4 extends UserComponent {
 		$numero = 0;
 		$this->Invepos->setTransaction($transaction);
 		foreach($this->Invepos->findForUpdate("fecha='$fechaProceso' AND estado='N'") as $invepos){
-			$factura = $this->_getFactura($invepos->getPrefac(), $invepos->getNumfac());
+			$factura = $this->_getFactura($invepos->getPrefac(), $invepos->getNumfac(), $fechaProceso);
 			if($factura!=false){
 				if($factura->estado=='N'){
 					if($this->_verbose==true){

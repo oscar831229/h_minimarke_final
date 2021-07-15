@@ -127,6 +127,33 @@ function showOptions(n){
 	}
 }
 
+function showVueltas(inputPago){
+	var total_pagos = parseInt(inputPago.value);
+	
+	var dinero = prompt("Ingrese dinero recibido:", total_pagos);
+
+	dinero = parseInt(dinero);
+	var diff = dinero - total_pagos;
+	
+	if (diff < 0) {
+		showVueltas(inputPago);
+		return;
+	}
+
+	diff = Math.abs(diff);
+
+	alert("VALOR A PAGAR:  " + format2(total_pagos, '') + 
+		"\nVALOR RECIBIDO: " + format2(dinero, '') + 
+		"\n" +
+		"\n" +
+		"\nVALOR CAMBIO:   " + format2(diff, '')
+	);
+}
+
+function format2(n, currency) {
+  return currency + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+}
+
 function pay(){
 	var cargo_habitacion = false;
 	var facturar = false;
@@ -135,10 +162,10 @@ function pay(){
 			if ($("tr"+i).style.display!="none") {
 				if (parseFloat($("pago"+i).value)) {
 					if ($("forma"+i).tagName == "SELECT") {
-						if($("forma"+i).selectedIndex==0){
-							new Effect.Highlight("forma"+i, {startcolor: "#800000"})
-							return
-						}
+						//if($("forma"+i).selectedIndex==0){
+						//	new Effect.Highlight("forma"+i, {startcolor: "#800000"})
+						//	return
+						//}
 					}
 				}
 			}

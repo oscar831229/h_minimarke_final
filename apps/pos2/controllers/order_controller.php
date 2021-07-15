@@ -15,7 +15,6 @@
 
 class OrderController extends ApplicationController
 {
-
 	/**
 	 * Numero de menus_items actual
 	 *
@@ -175,13 +174,16 @@ class OrderController extends ApplicationController
 		if ($action) {
 			$this->action = $this->filter($action, 'alpha');
 		}
+
 		$this->account_id = $salonMesasId;
+
 		$salonMesa = $this->SalonMesas->findFirst($salonMesasId);
 		if($salonMesa!=false){
-
 			$accountMaster = $this->AccountMaster->findFirst("salon_mesas_id='$salonMesasId' AND estado = 'N'");
+
 			if($accountMaster){
 				$this->current_master = $accountMaster->id;
+
 				$accountCuenta = $this->AccountCuentas->findFirst("account_master_id={$accountMaster->id} AND estado = 'A'");
 				if($accountCuenta){
 					$this->numero_cuenta = $accountCuenta->cuenta;
@@ -203,6 +205,7 @@ class OrderController extends ApplicationController
 				Flash::error('El ambiente no existe');
 				return $this->routeTo(array('controller' => 'tables', 'action' => 'index', 'id' => 0));
 			}
+
 			$this->setParamToView('salon', $salon);
 			$this->porcentaje_servicio = $salon->porcentaje_servicio;
 			if($salonMesa->numero){
@@ -244,16 +247,18 @@ class OrderController extends ApplicationController
 				}
 			}
 		}
-
 		if(!$this->numero_comanda){
 			if($this->current_master){
 				$comanda = $this->Account->minimum(array("comanda", "conditions" => "account_master_id='{$this->current_master}'"));
 				$this->numero_comanda = (int) $comanda;
 			} else {
-				$this->numero_comanda = 0;
+				if ($salon->tipo_comanda != 'A') {
+					$this->numero_comanda = 0;
+				} else {
+					$this->numero_comanda = $this->getNextComanda();
+				}
 			}
 		}
-
 		if(!$this->numero_asientos){
 			if($this->current_master){
 				$max_asientos = $this->Account->maximum(array("asiento", "conditions" => "account_master_id='{$this->current_master}' AND estado <> 'L'"));
@@ -297,7 +302,7 @@ class OrderController extends ApplicationController
 				'modifiers' => $accountModifiers
 			);
 		} else {
-			$this->loadModel('SalonMesas', 'Datos', 'AccountMaster', 'Account');
+			$this->loadModel('SalonMesas', 'Datos', 'AccountMaster', 'Account', 'AccountTemp');
 			$this->loadModel('AccountCuentas', 'Salon', 'Habitacion', 'SalonTipoVenta');
 			$this->loadModel('MenusItems', 'Menus', 'SalonMenusItems', 'TipoVenta', 'SalonTipoVenta');
 			$this->loadModel('AccountModifiers', 'Modifiers', 'AccountDiscount');
@@ -707,7 +712,6 @@ class OrderController extends ApplicationController
 					$this->numero_cuenta = 1;
 				}
 			}
-
 			$this->current_master = $accountMaster->id;
 			Session::set('current_master', $this->current_master);
 
@@ -720,14 +724,15 @@ class OrderController extends ApplicationController
 						if (Browser::isMobile() == false) {
 							$transaction->rollback('Por favor cree una comanda primero');
 						} else {
-							$this->numero_comanda = $this->Account->maximum(array('comanda', "conditions" => "estado<>'C'"))+1;
+							$this->numero_comanda = $this->getNextComanda();
 						}
 					}
 				} else {
 					if (Browser::isMobile() == false) {
 						$transaction->rollback('Por favor cree una comanda primero');
 					} else {
-						$this->numero_comanda = $this->Account->maximum(array('comanda', "conditions" => "estado<>'C'"))+1;
+						die("aaaa");
+						$this->numero_comanda = $this->getNextComanda();
 					}
 				}
 			}
@@ -785,7 +790,6 @@ class OrderController extends ApplicationController
 						}
 					}
 				}
-
 				if ($salon->tipo_comanda == 'A') {
 					if ($this->numero_comanda > $salon->consecutivo_comanda) {
 						POSRcs::disable();
@@ -798,7 +802,7 @@ class OrderController extends ApplicationController
 					}
 				}
 
-				$conditions = "
+				/*$conditions = "
 				salon_mesas_id=".$this->account_id." AND
 				menus_items_id='$id' AND
 				comanda = '".$this->numero_comanda."' AND
@@ -806,7 +810,7 @@ class OrderController extends ApplicationController
 				asiento = '".$this->silla."' AND
 				estado IN ('S', 'A')";
 				$account = $this->Account->findFirst($conditions);
-				if ($account == false) {
+				if ($account == false) {*/
 					$account = new Account();
 					$account->setTransaction($transaction);
 					$account->salon_mesas_id = $this->account_id;
@@ -820,9 +824,9 @@ class OrderController extends ApplicationController
 					$account->tiempo = Date::getCurrentTime();
 					$account->tiempo_final = '';
 					$account->cantidad = 1;
-				} else {
+				/*} else {
 					$account->cantidad++;
-				}
+				}*/
 				$account->estado = 'S';
 
 				$this->tipo_venta = $accountCuenta->tipo_venta;
@@ -915,7 +919,7 @@ class OrderController extends ApplicationController
 		}
 
 		if (Browser::isMobile() == false) {
-			$this->loadModel('SalonMesas', 'Datos', 'AccountMaster', 'Account');
+			$this->loadModel('SalonMesas', 'Datos', 'AccountMaster', 'Account', 'AccountTemp');
 			$this->loadModel('AccountCuentas', 'Salon', 'Habitacion');
 			$this->loadModel('MenusItems', 'Menus', 'SalonMenusItems', 'TipoVenta', 'SalonTipoVenta');
 			$this->loadModel('AccountModifiers', 'Modifiers', 'AccountDiscount');
@@ -1171,7 +1175,7 @@ class OrderController extends ApplicationController
 		if ($orden) {
 			$this->order = $orden;
 		}
-		$this->loadModel('AccountMaster', 'Account');
+		$this->loadModel('AccountMaster', 'Account', 'AccountTemp');
 		$this->loadModel('AccountCuentas', 'Habitacion');
 		$this->loadModel('MenusItems', 'Menus', 'SalonMenusItems', 'TipoVenta', 'SalonTipoVenta');
 		$this->loadModel('AccountModifiers', 'Modifiers', 'AccountDiscount');
@@ -1598,6 +1602,25 @@ class OrderController extends ApplicationController
 		}
 		$this->numero_cuenta = $nuevaCuenta;
 		return $nuevaCuenta;
+	}
+
+	private function getNextComanda()
+	{
+		// Maximo de account
+		$numero_comanda = $this->Account->maximum(array('comanda', "conditions" => "estado<>'C'")) + 1;
+			
+		// busco todos los registros de account_temp con le mismo numero de comanda
+		$accountTemp = $this->AccountTemp->find("comanda = '$numero_comanda'");
+		if ($accountTemp) {
+			$numero_comanda += count($accountTemp);
+		}
+
+		$accountTemp = new AccountTemp;
+		$accountTemp->comanda = $numero_comanda;
+		$accountTemp->usuarios_id = $_SESSION["session_data"]["usuarios_id"];
+		$accountTemp->save();
+
+		return $numero_comanda;
 	}
 
 	/**
@@ -2065,7 +2088,7 @@ class OrderController extends ApplicationController
 			$id = strtoupper($id);
 			$filteredId = preg_replace('/[^a-zA-Z0-9]/', '', $id);
 			$length = strlen($filteredId);
-			if ($length <= 3) {
+			if ($length <= 0) {
 				Flash::error('El documento "' . $id . '" no es válido, por favor revise (0)');
 				return '';
 			}
@@ -2213,6 +2236,7 @@ class OrderController extends ApplicationController
 
 			$transaction = TransactionManager::getUserTransaction();
 			$this->AccountCuentas->setTransaction($transaction);
+			$this->Clientes->setTransaction($transaction);
 
 			$tipo = $this->getPostParam('tipo');
 			if($tipo=='P'){
@@ -2223,10 +2247,10 @@ class OrderController extends ApplicationController
 					return;
 				}
 
-				$cedula = $this->_filterId($cedula);
+				/* $cedula = $this->_filterId($cedula);
 				if(!$cedula){
 					return;
-				}
+				} */
 
 				$nombre = $this->getPostParam('nombre', 'extraspaces', 'striptags');
 				if($nombre=='NO EXISTE EL CLIENTE EN LA BASE DE DATOS'){
@@ -2237,7 +2261,7 @@ class OrderController extends ApplicationController
 				if($existeCliente==0){
 					$cliente = new Clientes();
 					$cliente->setTransaction($transaction);
-					$cliente->tipdoc = 1;
+					$cliente->tipdoc = 13;
 					$cliente->cedula = $cedula;
 					$cliente->sexo = 'M';
 					$cliente->nombre = $nombre;
@@ -2258,6 +2282,15 @@ class OrderController extends ApplicationController
 						}
 						Flash::error('Ocurrió un error al crear el cliente');
 					}
+				}
+				
+				$actualizarCliente = $this->Clientes->findFirst("cedula='$cedula'");
+				$actualizarCliente->nombre = $nombre;
+				if($actualizarCliente->save()==false){
+					foreach($cliente->getMessages() as $message){
+						Flash::error($message->getMessage());
+					}
+					Flash::error('Ocurrió un error al actualizar el cliente');
 				}
 
 				$conditions = "account_master_id='".$this->current_master."' AND cuenta = '".$this->numero_cuenta."' AND estado = 'A'";
@@ -2425,6 +2458,7 @@ class OrderController extends ApplicationController
 			$this->setParamToView('account', $account);
 		}
 		$this->loadModel('Account');
+		$this->loadModel('AccountTemp');
 	}
 
 	/**
@@ -2871,6 +2905,7 @@ class OrderController extends ApplicationController
 						}
 					}
 					if(!Browser::isMobile()){
+						die("aaa");
 						$this->redirect('tables/index/'.$this->salon_id);
 					}
 				} else {

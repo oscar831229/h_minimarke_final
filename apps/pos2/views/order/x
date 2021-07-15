@@ -1,0 +1,1 @@
+add.phtml:				 	<?php echo Tag::textField(array("buscarItem", "placeholder" => "Buscar por nombre")) ?>

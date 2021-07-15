@@ -257,7 +257,7 @@ $propina = LocaleMath::round($propina, 0);
 	<td align='center'>
 		<?php if($accountCuenta->tipo_venta=='F'){ ?>
 			<select name='forma<?php echo  $i ?>' id='forma<?php echo  $i ?>' class='forma_p'>
-			<option value='@'>Seleccione...</option>
+			<!--<option value='@'>Seleccione...</option>-->
 			<?php
 				foreach($FormasPago->find() as $forma){
 					if($forma->detalle!='CARGO A LA HABITACION'){
@@ -276,7 +276,8 @@ $propina = LocaleMath::round($propina, 0);
 		id='<?php echo  'pago'.$i; ?>'
 		name='<?php echo  'pago'.$i; ?>'
 		value='<?php echo  $i==0 ? $total_cuentas+$propina : "" ?>'
-		onchange="totalPagos(this)"/>
+		onchange="totalPagos(this)" 
+		onclick="showVueltas(this)"/>
 	</td>
 	<td align='center'>
 	<?php
@@ -377,7 +378,7 @@ $propina = LocaleMath::round($propina, 0);
 				value="<?php echo $total_cuenta+$propina ?>"/>
 		</td>
 		<td align='center' rowspan="3">
-			<?php echo Tag::button("value: Pagar", "class: okButton", "onclick: pay()") ?>
+			<?php echo Tag::button("value: Pagar", "class: okButton", "onclick: pay()" ) ?>
 		</td>
 	</tr>
 	<tr class='tr_tot'>
@@ -397,4 +398,10 @@ $propina = LocaleMath::round($propina, 0);
 </div>
 </div>
 <br/>
+
+<script type="text/javascript">
+	setTimeout(function() {
+		showVueltas(document.getElementById("pago0"));
+	}, 500);	
+</script>
 <?php echo  Tag::endForm(); ?>

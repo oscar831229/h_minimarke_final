@@ -1,0 +1,99 @@
+%class MacroParser
+%start macro
+
+%left '%'
+%left '=' IGUAL ES
+%left '<' '>'
+%left '+' '-' MAS MENOS
+%left '*' '/' MULTIPLICADO POR DIVIDIDO
+%left ANOS MESES DIAS HORAS
+
+%left SINO
+
+%right IMPRIMIR
+
+macro = statement_list { ClaraMacro::setMacroCode($$); }
+.
+
+statement_list = statement_list/st statement/s { $$ = array('STMT_LIST', $st, $s); }
+| statement { $$ = $1; }
+.
+
+statement = if_statement EOL { $$ = $1; }
+| expression_statement EOL { $$ = $1; }
+| print_statement EOL { $$ = $1; }
+.
+
+if_statement = if_statement_1 { $$ = $1; }
+| if_statement_2 { $$ = $1; }
+.
+
+if_statement_1 = SI expression/e ENTONCES EOL statement_list/st FIN { $$ = array('IF', $e, $st); }
+.
+
+if_statement_2 = SI expression/e ENTONCES EOL statement_list/st SINO EOL statement_list/ste FIN { $$ = array('IF', $e, $st, $ste); }
+.
+
+print_statement = IMPRIMIR expression { $$ = array('PRINT', $2); }
+.
+
+expression_statement = expression { $$ = array('EXPR', $1); }
+.
+
+expression = exp { $$ = $1; }
+| equal_expr_statement { $$ = $1; }
+.
+
+equal_expr_statement = exp/e '=' exp/e { $$ = array('EQUAL', $1, $3); }
+| exp/e ES IGUAL exp/e { $$ = array('EQUAL', $1, $4); }
+| exp/e ES exp/e { $$ = array('EQUAL', $1, $3); }
+.
+
+interval = exp ANOS { $$ = array('INTERVAL', $1, 'ANOS'); }
+| exp MESES { $$ = array('INTERVAL', $1, 'MESES'); }
+| exp DIAS { $$ = array('INTERVAL', $1, 'DIAS'); }
+| exp HORAS { $$ = array('INTERVAL', $1, 'HORAS'); }
+.
+
+variable = var '.' var {
+	$$ = array('VAR', $1, $3);
+	ClaraMacro::addStaticSymbol($1, $3);
+}
+| var DEL var {
+	$$ = array('VAR', $3, $1);
+	ClaraMacro::addStaticSymbol($3, $1);
+}
+| var DE var {
+	$$ = array('VAR', $3, $1);
+	ClaraMacro::addStaticSymbol($3, $1);
+}
+| var {
+	$$ = array('VAR', $1);
+	ClaraMacro::addStaticSymbol($1);
+}
+.
+
+literal = NUMERO { $$ = array('LITERAL', 'NUM', $1); }
+| TEXTO { $$ = array('LITERAL', 'STR', $1); }
+.
+
+exp = exp MAS exp { $$ = array('OP', '+', $1, $3); }
+| exp '+' exp { $$ = array('OP', '+', $1, $3); }
+| exp MENOS exp { $$ = array('OP', '-', $1, $3); }
+| exp '-' exp { $$ = array('OP', '-', $1, $3); }
+| exp POR exp { $$ = array('OP', '*', $1, $3); }
+| exp MULTIPLICADO exp { $$ = array('OP', '*', $1, $3); }
+| exp MULTIPLICADO POR exp { $$ = array('OP', '*', $1, $4); }
+| exp '*' exp { $$ = array('OP', '*', $1, $3); }
+| exp DIVIDIDO exp { $$ = array('OP', '/', $1, $3); }
+| exp '/' exp { $$ = array('OP', '/', $1, $3); }
+| exp '>' exp { $$ = array('OP', '>', $1, $3); }
+| exp ES MAYOR exp { $$ = array('OP', '>', $1, $4); }
+| exp '<' exp { $$ = array('OP', '<', $1, $3); }
+| exp ES MENOR exp { $$ = array('OP', '<', $1, $4); }
+| NUMERO '%' { $$ = array('PERCENT', $1); }
+| literal { $$ = $1; }
+| variable { $$ = $1; }
+| interval { $$ = $1; }
+| '(' exp/$ ')'
+.

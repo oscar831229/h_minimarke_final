@@ -143,6 +143,8 @@ class Tatico extends UserComponent
 		$this->_hasTransaction = TransactionManager::hasUserTransaction();
 		$this->_transaction = TransactionManager::getUserTransaction();
 
+		$this->Movilin->setTransaction($this->_transaction);
+		$this->Movihead->setTransaction($this->_transaction);
 		$this->Comprob->setTransaction($this->_transaction);
 
 		$this->_addComprobante($codigoComprobante, $numero);
@@ -510,6 +512,7 @@ class Tatico extends UserComponent
 		//Crear Movihead
 		$movihead = new Movihead();
 		$movihead->setTransaction($this->_transaction);
+		$movihead->setMotaju((isset($movement['Motaju']) ? $movement['Motaju'] : 2));
 		$movihead->setComprob($movement['Comprobante']);
 		$movihead->setAlmacen($movement['Almacen']);
 		$movihead->setNumero($movement['Numero']);

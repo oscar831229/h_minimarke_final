@@ -121,7 +121,7 @@ class ReportBase extends Report
 	  		$header[] = new ReportText('Fecha Impresión: '.date('Y-m-d h:i a'), array(
 				'fontSize' => 11,
 				'fontWeight' => 'bold',
-				'textAlign' => 'center'
+				'textAlign' => 'right'
 	 		));
 	 	}
  		parent::setHeader($header);

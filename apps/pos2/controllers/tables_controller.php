@@ -81,21 +81,29 @@ class TablesController extends ApplicationController {
 	}
 
 	private function _getSalonMesa($salonId){
-		$salonMesa = $this->SalonMesas->findFirst("salon_id='$salonId' AND estado='N'");
-		if($salonMesa==false){
+
+		$usuarios_id = $_SESSION["session_data"]["usuarios_id"];
+		$salon_mesas_id =  $this->SalonMesas->maximum(array('id', 'conditions' => "salon_id='$salonId' AND usuarios_id='$usuarios_id'"));
+
+		if(empty($salon_mesas_id)){
 			$salonMesa = new SalonMesas();
 			$salonMesa->salon_id = $salonId;
 			$salonMesa->vpos = 0;
 			$salonMesa->hpos = 0;
 			$salonMesa->numero = '1';
+			$salonMesa->usuarios_id = $usuarios_id;
 			$salonMesa->estado = 'N';
 			if($salonMesa->save()==false){
 				foreach($salonMesa->getMessages() as $message){
 					Flash::error($message->getMessage());
 				}
 			}
+		}else{
+			$salonMesa = $this->SalonMesas->find($salon_mesas_id);
 		}
+
 		return $salonMesa;
+
 	}
 
 	public function crearMesasAction(){

@@ -73,6 +73,14 @@ class AjustesController extends HyperFormController {
 				'detail' => 'nom_centro',
 				'filters' => array('int')
 			),
+			'motaju' => array(
+				'single' => 'Motivo de Ajuste',
+				'type' => 'relation',
+				'relation' => 'Motaju',
+				'fieldRelation' => 'codigo',
+				'detail' => 'nombre',
+				'filters' => array('int')
+			),
 			'observaciones' => array(
 				'single' => 'Observaciones',
 				'type' => 'textarea',
@@ -186,6 +194,7 @@ class AjustesController extends HyperFormController {
 		$almacen = $request->getParamPost('almacen', 'alpha');
 		$numero = $request->getParamPost('numero', 'int');
 		$fecha = $request->getParamPost('fecha', 'date');
+		$motaju = $request->getParamPost('motaju', 'int');
 		try {
 			$comprob = sprintf('A%02s',$almacen);
 			$tatico = new Tatico($comprob, $numero, $fecha);
@@ -193,6 +202,7 @@ class AjustesController extends HyperFormController {
 				'Comprobante' => $comprob,
 				'Fecha' => $fecha,
 				'Almacen' => $almacen,
+				'Motaju' => $motaju,
 				'CentroCosto' => $request->getParamPost('centro_costo','int'),
 				'Estado' => 'C',
 				'Observaciones' => $request->getParamPost('observaciones', 'striptags'),

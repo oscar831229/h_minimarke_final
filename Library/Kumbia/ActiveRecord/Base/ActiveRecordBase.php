@@ -2285,6 +2285,11 @@ abstract class ActiveRecordBase extends Object
 					$values[] = $this->id;
 				}
 			}
+
+			// if(strpos($table, 'clientes')){
+			// 	echo 'insert into clientes ('.implode(',',$fields).') values('.implode(',',$values).')'; exit;
+			// }
+
 			$success = $this->_db->insert($table, $values, $fields);
 		}
 		if($this->_db->isUnderTransaction()==false){

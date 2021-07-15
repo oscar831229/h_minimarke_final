@@ -58,6 +58,7 @@ $menuDisposition = array(
 			'listado_referencias',
 			'listado_proveedores',
 			'horti',
+			'movinventario',
 			'impresion'
 		)
 	),
@@ -543,6 +544,15 @@ $accessList = array(
 	'horti' => array(
 		'elevation' => true,
 		'description' => 'Retefuentes Productos Hortifrutículas',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+		)
+	),
+	'movinventario' => array(
+		'elevation' => true,
+		'description' => 'Reporte movimientos por referencia',
 		'actions' => array(
 			'index' => array(
 				'description' => 'Ingreso a',

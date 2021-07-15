@@ -326,6 +326,20 @@ $accessList = array(
 		),
 		'require' => 'admin'
 	),
+	'reporte_bioseguridad' => array(
+		'description' => 'Reporte de Bioseguridad',
+		'actions' => array(
+			'index' => 'Generar reporte bioseguridad',
+		),
+		'require' => 'admin'
+	),
+	'reporte_recetaconsolidado' => array(
+		'description' => 'Reporte Estandar/Consolidado',
+		'actions' => array(
+			'index' => 'Generar reporte Estandar/Consolidado',
+		),
+		'require' => 'admin'
+	),
 	'receta' => array(
 		'description' => 'Receta Estándar',
 		'actions' => array(

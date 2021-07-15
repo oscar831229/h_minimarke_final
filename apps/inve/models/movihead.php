@@ -161,6 +161,10 @@ class Movihead extends RcsRecord
 	 */
 	protected $impo;
 
+	/**
+	 * @var string
+	 */
+	protected $motaju;
 
 	/**
 	 * Metodo para establecer el valor del campo comprob
@@ -686,5 +690,15 @@ class Movihead extends RcsRecord
 		return 'DESCONOCIDO';
 	}
 
+
+	public function getMotaju()
+	{
+		return $this->motaju;
+	}
+
+	public function setMotaju($motaju)
+	{
+		$this->motaju = $motaju;
+	}
 }
 

@@ -91,7 +91,7 @@ class Hfos_Application
 			'traslados', 'salidas', 'salidas-buffet', 'saldos-almacen', 'stocks', 'reabrir', 'cerrar', 'ajustes',
 			'saldos-almacen-consolidado', 'consecutivos', 'movimientos-inve', 'trasunto',
 			'listado-referencias','listado-proveedores', 'transformaciones', 'fisico',
-			'transaccion-inve', 'matriz-proveedores', 'comportamiento', 'horti', 'consumos',
+			'transaccion-inve', 'matriz-proveedores', 'comportamiento', 'horti','movinventario', 'consumos',
 			'impresion'
 		),
 		'CO' => array(
@@ -106,7 +106,7 @@ class Hfos_Application
 			'novedad-activos', 'libro-diario', 'libro-mayor', 'reabrir-mes',
 			'comprobante-cierre', 'ordenes-servicio', 'pyg', 'ejecucion-pres',
 			'cierre-cuentas', 'reabrir-cuentas', 'caratulas', 'balance-general', 'certificado-retencion',
-			'certificado-ica', 'cierre-anual', 'reabrir-ano', 'recibo-caja', 'listado-comprob',
+			'certificado-iva', 'certificado-ica', 'cierre-anual', 'reabrir-ano', 'recibo-caja', 'listado-comprob',
 			'interfase-siigo', 'cuentas-selector2', 'informe-balance-consolidado', 'corregir-cartera'
 		),
 		'NO' => array(
@@ -118,12 +118,12 @@ class Hfos_Application
 		'FC' => array(
 			'facturas', 'reimprimir'
 		),
-		 'SO' => array(
-                'socios', 'cambio_accion', 'asignacion_cargos_grupo', 'cargos_socios', 'movimiento_cargos', 'facturar',
-                'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir',
-                'prestamos-socios', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
-                'informe-convenios', 'estado_cuenta', 'estado_cuenta_consolidado', 'pagos-periodo',
-                'estado_cuenta_validacion', 'informe_rc', 'importar-pagos'
+		'SO' => array(
+            'socios', 'cambio_accion', 'asignacion_cargos_grupo', 'cargos_socios', 'movimiento_cargos', 'facturar',
+            'facturar_personal', 'proyeccion', 'consulta-socios', 'cierre-periodo', 'reabrir',
+            'prestamos-socios', 'suspendidos-mora', 'facturas-generadas', 'conceptos-causados', 'informe-cartera',
+            'informe-convenios', 'estado_cuenta', 'estado_cuenta_consolidado', 'pagos-periodo',
+            'estado_cuenta_validacion', 'informe_rc', 'importar-pagos'
         ),
 		'TC' => array(
 			'contratos', 'reservas', 'proyeccion', 'abono_contrato', 'abono_reserva',
@@ -379,7 +379,7 @@ class Hfos_Application
 		if (!$charset) {
 			$charset = CoreConfig::getAppSetting('charset', 'entities');
 			if (!$charset) {
-				return 'latin';
+				return 'utf8_unicode_ci';
 			}
 		}
 		return $charset;

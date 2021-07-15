@@ -169,6 +169,10 @@
   array (
     'index' => true,
   ),
+  'movinventario' => 
+  array (
+    'index' => true,
+  ),
   'impresion' => 
   array (
     'index' => true,

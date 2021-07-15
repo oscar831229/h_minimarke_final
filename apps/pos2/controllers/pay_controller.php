@@ -45,7 +45,7 @@ class PayController extends ApplicationController
 				$conditions = "account_master_id='{$this->pay[0]}' AND cuenta='{$this->pay[1]}'";
 				$accountCuenta = $this->AccountCuentas->findFirst($conditions);
 				if ($accountCuenta) {
-					if ($accountCuenta->estado == 'B'){
+					if ($accountCuenta->estado == 'B' || $accountCuenta->estado == 'A'){
 						if ($accountCuenta->tipo_venta != 'F') {
 							if(Router::wasRouted() == false){
 								return $this->routeTo(array('action' => 'savePay', 'id' => $this->pay[0].':'.$this->pay[1]));
@@ -81,7 +81,7 @@ class PayController extends ApplicationController
 			foreach ($this->cuentas as $cuenta) {
 				$conditions = "cuenta='{$cuenta[1]}' AND account_master_id='{$cuenta[0]}'";
 				$accountCuenta = $this->AccountCuentas->findFirst($conditions);
-				if ($accountCuenta->estado <> 'B') {
+				if ($accountCuenta->estado <> 'B' && $accountCuenta->estado <> 'A') {
 					$accountMaster = $this->AccountMaster->findFirst($accountCuenta->account_master_id);
 					if ($accountMaster) {
 						$this->salon_mesas_id = $accountMaster->salon_mesas_id;
@@ -222,7 +222,6 @@ class PayController extends ApplicationController
 
 	public function savePayAction($id=null)
 	{
-
 		$controllerRequest = ControllerRequest::getInstance();
 
 		try {
@@ -245,6 +244,9 @@ class PayController extends ApplicationController
 			$this->Account->setTransaction($transaction);
 			$this->Datos->findFirst();
 
+			# Variable respuesta de facturación de cuenta
+			$response = null;
+
 			foreach($cuentas as $cuenta){
 				$cuenta[0] = $this->filter($cuenta[0], 'int');
 				$cuenta[1] = $this->filter($cuenta[1], 'int');
@@ -254,7 +256,19 @@ class PayController extends ApplicationController
 					Flash::error('No existe la cuenta '.$cuenta[0].':'.$cuenta[1]);
 					$transaction->rollback();
 				} else {
-					if($accountCuenta->estado!='B'){
+					# Validamos si la cuenta esta sin facturar
+					if($accountCuenta->estado =='A'){
+						
+						$Facturacion = new Facturacion();
+						$response = $Facturacion->genVoice($accountCuenta, $transaction);
+
+						# Si ocurrio algun error al crear la factura
+						if(!$response){
+							Flash::error('Error al generar la factura: '.$response['error'].' Cuenta: '.$cuenta[0].':'.$cuenta[1]);
+							$transaction->rollback();
+						}
+
+					}else if($accountCuenta->estado!='B'){
 						Flash::error('La cuenta no tiene un estado apto para ser liquidada '.$cuenta[0].':'.$cuenta[1]);
 						$transaction->rollback();
 					}
@@ -1082,6 +1096,8 @@ class PayController extends ApplicationController
 				return $this->redirect('order/add/'.$accountMaster->salon_mesas_id);
 			} else {
 				GarbageCollector::freeControllerData('order');
+				Session::setData('current_master_id_ult', $accountCuenta->account_master_id);
+				Session::setData("current_cuenta_ult", $accountCuenta->cuenta);
 				return $this->redirect('tables/index/'.$accountMaster->salon_id);
 			}
 

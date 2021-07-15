@@ -326,6 +326,20 @@ Hfos.getApplication().getMenu().setOptions([
 						action: 'horti'
 					});
 				}
+			},
+			{
+				'title': 'Reporte de movimientos por referencia',
+				'icon': 'archives.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-movinventario',
+						icon: 'archives.png',
+						title: "Reporte de movimientos por referencia",
+						width: '700px',
+						height: '470px',
+						action: 'movinventario'
+					});
+				}
 			}
 		]
 	},

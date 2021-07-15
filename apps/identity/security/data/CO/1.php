@@ -57,12 +57,12 @@
   ),
   'movimiento_niif' => 
   array (
-    'index' => true,
-    'buscar' => true,
-    'guardar' => true,
-    'eliminar' => true,
-    'cambiarFecha' => true,
-    'copiar' => true,
+    'index' => false,
+    'buscar' => false,
+    'guardar' => false,
+    'eliminar' => false,
+    'cambiarFecha' => false,
+    'copiar' => false,
   ),
   'consultas' => 
   array (
@@ -86,7 +86,7 @@
   ),
   'informe_balance_consolidado' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'libro_auxiliar' => 
   array (
@@ -174,7 +174,7 @@
   ),
   'corregir_cartera' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'activos' => 
   array (
@@ -259,12 +259,12 @@
   'recibo_caja' => 
   array (
     'index' => true,
-    'buscar' => true,
-    'ver' => true,
-    'nuevo' => true,
-    'generar' => true,
-    'anular' => true,
-    'imprimir' => true,
+    'buscar' => false,
+    'ver' => false,
+    'nuevo' => false,
+    'generar' => false,
+    'anular' => false,
+    'imprimir' => false,
   ),
   'cheque' => 
   array (
@@ -380,19 +380,19 @@
   ),
   'niif' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'nic' => 
   array (
-    'index' => true,
-    'save' => true,
-    'delete' => true,
-    'search' => true,
-    'rcs' => true,
+    'index' => false,
+    'save' => false,
+    'delete' => false,
+    'search' => false,
+    'rcs' => false,
   ),
   'cuentas' => 
   array (

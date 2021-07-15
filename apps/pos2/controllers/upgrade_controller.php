@@ -1740,4 +1740,23 @@ class UpgradeController extends ApplicationController
 		}
 	}
 
+	public function limpiarMetaDataAction(){
+		$this->setResponse('json');
+		echo json_encode(apc_fetch('minimarket/hpos2hminimarket.clientes')); exit;
+		print_r(apc_cache_info()); exit;
+
+		
+		//GarbageCollector::freeAllMetaData();
+		// hpos2datos
+		// apc_delete('hpos2datos');
+		/*
+			apc_delete('guarigua/hpos2salon');
+
+			print_r(apc_cache_info()); exit;
+		*/
+		
+		
+		return array('procesada');
+	}
+
 }

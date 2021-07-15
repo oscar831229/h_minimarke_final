@@ -1,0 +1,15 @@
+appmenu.js:	Clave.authForModule('tables');
+order.js:		new Utils.redirectToAction("tables/back/" + this._salonId);
+order.js:		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/joinOrders");
+order.js:		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/changeTable");
+order_old.js:		new Utils.redirectToAction("tables/back/" + this._salonId);
+order_old.js:		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/joinOrders");
+order_old.js:		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/changeTable");
+tables.js:  	new Utils.redirectToAction('tables/index/'+id);
+tables.js:  new AJAX.viewRequest({action:"tables/deleteTable/"+id, container:"messages"});
+tables.js:				new Ajax.Request(Utils.getKumbiaURL('tables/addTable'), {
+tables.js:		new Ajax.Request(Utils.getKumbiaURL("tables/deleteTable/"+mesa.id), {
+tables.js:	new Ajax.Request(Utils.getKumbiaURL("tables/moveTable/"+mesa2.id), {
+tables.js:	new Ajax.Request(Utils.getKumbiaURL('tables/moveTable/'+mesa.id), {
+tables.js:		new Ajax.Request(Utils.getKumbiaURL('tables/changeNumber/'+numeroMesa.parentNode.parentNode.id), {
+tables.js:				window.location = Utils.getKumbiaURL("tables/index/"+this.lang);

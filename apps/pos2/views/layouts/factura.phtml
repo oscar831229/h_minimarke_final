@@ -45,7 +45,7 @@ function center($text, $size) {
 }
 
 echo center($factura->nombre_cadena, 35), "\n";
-echo center("REGIMEN COMUN", 35), "\n";
+echo center($factura->nota_contribuyentes, 35), "\n";
 echo center($factura->documento." No. : ".$factura->nit, 35)."\n";
 echo center($factura->nombre_hotel, 35)."\n";
 echo center($factura->direccion, 35)."\n";
@@ -56,67 +56,70 @@ if ($preview == false) {
 	if ($factura->tipo == "F") {
 		echo center("RESOLUCIÓN NO ".$factura->resolucion, 35)."\n";
 		echo center("DEL ".$factura->fecha_resolucion, 35)."\n";
-		echo center("NUMER. No ".$factura->prefijo_facturacion." ".sprintf("%06s", $Salon->consecutivo_inicial)." AL ".
-		$factura->prefijo_facturacion.' '.sprintf("%06s", $Salon->consecutivo_final), 35)."\n";
+		echo center("NUMER. No ".$factura->prefijo_facturacion." ".sprintf("%06s", $factura->numero_inicial)." AL ".
+		$factura->prefijo_facturacion.' '.sprintf("%06s", $factura->numero_final), 35)."\n";
 	}
 } else {
 	echo center("ESTADO DE CUENTA", 35)."\n";
 }
-echo center("Fecha: {$factura->fecha}" , 35)."\n";
+echo center("Fecha factura: {$factura->fecha} $factura->hora" , 35)."\n";
 echo center("Cajero: ".$factura->usuarios_nombre, 35)."\n";
 echo center("Ubicación: {$factura->salon_nombre} Mesa: {$factura->salonmesas_numero}", 40)."\n";
-echo center("Comanda #: {$factura->comanda} Hora: ".$factura->hora, 35)."\n";
-
+echo center("Comanda #: {$factura->comanda}", 35)."\n";
 ?>
 </pre>
+<?php
+if($factura->tipo_venta=='F'): ?>
+<div align="left">
+<pre>
+ <?php 
+ 	echo center( "CLIENTE: ".$factura->nombre, 35)."\n";
+ 	echo center( "NIT o CC ".$factura->cedula, 35)."\n";
+ ?>
+</pre>
+</div>
+<?php endif ?>
 <table width="250" cellspacing="0" border="0" align='left'>
 	<tr>
 		<th>Cant.</th>
 		<th>Descrip.</th>
 		<th>Vr Venta</th>
-		<th>Iv</th>
+		<th>Imp.</th>
 	</tr>
 	<?php
 
+	$bases = array();
+
 	foreach ($detalleFactura as $detalle) {
+
 		echo "<tr>";
 		echo "<td align='center'>$detalle->cantidad</td>";
 		echo '<td>', nl2br($detalle->menus_items_nombre), '</td>';
 		echo "<td align='right'>", Currency::number($detalle->total), "</td>";
 		echo "<td align='right'>", $detalle->porcentaje_iva, "</td>";
 		echo "</tr>";
+
+		if($detalle->porcentaje_iva > 0){
+			$bases[$detalle->porcentaje_iva] = isset($bases[$detalle->porcentaje_iva]) ? $bases[$detalle->porcentaje_iva] + $detalle->valor : $detalle->valor;
+			$impuesto[$detalle->porcentaje_iva] = isset($impuesto[$detalle->porcentaje_iva]) ? $impuesto[$detalle->porcentaje_iva] + $detalle->iva : $detalle->iva;
+		}
+		
+
 	}
 ?>
 </table>
 <br><br><br>
 <div style='pading: 0px; width:250px' align='right'>
------------------------------------
-TOTAL PEDIDO: <?php echo Currency::number($factura->total) ?><br>
+<br>
 ===================================
 </div>
 <table width='250'>
-	<tr>
-		<td align='right'>
-			ALIMENTOS:
-		</td>
-		<td align='right'>
-			<?php echo Currency::number($factura->total_alimentos) ?>
-		</td>
-	</tr>
-	<tr>
-		<td align='right'>
-			BEBIDAS:
-		</td>
-		<td align='right'>
-			<?php echo Currency::number($factura->total_bebidas) ?>
-		</td>
-	</tr>
 	<tr>
 		<td></td>
 	</tr>
 	<tr>
 		<td align="right">
-			Subtotal:
+			SUB-TOTAL:
 		</td>
 		<td align='right'>
 			<?php echo Currency::number($factura->subtotal) ?>
@@ -146,20 +149,47 @@ TOTAL PEDIDO: <?php echo Currency::number($factura->total) ?><br>
 			<?php echo Currency::number($factura->propina) ?>
 		</td>
 	</tr>
-	<tr>
-		<td align="right" style='font-size:14px'>
-			T O T A L:
-		</td>
-		<td align="right" style='font-size:14px'>
-			<?php echo Currency::number($factura->total) ?>
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-	</tr>
 </table>
 </div>
+<div style='pading: 0px; width:250px' align="right">
+----------------------------------
+GRAN TOTAL: <?php echo Currency::number($factura->total) ?>
+<br>
+===================================
+</div>
+<br>
+<div style='pading: 0px; width:250px'>
+----------------------------------
+FORMAS DE PAGO<br>
+===================================
+</div>
 <?php
+echo "<table width='250'>";
+foreach ($pagosFactura as $pago) {
+	$formapago = $pago->getFormasPago()->detalle;  
+	echo "<tr>";
+	echo "<td align='left' with='50%'>$formapago</td>";
+	echo "<td align='right'>", Currency::number($pago->pago), "</td>";
+	echo "</tr>";
+}
+echo "</table>";
+echo "<br>";
+
+?>
+<div style='pading: 0px; width:250px'>
+Detalles impuesto:<br>
+===================================
+</div>
+<?php
+echo "<table width='250'>";
+foreach ($bases as $iva => $base) {
+	echo "<tr>";
+	echo "<td align='left' with='50%'>$iva%</td>";
+	echo "<td align='right'>Base ", Currency::number($base), "</td>";
+	echo "<td align='right'>Impuesto ", Currency::number($impuesto[$iva]), "</td>";
+	echo "</tr>";
+}
+echo "</table>";
 
 if(!$preview&&$factura->propina>0&&$factura->leyenda_propina=='S'){
 	echo "<pre style='width:270px;text-align:justify'>", $factura->texto_propina, "</pre>";
@@ -200,18 +230,7 @@ echo '</pre>
 <div align="left">'; ?>
 CARGO POR PLAN: <?php echo Currency::number($factura->total) ?>
 </div>
-<?php }
-if($factura->tipo_venta=='F'): ?>
-<pre>
-
-
-
- Firma:---------------------
- <?php echo $factura->nombre."\n" ?>
- C.C. <?php echo $factura->cedula ?>
-</pre>
-</div>
-<?php endif ?>
+<?php } ?>
 
 <?php if($factura->tipo_venta=='U'): ?>
 <pre>
@@ -263,7 +282,6 @@ if(!$preview):
 ?>
 <br>
 <?php echo $factura->texto_impresion ?><br/>
-PRESTACIÓN DEL SERVICIO A CONTADO
 <?php else: ?>
 ESTE DOCUMENTO NO ES UNA <br>FACTURA DE VENTA
 <br><br>
@@ -281,12 +299,18 @@ ESTE DOCUMENTO NO ES UNA <br>FACTURA DE VENTA
 
 <script type='text/javascript'>
 	new Event.observe(window, "load", function(){
+		<?php  
+		if($redirec_pay){
+		?>
 		window.setTimeout(function(){
 			<?php if($preview==false&&$reprint==false): ?>
 			new Utils.redirectOpenerToAction("pay/index/<?php echo $factura->account_master_id ?>:<?php echo $accountCuenta->cuenta ?>");
 			<?php endif; ?>
 			window.print();
 		}, 500);
+		<?php 
+		}
+		?>
 	});
 </script>
 

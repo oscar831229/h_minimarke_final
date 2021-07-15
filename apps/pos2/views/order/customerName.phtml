@@ -19,6 +19,7 @@ echo '<div id="customerNameDiv">
 <div style="padding:3px">';
 
 if(isset($accountCuenta)&&$accountCuenta){
+	//echo "aaaa>" .print_r($accountCuenta, 1);
 	if($accountCuenta->clientes_nombre){
 		echo "<strong>Nombre Actual</strong> $accountCuenta->clientes_nombre<br>";
 	}

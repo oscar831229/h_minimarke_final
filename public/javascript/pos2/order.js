@@ -16,6 +16,8 @@ var Pedido = Class.create({
 
 	id: 0,
 
+	tipoVenta: null,
+
 	_accountMasterId: 0,
 
 	_numeroCuenta: 0,
@@ -105,6 +107,7 @@ var Pedido = Class.create({
 			if (items.length == 1) {
 				//alert(items.length);
 				this.addItemToAccount(button, items[0]);
+				document.getElementById("buscarItem").value="";
 			}
 		};
 		
@@ -149,6 +152,10 @@ var Pedido = Class.create({
 					this.getModifiers(item.id);
 				};
 				this.preOrderCallbacks();
+				new Ajax.Request(Utils.getKumbiaURL('order/changeTipoVenta/'+$("tipo_venta").getValue()), {
+                                	method: 'GET',
+                                	onSuccess: this.refresh.bind(this)
+                        	});
 			}.bind(this, item),
 			onFailure: function(t){
 				this._preOrder.update(t.responseText);
@@ -283,10 +290,10 @@ var Pedido = Class.create({
 		});
 	},
 
-	_addComandaInternal: function(numero){
+	_addComandaInternal: function(numero, skip){
 		new Ajax.Request(Utils.getKumbiaURL("order/existeComanda/"+numero), {
 			method: 'GET',
-			onSuccess: function(numero, transport){
+			onSuccess: function(numero, skip, transport){
 
 				var response = JSON.parse(transport.responseText);
 				if(response>0){
@@ -294,13 +301,15 @@ var Pedido = Class.create({
 					return false;
 				};
 
-				var options = this._comandasElement.options;
-				for(var i=0;i<options.length;i++){
-					if(options[i].value==numero){
-						Growler.show('Esta comanda ya existe');
-						return false;
+				if (skip != true) {
+					var options = this._comandasElement.options;
+					for(var i=0;i<options.length;i++){
+						if(options[i].value==numero){
+							Growler.show('Esta comanda ya existe');
+							return false;
+						}
 					}
-				};
+				}
 
 				var option = document.createElement("OPTION");
 				option.value = numero;
@@ -308,7 +317,7 @@ var Pedido = Class.create({
 				this._comandasElement.appendChild(option);
 				this.setLastComanda(numero);
 				window.setTimeout(this.pedirPersonas.bind(this), 300);
-			}.bind(this, numero)
+			}.bind(this, numero, skip)
 		});
 	},
 
@@ -840,8 +849,29 @@ var Pedido = Class.create({
 		buscarItem.observe("keydown", function(event){
 			this._searchMode = true;
 		}.bind(this));
+		buscarItem.observe("change", function(buscarItem, event) {
+			var val = $("buscarItem").getValue();
+            if(val.length > 12 && this._searching == false){
+                    this._searching = true;
+                    new Ajax.Request(Utils.getKumbiaURL("order/searchItem"), {
+                            parameters: {
+                                    text: val
+                            },
+                            onSuccess: function(transport){
+                                    this.updateMenuDetails(JSON.parse(transport.responseText));
+                                    this._searching = false;
+                            }.bind(this),
+                            onFailure: function(transport){
+                                    alert(transport.responseText);
+                                    this._searching = false;
+                            }.bind(this)
+                    });
+            } else {
+                    this.updateMenuDetails([]);
+            }
+		}.bind(this));
 		buscarItem.observe("keyup", function(buscarItem, event){
-			if(this._searching==false){
+			if(this._searching == false){
 				if(buscarItem.value.length>1){
 					this._searching = true;
 					new Ajax.Request(Utils.getKumbiaURL("order/searchItem"), {
@@ -1036,7 +1066,6 @@ var Pedido = Class.create({
 			$('gendoc').update("Imprimir<br>Orden");
 		};
 		tipoVenta.observe('change', this.onChangeTipoVenta.bind(this, tipoVenta));
-
 		if(this._pideAsientos=='N'){
 			$('asientosDiv').hide();
 		} else {
@@ -1235,8 +1264,19 @@ var Pedido = Class.create({
 
 	payAccount: function(){
 		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
+		var type = $F('tipo_venta');
 		if(numItems>0){
-			new Utils.redirectToAction('pay/index/0:'+this._cuentasElement.getValue())
+			if($('nombre_cliente').value!="PARTICULAR"){
+				new Utils.redirectToAction('pay/index/0:'+this._cuentasElement.getValue())
+			} else {
+				if(type=='F'){
+					Growler.show('Debe especificar el cliente antes de generar la Factura');
+				} else {
+					Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
+				};
+				this.setCustomerName();
+				return;
+			}
 		} else {
 			Growler.show('Aun no puede liquidar la cuenta');
 		}

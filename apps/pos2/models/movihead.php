@@ -152,6 +152,11 @@ class Movihead extends RcsRecord {
 	protected $cree;
 	protected $impo;
 
+	/**
+	 * @var string
+	 */
+	protected $motaju;
+
 
 	/**
 	 * Metodo para establecer el valor del campo comprob
@@ -597,6 +602,16 @@ class Movihead extends RcsRecord {
 		return $this->v_total;
 	}
 
+	public function getMotaju()
+	{
+		return $this->motaju;
+	}
+
+	public function setMotaju($motaju)
+	{
+		$this->motaju = $motaju;
+	}
+
 	/**
 	 * Devuelve el valor del campo numero_comprob_contab
 	 * @return integer
@@ -670,4 +685,5 @@ class Movihead extends RcsRecord {
 	}
 
 }
+
 
