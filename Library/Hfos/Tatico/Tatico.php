@@ -342,10 +342,12 @@ class Tatico extends UserComponent
 			if (!isset($movement['FacturaC'])||!$movement['FacturaC']) {
 				$this->_throwException('La entrada debe tener una factura de compra asociada');
 			}
-			$conditions = "comprob LIKE 'E%' AND nit='{$movement['Nit']}' AND factura_c='{$movement['FacturaC']}'";
+
+			$conditions = "comprob LIKE 'E%' AND nit='{$movement['Nit']}' AND IFNULL(prefijo_c,'')='{$movement['PrefijoC']}' AND factura_c='{$movement['FacturaC']}'";
 			$movihead = self::getModel('Movihead')->findFirst($conditions);
 			if ($movihead != false) {
-				$this->_throwException('Ya se realizó la entrada al almacén a la factura '.$movement['FacturaC'].' del proveedor '.$tercero->getNit().'/'.$tercero->getNombre().'. La entrada es la '.$movihead->getComprob().'-'.$movihead->getNumero(), 10010);
+				$document = isset($movement['PrefijoC']) && !empty($movement['PrefijoC']) ? $movement['PrefijoC'].'-'.$movement['FacturaC'] : $movement['FacturaC'];
+				$this->_throwException('Ya se realizó la entrada al almacén a la factura '.$document.' del proveedor '.$tercero->getNit().'/'.$tercero->getNombre().'. La entrada es la '.$movihead->getComprob().'-'.$movihead->getNumero(), 10010);
 			}
 		}
 
@@ -558,6 +560,9 @@ class Tatico extends UserComponent
 		}
 		if (isset($movement['FormaPago'])) {
 			$movihead->setFormaPago($movement['FormaPago']);
+		}
+		if (isset($movement['PrefijoC'])) {
+			$movihead->setPrefijoC($movement['PrefijoC']);
 		}
 		if (isset($movement['FacturaC'])) {
 			$movihead->setFacturaC($movement['FacturaC']);

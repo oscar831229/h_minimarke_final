@@ -117,6 +117,11 @@ class Movihead extends RcsRecord
 	protected $saldo;
 
 	/**
+	 * @var string
+	 */
+	protected $prefijo_c;
+
+	/**
 	 * @var integer
 	 */
 	protected $factura_c;
@@ -324,6 +329,14 @@ class Movihead extends RcsRecord
 	 */
 	public function setSaldo($saldo){
 		$this->saldo = $saldo;
+	}
+
+	/**
+	 * Metodo para establecer el valor del campo prefijo_c
+	 * @param integer $prefijo_c
+	 */
+	public function setPrefijoC($prefijo_c){
+		$this->prefijo_c = $prefijo_c;
 	}
 
 	/**
@@ -556,6 +569,14 @@ class Movihead extends RcsRecord
 	 */
 	public function getSaldo(){
 		return $this->saldo;
+	}
+
+	/**
+	 * Devuelve el valor del campo prefijo_c
+	 * @return integer
+	 */
+	public function getPrefijoC(){
+		return $this->prefijo_c;
 	}
 
 	/**

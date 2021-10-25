@@ -56,6 +56,14 @@ class SocketsTransport {
 	 */
 	private $_host = '';
 
+
+	/**
+	 *  Puerto de conexión socket
+	 *
+	 */
+	
+	private $_port = 80;
+
 	/**
 	 * Metodo utilizado para realizar la peticion
 	 *
@@ -150,21 +158,30 @@ class SocketsTransport {
 	 * @param int $port
 	 */
 	public function __construct($scheme, $host, $uri, $method, $port=80){
+		
 		if($scheme=='https'){
 			$address = 'ssl://'.$host;
 		} else {
 			$address = 'tcp://'.$host;
 		}
 		$this->_host = $host;
-		$this->_socketHandler = @pfsockopen($host, $port, $errorString);
-		if(!$this->_socketHandler){
-			throw new SoapException($errorString);
-		}
+		$this->_port = $port;
+		
 		if($this->_isSupportedMethod($method)==false){
 			throw new SoapException('El tipo de metodo HTTP "'.$method.'" no está soportado');
 		}
+
 		$this->_method = $method;
 		$this->_uri = $uri;
+
+	}
+
+
+	private function conectarSocket(){
+		$this->_socketHandler = @fsockopen($this->_host, $this->_port, $errorString);
+		if(!$this->_socketHandler){
+			throw new SoapException($errorString);
+		}
 	}
 
 	/**
@@ -251,33 +268,44 @@ class SocketsTransport {
 	 * @access public
 	 */
 	public function send(){
+
+		# Abrir socket de petición
+		$this->conectarSocket();
+	
 		if($this->_method=='GET'){
-			$this->_httpRequest = "GET /".$this->_uri." HTTP/1.1\r\n";
+			fwrite($this->_socketHandler,"GET ".$this->_uri." HTTP/1.1\r\n");
 		} else {
 			if($this->_method=='POST'){
-				//?XDEBUG_SESSION_START=noshe
-				$this->_httpRequest = "POST /".$this->_uri." HTTP/1.1\r\n";
+				fwrite($this->_socketHandler, "POST ".$this->_uri." HTTP/1.1\r\n");
 			}
 		}
 		foreach($this->_headers as $headerName => $headerValue){
-			$this->_httpRequest.=$headerName.': '.$headerValue."\r\n";
+			fwrite($this->_socketHandler, $headerName.': '.$headerValue."\r\n");
 		}
 		if(count($this->_cookies)>0||$this->_enableCookies==true){
-			$this->_httpRequest.='Cookie: ';
+			fwrite($this->_socketHandler,'Cookie: ');
 			foreach($this->_cookies as $cookieName => $cookieValue){
-				 $this->_httpRequest.=$cookieName.'='.$cookieValue.';';
+				 fwrite($this->_socketHandler,$cookieName.'='.$cookieValue.';');
 			}
 			if(isset($_SESSION['KHC'][$this->_host])){
 				foreach($_SESSION['KHC'][$this->_host] as $cookieName => $cookieValue){
-					$this->_httpRequest.=$cookieName.'='.$cookieValue.';';
+					fwrite($this->_socketHandler,$cookieName.'='.$cookieValue.';');
 				}
 			}
-			$this->_httpRequest.="\r\n";
+			fwrite($this->_socketHandler,"\r\n");
 		}
+
+
+
+
 		if($this->_method=='POST'){
+			
+			fwrite($this->_socketHandler, "Host: localhost\r\n");
+			fwrite($this->_socketHandler, "Content-Type: application/x-www-form-urlencoded\r\n");
+			
 			if($this->_rawPostData==''){
-				$this->_httpRequest.="Content-Length: 28\r\n";
-				$this->_httpRequest.="Content-Type: application/x-www-form-urlencoded\r\n";
+				fwrite($this->_socketHandler,"Content-Length: 28\r\n");
+				fwrite($this->_socketHandler,"Content-Type: application/x-www-form-urlencoded\r\n");
 				$postData = array();
 				/*if(isset($_POST)){
 					foreach($_POST as $key => $value){
@@ -286,17 +314,43 @@ class SocketsTransport {
 					$this->_httpRequest.="\r\n".join("&", $postData);
 				} else {
 					$this->_httpRequest.="\r\n";
-				}*/
-				$this->_httpRequest.="\r\n";
+				}
+				$this->_httpRequest.="\r\n";*/
 			} else {
-				$this->_httpRequest.="Content-Length: ".i18n::strlen($this->_rawPostData)."\r\n";
-				$this->_httpRequest.="\r\n";
-				$this->_httpRequest.=$this->_rawPostData;
+				fwrite($this->_socketHandler, "Content-Length: ".i18n::strlen($this->_rawPostData)."\r\n");
+				fwrite($this->_socketHandler, "Connection: close\r\n");
+				fwrite($this->_socketHandler, "\r\n");
+				fwrite($this->_socketHandler,$this->_rawPostData);
 			}
 		} else {
-			$this->_httpRequest.="\r\n";
+			fwrite($this->_socketHandler,"\r\n");
 		}
-		fwrite($this->_socketHandler, $this->_httpRequest);
+
+
+		/*  FUNCIONAL NO BORRAR
+		
+		fwrite($this->_socketHandler, "POST ".$this->_uri." HTTP/1.1\r\n");
+		foreach($this->_headers as $headerName => $headerValue){
+			fwrite($this->_socketHandler, $headerName.': '.$headerValue."\r\n");
+		}
+		if(count($this->_cookies)>0||$this->_enableCookies==true){
+			fwrite($this->_socketHandler,'Cookie: ');
+			foreach($this->_cookies as $cookieName => $cookieValue){
+				 fwrite($this->_socketHandler,$cookieName.'='.$cookieValue.';');
+			}
+			if(isset($_SESSION['KHC'][$this->_host])){
+				foreach($_SESSION['KHC'][$this->_host] as $cookieName => $cookieValue){
+					fwrite($this->_socketHandler,$cookieName.'='.$cookieValue.';');
+				}
+			}
+			fwrite($this->_socketHandler,"\r\n");
+		}
+		fwrite($this->_socketHandler, "Host: localhost\r\n");
+		fwrite($this->_socketHandler, "Content-Type: application/x-www-form-urlencoded\r\n");
+		fwrite($this->_socketHandler, "Content-Length: ".i18n::strlen($this->_rawPostData)."\r\n");
+		fwrite($this->_socketHandler, "Connection: close\r\n");
+		fwrite($this->_socketHandler, "\r\n");
+		fwrite($this->_socketHandler,$this->_rawPostData);*/
 
 		$response = '';
 		$header = true;
@@ -330,22 +384,35 @@ class SocketsTransport {
 			}
 			++$i;
     	}
+
+
     	$this->_responseBody = '';
+
     	if(isset($this->_responseHeaders['Content-Length'])){
     		$contentLength = $this->_responseHeaders['Content-Length'];
     		for($i=0;$i<$contentLength;$i++){
     			$this->_responseBody.=fgetc($this->_socketHandler);
     		}
     	} else {
+
     		while(!feof($this->_socketHandler)){
     			$this->_responseBody.=fgetc($this->_socketHandler);
     		}
+
+    		$_aux_body = explode("\r\n",$this->_responseBody);
+    		$this->_responseBody = $_aux_body[1];
     	}
+
     	if($this->_enableCookies==true){
     		if(!isset($_SESSION['KHC'][$this->_host])){
     			$_SESSION['KHC'][$this->_host] = $this->getResponseCookies();
     		}
     	}
+
+
+    	fclose($this->_socketHandler);
+
+	
 	}
 
 	/**
@@ -407,6 +474,14 @@ class SocketsTransport {
 	 */
 	public function enableCookies($enableCookies){
 		$this->_enableCookies = $enableCookies;
+	}
+
+	/**
+	 * [setUrl setter url servicio autenticación ]
+	 * @param [type] $url [description]
+	 */
+	public function setUrl($url){
+		$this->_uri = $url;
 	}
 
 }

@@ -89,6 +89,15 @@ class EntradasController extends HyperFormController
 				'notBrowse' => true,
 				'filters' => array('date')
 			),
+			'prefijo_c' => array(
+				'single' => 'Prefijo factura',
+				'type' => 'text',
+				'size' => 10,
+				'maxlength' => 10,
+				'notNull' => false,
+				'notBrowse' => true,
+				'filters' => array('int')
+			),
 			'factura_c' => array(
 				'single' => 'Factura No.',
 				'type' => 'int',
@@ -423,6 +432,7 @@ class EntradasController extends HyperFormController
 				'NPedido' => $request->getParamPost('n_pedido', 'int'),
 				'FechaVencimiento' => $fecha,
 				'FechaEntrega' => $fecha,
+				'PrefijoC' => $request->getParamPost('prefijo_c'),
 				'FacturaC' => $request->getParamPost('factura_c', 'int'),
 				'AlmacenDestino' => $almacen,
 				'Estado' => 'C',

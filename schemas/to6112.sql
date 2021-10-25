@@ -125,3 +125,5 @@ alter table inve add column rodizio char(1) null default 'N';
 
 alter table nits add column email varchar(200) null;
 alter table movi drop column consecutivo;
+
+ALTER TABLE movihead ADD COLUMN prefijo_c VARCHAR(10) NULL AFTER saldo ;
