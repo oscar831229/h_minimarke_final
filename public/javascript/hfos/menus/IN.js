@@ -340,6 +340,20 @@ Hfos.getApplication().getMenu().setOptions([
 						action: 'movinventario'
 					});
 				}
+			},
+			{
+				'title': 'Reporte analisis de compras',
+				'icon': 'archives.png',
+				'click': function(){
+					Hfos.getApplication().run({
+						id: 'win-analisiscompras',
+						icon: 'archives.png',
+						title: "Reporte de analisis de compras",
+						width: '700px',
+						height: '470px',
+						action: 'analisiscompras'
+					});
+				}
 			}
 		]
 	},

@@ -91,7 +91,7 @@ class Hfos_Application
 			'traslados', 'salidas', 'salidas-buffet', 'saldos-almacen', 'stocks', 'reabrir', 'cerrar', 'ajustes',
 			'saldos-almacen-consolidado', 'consecutivos', 'movimientos-inve', 'trasunto',
 			'listado-referencias','listado-proveedores', 'transformaciones', 'fisico',
-			'transaccion-inve', 'matriz-proveedores', 'comportamiento', 'horti','movinventario', 'consumos',
+			'transaccion-inve', 'matriz-proveedores', 'comportamiento', 'horti','movinventario', 'analisiscompras', 'consumos',
 			'impresion'
 		),
 		'CO' => array(

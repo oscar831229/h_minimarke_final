@@ -173,6 +173,10 @@
   array (
     'index' => true,
   ),
+  'analisiscompras' => 
+  array (
+    'index' => true,
+  ),
   'impresion' => 
   array (
     'index' => true,

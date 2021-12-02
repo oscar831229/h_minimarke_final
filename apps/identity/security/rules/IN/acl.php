@@ -59,6 +59,7 @@ $menuDisposition = array(
 			'listado_proveedores',
 			'horti',
 			'movinventario',
+			'analisiscompras',
 			'impresion'
 		)
 	),
@@ -553,6 +554,15 @@ $accessList = array(
 	'movinventario' => array(
 		'elevation' => true,
 		'description' => 'Reporte movimientos por referencia',
+		'actions' => array(
+			'index' => array(
+				'description' => 'Ingreso a',
+			),
+		)
+	),
+	'analisiscompras' => array(
+		'elevation' => true,
+		'description' => 'Reporte de analisis de compras',
 		'actions' => array(
 			'index' => array(
 				'description' => 'Ingreso a',
