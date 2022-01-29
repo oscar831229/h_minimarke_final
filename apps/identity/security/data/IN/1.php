@@ -175,7 +175,7 @@
   ),
   'analisiscompras' => 
   array (
-    'index' => true,
+    'index' => false,
   ),
   'impresion' => 
   array (
