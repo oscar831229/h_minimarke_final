@@ -263,7 +263,7 @@ class PayController extends ApplicationController
 						$response = $Facturacion->genVoice($accountCuenta, $transaction);
 
 						# Si ocurrio algun error al crear la factura
-						if(!$response){
+						if(!$response['success']){
 							Flash::error('Error al generar la factura: '.$response['error'].' Cuenta: '.$cuenta[0].':'.$cuenta[1]);
 							$transaction->rollback();
 						}
