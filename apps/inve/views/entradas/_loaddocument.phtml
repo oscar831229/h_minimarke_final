@@ -1,0 +1,73 @@
+
+<?php
+
+$request = ControllerRequest::getInstance();
+$almacen = $request->getParamRequest('almacen');
+$numero = $request->getParamRequest('numero');
+$comprob = "E".sprintf('%02s',$almacen);
+$control = true;
+if(!empty($numero)){
+?>
+
+
+<table class="hyGridTable zebraSt sortable" align="center">
+    <thead>
+        <tr>
+            <th>Nombre <?= $comprob ?></th>
+            <th>Fecha creado</th>
+            <th>Fecha procesado seven</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php
+    $files_upload = $MoviheadFiles->find("comprob='$comprob' AND numero='$numero'");
+    foreach ($files_upload as $key => $file) {
+        $control = false;
+    ?>
+        <tr>
+            <td><a href="<?php echo Core::getInstancePath().'upload/inve/' ?><?= $file->file_name ?>" target="_blank"><?= $file->file_name_origin ?></a></td>
+            <td><?= $file->fecha_creacion ?></td>
+            <td><?= $file->fecha_seven ?></td>
+        </tr>
+    <?php
+    }
+?>
+    </tbody>
+</table>
+<?php
+    }
+    if($control && empty($movihead)){
+?>
+<br><br>
+
+<script type="text/javascript">
+    add = function(){
+        var myHtmlContent = '<tr><td><input type="file" name="archivo[]" class="filebitacora"></td></tr>';
+        var tableRef = document.getElementById('tblfiles').getElementsByTagName('tbody')[0];
+
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+        newRow.innerHTML = myHtmlContent;
+    }
+</script>
+
+<div style="height:200px; overflow-y: scroll; width:100%">
+<center><input type="button" class="newButton" value="Adicionar" id="newfile" title="Adicionar" onclick="add()"></center>
+<br>
+<table align="center" id="tblfiles">
+    <tbody>
+        <tr>
+            <td><input type="file" name="archivo[]" class="filebitacora"></td>
+        </tr>
+        <tr>
+            <td><input type="file" name="archivo[]" class="filebitacora"></td>
+        </tr>
+        <tr>
+            <td><input type="file" name="archivo[]" class="filebitacora"></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<?php
+    }
+?>
+

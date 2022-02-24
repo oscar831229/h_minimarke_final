@@ -4,5 +4,6 @@ apps/*/config/*.ini
 apps/*/logs/*
 public/temp
 public/out
+public/upload
 Library/Mpdf/ttfontdata
 apps/pos2/models/metadata/

@@ -127,6 +127,57 @@ alter table nits add column email varchar(200) null;
 alter table movi drop column consecutivo;
 
 ALTER TABLE movihead ADD COLUMN prefijo_c VARCHAR(10) NULL AFTER saldo ;
+
+CREATE TABLE `movihead_files` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `comprob` CHAR(3),
+  `almacen` INT(10),
+  `numero` INT(11),
+  `file_name` VARCHAR(255),
+  `file_name_origin` VARCHAR(255),
+  `seven_name` VARCHAR(255) NULL,
+  `proccess_seven` VARCHAR(1) DEFAULT 'N',
+  `error_ftp_seven` TEXT NULL,
+  `fecha_seven` DATETIME NULL,
+  `fecha_creacion` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE `spofactu_birad` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `almacen` INT(10),
+  `numero` INT(11),
+  `fecha` DATE NOT NULL,
+  `bir_con` VARCHAR(25),
+  `bir_numo` VARCHAR(25),
+  `fecha_creacion` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE `param_spofactu_birrad` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `host_amadeus` VARCHAR(25),
+  `user_amadeus` VARCHAR(25),
+  `password_amadeus` VARCHAR(25),
+  `db_amadeus_inve` VARCHAR(25),
+  `db_amadeus_pos` VARCHAR(25),
+  `server_oracle` VARCHAR(25),
+  `user_oracle` VARCHAR(25),
+  `password_oracle` VARCHAR(25),
+  `schema_oracle` VARCHAR(25),
+  `server_ftp` VARCHAR(25),
+  `user_ftp` VARCHAR(25),
+  `password_ftp` VARCHAR(25),
+  `directorio_servidor` VARCHAR(255),
+  `directorio_ubicacion` VARCHAR(255),
+  `usuario_seven` VARCHAR(25),
+  `password_seven` VARCHAR(25),
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+ALTER TABLE param_ws_spofactu ADD  COLUMN arb_codc VARCHAR(10);
+
 CREATE INDEX movihead_fecha ON movihead(`fecha`);
 CREATE INDEX movihead_comprob ON movihead(`comprob`);
 CREATE INDEX movihead_almacen ON movihead(`almacen`);

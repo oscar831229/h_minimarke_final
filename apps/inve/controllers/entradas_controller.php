@@ -308,6 +308,10 @@ class EntradasController extends HyperFormController
 						'filters' => array('decimal')
 					)
 				)
+			),
+			1 => array(
+				'partial' => 'loaddocument',
+				'tabName' => 'Documentos anexos',
 			)
 		)
 	);
@@ -402,6 +406,10 @@ class EntradasController extends HyperFormController
 				Tag::displayTo($nameField, $movih1->readAttribute($field));
 			}
 		}
+
+		$this->setParamToView('movihead', $movihead);
+		$this->loadModel('MoviheadFiles');
+
 	}
 
 	/**
@@ -422,6 +430,13 @@ class EntradasController extends HyperFormController
 
 			$comprob = sprintf('E%02s', $almacen);
 			$tatico = new Tatico($comprob, $numero, $fecha);
+
+			# CREAR DIRECTORIO EN DONDE SE SUBEN LAS FACTURAS
+			if(isset($_FILES['archivo'])){
+				$ruta = Core::getInitialPath().'public/upload/inve/';
+				if(!file_exists($ruta))
+					mkdir($ruta, 0777, true);
+			}
 
 			//Crear el movimiento
 			$movement = array(
@@ -529,6 +544,10 @@ class EntradasController extends HyperFormController
 
 			//Agregar a Tatico
 			$tatico->addMovement($movement);
+
+
+
+			
 		}
 		catch(TaticoException $te){
 			return array(
@@ -551,6 +570,71 @@ class EntradasController extends HyperFormController
 			'almacen='.$almacen,
 			'numero='.$numeros['inve'],
 		);
+
+		# CARGAR DOCUMENTOS SEVEN.
+		if(isset($_FILES['archivo'])){
+
+			$numfile = 0;
+			foreach ($_FILES['archivo']['name'] as $index => $name) {
+
+				if(empty($name))
+					continue;
+
+				// file name
+				$filename = $name;
+				$filename_origin = $name;
+
+				# UBICACIONE ARCHIVO
+				$location = $ruta.$filename;
+			
+				// file extension
+				$file_extension = pathinfo($location, PATHINFO_EXTENSION);
+				$file_extension = strtolower($file_extension);
+			
+				// Valid extensions
+				$valid_ext = array("pdf","doc","docx","jpg","png","jpeg");
+			
+				$response = 0;
+				if(in_array($file_extension,$valid_ext)){
+					// Upload file
+					$filename = 'file_'.$comprob.'_'.$numeros['inve'].'_'.$numfile.'.'.$file_extension;
+					$location = $ruta.$filename;
+					if(move_uploaded_file($_FILES['archivo']['tmp_name'][$index] , $location)){
+						$numfile++;
+						$movihead_file = new MoviheadFiles();
+						$movihead_file->comprob = $comprob;
+						$movihead_file->almacen = $almacen;
+						$movihead_file->numero = $numeros['inve'];
+						$movihead_file->file_name = $filename;
+						$movihead_file->file_name_origin = $filename_origin;
+						$movihead_file->fecha_creacion = date("Y-m-d H:i:s");
+						$movihead_file->save();
+					} 
+				}
+
+			}
+
+			# GENERAR PDF DE LA ENTRADA PARA IMPORTARLO BITACORA
+			$fileUri = Tatico::getPrintUrl('pdf', $comprob, $almacen, $numeros['inve']);
+			$origin_file = Core::getInitialPath().'public/'.$fileUri;
+			if(file_exists($origin_file)){
+				$filename = 'file_'.$comprob.'_'.$numeros['inve'].'_'.$numfile.'.pdf'; 
+				$destination_file = $ruta.$filename;
+
+				if(copy($origin_file, $destination_file)){
+					$movihead_file = new MoviheadFiles();
+					$movihead_file->comprob = $comprob;
+					$movihead_file->almacen = $almacen;
+					$movihead_file->numero = $numeros['inve'];
+					$movihead_file->file_name = $filename;
+					$movihead_file->file_name_origin = basename($fileUri);
+					$movihead_file->fecha_creacion = date("Y-m-d H:i:s");
+					$movihead_file->save();
+				}
+
+			}
+
+		}
 
 		return array(
 			'status' => 'OK',

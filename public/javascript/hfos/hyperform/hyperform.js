@@ -1531,6 +1531,29 @@ var HyperForm = Class.create({
 		};
 		options.checkAcl = true;
 		reportType = this.getElement('reportType').getValue();
+
+		if(document.querySelectorAll('.filebitacora').length > 0){
+
+			var count = 0;
+			for (let i = 0; i < document.querySelectorAll('.filebitacora').length ; i++) {
+				if(document.querySelectorAll('.filebitacora')[0].files.length != 0){
+					count++;
+				}
+			}
+
+			if(count == 0){
+				if(!confirm('No ha adjuntado ningun archivo a la entrada, ¿Desea continuar con el proceso?')){
+					this._hideToolbarSpinner();
+					var saveButton = this.getElement('saveButton');
+					saveButton.enable();
+					return false;
+				}
+			}
+
+			return HfosAjax.JsonFormFileRequest(formElement, options);
+
+		}
+
 		if (reportType == 'screen') {
 			return HfosAjax.JsonFormRequest(formElement, options);
 		} else {

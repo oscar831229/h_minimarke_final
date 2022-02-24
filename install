@@ -12,16 +12,25 @@ chmod -R 777 apps/pos2/logs/
 mkdir Library/Mpdf/tmp
 chmod -R 777 Library/Mpdf/tmp
 
+mkdir public/upload/
+mkdir public/upload/inve
+chmod -R 777 public/upload/inve/
+
 chmod -R 777 apps/identity/security/data
 
 ln -s /tmp/ out
 sudo chmod -R 777 public/temp
 
+cd  public/
+
 cp index.config.php.dist index.config.php
 
 echo $dirPath
 echo $gitPath
+
 sed -i "s|$gitPath|$dirPath/|" index.config.php
+
+cd $dirpath
 
 function setIni {
         cd $dirPath
@@ -82,6 +91,7 @@ else
     mysql -uroot -phea101 r$instance -f < to6110.sql
     mysql -uroot -phea101 r$instance -f < to6111.sql
     mysql -uroot -phea101 r$instance -f < to6112.sql
+    mysql -uroot -phea101 p$instance -f < to6113.sql
 fi
 
 echo "Se cambio la clave a la defecto"

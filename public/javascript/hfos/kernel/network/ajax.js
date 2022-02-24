@@ -175,6 +175,109 @@ var HfosHttpRequest = Class.create({
 
 });
 
+
+var HfosHttpRequestUpload = Class.create({
+
+	_xmlHttpRequest: null,
+
+	_options: {},
+
+	/**
+	 * @constructor
+	 */
+	initialize: function(url, options, send){
+
+		try {
+
+			this._xmlHttpRequest = new XMLHttpRequest();
+
+			if(typeof options == "undefined"){
+				options = {};
+			};
+
+			if(typeof options.method == "undefined"){
+				options.method = "POST";
+			} else {
+				options.method = options.method.toUpperCase();
+			};
+
+			// if(typeof options.parameters != "undefined"){
+			// 	if(typeof options.parameters != "string"){
+			// 		options.parameters = $H(options.parameters).toQueryString();
+			// 	}
+			// };
+
+			if (options.method == "GET") {
+				if(typeof options.parameters != "undefined"){
+					url+="?"+options.parameters;
+				}
+			};
+
+			if(typeof send == "undefined"){
+				send = true;
+			};
+
+			this._xmlHttpRequest.open(options.method, url, true);
+			this._xmlHttpRequest.onreadystatechange = HfosHttpReadyState.onReadyStateChange.bind(this, this._xmlHttpRequest, options);
+			this._options = options;
+
+			if(typeof this._options.onCreate != "undefined"){
+				this._options.onCreate(this._xmlHttpRequest);
+			}
+
+			// this._xmlHttpRequest.setRequestHeader("Accept", "text/html, application/xml, text/xml, */*");
+			// this._xmlHttpRequest.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+			// if(options.contentTypeJson){
+			// 	this._xmlHttpRequest.setRequestHeader("X-Json-Accept", "text/json");
+			// }
+
+			// if(options.method=="POST"){
+			// 	this._xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			// };
+
+		}
+		catch(e){
+			HfosException.show(e);
+		};
+		if(send==true){
+			this.send();
+		}
+	},
+
+	/**
+	 * Envía la petición Http
+	 *
+	 * @this {HfosHttpRequest}
+	 */
+	send: function(){
+		try {
+			if(typeof this._options.parameters == "undefined"){
+				this._xmlHttpRequest.send();
+			} else {
+				if(this._options.method=="GET"){
+					this._xmlHttpRequest.send();
+				} else {
+					this._xmlHttpRequest.send(this._options.parameters);
+				}
+			}
+		}
+		catch(e){
+			HfosException.show(e);
+		}
+	},
+
+	/**
+	 * Obtiene el objeto XMLHttpRequest Nativo
+	 *
+	 * @this {HfosHttpRequest}
+	 */
+	getHttpRequest: function(){
+		return this._xmlHttpRequest;
+	}
+
+});
+
 var HfosAjax = {
 
 	setCallbacks: function(options){
@@ -398,6 +501,30 @@ HfosAjax.JsonFormRequest = function(form, options){
 		var bgProcess = new HfosBgProcess();
 		bgProcess.request(form.getAttribute('action'), options);
 	}
+};
+
+
+
+/**
+ * Enviar un formulario con archivos adjuntos que devuelve una salida JSON
+ *
+ * @constructor
+ */
+ HfosAjax.JsonFormFileRequest = function(form, options){
+
+	// Parametros en  FormData
+	var formData = new FormData(form);
+	options = HfosAjax.setCallbacks(options);
+	options = HfosAjax.bindJson('onSuccess', form.getAttribute('action'), options);
+	options.parameters = formData;
+	options.method = form.getAttribute('method');
+	if(typeof options.longProcess == "undefined"){
+		return new HfosHttpRequestUpload(form.getAttribute('action'), options);
+	} else {
+		var bgProcess = new HfosBgProcess();
+		bgProcess.request(form.getAttribute('action'), options);
+	}
+
 };
 
 /**
