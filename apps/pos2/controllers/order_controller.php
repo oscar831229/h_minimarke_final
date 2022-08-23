@@ -28,7 +28,7 @@ class OrderController extends ApplicationController
 	 *
 	 * @var string
 	 */
-	public $tipo_venta = 'H';
+	public $tipo_venta = 'F';
 
 	/**
 	 * Id del Account Master actual
