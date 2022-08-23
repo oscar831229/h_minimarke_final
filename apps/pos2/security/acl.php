@@ -455,6 +455,13 @@ $accessList = array(
 		),
 		'require' => 'admin'
 	),
+	'interfaz_redeban' => array(
+		'description' => 'Interfaz redeban',
+		'actions' => array(
+			'index' => 'Ingresar a interfaz redeban'
+		),
+		'require' => 'admin'
+	),
 	'rcs' => array(
 		'description' => 'Revisiones de la información del sistema',
 		'actions' => array(

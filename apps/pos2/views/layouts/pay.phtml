@@ -27,6 +27,202 @@ if($config->application->mode=='development'){
 }
 
 ?>
+<style>
+	.mg-b-10 {
+		margin-bottom: 10px;
+	}
+	.btn-warning {
+		color: #fff !important;
+	}
+	.btn-block {
+		display: block;
+		width: 100%;
+	}
+	.btn-warning {
+		color: #111;
+		background-color: #F49917;
+		border-color: #F49917;
+	}
+	.btn-success {
+		color: #fff;
+		background-color: #28a745;
+		border-color: #28a745;
+	}
+	.btn-danger {
+		color: #fff;
+		background-color: #ea3631;
+		border-color: #d43f3a;
+	}
+	.btn, .sp-container button {
+		display: inline-block;
+		font-weight: normal;
+		text-align: center;
+		white-space: nowrap;
+		vertical-align: middle;
+		user-select: none;
+		border: 1px solid transparent;
+		padding: 0.65rem 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.25;
+		border-radius: 3px;
+		transition: all 0.15s ease-in-out;
+	}
+	button, html [type="button"], [type="reset"], [type="submit"] {
+		-webkit-appearance: button;
+	}
+	button, select {
+		text-transform: none;
+	}
+	button, input {
+		overflow: visible;
+	}
+	input, button, select, optgroup, textarea {
+		margin: 0;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+	}
+	a, area, button, [role="button"], input, label, select, summary, textarea {
+		touch-action: manipulation;
+	}
+	*, *::before, *::after {
+		box-sizing: inherit;
+	}
+	.btn-primary:hover {
+		color: #fff;
+		background-color: #0753a1;
+		border-color: #064d95;
+	}
+	.btn:focus, .sp-container button:focus, .btn:hover, .sp-container button:hover {
+		text-decoration: none;
+	}
+	.mg-b-10 {
+		margin-bottom: 10px;
+	}
+	.btn-block {
+		display: block;
+		width: 100%;
+	}
+	.btn-primary {
+		color: #fff;
+		background-color: #0866C6;
+		border-color: #0866C6;
+	}
+	.btn, .sp-container button {
+		display: inline-block;
+		font-weight: normal;
+		text-align: center;
+		white-space: nowrap;
+		vertical-align: middle;
+		user-select: none;
+		border: 1px solid transparent;
+		padding: 0.65rem 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.25;
+		border-radius: 3px;
+		transition: all 0.15s ease-in-out;
+	}
+	button, html [type="button"], [type="reset"], [type="submit"] {
+		-webkit-appearance: button;
+	}
+	button, select {
+		text-transform: none;
+	}
+	button, input {
+		overflow: visible;
+	}
+	input, button, select, optgroup, textarea {
+		margin: 0;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+	}
+	a, area, button, [role="button"], input, label, select, summary, textarea {
+		touch-action: manipulation;
+	}
+	*, *::before, *::after {
+		box-sizing: inherit;
+	}
+
+	.btn-sm, .btn-group-sm > .btn, .sp-container .btn-group-sm > button {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		border-radius: 0.2rem;
+	}
+
+	button {
+		appearance: auto;
+		writing-mode: horizontal-tb !important;
+		font-style: ;
+		font-variant-ligatures: ;
+		font-variant-caps: ;
+		font-variant-numeric: ;
+		font-variant-east-asian: ;
+		font-weight: ;
+		font-stretch: ;
+		font-size: ;
+		font-family: ;
+		text-rendering: auto;
+		color: buttontext;
+		letter-spacing: normal;
+		word-spacing: normal;
+		line-height: normal;
+		text-transform: none;
+		text-indent: 0px;
+		text-shadow: none;
+		display: inline-block;
+		text-align: center;
+		align-items: flex-start;
+		cursor: default;
+		box-sizing: border-box;
+		background-color: buttonface;
+		margin: 0em;
+		padding: 1px 6px;
+		border-width: 2px;
+		border-style: outset;
+		border-color: buttonborder;
+		border-image: initial;
+	}
+
+	#div_redeban {
+		cursor: pointer;
+		width: 170px;
+		background: rgba(11, 11, 11, 0.1);
+		margin-top: 10px;
+		padding: 10px;
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+	}
+
+	.pw_prompt {
+		position:fixed;
+		left: 70%;
+		top:30%;
+		margin-left:-100px;
+		padding:15px;
+		width:200px;
+		border:1px solid black;
+		background-color: #7e919a;
+		text-align: center;
+	}
+	.pw_prompt label {
+		display:block; 
+		margin-bottom:5px;
+		color: #fff;
+		font-size: 14px;
+	}
+	.pw_prompt input {
+		margin-bottom:10px;
+	}
+
+	.ml-4 {
+		margin-left:10px;
+	}
+	.text-left{
+		text-align: left !important;
+	}
+</style>
 <div id="pay" align="center">
 	<table cellspacing="0" cellpadding='0' align="center">
 		<tr>

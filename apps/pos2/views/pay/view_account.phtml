@@ -30,6 +30,11 @@ if($accountCuenta!=false){
 	return;
 }
 
+$account_master_id = $cuentas[0][0];
+$account_cuenta = $cuentas[0][1];
+$account_cuenta_id = $accountCuenta->id;
+$usuario_id = Session::getData('usuarios_id');
+
 echo Tag::form("pay/savePay", 'autocomplete: off')
 
 ?>
@@ -237,6 +242,7 @@ $propina = LocaleMath::round($propina, 0);
 		<tr>
 			<th width="40%">Forma de Pago</th>
 			<th>Valor</th>
+			<th style="width: 20%; text-align: center;">Redeban</th>
 			<th></th>
 		</tr>
 	</thead>
@@ -256,12 +262,19 @@ $propina = LocaleMath::round($propina, 0);
 	?>
 	<td align='center'>
 		<?php if($accountCuenta->tipo_venta=='F'){ ?>
-			<select name='forma<?php echo  $i ?>' id='forma<?php echo  $i ?>' class='forma_p'>
-			<!--<option value='@'>Seleccione...</option>-->
+			<select name='forma<?php echo  $i ?>' id='forma<?php echo  $i ?>' class='forma_p' data-index='<?= $i ?>'>
+			<option value='@'>Seleccione...</option>
 			<?php
 				foreach($FormasPago->find() as $forma){
+
+					$interfaz = new InterfazRedeban;
+					$redeban = $interfaz->findFirst("formas_pago_id='{$forma->id}'");
+					$operacion = '@';
+					if($redeban)
+						$operacion = $redeban->operacion;
+					
 					if($forma->detalle!='CARGO A LA HABITACION'){
-						echo Tag::option($forma->id, $forma->detalle);
+						echo "<option value='{$forma->id}' data-operacion='{$operacion}'>{$forma->detalle}</option>";
 					}
 				}
 		} else {
@@ -270,14 +283,23 @@ $propina = LocaleMath::round($propina, 0);
 		</select>
 	</td>
 	<td align='center'>
-		<input type='text' class='azul'
+		<input type='text' class='azul pago'
 		class='pago'
 		onkeydown="valNumeric(event);"
 		id='<?php echo  'pago'.$i; ?>'
 		name='<?php echo  'pago'.$i; ?>'
 		value='<?php echo  $i==0 ? $total_cuentas+$propina : "" ?>'
-		onchange="totalPagos(this)" 
-		onclick="showVueltas(this)"/>
+		onchange="totalPagos(this)"
+		data-index='<?= $i ?>'/>
+		<input type="hidden" name="<?php echo  'redeban'.$i; ?>" value="">
+	</td>
+	<td class="redeban" style="text-align: right;" data-index="<?= $i ?>">
+		<div class="btn btn-primary btn-block btn-sm btnredeban vertical-center" style="cursor: pointer; height: 16px; margin-top: 5px; display:none;" title="Solicitar transacción con redeban" data-index="<?= $i ?>">
+			<img width="70" height="21" src="<?= Core::getInstancePath() ?>img/pos2/redeban.png" border="0" style="height: 15px; width: 30px;"><span style="margin-left: 10px;font-size: 12px; letter-spacing: 0.1em;">Solicitud</span>
+		</div>
+		<div class="btn btn-danger btn-block btn-sm btndelete vertical-center" style="cursor: pointer; height: 16px; margin-top: 5px;" title="Anular transacción redeban" data-index="<?= $i ?>">
+			<img src="<?= Core::getInstancePath() ?>img/pos2/trash-p.png" border="0" style="height: 15px; width: 20px;"><span style="margin-left: 10px; ;font-size: 12px; letter-spacing: 0.1em;">Anular</span>
+		</div>
 	</td>
 	<td align='center'>
 	<?php
@@ -349,18 +371,19 @@ $propina = LocaleMath::round($propina, 0);
 	</tr>
 	<?php endif;
 	if($accountCuenta->tipo_venta<>'H'){
-		echo "<tr id='trnum", $i, "' style='display:none'>"; ?>
-		<td colspan="3">
+		echo "<tr id='trnum", $i, "' style='display:none; padding: 0px;'>"; ?>
+		<td colspan="3" style="padding: 0px;">
 			<table width="100%">
 				<tr>
-					<td>
+					<td style="width: 42%; padding: 0px;">
 						<span><b>Número</b></span><br/>
-						<?php echo Tag::textField("numero$i", "style: width:250px") ?>
+						<?php echo Tag::textField("numero$i", "style: width:100%") ?>
 					</td>
 					<td>
-						<span><b>Fecha</b></span><br/>
-						<?php echo Tag::textField("fecha$i", "size: 11") ?>
+						<span style="margin-left: 10px;	"><b>Fecha</b></span><br/>
+						<?php echo Tag::textField("fecha$i", "style: width: 60%; margin-left: 10px;") ?>
 					</td>
+					<td>&nbsp;</td>
 				</tr>
 			</table>
 		</td>
@@ -398,7 +421,10 @@ $propina = LocaleMath::round($propina, 0);
 </div>
 </div>
 <br/>
-
+<script>
+	redeban.cargarCuenta('<?= $account_cuenta_id?>')
+	redeban.setUsuario('<?= $usuario_id?>')
+</script>
 <script type="text/javascript">
 	setTimeout(function() {
 		showVueltas(document.getElementById("pago0"));

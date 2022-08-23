@@ -948,6 +948,7 @@ class PayController extends ApplicationController
 			$sumaPagos = 0;
 			for($i=0;$i<=8;$i++){
 				$valorPago = $this->getPostParam('pago'.$i, 'double');
+				$redeban = $this->getPostParam('redeban'.$i);
 				if($valorPago>0){
 					$pago = new PagosFactura();
 					$pago->setTransaction($transaction);
@@ -967,6 +968,7 @@ class PayController extends ApplicationController
 					}
 					$pago->habitacion_id = $numeroFolio;
 					$pago->cuenta = $numeroCuenta;
+					$pago->redeban = $redeban;
 					if($pago->save()==false){
 						foreach($pago->getMessages() as $message){
 							Flash::error($message->getMessage());

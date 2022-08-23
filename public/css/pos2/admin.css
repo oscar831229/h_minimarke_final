@@ -571,6 +571,13 @@ div.edit {
 	background-repeat: no-repeat;
 }
 
+#interfaz_redeban_link {
+	padding-left: 30px;
+	background-image: url("../../img/pos2/icons/cash_register.png");
+	background-position: 5px 10px;
+	background-repeat: no-repeat;
+}
+
 #salon_link {
 	padding-left: 30px;
 	background-image: url("../../img/pos2/icons/store-open.png");
