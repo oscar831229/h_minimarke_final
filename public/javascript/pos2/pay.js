@@ -156,7 +156,7 @@ redeban = {
 
 	data : [],
 
-	url_api : 'http://localhost:8080/api/v1',
+	url_api : 'http://redeban.test:81/api/v1',
 
 	account_cuenta_id : null,
 
