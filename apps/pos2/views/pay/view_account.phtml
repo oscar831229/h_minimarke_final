@@ -263,7 +263,7 @@ $propina = LocaleMath::round($propina, 0);
 	<td align='center'>
 		<?php if($accountCuenta->tipo_venta=='F'){ ?>
 			<select name='forma<?php echo  $i ?>' id='forma<?php echo  $i ?>' class='forma_p' data-index='<?= $i ?>'>
-			<option value='@'>Seleccione...</option>
+			<!-- <option value='@'>Seleccione...</option> -->
 			<?php
 				foreach($FormasPago->find() as $forma){
 
