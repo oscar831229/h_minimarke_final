@@ -176,7 +176,7 @@ class InterfasePOS4 extends UserComponent {
 						$this->_addCantidad($usuarioId, $codigoAlmacen, $centroCosto, $recetal->item, $acantidad, 0);
 					} else {
 						if($recetal->item!=$numeroReceta){
-							$this->itemsDeReceta($usuarioId, $codigoAlmacen, $centroCosto, $recetal->item, $cantidad);
+							$this->itemsDeReceta($usuarioId, $codigoAlmacen, $centroCosto, $recetal->item, ($recetal->cantidad * $cantidad));
 						} else {
 							Flash::error("La receta '{$recetap->nombre}' es sub-receta de sí misma");
 							$this->_numberErrors++;
@@ -309,6 +309,7 @@ class InterfasePOS4 extends UserComponent {
 
 	public function download($onlyDescarga=false, $transaction=null, $strict=false, $fechaProceso=null){
 
+		
 		$this->_numberErrors = 0;
 		$controllerRequest = ControllerRequest::getInstance();
 		if($fechaProceso==null){
@@ -500,6 +501,10 @@ class InterfasePOS4 extends UserComponent {
 					echo '</table>';
 				}
 
+				# REGISTRAR HISTORICO DE COSTOS SEGUN INVEPOS DESCARGADO
+				if($procesoDefinitivo == 'S'){
+					$this->registarHistoricoCostosItemsDescargados($transaction, $fechaProceso);
+				}
 				$controllerRequest = ControllerRequest::getInstance();
 				if($procesoDefinitivo=='S'){
 					Flash::success('Se realizó la descarga de inventarios correctamente');
@@ -518,5 +523,180 @@ class InterfasePOS4 extends UserComponent {
 		}
 
 	}
+
+	public function registarHistoricoCostosItemsDescargados($transaction, $fechaProceso){
+
+		# Obtener productos y costo en linea
+		$costoitemsdescarga = $this->getCostoProductosDescarga($fechaProceso);
+
+		# Registramos historico de costos menus items
+		set_time_limit(0);
+		$this->HistoricoCostoMenusItems->setTransaction($transaction);
+
+		foreach ($costoitemsdescarga['items'] as $almacen => $items) {
+
+			foreach ($items as $menus_items_id => $item) {
+
+				$controlhistorico = $this->HistoricoCostoMenusItems->findFirst("almacen='{$almacen}' AND menus_items_id='{$menus_items_id}' AND fecha='{$fechaProceso}'");
+
+				if(!$controlhistorico){
+
+					$historico = new HistoricoCostoMenusItems();
+					$historico->setTransaction($transaction);
+					$historico->almacen = $almacen;
+					$historico->menus_items_id = $menus_items_id;
+					$historico->codigo_referencia = $item->codigo_referencia;
+					$historico->fecha = $fechaProceso;
+					$historico->costo = $item->costo;
+
+					if ($historico->save() == false) {
+						Flash::error('No se pudo guardar el historico de costos');
+						foreach($historico->getMessages() as $message){
+							Flash::error(' > '.$message->getMessage());
+						}
+					}
+				}
+			}
+		}
+
+		# REGISTRAR COSTOS REFERENCIA DESCARGA
+		$this->HistoricoCostoReferencia->setTransaction($transaction);
+
+		foreach ($costoitemsdescarga['referencia'] as $almacen => $items) {
+
+			foreach ($items as $codigo_referencia => $item) {
+
+				$controlhistorico = $this->HistoricoCostoReferencia->findFirst("almacen='{$almacen}' AND codigo_referencia='{$codigo_referencia}' AND fecha='{$fechaProceso}'");
+
+				if(!$controlhistorico){
+
+					$historico = new HistoricoCostoReferencia();
+					$historico->setTransaction($transaction);
+					$historico->almacen = $almacen;
+					$historico->codigo_referencia = $codigo_referencia;
+					$historico->fecha = $fechaProceso;
+					$historico->costo = $item['valor'];
+
+					if ($historico->save() == false) {
+						Flash::error('No se pudo guardar el historico de costos referencia');
+						foreach($historico->getMessages() as $message){
+							Flash::error(' > '.$message->getMessage());
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+	public function getCostoProductosDescarga($fecha){
+
+		set_time_limit(0);
+
+		$query = new ActiveRecordJoin(array(
+			'entities' => array('Invepos', 'MenusItems'),
+			'conditions' => "{#Invepos}.fecha = '$fecha'",
+			'fields' => array(
+				'menus_items_id' => '{#Invepos}.menus_items_id',
+				'tipo_costo' => '{#MenusItems}.tipo_costo',
+				'nombre' => '{#MenusItems}.nombre',
+				'almacen' => '{#Invepos}.almacen',
+				'codigo_referencia' => '{#MenusItems}.codigo_referencia',
+				'descontar' => '{#MenusItems}.descontar',
+				'valor' => '{#MenusItems}.valor',
+				'porcentaje_iva' => '{#MenusItems}.porcentaje_iva',
+				'porcentaje_impoconsumo' => '{#MenusItems}.porcentaje_impoconsumo',
+				'costo' => '{#MenusItems}.costo',
+			),
+			'order' => 'nombre'
+		));
+
+		$costo = new CostoInventario();
+		$costo->setVerbose(true);
+		# Items descargados y costeados
+		$arraycosteoitems  = [];
+
+		foreach ($query->getResultSet() as $menuitem) {
+
+			if(isset($arraycosteoitems['items'][$menuitem->almacen][$menuitem->menus_items_id])){
+				continue;
+			}
+			
+			# RESET COSTO
+			$valorCosto = 0;
+
+			# COSTEO ITEMS I Y R
+			if ($menuitem->tipo_costo != "N") {
+				
+				if ($menuitem->codigo_referencia){
+
+					# Calcular precio de venta
+					if ($menuitem->porcentaje_iva > 0) {
+						$precioVenta = $menuitem->valor / (1 + ($menuitem->porcentaje_iva/100));
+					} else {
+						$precioVenta = $menuitem->valor / (1 + ($menuitem->porcentaje_impoconsumo/100));
+					}
+
+					# Obtener costo del producto a descagar
+					$valorCosto = $costo->obtenerCosto(
+						$menuitem->tipo_costo, 
+						$menuitem->nombre, 
+						$menuitem->codigo_referencia, 
+						$menuitem->descontar, 
+						$precioVenta,
+						$menuitem->almacen
+					);
+
+					$valorCosto = LocaleMath::round($valorCosto, 2);
+
+				}
+
+			}
+
+			# REGISTRAMOS EL COSTO MENUS ITMES ALMACEN.
+			$arraycosteoitems['items'][$menuitem->almacen][$menuitem->menus_items_id] = (object) [
+				'codigo_referencia' => $menuitem->codigo_referencia,
+				'costo' => $valorCosto,
+			];
+
+		}
+
+		# Costo referencia
+		$arraycosteoitems['referencia'] = $costo->getCostosReferencia();
+
+		return $arraycosteoitems;
+
+
+	}
+
+
+	public function explodeRecetasDownload($transaction, $fechaProceso){
+
+		$numero = 0;
+		$this->Invepos->setTransaction($transaction);
+		$recetasExplode = [];
+
+		foreach($this->Invepos->findForUpdate("fecha='$fechaProceso' AND tipo = 'R' AND codigo = '90170'") as $invepos){
+
+			if(isset($recetasExplode[$invepos->getAlmacen()])){
+				continue;
+			}
+
+			echo "Referencia ".$invepos->getCodigo().'<br>';
+
+			$usuarioId = 0;
+			$this->_descargue[$usuarioId] = array();
+
+			$codigoAlmacen = $invepos->getAlmacen();
+			$centroCosto = $invepos->getCentroCosto();
+			$this->itemsDeReceta($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $invepos->getCantidad());
+
+			echo json_encode($this->_descargue);
+			exit;
+
+
+		}
+	}
+
 
 }

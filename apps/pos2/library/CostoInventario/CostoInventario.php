@@ -47,9 +47,13 @@ class CostoInventario extends UserComponent
 		$this->_verbose = $verbose;
 	}
 
-	private function _queryCostoInve($codigo)
+	public function getCostosReferencia(){
+		return self::$_costos;
+	}
+
+	private function _queryCostoInve($codigo, $almacen = 1)
 	{
-		if (!isset(self::$_costos[$codigo])) {
+		if (!isset(self::$_costos[$almacen][$codigo])) {
 			$costo = array();
 			if(!isset(self::$_inves[$codigo])){
 				$inve = $this->Inve->findFirst("item='$codigo'", "columns: item,descripcion,unidad,volumen");
@@ -73,6 +77,25 @@ class CostoInventario extends UserComponent
 				}
 				$costo['unidad'] = $unidadNombre;
 				$costo['volumen'] = $inve->getVolumen();
+
+				# Se incluye condición para costear inicialmente sobre otro almacen.
+				if($almacen != 1){
+					$saldo = $this->Saldos->findFirst("item='$codigo' AND almacen='{$almacen}' AND ano_mes=0", "columns: costo,saldo");
+					if($saldo!=false){
+						if($saldo->getSaldo()>0){
+							$valorCosto = ($saldo->getCosto()/$saldo->getSaldo());
+							if($valorCosto<0){
+								$valorCosto = 0;
+							}
+							$costo['valor'] = $valorCosto;
+							$costo['tipo'] = 'ALMACEN';
+							$costo['numero'] = $almacen;
+							self::$_costos[$almacen][$codigo] = $costo;
+							return $costo;
+						}
+					}
+				}
+
 				$saldo = $this->Saldos->findFirst("item='$codigo' AND almacen=1 AND ano_mes=0", "columns: costo,saldo");
 				if($saldo!=false){
 					if($saldo->getSaldo()>0){
@@ -83,7 +106,7 @@ class CostoInventario extends UserComponent
 						$costo['valor'] = $valorCosto;
 						$costo['tipo'] = 'ALMACEN';
 						$costo['numero'] = 1;
-						self::$_costos[$codigo] = $costo;
+						self::$_costos[$almacen][$codigo] = $costo;
 						return $costo;
 					}
 				}
@@ -98,7 +121,7 @@ class CostoInventario extends UserComponent
 						$costo['valor'] = $valorCosto;
 						$costo['tipo'] = 'ALMACEN';
 						$costo['numero'] = $saldo->getAlmacen();
-						self::$_costos[$codigo] = $costo;
+						self::$_costos[$almacen][$codigo] = $costo;
 						return $costo;
 					}
 				}
@@ -113,7 +136,7 @@ class CostoInventario extends UserComponent
 					$costo['valor'] = $valorCosto;
 					$costo['tipo'] = 'ENTRADA';
 					$costo['numero'] = $entrada.':'.$movilin->getNumero();
-					self::$_costos[$codigo] = $costo;
+					self::$_costos[$almacen][$codigo] = $costo;
 					return $costo;
 				} else {
 					$traslado = 'T01';
@@ -126,7 +149,7 @@ class CostoInventario extends UserComponent
 						$costo['valor'] = $valorCosto;
 						$costo['tipo'] = 'TRASLADO';
 						$costo['numero'] = $traslado.':'.$movilin->getNumero();
-						self::$_costos[$codigo] = $costo;
+						self::$_costos[$almacen][$codigo] = $costo;
 						return $costo;
 					}
 				}
@@ -134,20 +157,20 @@ class CostoInventario extends UserComponent
 				$costo['valor'] = 0;
 				$costo['tipo'] = 'INDEFINIDO';
 				$costo['numero'] = '-';
-				self::$_costos[$codigo] = $costo;
+				self::$_costos[$almacen][$codigo] = $costo;
 				return $costo;
 			} else {
-				self::$_costos[$codigo] = false;
+				self::$_costos[$almacen][$codigo] = false;
 				return false;
 			}
 		} else {
-			return self::$_costos[$codigo];
+			return self::$_costos[$almacen][$codigo];
 		}
 	}
 
-	public function obtenerCostoInve($codigo, $nombre, $cantidad, $descontar='')
+	public function obtenerCostoInve($codigo, $nombre, $cantidad, $descontar='', $almacen = 1)
 	{
-		$costo = $this->_queryCostoInve($codigo);
+		$costo = $this->_queryCostoInve($codigo, $almacen);
 		if ($costo != false) {
 			$valorCosto = $costo['valor']*$cantidad;
 			if($descontar=='T'){
@@ -188,7 +211,7 @@ class CostoInventario extends UserComponent
 
 	}
 
-	public function obtenerCostoReceta($codigo, $nombre)
+	public function obtenerCostoReceta($codigo, $nombre, $almacen = 1)
 	{
 		$sinRecalcular = false;
 		if (!isset(self::$_recetas[$codigo])) {
@@ -221,8 +244,8 @@ class CostoInventario extends UserComponent
 					$costo = 0;
 					if($recetalinea->tipol=='I'){
 						if($recetalinea->divisor!=0){
-							if($recetalinea->cantidad!=0){
-								$costo = $this->obtenerCostoInve($recetalinea->item, $nombre, $recetalinea->cantidad/$recetalinea->divisor);
+							if($recetalinea->cantidad!=0){                                                     
+								$costo = $this->obtenerCostoInve($recetalinea->item, $nombre, $recetalinea->cantidad/$recetalinea->divisor, '', $almacen);
 							} else {
 								if($this->_verbose){
 									Flash::warning("La cantidad del item '{$recetalinea->item}' en la receta {$recetap->nombre} es 0");
@@ -235,7 +258,7 @@ class CostoInventario extends UserComponent
 						}
 					} else {
 						$this->_level++;
-						$costo = $this->obtenerCostoReceta($recetalinea->item, $nombre);
+						$costo = $this->obtenerCostoReceta($recetalinea->item, $nombre, $almacen);
 						if($recetalinea->divisor){
 							$costo = $costo/$recetalinea->divisor*$recetalinea->cantidad;
 						} else {
@@ -247,7 +270,7 @@ class CostoInventario extends UserComponent
 					}
 					$costoTotal+=$costo;
 					if($sinRecalcular==false){
-						if($recetalinea->valor!=$costo){
+						if($recetalinea->valor!=$costo && $almacen == 1){
 							$recetalinea->valor = $costo;
 							if($recetalinea->save()==false){
 								foreach($recetalinea->getMessages() as $message){
@@ -281,7 +304,7 @@ class CostoInventario extends UserComponent
 				}
 				$costo = $costoTotal/$recetap->num_personas;
 				if($sinRecalcular==false){
-					if($costoTotal!=$recetap->precio_costo){
+					if($costoTotal!=$recetap->precio_costo && $almacen == 1){
 						$recetap->precio_costo = $costoTotal;
 						if($recetap->save()==false){
 							foreach($recetap->getMessages() as $message){
@@ -310,7 +333,7 @@ class CostoInventario extends UserComponent
 		}
 	}
 
-	public function obtenerCosto($tipo, $nombre, $codigo, $descontar, $precioVenta){
+	public function obtenerCosto($tipo, $nombre, $codigo, $descontar, $precioVenta, $almacen = 1){
 		$saldo = 0;
 		$costo = 0;
 		$this->_level = 0;
@@ -342,10 +365,10 @@ class CostoInventario extends UserComponent
 			</tr>";
 		}
 		if($tipo=='I'){
-			$costo = $this->obtenerCostoInve($codigo, $nombre, 1, $descontar);
+			$costo = $this->obtenerCostoInve($codigo, $nombre, 1, $descontar, $almacen);
 		} else {
 			if($tipo=='R'){
-				$costo = $this->obtenerCostoReceta($codigo, $nombre);
+				$costo = $this->obtenerCostoReceta($codigo, $nombre, $almacen);
 			}
 		}
 		if($this->_verbose){

@@ -256,5 +256,10 @@ class Invepos extends ActiveRecord {
 		return $this->estado;
 	}
 
+	protected function initialize()
+	{
+		$this->belongsTo('MenusItems');
+	}
+
 }
 

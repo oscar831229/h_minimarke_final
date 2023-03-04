@@ -161,6 +161,7 @@ class MenusItems extends ActiveRecord
 	{
 		$this->belongsTo('Menus');
 		$this->hasMany('Account');
+		$this->hasMany('Invepos');
 		$this->hasMany('DetalleFactura');
 		$this->hasMany('MenusItemsModifiers');
 		$this->hasMany('SalonMenusItems');
