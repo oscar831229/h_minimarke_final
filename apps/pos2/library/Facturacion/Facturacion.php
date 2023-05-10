@@ -20,6 +20,18 @@
 class Facturacion extends UserComponent
 {
 
+    public $preview = false;
+
+    public $reprint = false;
+
+	public $cuenta_liquidada = false;
+
+	public $resolucion_id = '';
+
+	public function setIdResolucion($resolucion_id){
+		$this->resolucion_id = $resolucion_id;
+	}
+
 	public function genVoice($accountCuenta, $transaction){
 
 		$response = array(
@@ -33,11 +45,12 @@ class Facturacion extends UserComponent
 
 			POSRcs::disable();
 
-			$datos = $this->Datos->findFirst();
-			$accountCuenta->setTransaction($transaction);
-
-			if ($accountCuenta->clientes_cedula == '0') {
-				throw new Exception('El cliente no puede ser particular', 1);
+            $datos = $this->Datos->findFirst();
+            $accountCuenta->setTransaction($transaction);
+            if ($this->preview==false && $this->reprint == false) {
+				if ($accountCuenta->clientes_cedula == '0') {
+                    throw new Exception('El cliente no puede ser particular', 1);
+                }
 			}
 
 			if ($accountCuenta->tipo_venta == 'S') {
@@ -54,8 +67,6 @@ class Facturacion extends UserComponent
 					}
 				}
 			}
-
-
 
 			$accountMaster = $this->AccountMaster->findFirst($accountCuenta->account_master_id);
 			if ($accountMaster == false) {
@@ -80,7 +91,36 @@ class Facturacion extends UserComponent
 			}
 
 			$salonId = $salon->id;
-			$prefijoFacturacion = $salon->prefijo_facturacion;
+			$tipo_factura = 'P';
+			$resolucion_factura_id = 0;
+			$fecha_fin_autorizacion = null;
+
+			/**
+			 *  Estados tabla master_master (CUENTA MAESTRA)
+			 *  N : Abierta
+			 *  C : Maestra cancelada
+			 *  L : Maestra liquidada
+			 */
+
+
+			/**
+			*  Estados tabla account_cuentas (CUENTAS MESA)
+			*  A : Cuenta abierta sin liquidar 
+			*  C : Cuenta cancelada
+			*  B : Cuenta facturada (Cuando se genera factura o orden de compra antes de liquidar)
+			*  L : Maestra liquidada
+			*/
+
+
+			/***
+			*  Estado tabla account (PRODUCTOS MESA)
+			*  S : Producto registrado sin liquidar
+			*  C : Producto cancelado (Se utiliza cuando cancelan cuenta o borran productos de forma individual)
+			*  B : Producto facturado (Proceso que se ejecuta al factura o generar orden de servicio)
+			*  L : Producto liquidado
+			*/
+
+
 			if ($accountCuenta->estado != 'L' && $accountCuenta->estado != 'B') {
 
 				if($accountCuenta->numero > 0){
@@ -88,9 +128,38 @@ class Facturacion extends UserComponent
 				} else {
 					if ($accountCuenta->estado == 'A'){
 						if ($tipoVenta != "F") {
-							$consecutivo = $accountCuenta->numero = ++$salon->consecutivo_orden;
+							// $consecutivo = $accountCuenta->numero = ++$salon->consecutivo_orden;
+							$resolucion = $this->Salon->findFirst($accountMaster->salon_id);
+							if ($resolucion == false) {
+								throw new Exception('No existe el ambiente ('.$accountMaster->salon_id.')');
+							}
+
+							$prefijoFacturacion = $resolucion->prefijo_facturacion;
+							$consecutivo = $accountCuenta->numero = ++$resolucion->consecutivo_orden;
+
 						} else {
-							$consecutivo = $accountCuenta->numero = ++$salon->consecutivo_facturacion;
+
+							# ESTADO DE CUENTA SET DEFAUL RESOLUCION
+							if($this->preview){
+								$this->resolucion_id = 1;
+							}
+
+							if(empty($this->resolucion_id)){
+								throw new Exception('No esta definida la resolución de facturación.');
+							}
+
+							$resolucion_factura_id = $this->resolucion_id;
+							$this->ResolucionFactura->setTransaction($transaction);
+							$resolucion = $this->ResolucionFactura->findFirst($this->resolucion_id);
+							if ($resolucion == false) {
+								throw new Exception('No existe la resolución de facturación con id '.$resolucion_factura_id);
+							}
+
+							$prefijoFacturacion = $accountCuenta->prefijo =  $resolucion->prefijo_facturacion;
+							$consecutivo = $accountCuenta->numero = ++$resolucion->consecutivo_facturacion;
+							$tipo_factura = $resolucion->tipo_factura;
+							$fecha_fin_autorizacion = $resolucion->fecha_fin_autorizacion;
+							
 						}
 					}
 				}
@@ -138,14 +207,16 @@ class Facturacion extends UserComponent
 							}
 
 							$menuItem = $this->MenusItems->find($account->menus_items_id);
+
 							if(!isset($resumen[$menuItem->tipo])){
 								$resumen[$menuItem->tipo] = 0;
 							}
-
-							$valor = $account->valor * $account->cantidad;
-							$total = $account->total * $account->cantidad;
+							
 							$nombreItem = $menuItem->nombre;
-
+							$modis = 0;
+							$modifier_base = 0;
+							$modifier_impo = 0;
+							$modifier_iva = 0;
 							$accountModifiers = $this->AccountModifiers->find("account_id='" . $account->id . "'");
 							if (count($accountModifiers)) {
 								$nombreItem .= PHP_EOL;
@@ -160,16 +231,43 @@ class Facturacion extends UserComponent
 											break;
 									}
 									if ($modifier != false) {
-										$valor += $modifier->valor;
-										$total += $modifier->valor;
+										$modis += $accountModifier->valor;
 									}
 								}
 								$nombreItem .= PHP_EOL;
 							}
 
+							#Calcular la base del modificar y iva o impo
+							if ($menuItem->porcentaje_iva > 0) {
+								if ($accountCuenta->tipo_venta == 'F') {
+									$modifier_base = $modis / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+									$modifier_iva = $modis - ($modis / (1 + ($menuItem->porcentaje_iva / 100)));
+								} else {
+									if (self::_esExento($accountCuenta, $menuItem)) {
+										$modifier_base = $modis / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+										$modifier_iva = 0;
+									} else {
+										$modifier_base = $modis / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+										$modifier_iva = $modis - ($modis / (1 + ($menuItem->porcentaje_iva / 100)));
+									}
+								}
+								$account->impo = 0;
+							} else {
+								$modifier_base = $modis / (($menuItem->porcentaje_impoconsumo + $menuItem->porcentaje_servicio) / 100 + 1);
+								$modifier_impo = $modis - ($modis / (1 + ($menuItem->porcentaje_impoconsumo / 100)));
+								$modifier_iva = 0;
+							}
+
+							$valor = ($account->valor + $modifier_base) * $account->cantidad;
+							$total = ($account->total + $modis)         * $account->cantidad;
+							$account->iva += $modifier_iva;
+							$account->impo += $modifier_impo;
+
+							$descuento_aplicado = 0;
 							if ($account->descuento > 0) {
 								$nombreItem .= " (Descuento {$account->descuento}%)";
-								$valor -= ($valor * $account->descuento / 100);
+								$descuento_aplicado = ($valor * $account->descuento / 100);
+								$valor -= $descuento_aplicado;
 								$servicio = ($account->servicio - ($account->servicio * $account->descuento / 100)) * $account->cantidad;
 								if ($account->iva  > 0) {
 									$iva = ($account->iva - ($account->iva * $account->descuento / 100)) * $account->cantidad;
@@ -217,6 +315,7 @@ class Facturacion extends UserComponent
 
 							$detalle->cantidad = $account->cantidad;
 							$detalle->descuento = $account->descuento;
+							$detalle->descuento_aplicado = $descuento_aplicado;
 							$detalle->valor = $valor;
 							$detalle->iva = $iva;
 							$detalle->impo = $impo;
@@ -261,9 +360,9 @@ class Facturacion extends UserComponent
 						throw new Exception(implode(",",$error_save));
 					}
 
-					if ($salon->save() == false) {
+					if ($resolucion->save() == false) {
 						$error_save = array();
-						foreach ($salon->getMessages() as $message) {
+						foreach ($resolucion->getMessages() as $message) {
 							$error_save[] = $message->getMessage(); 
 						}
 						throw new Exception(implode(",",$error_save));
@@ -274,11 +373,12 @@ class Facturacion extends UserComponent
 					$factura->setTransaction($transaction);
 					$factura->prefijo_facturacion = $prefijoFacturacion;
 					$factura->consecutivo_facturacion = $consecutivo;
-					$factura->resolucion = $salon->autorizacion;
-					$factura->fecha_resolucion = $salon->fecha_autorizacion;
+					$factura->resolucion = $resolucion->autorizacion;
+					$factura->fecha_resolucion = $resolucion->fecha_autorizacion;
+					$factura->fecha_fin_autorizacion = $fecha_fin_autorizacion;
 					$factura->tipo = $tipo;
-					$factura->numero_inicial = $salon->consecutivo_inicial;
-					$factura->numero_final = $salon->consecutivo_final;
+					$factura->numero_inicial = $resolucion->consecutivo_inicial;
+					$factura->numero_final = $resolucion->consecutivo_final;
 					$factura->account_master_id = $accountCuenta->account_master_id;
 					$factura->cuenta = $accountCuenta->cuenta;
 					$factura->comanda = join(',', $comandas);
@@ -296,6 +396,8 @@ class Facturacion extends UserComponent
 					$factura->moneda = $datos->getMoneda();
 					$factura->centavos = $datos->getCentavos();
 					$factura->nota_contribuyentes = $datos->getNotaContribuyentes();
+					$factura->tipo_factura = $tipo_factura;
+					$factura->resolucion_factura_id = $resolucion_factura_id;
 
 					if ($cliente == false) {
 						$factura->cedula = $empresa->nit;
@@ -363,10 +465,13 @@ class Facturacion extends UserComponent
 					
 
 				} else {
-					throw new Exception('El consecutivo a asignar ya fue utilizado');					
-				}
+                    if ($this->preview == false && $this->reprint == false) {
+						throw new Exception('El consecutivo a asignar ya fue utilizado');
+					}
+                }
 			} else {
 
+				$prefijoFacturacion = $accountCuenta->prefijo;
 				$conditions = "salon_id='$salonId' AND prefijo_facturacion = '$prefijoFacturacion' and consecutivo_facturacion = {$accountCuenta->numero} and tipo = '$tipo'";
 				$factura = $this->Factura->findFirst($conditions);
 				if ($factura == false) {
@@ -376,6 +481,9 @@ class Facturacion extends UserComponent
 						throw new Exception('La factura/orden ' . $prefijoFacturacion . ':' . $accountCuenta->numero.' está anulada');
 					}
 				}
+
+				$this->cuenta_liquidada = true;
+				
 			}
 
 			$conditions = "prefijo_facturacion = '$prefijoFacturacion' AND consecutivo_facturacion = '{$accountCuenta->numero}' AND tipo = '$tipo'";
@@ -396,6 +504,85 @@ class Facturacion extends UserComponent
 
 		return $response;
 
+	}
+
+
+	/**
+	 * Busca si la cuenta donde se agregará un item es exenta ó no
+	 *
+	 * @param	AccountCuentas $accountCuenta
+	 * @param	MenusItems $menuItem
+	 * @param	boolean $singleItem
+	 */
+	public static function _esExento($accountCuenta, $menuItem, $singleItem=true)
+	{
+		if ($accountCuenta->tipo_venta == 'H') {
+			if ($accountCuenta->habitacion_id != -1) {
+
+				# CUENTA MAESTRA
+				$AccountMaster = $accountCuenta->getAccountMaster();
+
+				# NUMERO DE FOLIO
+				$numeroFolio = $accountCuenta->habitacion_id;
+
+				# CARGAR MODELOS
+				$SalonMenusItems = EntityManager::getEntityInstance('SalonMenusItems');
+				$Concue = EntityManager::getEntityInstance('Concue');
+				$Carghab = EntityManager::getEntityInstance('Carghab');
+				$Conrel = EntityManager::getEntityInstance('Conrel');
+				$Conceptos = EntityManager::getEntityInstance('Conceptos');
+				$Clientes = EntityManager::getEntityInstance('Clientes');
+
+
+				$salonMenuItem = $SalonMenusItems->findFirst("salon_id='{$AccountMaster->salon_id}' AND menus_items_id='{$menuItem->id}' AND estado='A'");
+				if ($salonMenuItem == false) {
+					if ($singleItem == true) {
+						Flash::error('El item no está activo en el ambiente');
+					}
+					return false;
+				}
+
+				$numeroCuenta = 0;
+				$concue = $Concue->findFirst("numfol='$numeroFolio' AND codcar='{$salonMenuItem->conceptos_id}'");
+
+				if ($concue != false) {
+					$numeroCuenta = $concue->getNumcue();
+				} else {
+					$numeroCuenta = $Carghab->minimum("numcue", "conditions: numfol='{$numeroFolio}' AND estado='N'");
+				}
+
+				if ($numeroCuenta > 0) {
+					$cuenta = $Carghab->findFirst("numfol='{$numeroFolio}' AND numcue='{$numeroCuenta}' AND estado='N'");
+					if ($cuenta->getExento() == 'S') {
+						$conrel = $Conrel->findFirst("codcar='{$salonMenuItem->conceptos_id}'");
+						if ($conrel == false) {
+							$concepto = $Conceptos->findFirst($salonMenuItem->conceptos_id);
+							if ($concepto == false) {
+								Flash::notice('La cuenta de recepción recibe cargos exentos pero el concepto asignado no existe');
+							} else {
+								Flash::notice('La cuenta de recepción recibe cargos exentos pero no existe el concepto "'.$concepto->descripcion.'" que sea exento');
+							}
+						} else {
+							if ($singleItem == true) {
+								Flash::notice('La cuenta de la habitación recibe solo cargos exentos');
+							}
+							return true;
+						}
+					}
+				} else {
+					$cliente = $Clientes->findFirst("cedula='{$accountCuenta->clientes_cedula}'");
+					if ($cliente != false) {
+						if ($cliente->exento == 'S') {
+							if ($singleItem == true) {
+								Flash::notice('Al cliente se le factura exento de impuestos');
+							}
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 }

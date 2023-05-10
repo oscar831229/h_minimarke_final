@@ -139,4 +139,25 @@ class CommonController extends ApplicationController {
 		}
 	}
 
+	public function getCiudadesDianAction(){
+
+		$this->setResponse('view');
+		$id = $this->getPostParam('id');
+
+		$ciudades = $this->ciudadesdian->find("nombre_ciudad LIKE '$id%'");
+
+		$response = '<ul>';
+		foreach ($ciudades as $key => $ciudad) {
+			$response .='<li id="'.$ciudad->id.'">'.
+			$ciudad->nombre_pais.' / '.
+			$ciudad->nombre_depto.' / '.
+			$ciudad->nombre_ciudad.
+			'</li>';
+		}
+		$response .= '</ul>';
+
+		echo $response;
+
+	}
+
 }

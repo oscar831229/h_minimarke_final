@@ -24,7 +24,7 @@ class Anula_FacturaController extends ApplicationController
 	{
 		$this->loadModel('Salon');
 		$datos = $this->Datos->findFirst();
-		$this->setParamToView('facturas', $this->Factura->find("fecha='{$datos->getFecha()}' AND estado='A'"));
+		$this->setParamToView('facturas', $this->Factura->find("fecha='{$datos->getFecha()}' AND estado='A' AND tipo = 'O'"));
 	}
 
 	private function _anulaFactura($factura)
@@ -257,6 +257,7 @@ class Anula_FacturaController extends ApplicationController
 			$tipo_venta = "tipo_venta IN ('H', 'P', 'U', 'C')";
 		} else {
 			$tipo_venta = "tipo_venta = 'F'";
+			throw new Exception("Error no es posible anular facturas", 1);
 		}
 
 		try {

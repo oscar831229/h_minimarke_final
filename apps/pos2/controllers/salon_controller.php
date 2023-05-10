@@ -110,6 +110,7 @@ class SalonController extends StandardForm
 		$this->setCaption('propina_automatica', 'Propina Automática');
 		$this->setCaption('cierre_pedidos', 'Controlar Pedidos Activos al Cerrar Día');
 		$this->setCaption('texto_impresion', 'Texto Impresión');
+		$this->setCaption('factu_elect_monto_desde', 'Factura electrónica monto desde');
 
 		$this->setTypeTextarea('texto_propina');
 		$this->setTypeTextarea('texto_impresion');

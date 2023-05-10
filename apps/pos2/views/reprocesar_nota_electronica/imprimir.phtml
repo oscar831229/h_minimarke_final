@@ -1,0 +1,134 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+View::getContent();
+
+?>
+
+<style type='text/css'>
+	td, span, div, th, pre {
+		font-family: 'Lucida Console', 'Courier New';
+		font-size: 12px;
+	}
+	body {
+		margin: 0px;
+		margin-left:2px;
+	}
+</style>
+<div style='width:270px;'>
+<pre>
+<?php
+if(!function_exists('center')){
+	function center($text, $size) {
+		if (mb_strlen($text) >= $size) {
+			return $text;
+		}
+		$spaces = str_repeat(' ', ($size - mb_strlen($text))/2);
+		return $spaces . $text . $spaces;
+	}
+}
+
+echo center($factura->nombre_cadena, 35), "\n";
+echo center("REGIMEN COMUN", 35), "\n";
+echo center($factura->documento." No. : ".$factura->nit, 35)."\n";
+echo center($factura->nombre_hotel, 35)."\n";
+echo center($factura->direccion, 35)."\n";
+echo center("Tel. ".$factura->telefonos, 35)."\n";
+echo center('NOTA CREDITO No. '.$nota_credito->prefijo_documento.'-'.$nota_credito->consecutivo_documento, 35)."\n";
+echo center("NUMER. No ".$nota_credito->prefijo_documento." ".sprintf("%06s", $nota_credito->numero_inicial)." AL ".$nota_credito->prefijo_documento.' '.sprintf("%06s", $nota_credito->numero_final), 35)."\n";
+
+echo center("Fecha: {$nota_credito->fecha}" , 35)."\n";
+echo center("Cajero: ".$nota_credito->usuarios_nombre, 35)."\n";
+
+?>
+</pre>
+<table width="250" cellspacing="0" border="0" align='left'>
+	<tr>
+		<th>Cant.</th>
+		<th>Descrip.</th>
+		<th>Vr Venta</th>
+		<th>Iv</th>
+	</tr>
+	<?php
+
+	foreach ($nota_credito_detalle as $detalle) {
+		echo "<tr>";
+		echo "<td align='center'>$detalle->cantidad</td>";
+		echo '<td>', nl2br($detalle->menus_items_nombre), '</td>';
+		echo "<td align='right'>", Currency::number($detalle->total), "</td>";
+		echo "<td align='right'>", $detalle->porcentaje_iva, "</td>";
+		echo "</tr>";
+	}
+?>
+</table>
+<br><br><br>
+<div style='pading: 0px; width:250px' align='right'>
+-----------------------------------
+TOTAL PEDIDO: <?php echo Currency::number($nota_credito->total) ?><br>
+===================================
+</div>
+<table width='250'>
+	<tr>
+		<td align="right">
+			PROPINA VOLUNTARIA SUGERIDA:
+		</td>
+		<td align='right'>
+			<?php echo Currency::number($nota_credito->propina) ?>
+		</td>
+	</tr>
+	<tr>
+		<td align="right" style='font-size:14px'>
+			TOTAL NOTA CREDITO:
+		</td>
+		<td align="right" style='font-size:14px'>
+			<?php echo Currency::number($nota_credito->total) ?>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+	</tr>
+</table>
+</div>
+
+<br>
+<div style='pading: 0px; width:250px'>
+----------------------------------
+FORMAS DE PAGO<br>
+===================================
+</div>
+<?php
+echo "<table width='250'>";
+foreach ($nota_credito_pago as $pago) {
+	$formapago = $pago->getFormasPago()->detalle;  
+	echo "<tr>";
+	echo "<td align='left' with='50%'>$formapago</td>";
+	echo "<td align='right'>", Currency::number($pago->pago), "</td>";
+	echo "</tr>";
+}
+echo "</table>";
+echo "<br>";
+
+?>
+</div>
+
+<script type='text/javascript'>
+	new Event.observe(window, "load", function(){
+		window.setTimeout(function(){
+			window.print();
+		}, 500);
+	});
+</script>
+
+</div>

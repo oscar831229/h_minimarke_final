@@ -91,6 +91,10 @@ function getAccountData()
 					$('add_forma_div').observe('click', addFormaPago);
 				};
 				$('total_propina').activate();
+
+				// Cargar resoluciones
+				resoluciones.init();
+
 			},
 			onFailure: function(t){
 				$('account').update(t.responseText);
@@ -120,6 +124,7 @@ function totalPagos(obj)
 	total = parseFloat(total).toFixed(2);
 	$("total_pagos").value = total;
 	$("total_saldo").value = parseFloat($('total_cuenta').getValue())+parseFloat($('total_propina').getValue())-total;
+	resoluciones.consultarResoluciones();
 }
 
 function showOptions(n){
@@ -132,7 +137,7 @@ function showOptions(n){
 	var operacion = opcionpago.dataset.operacion;
 
 	document.querySelector('.redeban[data-index="'+index+'"] > div').hide()
-	if(operacion != '@'){
+	if(operacion != '@'  && operacion != undefined){
 		document.querySelector('.redeban[data-index="'+index+'"] > div').show()
 	}	
 
@@ -683,3 +688,91 @@ new Event.observe(window, 'load', function(){
 		}
 	}, 300)
 });
+
+
+resoluciones = {
+
+	data : [],
+
+	consultarResoluciones : function(){
+		if($('tipo_venta').getValue() == 'F'){
+			let salon_id = $('salon_id').getValue();
+			let pago_total = parseFloat($('total_cuenta').getValue())+parseFloat($('total_propina').getValue());
+			new Ajax.Request(Utils.getKumbiaURL("pay/lookInvoiceResolutions/"+salon_id+'/'+pago_total), {
+				method: 'GET',
+				onSuccess: function(response){
+					resoluciones.data = response.responseJSON;
+					resoluciones.listarResoluciones();
+				},
+				onFailure: function(t){
+					alert('Fallo la consulta a resoluciones');
+				}
+			});
+		}
+	},
+
+	listarResoluciones : function(){
+
+		var option = '';
+        if(resoluciones.data.length > 1){
+            option = '<option value="" data-id="">Seleccione...</option>';
+        }
+
+		resoluciones.data.forEach(element => {
+			let tipo_factura = ''
+			switch (element.tipo_factura) {
+				case 'P':
+					tipo_factura = 'FACTURA POS'
+					break;
+				case 'E':
+					tipo_factura = 'FACTURA ELECTRÓNICA'
+					break;
+			
+				default:
+					break;
+			}
+			option +='<option value="'+element.id+'" data-tipo_factura="'+element.tipo_factura+'" data-salon_id="'+element.salon_id+'">' + element.prefijo_facturacion + ' - ' + tipo_factura + '</option>';
+		});
+
+		document.querySelector('#autorizacion').innerHTML = option;
+
+        if(resoluciones.data.length == 1){
+            document.querySelector('#autorizacion').setValue(resoluciones.data[0].value);
+			document.querySelector('#autorizacion').dispatchEvent(new Event("change"));
+        }
+
+	},
+
+	existeResoluion(){
+		let response = true;
+		if($('tipo_venta').getValue() == 'F'){
+			let value_resolucion = document.querySelector('#autorizacion').getValue();
+			if(value_resolucion == '' || value_resolucion == '@'){
+				response = false;
+			}
+		}
+		return response;
+	},
+
+	init : function(){
+		this.consultarResoluciones();
+		document.querySelector('#autorizacion').observe('change', function(){
+			let tipo_fatura = this.options[this.selectedIndex].dataset.tipo_factura;
+			let tipo_factura_text = ''
+			switch (tipo_fatura) {
+				case 'P':
+					tipo_factura_text = 'FACTURA POS'
+					break;
+				case 'E':
+					tipo_factura_text = 'FACTURA ELECTRÓNICA'
+					break;
+			
+				default:
+					break;
+			}
+			document.querySelector('#tipo_factura_text').innerHTML = tipo_factura_text;
+
+		});
+	}
+}
+

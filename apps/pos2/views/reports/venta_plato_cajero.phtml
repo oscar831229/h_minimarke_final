@@ -54,7 +54,7 @@ echo center("Fecha Impresión: ".Date::now(), 40)."\n";
 </pre>
 <div>
 <?php
-
+	$db = DbBase::rawConnect();
 	$total = 0;
 	$total_iva = 0;
 	$items = array();
@@ -68,7 +68,11 @@ echo center("Fecha Impresión: ".Date::now(), 40)."\n";
 			if(!isset($items[$account_master->usuarios_id][$account->menus_items_id])){
 				$items[$account_master->usuarios_id][$account->menus_items_id] = array(
 					'cantidad' => 0,
-					'valor' => 0
+					'valor' => 0,
+					'nota_credito' => [
+						'cantidad' => 0,
+						'valor' => 0
+					]
 				);
 			}
 			$items[$account_master->usuarios_id][$account->menus_items_id]['cantidad']+=$account->cantidad;
@@ -78,6 +82,27 @@ echo center("Fecha Impresión: ".Date::now(), 40)."\n";
 			} else {
 				$items[$account_master->usuarios_id][$account->menus_items_id]['valor']+=$account->total*$account->cantidad;
 			}
+
+			# CAPTURAMOS EL ACCOUN CUENTA PARA VALIDAR QUE SEA FACTURA.
+			$accountCuenta = $account->getAccountCuentas();
+			if($accountCuenta->tipo_venta == 'F'){
+
+				$sql = "SELECT 
+							ncd.*, 
+							a.id, 
+							nc.fecha FROM nota_credito nc
+						INNER JOIN nota_credito_detalle ncd ON ncd.nota_credito_id = nc.id
+						INNER JOIN detalle_factura df ON df.id = ncd.detalle_factura_id
+						INNER JOIN account a ON a.id = df.account_id
+						WHERE a.id = '$account->id' AND nc.fecha = date('$account_master->hora')";
+
+				foreach($db->inQueryAssoc($sql) as $key => $producto){
+					$items[$account_master->usuarios_id][$account->menus_items_id]['nota_credito']['valor']+=$producto['total'];
+					$items[$account_master->usuarios_id][$account->menus_items_id]['nota_credito']['cantidad']+=$producto['cantidad'];
+				}
+
+			}
+
 		}
 	}
 	foreach($items as $cajero => $itemv){
@@ -94,25 +119,58 @@ echo center("Fecha Impresión: ".Date::now(), 40)."\n";
 				<td align='center'>Valor</td>
 			</tr>";
 		$totalc = 0;
+		$totalcnc = 0;
 		$tipos_venta = array();
 		foreach($itemv as $item_id => $item){
+
 			$MenusItems->find($item_id);
 			echo "<tr>";
 			echo "<td align='left'>{$MenusItems->nombre}</td>";
-			echo "<td align='center'>{$item['cantidad']}</td>";
+			echo "<td align='center'>&nbsp;{$item['cantidad']}</td>";
 			echo "<td align='right'>{$item['valor']}</td>";
 			echo "</tr>";
+
+			$valornc = 0;
+
+			if($item['nota_credito']['cantidad'] > 0){
+				echo "<tr>";
+				echo "<td align='left'></td>";
+				echo "<td align='center'>-{$item['nota_credito']['cantidad']}</td>";
+				echo "<td align='right'>", $item['nota_credito']['valor'] , "</td>";
+				echo "</tr>";
+	
+				$cantidad = $item['cantidad']-$item['nota_credito']['cantidad'];
+				$valor = $item['valor'] - $item['nota_credito']['valor'];
+	
+				echo "<tr>";
+				echo "<td align='left'></td>";
+				echo "<td align='center'>&nbsp;{$cantidad}</td>";
+				echo "<td align='right'>", $valor, "</td>";
+				echo "</tr>";
+				echo "<tr>";
+				echo "<td colspan='3'>---------------------------------</td>";
+				echo "</tr>";
+				$valornc = $item['nota_credito']['valor'];
+				$totalcnc += $item['nota_credito']['valor'];
+
+			}
+
 			if(!isset($tipos_venta[$MenusItems->tipo])){
 				$tipos_venta[$MenusItems->tipo] = 0;
 			}
-			$tipos_venta[$MenusItems->tipo]+=$item['valor'];
-			$total += $item['valor'];
+			$tipos_venta[$MenusItems->tipo]+=$item['valor']-$valornc;
+			$total += $item['valor']-$valornc;
 			$totalc += $item['valor'];
+
 		}
+		$totalneto = $totalc-$totalcnc;
 		echo "</table>";
 		echo "<div>--------------------------------------</div>";
 		echo "<div style='pading: 20px; width:247px' align='right'>
-		TOTAL CAJERO: $totalc<br><br>
+		TOTAL CAJERO: $totalc<br>
+		NOTA CREDITO CAJERO: $totalcnc<br>
+		-------------------------------
+		TOTAL NETO CAJERO:  $totalneto<br><br>
 		ALIMENTOS CAJERO: ".(isset($tipos_venta['A']) ? Locale::round($tipos_venta['A']) : 0), "<br/>
 		BEBIDAS CAJERO: ".(isset($tipos_venta['B']) ? Locale::round($tipos_venta['B']) : 0), "<br/>
 		CIGARRILLOS CAJERO: ".(isset($tipos_venta['C']) ? Locale::round($tipos_venta['C']) : 0), "<br/>

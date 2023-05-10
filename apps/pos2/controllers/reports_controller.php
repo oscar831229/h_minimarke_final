@@ -73,7 +73,7 @@ class ReportsController extends ApplicationController {
 
 	public function cuadre_cajaAction($salonId, $fecha_inicial, $fecha_final){
 		$this->setResponse('view');
-		$this->loadModel('AccountCuentas', 'Factura', 'Habitacion', 'TipoVenta', 'PagosFactura');
+		$this->loadModel('AccountCuentas', 'Factura', 'Habitacion', 'TipoVenta', 'PagosFactura', 'NotaCredito');
 		$this->fecha_inicial = $this->filter($fecha_inicial, 'date');
 		$this->fecha_final = $this->filter($fecha_final, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
@@ -81,7 +81,7 @@ class ReportsController extends ApplicationController {
 
 	public function cuadre_caja_todosAction($salonId, $fechaInicial, $fechaFinal){
 		$this->setResponse('view');
-		$this->loadModel('AccountCuentas', 'Factura', 'Habitacion', 'TipoVenta', 'HabitacionHistorico', 'PagosFactura');
+		$this->loadModel('AccountCuentas', 'Factura', 'Habitacion', 'TipoVenta', 'HabitacionHistorico', 'PagosFactura', 'NotaCredito');
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
 		$this->fecha_final = $this->filter($fechaFinal, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
@@ -120,6 +120,7 @@ class ReportsController extends ApplicationController {
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
 		$this->fecha_final = $this->filter($fechaFinal, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
+		$this->loadModel('NotaCredito');
 	}
 
 	public function funcionariosHtmlAction($usuarioId, $tipo, $fechaInicial, $fechaFinal){
@@ -136,7 +137,7 @@ class ReportsController extends ApplicationController {
 		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
 		$this->fecha_final = $this->filter($fechaFinal, 'date');
 		$this->salon_id = $this->filter($salonId, 'int');
-		$this->loadModel('AccountMaster', 'Account', 'MenusItems', 'Factura', 'FormasPago');
+		$this->loadModel('AccountMaster', 'Account', 'MenusItems', 'Factura', 'FormasPago', 'NotaCredito');
 	}
 
 	public function saldosInventariosAction($salonId, $tipoItem, $fechaInicial='', $fechaFinal=''){
@@ -226,6 +227,14 @@ class ReportsController extends ApplicationController {
 			$this->setResponse("view");
 			$this->loadModel('HabitacionHistorico');
 		}
+	}
+
+
+	public function notasCreditoHtmlAction($salonId, $fechaInicial, $fechaFinal){
+		$this->setResponse('view');
+		$this->fecha_inicial = $this->filter($fechaInicial, 'date');
+		$this->fecha_final = $this->filter($fechaFinal, 'date');
+		$this->salon_id = $this->filter($salonId, 'int');
 	}
 
 }

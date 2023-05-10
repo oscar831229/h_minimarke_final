@@ -1,0 +1,217 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+$config = CoreConfig::readAppConfig();
+if($config->application->mode=='development'){
+	Tag::stylesheetLink('pos2/nota_credito');
+	Tag::stylesheetLink('pos2/numero');
+	Tag::stylesheetLink('pos2/status');
+	echo Tag::javascriptInclude('pos2/windows');
+	echo Tag::javascriptInclude('pos2/modal');
+	echo Tag::javascriptInclude('pos2/numero');
+	echo Tag::javascriptInclude('pos2/hash');
+	echo Tag::javascriptInclude('pos2/reprocesar_factura_electronica');
+	echo Tag::javascriptInclude('pos2/comunes');
+} else {
+	Tag::stylesheetLink('pos2/production/anular', false, 'v='.ControllerBase::APP_VERSION);
+	Tag::stylesheetLink('pos2/nota_credito');
+	echo Tag::javascriptInclude('pos2/production/reprocesar_factura_electronica', true, 'v='.ControllerBase::APP_VERSION);
+}
+
+echo View::getContent();
+
+if(Flash::hasMessages()){
+	echo '<div class="messages">';
+	foreach(Flash::getMessages() as $message){
+		Flash::show($message);
+	}
+	echo '</div>';
+}
+
+?>
+
+<style>
+	table {
+		border-bottom: 1px solid #ddd;
+		border-right: 1px solid #ddd;
+	}
+
+	table thead th {
+		padding: 5px;
+		text-align: center;
+		font-size: 11px;
+		font-weight: bold;
+		border-left: 1px solid #ddd;
+		border-top: 1px solid #ddd;
+	}
+
+	table tbody td {
+		border-left: 1px solid #ddd;
+		border-top: 1px solid #ddd;
+		font-size: 11px;
+		padding: 3px;
+	}
+
+	.al-l {
+		text-align:left;
+	}
+
+	.al-c {
+		text-align:center;
+	}
+
+	.al-r {
+		text-align:right;
+	}
+
+	.div-control{
+		margin-top: 20px;
+	}
+
+</style>
+
+<!-- notificciones -->
+<div class="notification">
+	<span></span>
+	<span class="text"></span>
+	<span></span>
+</div>
+
+
+<div align="center">
+	<table cellspacing="0" width="800">
+		<tr>
+			<td class='titulo' align='left'>
+				Generar XML Factura Electrónica Carvajal
+			</td>
+		</tr>
+		<tr>
+			<td class="main-content">
+				<br/>
+
+				<table width="100%" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width='60%' style='border-bottom:1px solid #dadada' valign="bottom">&nbsp;</td>
+						<td width="18%" class='tab_basic active_tab' align="center" onclick="Tabs.setActiveTab(this, 1)">Consecutivo</td>
+						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
+						<td width="18%" class='tab_basic inactive_tab' align="center" onclick="Tabs.setActiveTab(this, 2)">Hoy</td>
+						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="tab_content_p" colspan="5">
+							<div id='tab1' class='tab_content'>
+
+								<div align="center" style='padding: 20px;'>
+									<table id='anularTab'>
+										<tr>
+											<td rowspan="4"><?php echo Tag::image("pos2/xml_factura.jpg", "width: 90"); ?></td>
+										</tr>
+										<tr>
+											<td align="right"><b>Prefijo factura</b></td>
+											<td>
+												<?php echo Tag::textField(array("prefijo_facturacion")) ?>
+											</td>
+										</tr>
+										<tr>
+											<td align="right"><b>Número factura</b></td>
+											<td>
+												<?php echo Tag::textField(array("consecutivo_facturacion")) ?>
+											</td>
+										</tr>
+										<tr class="loading" style="display:none;">
+											<td style="text-align: center;" colspan="2"><?php echo Tag::image('spin.gif') ?></td>
+										</tr>
+										<tr>
+											<td colspan="2" style="text-align:center; padding-top: 10px;">
+												<?php echo Tag::button('Consultar', 'id: consultar', 'onclick: nota.consultarFactura(this)', 'class: controlButton') ?>
+												<?php echo Tag::button('Nueva', 'id: nueva', 'onclick: nota.nuevaConsulta(this)', 'class: controlButton', 'style: background: -webkit-linear-gradient(#8CB62C, #4B6C15); display:none;') ?>
+											</td>
+										</tr>
+									</table>
+								</div>
+
+								<div align="center" style='padding: 20px;'>
+									<?php view::renderview('reprocesar_factura_electronica/detalle'); ?>
+								</div>
+							</div>
+							<div id='tab2' class='tab_content' style="display:none" align="center">
+								<?php
+
+								if(count($facturas)>0){
+									echo '<table class="lista_res" cellspacing="0" cellpadding="5" align="center" style="width: 80%;">
+									<tr>
+										<th>Número</th>
+										<th>Ambiente</th>
+										<th>Total</th>
+										<th>Cliente</th>
+										<th></th>
+									</tr>';
+									foreach($facturas as $factura){
+										
+										$btngenerate = $factura->tipo_factura != 'E' ? '' : '<button class="btnxml" onclick="nota.xmlGenerate(this,\''.$factura->id.'\')">'.Tag::image("pos2/icon_xml.png", "width: 23").'</button>'.Tag::image("spin.gif", "width: 23", "class: xmlloading", "style: display:none;");
+										echo '<tr>',
+											'<td>', $factura->prefijo_facturacion.'-'.$factura->consecutivo_facturacion, '</td>',
+											'<td>', $factura->salon_nombre, '</td>',
+											'<td class="al-r">', $factura->total, '</td>',
+											'<td>', $factura->nombre, '</td>',
+											'<td style="text-align:center">'.$btngenerate.'</td>',
+										'</tr>';
+									}
+									echo '</table>';
+								} else {
+									echo '<div align="center">
+										<div id="noPedidos">
+											<table width="450">
+												<tr>
+													<td>', Tag::image("pos2/advert.png", "width: 72"), '</td>
+													<td width="350">No hay facturas/ordenes para anular</td>
+												</tr>
+											</table>
+										</div>
+									</div>';
+								}
+
+								?>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<table align="center">
+					<tr>
+						<td align='center'>
+							<table align="center">
+								<tr>
+									<td>
+										<button class='commandButton' onclick='new Utils.redirectToAction("tables")'>
+											<?php echo Tag::image("pos2/arrow_left-p.png", "width: 23") ?><br>
+											<b>Ir a Mesas</b>
+										</button>
+									</td>
+									<td>
+										<button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+											<?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+											<b>Salir</b>
+										</button>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+</div>

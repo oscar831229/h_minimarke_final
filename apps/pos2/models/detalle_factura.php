@@ -18,6 +18,7 @@ class DetalleFactura extends ActiveRecord {
 	public function initialize(){
 		$this->belongsTo('Account');
 		$this->belongsTo('MenusItems');
+		$this->hasMany('NotaCreditoDetalle');
 	}
 
 }

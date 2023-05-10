@@ -129,6 +129,11 @@ class Tatico extends UserComponent
 	);
 
 	/**
+	 *  Controla el costo del producto cuando se hace un ajuste por nota credito.
+	 */
+	public $ajustCreditNote = false;
+
+	/**
 	 * Constructor de Tatico
 	 *
 	 * @param	string $codigoComprobante
@@ -180,6 +185,7 @@ class Tatico extends UserComponent
 			$this->_comprobs[$codigoComprobante]->setConsecutivo($numero);
 		}
 	}
+
 
 	/**
 	 * Valida que un movimiento tenga todo lo requerido para grabarse
@@ -454,6 +460,7 @@ class Tatico extends UserComponent
 		try {
 			set_time_limit(0);
 			$movement = $this->validate($movement);
+			
 			return $this->_storeMovement($movement);
 		}
 		catch (DbLockAdquisitionException $e) {
@@ -766,7 +773,19 @@ class Tatico extends UserComponent
 					$detail['Valor'] = $costoItem * $detail['Cantidad'];
 					$costo = $costoItem;
 				} else {
+					
 					if ($tipoComprob=='A') {
+
+						# ASIGNAMOS EL VALOR DEL ITEM SEGUN COSTO DE VENTA ACTUAL
+						if($this->ajustCreditNote){
+							$costoItem = self::getCosto($detail['Item'], 'I', $movement['Almacen'], $this);
+							$costoItem = LocaleMath::round($costoItem, 2);
+							if ($costoItem<=0) {
+								$this->_throwException('No se pudo valorizar la referencia '.$detail['Item'].'/'.$inve->getDescripcion().' porque el costo es cero en el almacén '.$movement['Almacen'].'/'.$almacen->getNomAlmacen(), 10014);
+							}
+							$detail['Valor'] = $costoItem * $detail['Cantidad'];
+						}
+
 						if ($detail['Tipo']=='SUMAR') {
 							if ($detail['Cantidad']>0) {
 								$costo = $detail['Valor'] / $detail['Cantidad'];

@@ -191,6 +191,8 @@
 			}
 
 			echo "<td><input type='checkbox' $itemChecked $itemDisabled class='checkItem' value='{$account->id}'></td>";
+			$totalmodificado = 0;
+
 			if ($account->estado == 'B') {
 				echo "<td>{$account->comanda}&nbsp; [{$account->cuenta}]</td>";
 				echo "<td align='center'>", $account->asiento, "</td>";
@@ -198,21 +200,22 @@
 				foreach ($AccountModifiers->find("account_id='{$account->id}'") as $acc_mod) {
 					$modifier = $Modifiers->findFirst($acc_mod->modifiers_id);
 					echo "<br><a href='#' class='deleteModifier'>";
-					if ($modifier->valor > 0) {
+					if ($acc_mod->valor > 0) {
 						echo "+ {$modifier->nombre}";
 					} else {
-						if ($modifier->valor < 0) {
+						if ($acc_mod->valor < 0) {
 							echo "- {$modifier->nombre}";
 						} else {
 							echo "&gt; {$modifier->nombre}";
 						}
 					}
-					if($modifier->valor!=0){
-						echo "(".sprintf("% .2f", $modifier->valor).")";
+					if($acc_mod->valor!=0){
+						echo "(".sprintf("% .2f", $acc_mod->valor).")";
 					}
 					echo "</a>\n";
-					$total+=$modifier->valor;
-					$valor+=$modifier->valor;
+					$total+=$acc_mod->valor;
+					// $valor+=$acc_mod->valor;
+					$totalmodificado += $acc_mod->valor;
 				}
 				if ($account->note) {
 					echo "<br><div class='ac_note'>", $account->note, "</div>";
@@ -246,21 +249,22 @@
 				foreach($account->getAccountModifiers() as $accountModifier){
 					$modifier = $accountModifier->getModifiers();
 					echo "<br><a href='#' class='deleteModifier' lang='", $accountModifier->id, "'>";
-					if($modifier->valor>0){
+					if($accountModifier->valor>0){
 						echo "+ ", $modifier->nombre;
 					} else {
-						if($modifier->valor<0){
+						if($accountModifier->valor<0){
 							echo "- ", $modifier->nombre;
 						} else {
 							echo "&gt; ", $modifier->nombre;
 						}
 					}
-					if($modifier->valor!=0){
-						echo "(".sprintf("% .2f", $modifier->valor).")";
+					if($accountModifier->valor!=0){
+						echo "(".sprintf("% .2f", $accountModifier->valor).")";
 					}
 					echo "</a>\n";
-					$total+=$modifier->valor;
-					$valor+=$modifier->valor;
+					$total+=$accountModifier->valor;
+					// $valor+=$accountModifier->valor;
+					$totalmodificado += $accountModifier->valor;
 				}
 				if($account->note!=""){
 					echo "<br><div class='accountNote'>".Tag::linkTo("order/notes/{$account->id}", $account->note)."</div>";
@@ -296,12 +300,41 @@
 			}
 			$totalCuentas += $total;
 			echo "</tr>";
-			$tiva += ($account->iva * $account->cantidad);
-			$timpo += ($account->impo * $account->cantidad);
-			if (!isset($resumen[$menuItem->tipo])) {
-				$resumen[$menuItem->tipo] = $valor;
+
+			$modifier_base = 0;
+			$modificador_impo = 0;
+			$modificador_iva = 0;
+			$menuItem = $MenusItems->find($account->menus_items_id);
+			if ($menuItem->porcentaje_iva > 0) {
+				if ($accountCuenta->tipo_venta == 'F') {
+					$modifier_base = $totalmodificado / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+					$modificador_iva = $totalmodificado - ($totalmodificado / (1 + ($menuItem->porcentaje_iva / 100)));
+				} else {
+					if (Facturacion::_esExento($accountCuenta, $menuItem)) {
+						$modifier_base = $totalmodificado / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+						$modificador_iva = 0;
+					} else {
+						$modifier_base = $totalmodificado / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+						$modificador_iva = $totalmodificado - ($totalmodificado / (1 + ($menuItem->porcentaje_iva / 100)));
+					}
+				}
+				$account->impo = 0;
 			} else {
-				$resumen[$menuItem->tipo]+= $valor;
+				$modifier_base = $totalmodificado / (($menuItem->porcentaje_impoconsumo + $menuItem->porcentaje_servicio) / 100 + 1);
+				$modificador_impo = $totalmodificado - ($totalmodificado / (1 + ($menuItem->porcentaje_impoconsumo / 100)));
+				$modificador_iva = 0;
+			}
+
+			$valor += $modifier_base;
+			$total_iva =  $account->iva + $modificador_iva;
+			$total_impo = $account->impo + $modificador_impo;
+
+			$tiva += (($total_iva - ($total_iva * $account->descuento / 100)) * $account->cantidad);
+			$timpo += (($total_impo  - ($total_impo  * $account->descuento /100)) * $account->cantidad);
+			if (!isset($resumen[$menuItem->tipo])) {
+				$resumen[$menuItem->tipo] = ($valor-($valor * $account->descuento /100));
+			} else {
+				$resumen[$menuItem->tipo]+= ($valor-($valor * $account->descuento /100));
 			}
 			$nn++;
 		}

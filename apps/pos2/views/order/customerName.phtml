@@ -14,12 +14,20 @@
  */
 
 View::getContent();
+?>
+  <style>
+	  	.clsObligatorio {
+			background: url(../../../public/img/obligado.png)no-repeat;
+			width: 22px;
+			height: 22px;
+		}
+  </style>
+<?php
 
 echo '<div id="customerNameDiv">
 <div style="padding:3px">';
 
 if(isset($accountCuenta)&&$accountCuenta){
-	//echo "aaaa>" .print_r($accountCuenta, 1);
 	if($accountCuenta->clientes_nombre){
 		echo "<strong>Nombre Actual</strong> $accountCuenta->clientes_nombre<br>";
 	}
@@ -62,15 +70,90 @@ if(isset($accountCuenta)&&$accountCuenta){
 								<tr>
 									<td align="right"><b>Documento</b></td>
 									<td>
-										', Tag::textField("documento_cliente", "size: 15", "maxlength: 15",
-										"onblur: $(\"nombre\").value = AJAX.query(\"pay/getClientName/\"+this.value);
-										$(\"nombre\").activate()"), '
-										<div class="autocomplete" id="nombre_choices"></div>
+										', Tag::textField("documento_cliente", "size: 15", "maxlength: 15"), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
 									</td>
 								</tr>
 								<tr>
-									<td align="right"><b>Nombre</b></td>
-									<td>', Tag::textField(array("nombre", "size" => "40", "onblur" => "this.value = this.value.toUpperCase()")), '
+									<td align="right"><b>Tipo de documento</b></td>
+									<td>
+										', Tag::select('tipo_documento', $type_documents, 'using: tipdoc,detalle', 'useDummy: yes'), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Tipo persona</b></td>
+									<td>
+										', Tag::selectStatic('tip_per_jur', array(
+											'@'  => 'Seleccione....', 
+											'2' => 'Persona natural',
+											'1' => 'Persona jurídica'
+										)), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr class="div_juridicas" style="display:none;">
+									<td align="right"><b>Digito verificación</b></td>
+									<td>
+										', Tag::textField("digitov", "size: 15", "maxlength: 2"), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b class="nombre_x_persona">Primer nombre</b></td>
+									<td>', Tag::textField(array("primer_nombre", "size" => "17", "onblur" => "this.value = this.value.toUpperCase()")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr class="div_naturales">
+									<td align="right"><b>Segundo nombre</b></td>
+									<td>', Tag::textField(array("segundo_nombre", "size" => "17", "onblur" => "this.value = this.value.toUpperCase()")), '
+									</td>
+								</tr>
+								<tr class="div_naturales"> 
+									<td align="right"><b>Primer apellido</b></td>
+									<td>', Tag::textField(array("primer_apellido", "size" => "17", "onblur" => "this.value = this.value.toUpperCase()")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr class="div_naturales">
+									<td align="right"><b>Segundo apellido</b></td>
+									<td>', Tag::textField(array("segundo_apellido", "size" => "17", "onblur" => "this.value = this.value.toUpperCase()")), '
+									</td>
+								</tr>
+								
+								<tr>
+									<td align="right"><b>Teléfono</b></td>
+									<td>', Tag::textField(array("telefono1", "size" => "15")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Email</b></td>
+									<td>', Tag::textField(array("email", "size" => "30")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Ciudad DIAN</b></td>
+									<input type="hidden" name="flid_ciudades_dian" id="flid_ciudades_dian" class="hd_locator">
+									<td>', Tag::textField(array("ciudades_dian", "size" => "40")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>&nbsp;<div id="ciudades_dian_choices" style="display:none" class="autocomplete"></div></td>
+								</tr>
+								<tr>
+									<td align="right"><b>Dirección</b></td>
+									<td>', Tag::textField(array("direccion", "size" => "40")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Regimen fiscal</b></td>
+									<td>
+										', Tag::selectStatic('regimen_fiscal', array(
+											'@'  => 'Seleccione....', 
+											'49' => 'No responsables del IVA',
+											'48' => 'Impuestos sobre la venta del IVA'
+										)), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Código postal</b></td>
+									<td>', Tag::textField(array("codigo_postal", "size" => "15")), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
+									</td>
+								</tr>
+								<tr>
+									<td align="right"><b>Fecha nacimiento</b></td>
+									<td>', Tag::dateField(array("fecnac", "size" => "40", 'useDummy'=> true, 'class' => 'date-field')), '<span class="clsObligatorio">&nbsp;&nbsp;&nbsp;</span>
 									</td>
 								</tr>
 							</table>

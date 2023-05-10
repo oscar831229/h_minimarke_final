@@ -234,7 +234,7 @@ abstract class Component
 		if(isset($com["attributes"])){
 			if(is_array($com["attributes"])){
 				foreach($com["attributes"] as $nitem => $item) {
-					if($nitem!='maxlength'&&$nitem!='size'){
+					if($nitem!='maxlength'&&$nitem!='size' &&  $name != 'conceptos_id'){
 						StandardGenerator::formsPrint(" $nitem='$item' ");
 					}
 				}

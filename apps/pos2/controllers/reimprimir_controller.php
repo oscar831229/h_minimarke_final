@@ -22,12 +22,13 @@ class ReimprimirController extends ApplicationController {
 		$this->setParamToView('facturas', $this->Factura->find("fecha='{$datos->getFecha()}' AND estado='A'"));
 	}
 
-	public function reprintAction($numero, $salon, $tipo){
+	public function reprintAction($numero, $salon, $tipo, $prefijo){
 
 		$this->setResponse('view');
 		$salon = $this->filter($salon, 'int');
 		$numero = $this->filter($numero, 'int');
 		$tipo_venta = $this->filter($tipo, 'onechar');
+		$prefijo = $this->filter($prefijo, 'alpha');
 
 		if($tipo=='O'||$tipo=='F'){
 			$conditions = '';
@@ -35,7 +36,7 @@ class ReimprimirController extends ApplicationController {
 				$conditions = "tipo_venta IN ('H', 'P', 'U', 'C', 'S')";
 			} else {
 				if($tipo=='F'){
-					$conditions = "tipo_venta = 'F'";
+					$conditions = "tipo_venta = 'F' AND prefijo_facturacion = '$prefijo'";
 				}
 			}
 			$conditions = "consecutivo_facturacion = '$numero' AND salon_id = '$salon' AND $conditions";
@@ -51,17 +52,20 @@ class ReimprimirController extends ApplicationController {
 		}
 	}
 
-	public function existsAction($id, $salon, $tipo_venta){
+	public function existsAction($id, $salon, $tipo_venta, $prefijo){
 		$this->setResponse('xml');
 		$salon = $this->filter($salon, 'int');
 		$id = $this->filter($id, 'int');
 		$tipo_venta = $this->filter($tipo_venta, 'onechar');
+		$prefijo = $this->filter($prefijo, 'alpha');
 		if($tipo_venta=='O'){
 			$tipo_venta = "tipo_venta IN ('H', 'P', 'U', 'C', 'S')";
+			$conditions = "consecutivo_facturacion = '$id' AND salon_id = '$salon' AND $tipo_venta";
 		} else {
 			$tipo_venta = "tipo_venta = 'F'";
+			$conditions = "consecutivo_facturacion = '$id' AND salon_id = '$salon' AND prefijo_facturacion = '$prefijo' AND $tipo_venta";
 		}
-		$conditions = "consecutivo_facturacion = '$id' AND salon_id = '$salon' AND $tipo_venta";
+
 		$existe = $this->Factura->count($conditions);
 		if($existe){
 			return "yes";

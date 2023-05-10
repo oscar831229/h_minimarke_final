@@ -21,6 +21,7 @@ class Factura extends ActiveRecord {
 		$this->belongsTo(array('prefijo_facturacion', 'consecutivo_facturacion', 'tipo_venta'), 'AccountCuentas', array('prefijo', 'numero', 'tipo_venta'));
 		$this->hasMany(array('prefijo_facturacion', 'consecutivo_facturacion', 'tipo'), 'DetalleFactura');
 		$this->hasMany(array('prefijo_facturacion', 'consecutivo_facturacion', 'tipo'), 'PagosFactura');
+		$this->hasMany('NotaCredito');
 	}
 
 }

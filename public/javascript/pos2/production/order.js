@@ -342,86 +342,2946 @@ this.translateToPx(b.start),a.style.height=this.translateToPx(b.end-b.start+this
 this.track.cumulativeOffset(),this.event=a,this.setValue(this.translateToValue((this.isVertical()?c[1]-b[1]:c[0]-b[0])-this.handleLength/2)),b=this.activeHandle.cumulativeOffset(),this.offsetX=c[0]-b[0],this.offsetY=c[1]-b[1];else{for(;-1==this.handles.indexOf(b)&&b.parentNode;)b=b.parentNode;if(-1!=this.handles.indexOf(b))this.activeHandle=b,this.activeHandleIdx=this.handles.indexOf(this.activeHandle),this.updateStyles(),b=this.activeHandle.cumulativeOffset(),this.offsetX=c[0]-b[0],this.offsetY=
 c[1]-b[1]}}Event.stop(a)}},update:function(a){if(this.active){if(!this.dragging)this.dragging=!0;this.draw(a);Prototype.Browser.WebKit&&window.scrollBy(0,0);Event.stop(a)}},draw:function(a){var b=[Event.pointerX(a),Event.pointerY(a)],c=this.track.cumulativeOffset();b[0]-=this.offsetX+c[0];b[1]-=this.offsetY+c[1];this.event=a;this.setValue(this.translateToValue(this.isVertical()?b[1]:b[0]));if(this.initialized&&this.options.onSlide)this.options.onSlide(1<this.values.length?this.values:this.value,this)},
 endDrag:function(a){this.active&&this.dragging&&(this.finishDrag(a,!0),Event.stop(a));this.dragging=this.active=!1},finishDrag:function(){this.dragging=this.active=!1;this.updateFinished()},updateFinished:function(){if(this.initialized&&this.options.onChange)this.options.onChange(1<this.values.length?this.values:this.value,this);this.event=null}});
-/*
- 	New BSD License
- @version 	$Id$
-*/
-var Base={PROTOTYPE:1,JQUERY:2,EXT:3,MOOTOOLS:4,framework:0,bind:function(){for(var a=arguments[0]||null,b=arguments[1]||this,c=0,d=[],c=0;c<arguments.length;c++)1<c&&(d[d.length]=arguments[c]),c++;return function(){return a.apply(b,d)}},_checkFramework:function(){if("undefined"!=typeof Prototype)Base.activeFramework=Base.PROTOTYPE;else if("undefined"!=typeof jQuery)Base.activeFramework=Base.JQUERY;else if("undefined"!=typeof Ext)Base.activeFramework=Base.EXT;else if("undefined"!=typeof MooTools)Base.activeFramework=
-Base.MOOTOOLS;else return 0},$:function(a){return document.getElementById(a)},show:function(a){document.getElementById(a).style.display=""},hide:function(a){document.getElementById(a).style.display="none"},setValue:function(a,b){document.getElementById(a).value=b},getValue:function(a){a=document.getElementById(a);return"SELECT"==a.tagName?a.options[a.selectedIndex].value:a.value},up:function(a,b){for(var c=0,d=a;d;){d=d.parentNode;if(c>=b)break;c++}return d}},NumericField={maskNum:function(a){var a=
-a?a:window.event?window.event:null,b=a.keyCode;if(!a.ctrlKey&&!a.metaKey){var c=!1==a.altKey&&!1==a.shiftKey&&(48<=b&&57>=b||96<=b&&105>=b||8==b||9==b||13==b||17==b||36==b||35==b||37==b||46==b||39==b||190==b||110==b);c||(c=!0==a.shiftKey&&(9==b||35<=b&&39>=b))||(c=!0==a.altKey&&(84==b||82==b));if(!c)return a.preventDefault(),a.stopPropagation(),a.stopped=!0,!1}return!0},format:function(a){if(""!==a.value){var b="",c="",b=a.value.indexOf(".");-1!=b?(c=a.value.substr(b),b=a.value.substr(0,b)):b=a.value;
-document.title=b+" "+c}}},DateCalendar={build:function(a,b,c){var b=parseInt(c.substr(0,4),10),d=parseInt(c.substr(5,2),10);parseInt(c.substr(8,2),10);DateCalendar._buildMonth(a,b,d,c)},_buildMonth:function(a,b,c,d){var f=DateField.getNumberDays(b,c),g=new Date(b,c-1,1),e;e='<table class="calendarTable" cellspacing="0">'+('<tr><td class="arrowPrev"><img src="'+$Kumbia.path+'img/prevw.gif"/></td>');e+='<td colspan="5" class="monthName">'+DateCalendar.getMonthName(c)+"</td>";e+='<td class="arrowNext"><img src="'+
-$Kumbia.path+'img/nextw.gif"/></td></tr>';e+="<tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>S\u00e1b</th></tr><tr>";for(var h=1==c?DateField.getNumberDays(b-1,12):DateField.getNumberDays(b-1,c-1),g=g.getDay(),i=h-g+1;i<h;i++)e+='<td class="outMonthDay">'+(i+1)+"</td>";for(h=1;h<=f;)i=10>c?b+"-0"+c+"-"+h:b+"-"+c+"-"+h,e=d==i?e+('<td class="selectedDay" title="'+i+'">'+h+"</td>"):e+('<td title="'+i+'">'+h+"</td>"),6==g?(e+="</tr><tr>",g=0):g++,h++;h=1;if(7>g)for(i=
-g;7>i;i++)e+='<td class="outMonthDay">'+h+"</td>",h++;e+="</tr></table>";a=a.up(1).cumulativeOffset();(b=document.getElementById("calendarDiv"))&&b.parentNode.removeChild(b);b=document.createElement("DIV");b.id="calendarDiv";b.addClassName("calendar");b.update(e);b.style.top=a[1]+22+"px";b.style.left=a[0]+"px";document.body.appendChild(b);window.setTimeout(function(){new Event.observe(window,"click",DateCalendar.removeCalendar)},150)},removeCalendar:function(a){"INPUT"!=a.target.tagName&&"SELECT"!=
-a.target.tagName&&((a=document.getElementById("calendarDiv"))&&a.parentNode.removeChild(a),new Event.stopObserving(window,"click",DateCalendar.removeCalendar))},getMonthName:function(a){switch(a){case 1:return"Enero";case 2:return"Febrero";case 3:return"Marzo";case 4:return"Abril";case 5:return"Mayo";case 6:return"Junio";case 7:return"Julio";case 8:return"Agosto";case 9:return"Septiembre"}}},DateField={_monthTable:[31,28,31,30,31,30,31,31,30,31,30,31],_listeners:{},observe:function(a,b,c){"undefined"==
-typeof DateField._listeners[b]&&(DateField._listeners[b]={});DateField._listeners[b][a.id]={element:a,procedure:c}},fire:function(a,b,c){"undefined"!=typeof DateField._listeners[b]&&"undefined"!=typeof DateField._listeners[b][a.id]&&(b=DateField._listeners[b][a.id],a==b.element&&b.procedure(c));return!1},getNumberDays:function(a,b){var c=DateField._monthTable[b-1];2==b&&0==parseInt(a,10)%4&&(c=29);return c},getElement:function(a,b){return"undefined"==typeof b?Base.$(a):b.up(4).querySelector("#"+a)},
-getValue:function(a,b){var c=DateField.getElement(a,b);return"SELECT"==c.tagName?c.options[c.selectedIndex].value:c.value},refresh:function(a,b){var c="",d,f;d=DateField.getValue(a+"Year",b);f=DateField.getValue(a+"Month",b);var g=DateField.getValue(a+"Day",b),e=DateField.getElement(a+"Day",b),h=d+"-"+f+"-"+g,i=DateField.getElement(a,b);for(i.value=h;e.lastChild;)e.removeChild(e.lastChild);"0"==f.substr(0,1)&&(f=f.substr(1,1));f=DateField.getNumberDays(d,f);for(var j=1;j<=f;++j)d=10>j?"0"+j:j,c=d==
-g?c+('<option value="'+d+'" selected="selected">'+d+"</option>"):c+('<option value="'+d+'">'+d+"</option>");e.innerHTML=c;DateField.fire(i,"change",h)},showCalendar:function(a,b){DateCalendar.build(a,b,Base.getValue(b))}},TimeField={refresh:function(a,b){var c=DateField.getValue(a+"Hour",b),d=DateField.getValue(a+"Minutes",b);DateField.getElement(a,b).value=c+":"+d}},Utils={getKumbiaURL:function(a){"undefined"==typeof a&&(a="");return""!=$Kumbia.app?$Kumbia.path+$Kumbia.app+"/"+a:$Kumbia.path+a},
-getAppURL:function(a){"undefined"==typeof a&&(a="");return""!=$Kumbia.app?$Kumbia.path+$Kumbia.app+"/"+a:$Kumbia.path+a},getURL:function(a){return"undefined"==typeof a?$Kumbia.path:$Kumbia.path+a},redirectParentToAction:function(a){new Utils.redirectToAction(a,window.parent)},redirectOpenerToAction:function(a){new Utils.redirectToAction(a,window.opener)},redirectToAction:function(a,b){(b?b:window).location=Utils.getKumbiaURL()+a},upperCaseFirst:function(a){return a.substring(0,1).toUpperCase()+a.substr(1,
-a.length-1)},round:function(a,b){var c=Math.pow(100,b);return Math.round(a*c)/c},numberFormat:function(a){var a=a.toString(),b=a.indexOf(".");if(-1!=b)var c=a.substr(b+1),a=a.substring(0,b);else c="00";for(var b=[],a=a.toArray(),d=0;d<a.length;d++)0==(a.length-d)%3&&0!=d&&b.unshift("."),b.unshift(a[d]);return b.reverse().join("")+","+c.substr(0,2)}};
-function ajaxRemoteForm(a,b,c){void 0==c&&(c={});new Ajax.Updater(b,a.action,{method:"post",asynchronous:!0,evalScripts:!0,onSuccess:function(a){$(b).update(a.responseText)},onLoaded:void 0!=c.before?c.before:function(){},onComplete:void 0!=c.success?c.success:function(){},parameters:Form.serialize(a)});return!1}
-var AJAX={doRequest:function(a,b){var c=Base.activeFramework;"undefined"==typeof b&&(b={});switch(c){case Base.PROTOTYPE:return $H({before:"onLoading",success:"onSuccess",complete:"onComplete",error:"onFailure"}).each(function(a){"undefined"!=typeof b[a[0]]&&(b[a[1]]=function(a,b){a.bind(this,b.responseText)()}.bind(this,b[a[0]]))}),new Ajax.Request(a,b);case Base.JQUERY:return c={method:"type",parameters:"data",asynchronous:"async"},$.each(c,function(a,c){"undefined"!=typeof b[a]&&(b[c]=b[a])}),
-b.url=a,$.ajax(b);case Base.EXT:var c={before:"beforerequest",error:"failure",parameters:"params"},d;for(d in c)"undefined"!=typeof b[d]&&(b[c[d]]=b[d]);b.url=a;return Ext.Ajax.request(b);case Base.MOOTOOLS:c={parameters:"data",asynchronous:"async",before:"onRequest",success:"onSuccess",error:"onFailure",complete:"onComplete"};for(d in c)"undefined"!=typeof b[d]&&(b[c[d]]=b[d]);b.url=a;d=new Request(b);d.send();return d}},update:function(a,b,c){"undefined"==typeof c&&(c={});c.success=function(a){Base.$(b).innerHTML=
-a};Base.bind(c.success,b,b);return AJAX.doRequest(a,c)}};AJAX.xmlRequest=function(a){var b={};if("undefined"==typeof a.url&&"undefined"!=typeof a.action)b.url=Utils.getKumbiaURL(a.action);return AJAX.doRequest(b.url,b)};
-AJAX.viewRequest=function(a){var b={};if("undefined"==typeof a.url&&"undefined"!=typeof a.action)b.url=Utils.getKumbiaURL(a.action);container=a.container;b.evalScripts=!0;if(!document.getElementById(container))throw"CoreError: DOM Container '"+container+"' no encontrado";return AJAX.update(container,b.url,b)};AJAX.execute=function(a){var b={};if("undefined"==typeof a.url&&"undefined"!=typeof a.action)b.url=Utils.getKumbiaURL(a.action);return AJAX.doRequest(b.url,b)};
-AJAX.query=function(a){var b;new Ajax.Request(Utils.getKumbiaURL(a),{method:"GET",asynchronous:!1,onSuccess:function(a){a=a.responseXML.getElementsByTagName("data");b=xmlValue=Prototype.Browser.IE?a[0].text:a[0].textContent}});return b};document.addEventListener?document.addEventListener("DOMContentLoaded",Base._checkFramework,!1):document.attachEvent("readystatechange",Base._checkFramework);var WindowUtilities={getWindowScroll:function(a){var b,c,d,a=a||document.body;a!=document.body?(b=a.scrollTop,c=a.scrollLeft,d=a.scrollWidth,a=a.scrollHeight):(a=window,b=a.document.body.scrollTop,c=a.document.body.scrollLeft,d=a.innerWidth,a=a.innerHeight);return{top:b,left:c,width:d,height:a}},getPageSize:function(a){var a=a||document.body,b,c,d;if(a!=document.body)b=a.getWidth(),c=a.getHeight(),d=a.scrollWidth,a=a.scrollHeight;else{window.innerHeight&&window.scrollMaxY?(d=document.body.scrollWidth,
-a=window.innerHeight+window.scrollMaxY):document.body.scrollHeight>document.body.offsetHeight?(d=document.body.scrollWidth,a=document.body.scrollHeight):(d=document.body.offsetWidth,a=document.body.offsetHeight);if(self.innerHeight)b=self.innerWidth,c=self.innerHeight;else if(document.documentElement&&document.documentElement.clientHeight)b=document.documentElement.clientWidth,c=document.documentElement.clientHeight;else if(document.body)b=document.body.clientWidth,c=document.body.clientHeight;a=
-a<c?c:a;d=d<b?b:d}return{pageWidth:d,pageHeight:a,windowWidth:b,windowHeight:c}}};$W=function(a){return document.frames("openWindow").document.getElementById(a)};
-var WINDOW={open:function(a){if(!$("myWindow")){var b=WindowUtilities.getWindowScroll(document.body),c=WindowUtilities.getPageSize(document.body),d=document.createElement("DIV");if(!a.title)a.title="";if(!a.url)a.url=a.action;left=parseInt((c.windowWidth-(parseInt(a.width)+36))/2);left+=b.left;d.style.left=left+"px";if("undefined"!=typeof a.width)d.style.width=a.width;if("undefined"!=typeof a.height)d.style.height=parseInt(a.height)+10+"px";d.hide();d.innerHTML="<table cellspacing='0' cellpadding='0' width='100%'><tr><td align='center' id='myWindowTitle'>"+
-a.title+"</td></tr><tr><td id='myWindowData'></td></tr></table>";d.id="myWindow";document.body.appendChild(d);if("undefined"!=typeof a.onclose)WINDOW.onclose=a.onclose;if("undefined"!=typeof a.onbeforeclose)WINDOW.onbeforeclose=a.onbeforeclose;d.close=function(b){var c=$("myWindow"),d=$("shadow_win");if(!("undefined"!=typeof a.onbeforeclose&&!1==a.onbeforeclose.call(this,b))){if("undefined"!=typeof c.onclose)a.onclose=c.onclose;document.body.removeChild(c);d&&document.body.removeChild(d);"undefined"!=
-typeof a.onclose&&a.onclose&&"undefined"!=typeof a.onclose.call&&a.onclose.call(this,b)}};new Ajax.Request(Utils.getKumbiaURL(a.url),{method:"GET",onSuccess:function(a,b){$("myWindowData").update(b.responseText);"undefined"!=typeof a.afterRender&&a.afterRender();var c=document.createElement("DIV");c.id="shadow_win";$(c).setOpacity(0.1);document.body.appendChild(c);$("myWindow").show()}.bind(this,a)})}}};var Modal={confirm:function(a,b){document.body.scrollTop=0;new WINDOW.open({url:"context",title:"Confirmaci\u00f3n",width:"500px",height:"200px",afterRender:function(a){$("contextMessage").update(a);$("okModal").observe("click",function(a){$("myWindow").close();a()}.bind(this,b));$("noModal").observe("click",function(){$("myWindow").close()})}.bind(this,a,b)})}},Growler={timeout:null,addTimeout:function(a){if(null!=Growler.timeout)window.clearTimeout(Growler.timeout),Growler.timeout=null;Growler.timeout=
-window.setTimeout(function(a){document.body.removeChild(a);Growler.timeout=null}.bind(this,a),3500)},show:function(a){var b=WindowUtilities.getWindowScroll(document.body),c=WindowUtilities.getPageSize(document.body),d=$("growler");d?(d.innerHTML=a,Growler.addTimeout(d),new Effect.Shake(d,{duration:0.5})):(d=document.createElement("DIV"),d.id="growler",d.innerHTML=a,d.hide(),document.body.appendChild(d),d.setStyle({top:c.windowHeight-(d.getHeight()+20)+b.top+"px",left:c.windowWidth-270+b.left+"px"}),
-d.show(),Growler.addTimeout(d))}};var Pedido=Class.create({id:0,_accountMasterId:0,_numeroCuenta:0,_tipoComanda:"M",_searchMode:!1,_searching:!1,_pedirPersonas:"S",_pedirAsientos:"S",_numeroAsientos:0,_menuCache:[],_modifiersCache:[],_menuDetails:null,_menuDetailsHeight:"300px",_listaPedidoHeight:"300px",_menuItemsButtons:[],_cuentasElement:null,_comandasElement:null,_menuItemSelected:null,_lastMenuSelected:null,getMenuItems:function(a,b){if(this._lastMenuSelected!=a){a.className="menuButtonSelected";if(null!=this._lastMenuSelected)this._lastMenuSelected.className=
-"menuButton";this._lastMenuSelected=a}"undefined"==typeof this._menuCache[b]?new Ajax.Request(Utils.getKumbiaURL("order/getMenu/"+b),{method:"GET",onSuccess:function(a,b){this._menuCache[a]=JSON.parse(b.responseText);this.updateMenuDetails(this._menuCache[a])}.bind(this,b)}):this.updateMenuDetails(this._menuCache[b])},adjustItemsList:function(a){""==this._menuDetailsElement.style.height&&new Effect.Morph(this._menuDetailsElement,{duration:0.3,style:{height:this._menuDetailsHeight}});this._menuDetailsElement.style.overflowY=
-8<a.length?"scroll":"auto"},updateMenuDetails:function(a){this._menuDetailsElement.innerHTML="";for(var b=0;b<a.length;b++){var c=document.createElement("BUTTON");c.className="menuItemButton";c.title="Precio: "+a[b].valor;c.update(a[b].nombre);c.observe("click",this.addItemToAccount.bind(this,c,a[b]));this._menuDetailsElement.appendChild(c)}this.adjustItemsList(a)},updateModifiersDetails:function(a){this._menuDetailsElement.innerHTML="";for(var b=0;b<a.length;b++){var c=document.createElement("BUTTON");
-c.className="menuItemButton";0==b?c.observe("click",this.addItemToAccount.bind(this,c,a[b])):(c.addClassName("modifierButton"),c.observe("click",this.addModifier.bind(this,c,a[b])));c.title="Precio: "+a[b].valor;c.update(a[b].nombre);this._menuDetailsElement.appendChild(c)}this.adjustItemsList(a)},addItemToAccount:function(a,b){if(a!=this._menuItemSelected)a.addClassName("menuItemButtonSelected"),this._menuItemSelected&&this._menuItemSelected.removeClassName("menuItemButtonSelected"),this._menuItemSelected=
-a;new Ajax.Request(Utils.getKumbiaURL("order/addToList/"+b.id),{method:"GET",onSuccess:function(a,b){this._preOrder.update(b.responseText);0!=a.modifiers&&this.getModifiers(a.id);this.preOrderCallbacks()}.bind(this,b),onFailure:function(a){this._preOrder.update(a.responseText)}})},getModifiers:function(a){"undefined"==typeof this._modifiersCache[a]?new Ajax.Request(Utils.getKumbiaURL("order/getModifiers/"+a),{method:"GET",onSuccess:function(a,c){this._modifiersCache[a]=JSON.parse(c.responseText);
-this.updateModifiersDetails(this._modifiersCache[a])}.bind(this,a)}):this.updateModifiersDetails(this._modifiersCache[a])},addModifier:function(a,b){if(a!=this._menuItemSelected)a.addClassName("menuItemButtonSelected"),this._menuItemSelected&&this._menuItemSelected.removeClassName("menuItemButtonSelected"),this._menuItemSelected=a;new Ajax.Request(Utils.getKumbiaURL("order/addModifier/"+b.id),{method:"GET",onSuccess:this.refresh.bind(this)})},deleteModifier:function(a){Modal.confirm("\u00bfSeguro desea eliminar el modificador '"+
-a.innerHTML+"'?",function(a){new Ajax.Request(Utils.getKumbiaURL("order/deleteModifier/"+a),{method:"GET",onSuccess:this.refresh.bind(this)})}.bind(this,a.lang))},addMenuItemsHotKeys:function(){for(var a=[],b=65;91>b;b++){var c=String.fromCharCode(b).toLowerCase();HotKeys.include()||a.push(c)}iHotKeys=[];MenuItemsHotKeys=[];b=$$(".menuItemButton");for(c=0;c<b.length;c++){var d=b[c];if(a.length>c)d.innerHTML+="<span class='mcode'>&nbsp;("+a[c]+")</span>",d.id="mit"+c,MenuItemsHotKeys.push(c),iHotKeys.push(a[c]);
-c++}},refresh:function(a){"string"!=typeof a&&(a="");new Ajax.Request(Utils.getKumbiaURL("order/refresh/"+a),{method:"GET",onSuccess:function(a){this._preOrder.update(a.responseText);this.preOrderCallbacks()}.bind(this)})},closeRefresh:function(){var a=$("myWindow");a&&a.close();this.refresh()},addAutomaticComanda:function(){new Ajax.Request(Utils.getKumbiaURL("order/addNextComanda"),{method:"GET",onSuccess:function(a){var a=JSON.parse(a.responseText),b=document.createElement("OPTION");b.value=a;
-b.text=a;this._comandasElement.appendChild(b);this._comandasElement.selectedIndex=this._comandasElement.options.length-1;this.pedirPersonas()}.bind(this)})},addComanda:function(){new WINDOW.open({title:"Digite el N\u00famero de Comanda",action:"numero",width:"220px",height:"390px",background:"#c0c0c0",onbeforeclose:function(a){if("cancel"==a&&0==this._comandasElement.options.length)return this.backToTables();a=parseInt($("number").value,10);if(0>=a){if(0==this._comandasElement.options.length)return Growler.show("Debe ingresar un n\u00famero de Comanda antes de empezar"),
-!1;0==a&&Growler.show("Debe ingresar un n\u00famero de Comanda antes de empezar")}else this._addComandaInternal(a)}.bind(this)})},_addComandaInternal:function(a){new Ajax.Request(Utils.getKumbiaURL("order/existeComanda/"+a),{method:"GET",onSuccess:function(a,c){if(0<JSON.parse(c.responseText))return Growler.show("Esta comanda ya existe en otra cuenta"),!1;for(var d=this._comandasElement.options,f=0;f<d.length;f++)if(d[f].value==a)return Growler.show("Esta comanda ya existe"),!1;d=document.createElement("OPTION");
-d.value=a;d.text=a;this._comandasElement.appendChild(d);this.setLastComanda(a);window.setTimeout(this.pedirPersonas.bind(this),300)}.bind(this,a)})},deleteComanda:function(){new Ajax.Request(Utils.getKumbiaURL("order/getNumeroComandas"),{method:"GET",onSuccess:function(a){if(1<JSON.parse(a.responseText))Modal.confirm("\u00bfEsta seguro de eliminar esta comanda?",function(){new Ajax.Request(Utils.getKumbiaURL("order/queryComanda/"+this._comandasElement.getValue()),{method:"GET",onSuccess:function(a){if(0<
-JSON.parse(a.responseText))return Growler.show("No se puede borrar esta comanda porque tiene items atendidos"),!1;new Ajax.Request(Utils.getKumbiaURL("order/deleteComanda/"+this._comandasElement.getValue()),{method:"GET",onSuccess:function(){Growler.show("Se elimin\u00f3 la comanda correctamente");this.refresh();this.setLastComanda()}.bind(this)})}.bind(this)})}.bind(this));else return Growler.show("No se puede eliminar la comanda porque es la \u00fanica existente"),!1}.bind(this)})},pedirPersonas:function(){0==
-this._numeroAsientos&&"S"==this._pedirPersonas&&new WINDOW.open({title:"Digite el N\u00famero de Personas",action:"numero",width:"220px",height:"390px",onbeforeclose:function(a){if("cancel"==a)return this.backToTables();a=parseInt($("number").value,10);if(14<a)return Growler.show("El n\u00famero de personas es muy alto"),!1;if(1>a)return Growler.show("El n\u00famero de personas es muy bajo"),!1;this.addSillas(a);this.setNumeroSillas(a)}.bind(this)})},setNumeroSillas:function(a){new Ajax.Request(Utils.getKumbiaURL("order/setNumberAsientos/"+
-a),{method:"GET"})},setActiveAsiento:function(a){new Ajax.Request(Utils.getKumbiaURL("order/setActiveAsiento/"+a),{method:"GET"})},addSillas:function(a){for(var b=0,a=parseInt(a,10)+1,b=1;b<=a;b++){var c=$("s"+b);new Effect.Appear(c,{duration:0.6});c.number||new Event.observe(c,"click",this.changeSelectedSilla.bind(this,b));c.number=b;c.show();b==a&&new Effect.Opacity(c,{duration:0.5,to:0.4})}if(a>this._numeroAsientos)this._numeroAsientos=a},changeSelectedSilla:function(a){for(var b=1;15>b;b++){var c=
-$("s"+b);c.visible()&&(b==a?(c.removeClassName("inactiveAsiento"),c.addClassName("activeAsiento"),this.setActiveAsiento(a)):(c.removeClassName("activeAsiento"),c.addClassName("inactiveAsiento")))}},addCuenta:function(){new Ajax.Request(Utils.getKumbiaURL("order/addCuenta"),{method:"GET",onSuccess:function(a){for(var a=JSON.parse(a.responseText),b=this._cuentasElement.options,c=0;c<b.length;c++)b[c].value==a&&a++;b=document.createElement("OPTION");b.value=a;b.text=a;this._cuentasElement.appendChild(b);
-$("documento").value=0;$("nombre_cliente").value="PARTICULAR";$("nombre_cliente_span").innerHTML="PARTICULAR";$("habitacion_id").value=0;$("habitacion_id_span").innerHTML="";$("nota").value="";$("nota_span").innerHTML="";this.setLastCuenta()}.bind(this)})},setLastCuenta:function(){this._cuentasElement.selectedIndex=this._cuentasElement.options.length-1;new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()))},deleteCuenta:function(){new Ajax.Request(Utils.getKumbiaURL("order/getNumeroCuentas"),
-{method:"GET",onSuccess:function(a){if(1<JSON.parse(a.responseText))Modal.confirm("\u00bfEsta seguro de eliminar esta cuenta?",function(){new Ajax.Request(Utils.getKumbiaURL("order/queryCuenta/"+this._cuentasElement.getValue()),{method:"GET",onSuccess:function(a){if(0<JSON.parse(a.responseText))return Growler.show("No se puede borrar esta cuenta porque tiene items atendidos"),!1;new Ajax.Request(Utils.getKumbiaURL("order/deleteCuenta/"+this._cuentasElement.getValue()),{method:"GET",onSuccess:function(){Growler.show("Se elimin\u00f3 la cuenta correctamente");
-this.refresh();this.setLastCuenta()}.bind(this)})}.bind(this)})}.bind(this));else return Growler.show("No se puede eliminar la cuenta porque es la \u00fanica existente"),!1}.bind(this)})},onChangeCuenta:function(){new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()),{onSuccess:function(a){a=JSON.parse(a.responseText);if("OK"==a.status)$("documento").value=a.documento,$("nombre_cliente").value=a.cliente,$("nombre_cliente_span").innerHTML=a.cliente,-1!=a.habitacion?
-($("habitacion_id").value=a.habitacion,$("habitacion_id_span").innerHTML="["+a.habitacion+"]"):($("habitacion_id").value=0,$("habitacion_id_span").innerHTML=""),null!=a.nota?($("nota").value=a.nota,$("nota_span").innerHTML="<br><b>Nota:</b>"+a.nota):($("nota").value="",$("nota_span").innerHTML=""),$("tipo_venta").setValue(a.tipo_venta),"B"==a.estado&&("F"==a.tipo_venta?Growler.show("Ya se ha generado la factura en esta cuenta"):Growler.show("Ya se ha generado la orden de servicio en esta cuenta"))}})},
-onChangeComanda:function(){new Ajax.Request(Utils.getKumbiaURL("order/setComanda/"+this._comandasElement.getValue()),{method:"GET"});this._comandasElement.blur()},setLastComanda:function(a){this._comandasElement.selectedIndex=this._comandasElement.options.length-1;new Ajax.Request(Utils.getKumbiaURL("order/setComanda/"+a),{method:"GET"})},toggleComanda:function(a){for(var b=a.up(1),c=a.innerHTML,d=document.createElement("SELECT"),f=this._comandasElement.options,g=0;g<f.length;g++){var e=document.createElement("OPTION");
-e.value=f[g].value;e.text=f[g].text;if(e.value==c)e.selected=!0;d.appendChild(e)}d.observe("change",this.changeItemComanda.bind(this,b.lang,d));d.observe("blur",function(a,b){a.innerHTML=b.getValue();b.parentNode.removeChild(b)}.bind(this,a,d));a.innerHTML="";a.up().appendChild(d);d.activate()},changeItemComanda:function(a,b){new Ajax.Request(Utils.getKumbiaURL("order/changeItemComanda/"+a+"/"+b.getValue()),{method:"get",onSuccess:this.refresh.bind(this)})},toggleCuenta:function(a){for(var b=a.up(1),
-c=a.innerHTML.replace("[","").replace("]",""),d=document.createElement("SELECT"),f=this._cuentasElement.options,g=0;g<f.length;g++){var e=document.createElement("OPTION");e.value=f[g].value;e.text=f[g].text;if(e.value==c)e.selected=!0;d.appendChild(e)}d.observe("change",this.changeItemCuenta.bind(this,b.lang,d));d.observe("blur",function(a,b){a.innerHTML="["+b.getValue()+"]";b.parentNode.removeChild(b)}.bind(this,a,d));a.innerHTML="";a.up().appendChild(d);d.activate()},changeItemCuenta:function(a,
-b){new Ajax.Request(Utils.getKumbiaURL("order/changeItemCuenta/"+a+"/"+b.getValue()),{method:"get",onSuccess:this.refresh.bind(this)})},deleteItem:function(a){var b=a.up(1),a=b.querySelector("span.itemName");Modal.confirm("\u00bfSeguro desea cancelar la cantidad pendiente de '"+a.innerHTML+"'?",function(){new Effect.Fade(b,{duration:0.3,afterFinish:function(a){new Ajax.Request(Utils.getKumbiaURL("order/deleteItem/"+a.lang),{method:"GET",onSuccess:this.refresh.bind(this)})}.bind(this,b)})}.bind(this,
-b))},changeDiscount:function(a){a=a.up(1);new WINDOW.open({title:"Digite el Porcentaje de Descuento",action:"numero",width:"220px",height:"390px",onbeforeclose:function(a,c){if("cancel"!=c){var d=parseInt($("number").value,10);if(100<d)return Growler.show("El porcentaje de descuento no puede ser mayor a 100"),!1;new Ajax.Request(Utils.getKumbiaURL("order/changeDiscount/"+a+"/"+d),{method:"GET",onSuccess:this.refresh.bind(this)})}}.bind(this,a.lang)})},changeQuantity:function(a){a=a.up(1);new WINDOW.open({title:"Digite la Cantidad",
-action:"numero",width:"220px",height:"370px",onbeforeclose:function(a,c){if("cancel"!=c){var d=parseInt($("number").value,10);if("0"==d)return Growler.show("La cantidad debe ser mayor a cero"),!1;new Ajax.Request(Utils.getKumbiaURL("order/changeQuantity/"+a+"/"+d),{method:"GET",onSuccess:this.refresh.bind(this)})}}.bind(this,a.lang)})},showInvoice:function(){var a=$F("tipo_venta");"0"!=$("documento").value?"PARTICULAR"!=$("nombre_cliente").value?"F"==a?Modal.confirm("\u00bfSeguro desea generar la Factura?",
-function(){window.open(Utils.getKumbiaURL("factura/index/"+this._numeroCuenta+"/"+this._accountMasterId),null,"width=300, height=700, toolbar=no, statusbar=no");new Utils.redirectToAction("order/add/"+this._id)}.bind(this)):"S"==a?Modal.confirm("\u00bfSeguro desea asignar estos cargos a la factura de socios?",function(){window.open(Utils.getKumbiaURL("factura/index/"+this._numeroCuenta+"/"+this._accountMasterId),null,"width=300, height=700, toolbar=no, statusbar=no");new Utils.redirectToAction("order/add/"+
-this._id)}.bind(this)):Modal.confirm("\u00bfSeguro desea generar la Orden de Servicio?",function(){window.open(Utils.getKumbiaURL("factura/index/"+this._numeroCuenta+"/"+this._accountMasterId),null,"width=300, height=700, toolbar=no, statusbar=no");new Utils.redirectToAction("order/add/"+this._id)}.bind(this)):("F"==a?Growler.show("Debe especificar el cliente antes de generar la Factura"):Growler.show("Debe especificar el cliente antes de generar la Orden de Servicio"),this.setCustomerName()):("F"==
-a?Growler.show("Debe especificar el cliente antes de generar la Factura"):Growler.show("Debe especificar el cliente antes de generar la Orden de Servicio"),this.setCustomerName())},deleteItems:function(){for(var a=[],b=this._preOrder.querySelectorAll("input.checkItem"),c=0;c<b.length;c++)!0==b[c].checked&&a.push(b[c].value);0<a.length?Modal.confirm("\u00bfDesea eliminar los items seleccionados?",function(a){new Ajax.Request(Utils.getKumbiaURL("order/cancelItems"),{parameters:{items:a.join(",")},onSuccess:this.refresh.bind(this)})}.bind(this,
-a)):Growler.show("Seleccione un item al menos a eliminar")},onChangeTipoVenta:function(a,b){0<this._preOrder.querySelectorAll("tr.orderRow").length?("F"==a.getValue()?$("gendoc").update("Imprimir<br>Factura"):$("gendoc").update("Imprimir<br>Order"),new Ajax.Request(Utils.getKumbiaURL("order/changeTipoVenta/"+a.getValue()),{method:"GET",onSuccess:this.refresh.bind(this)})):(Growler.show("Agregue items a la cuenta antes de indicar el tipo de pedido"),new Event.stop(b))},enableShortCuts:function(a){!1==
-this._searchMode&&!$("myWindow")&&!0==a.ctrlKey&&(49==a.keyCode?this.goToModifiers():50==a.keyCode?this.setCustomerName():51==a.keyCode?this.payAccount():52==a.keyCode?this.showInvoice():48==a.keyCode&&this.showStatement())},selectItem:function(a){for(var b=this._preOrder.querySelectorAll("tr.itemSelected"),c=0;c<b.length;c++)b[c].removeClassName("itemSelected");a.addClassName("itemSelected");new Ajax.Request(Utils.getKumbiaURL("order/changeSelectedItem/"+a.lang),{method:"GET"})},selectAllItems:function(){for(var a=
-this._preOrder.querySelectorAll("input.checkItem"),b=0;b<a.length;b++)if(!1==a[b].disabled)a[b].checked=!0},prepareBuscarItem:function(){var a=$("buscarItem");a.observe("focus",function(){if("Buscar por nombre"==this.value)this.value="",this.style.color="#000000";this.activate()});a.observe("blur",function(){if(""==this.value)this.value="Buscar por nombre",this.style.color="#c0c0c0"});a.observe("keydown",function(){this._searchMode=!0}.bind(this));a.observe("keyup",function(a){if(!1==this._searching)1<
-a.value.length?(this._searching=!0,new Ajax.Request(Utils.getKumbiaURL("order/searchItem"),{parameters:{text:a.getValue()},onSuccess:function(a){this.updateMenuDetails(JSON.parse(a.responseText));this._searching=!1}.bind(this),onFailure:function(a){alert(a.responseText);this._searching=!1}.bind(this)})):this.updateMenuDetails([]);this._searchMode=!1}.bind(this,a))},changePrice:function(a){new WINDOW.open({title:"Digite el nuevo Precio Unitario",action:"numero",width:"220px",height:"390px",background:"#c0c0c0",
-onbeforeclose:function(a,c){if("cancel"==c)return!1;var d=a.up(1),f=parseInt($("number").value,10);-1<f&&new Ajax.Request(Utils.getKumbiaURL("order/changePrice/"+d.lang+"/"+f),{onSuccess:this.refresh.bind(this)})}.bind(this,a)})},captureServicio:function(){new WINDOW.open({title:"Digite la Propina",action:"numero",width:"220px",height:"370px",onbeforeclose:function(a){if("cancel"!=a){var b=$("number").getValue(),b=""!=b?parseFloat(b,10):0;new Ajax.Request(Utils.getKumbiaURL("order/setPropina"),{parameters:{valor:b},
-onSuccess:function(){$("servicio").setValue(b)}.bind(this,b)});window.setTimeout(function(){$("servicio").blur()},200)}}})},preOrderCallbacks:function(){for(var a=this._preOrder,b=a.querySelectorAll("span.ccom"),c=0;c<b.length;c++){var d=b[c];d.title="Haga Click Para Cambiar Comanda...";d.observe("click",this.toggleComanda.bind(this,d))}b=a.querySelectorAll("span.ccue");for(c=0;c<b.length;c++)d=b[c],d.title="Haga Click Para Cambiar la Cuenta...",d.observe("click",this.toggleCuenta.bind(this,d));b=
-a.querySelectorAll("span.cPrecio");for(c=0;c<b.length;c++)d=b[c],"ch"==d.lang?(d.title="Haga Click Para Cambiar Precio...",d.observe("click",this.changePrice.bind(this,d))):(d.title="Este item no permite modificar el precio",d.observe("click",function(){Growler.show("Este item no permite modificar el precio")}));b=a.querySelectorAll("tr.orderRow");for(c=0;c<b.length;c++)d=b[c],d.observe("click",this.selectItem.bind(this,d));d=a.querySelectorAll(".deleteModifier");for(c=0;c<d.length;c++)d[c].observe("click",
-this.deleteModifier.bind(this,d[c])),d[c].title="Eliminar este Modificador";d=a.querySelectorAll(".changeQuantity");for(c=0;c<d.length;c++)d[c].observe("click",this.changeQuantity.bind(this,d[c])),d[c].title="Cambiar Cantidad Pedida";d=a.querySelectorAll(".changeDiscount");for(c=0;c<d.length;c++)d[c].observe("click",this.changeDiscount.bind(this,d[c])),d[c].title="Cambiar Descuento";d=a.querySelectorAll("img.deleteItem");for(c=0;c<d.length;c++)d[c].observe("click",this.deleteItem.bind(this,d[c])),
-d[c].title="Eliminar este Item";a=a.querySelectorAll("a.deleteDiscount");for(c=0;c<a.length;c++)a[c].observe("click",this.deleteDiscount.bind(this,a[c].lang)),a[c].title="Eliminar este descuento";this._cuentasElement=$("cuentas");this._comandasElement=$("comandas");this._cuentasElement.observe("change",this.onChangeCuenta.bind(this));this._comandasElement.observe("change",this.onChangeComanda.bind(this));c=$("plusComanda");c.observe("click",this.addComanda.bind(this));c.title="Agregar Comanda";c=
-$("minusComanda");c.observe("click",this.deleteComanda.bind(this));c.title="Eliminar Comanda Actual";c=$("plusCuenta");c.observe("click",this.addCuenta.bind(this));c.title="Agregar Cuenta";c=$("minusCuenta");c.observe("click",this.deleteCuenta.bind(this));c.title="Eliminar Cuenta Actual";$("servicio").observe("focus",this.captureServicio.bind(this));$("selectAllArrow").observe("click",this.selectAllItems.bind(this));c=$("tipo_venta");"F"==c.getValue()?$("gendoc").update("Imprimir<br>Factura"):$("gendoc").update("Imprimir<br>Orden");
-c.observe("change",this.onChangeTipoVenta.bind(this,c));"N"==this._pideAsientos?$("asientosDiv").hide():0<this._numeroAsientos&&this.addSillas(this._numeroAsientos-1);a=this._preOrder.querySelectorAll("tr.itemChanged");for(c=0;c<a.length;c++)new Effect.Highlight(a[c]);this.adjustOrderList()},getDiscounts:function(){new WINDOW.open({action:"order/discount",width:"400px",height:"400px",title:"Aplicar un Descuento",afterRender:function(){for(var a=$("myWindow").querySelectorAll("button.commandButtonBig"),
-b=0;b<a.length;b++)a[b].observe("click",this.applyDiscount.bind(this,a[b].lang))}.bind(this)})},applyDiscount:function(a){new Ajax.Request(Utils.getKumbiaURL("order/applyDiscount/"+a),{onSuccess:function(){$("myWindow").close();this.refresh()}.bind(this)})},deleteDiscount:function(a){new Ajax.Request(Utils.getKumbiaURL("order/deleteDiscount/"+a),{onSuccess:this.refresh.bind(this)})},cancelOrder:function(){Modal.confirm("\u00bfDesea cancelar todas las cuentas en este pedido?",function(){new Utils.redirectToAction("cancel/docancel")})},
-setCustomerName:function(){if(0<this._preOrder.querySelectorAll("tr.orderRow").length){var a=$F("tipo_venta");"H"==a||"P"==a?new WINDOW.open({action:"order/customerName",width:"940px",height:"620px",title:"Seleccionar Folio",afterRender:this.addCustomerCallback.bind(this)}):new WINDOW.open({action:"order/customerName",width:"500px",height:"233px",title:"Seleccionar Cliente",afterRender:this.addCustomerCallback.bind(this)})}else Growler.show("Debe agregar items a la lista antes de definir el cliente")},
-addCustomerCallback:function(){var a=$("apl_submit");if(a)if(a.observe("click",function(){ajaxRemoteForm($("myform"),"customer_messages")}),a=$("habitacion")){window.setTimeout(function(){$("numHabitacion").activate()},200);a.observe("change",this.getHuespedInfo.bind(this,a));for(var a=$$(".huespedButton"),b=0;b<a.length;b++)a[b].observe("click",this.selectThisFolio.bind(this,a[b]))}else window.setTimeout(function(){$("nombre")&&$("nombre").activate();new Ajax.Autocompleter("nombre","nombre_choices",
-Utils.getKumbiaURL("order/queryCustomers"),{afterUpdateElement:function(a,b){$("documento_cliente").setValue(b.id)}})},200);else(a=$("numeroAccion"))?(window.setTimeout(function(){$("numeroAccion").activate()},200),a.observe("keyup",this.accionKeyup.bind(this,a)),$("myWindow").setStyle({background:"#fff"})):$("myWindow").setStyle({width:"400px",height:"135px"})},getHuespedInfo:function(a){new Ajax.Request(Utils.getKumbiaURL("order/getHuespedInfo/"+a.getValue()),{onSuccess:function(a){$("huesped_info").update(a.responseText)}})},
-selectThisFolio:function(a){$("habitacion").setValue(a.id);ajaxRemoteForm($("myform"),"customer_messages")},getCustomerId:function(a,b){$("documento_cliente").value=b.id},accionKeyup:function(a){if(0<a.value.length)try{new Ajax.Request(Utils.getKumbiaURL("order/querySocios"),{parameters:{numeroAccion:$F("numeroAccion"),tipoVenta:$F("tipo_venta")},onSuccess:function(a){$("socios").update(a.responseText);$$(".aplSubmit").each(function(a){a.lang=a.title;a.title="";a.observe("click",function(){var a=
-this.lang;new Ajax.Request(Utils.getKumbiaURL("order/saveSocio"),{parameters:{folio:a},onSuccess:function(a){$("customer_messages").update(a.responseText)},onFailure:function(a){$("customer_messages").update(a.responseText)}})})})},onFailure:function(a){alert(a.responseText)}})}catch(b){alert(b)}},payAccount:function(){0<this._preOrder.querySelectorAll("tr.orderRow").length?new Utils.redirectToAction("pay/index/0:"+this._cuentasElement.getValue()):Growler.show("Aun no puede liquidar la cuenta")},
-goToNotes:function(){0<this._preOrder.querySelectorAll("tr.orderRow").length?window.location=Utils.getKumbiaURL("order/notes"):Growler.show("Agregue items al pedido antes de agregar notas")},showStatement:function(){window.open(Utils.getKumbiaURL("factura?preview"),null,"width=300, height=700, toolbar=no, statusbar=no")},sendToKitchen:function(){new Utils.redirectToAction("order/sendToKitchen")},backToTables:function(){new Utils.redirectToAction("tables/back/"+this._salonId)},joinOrders:function(){new Utils.redirectToAction("tables/chooseTable/"+
-this._id+"/"+this._salonId+"/joinOrders")},changeTable:function(){new Utils.redirectToAction("tables/chooseTable/"+this._id+"/"+this._salonId+"/changeTable")},adjustOrderList:function(){var a=$$("orderRow"),b=$("listaPedido");9>a.length?(b.style.height=this._listaPedidoHeight,b.style.overflowY="auto"):b.style.height="380px";b.getHeight();for(a=this._preOrder.querySelectorAll("tr.itemSelected");0<a.length;){a=a[0].positionedOffset()[1]-b.offsetTop-a[0].getHeight()-20;b.scrollTop=0<a?a:0;break}},setHeightDimensions:function(){var a=
-$("mainTable").getHeight();this._menuDetailsHeight=parseInt(0.57*a,10)+"px";this._listaPedidoHeight=parseInt(0.55*a,10)+"px"},setAccountMasterId:function(a){this._accountMasterId=a},setNumeroCuenta:function(){},initialize:function(a){try{document.title=a.title;this._tipoComanda=a.tipoComanda;this._ventaA=a.ventaA;this._pedirPersonas=a.pedirPersonas;this._pedirAsientos=a.pedirAsientos;this._numeroAsientos=a.numeroAsientos;this._id=a.id;this._salonId=a.salonId;this._accountMasterId=a.accountMasterId;
-this._numeroCuenta=a.numeroCuenta;this._cuentasElement=$("cuentas");this._comandasElement=$("comandas");this._preOrder=$("preOrder");this._menuDetailsElement=$("menuDetails");for(var b=$$("button.menuButton"),a=0;a<b.length;a++)b[a].observe("click",this.getMenuItems.bind(this,b[a],b[a].lang)),b[a].lang=null;this._comandasElement&&(0==this._comandasElement.options.length?"M"==this._tipoComanda?this.addComanda():this.addAutomaticComanda():this.pedirPersonas());$("showInvoice").observe("click",this.showInvoice.bind(this));
-$("goToNotes").observe("click",this.goToNotes.bind(this));$("customerName").observe("click",this.setCustomerName.bind(this));$("payAccount").observe("click",this.payAccount.bind(this));$("deleteItems").observe("click",this.deleteItems.bind(this));$("discounts").observe("click",this.getDiscounts.bind(this));$("showStatement").observe("click",this.showStatement.bind(this));$("sendToKitchen").observe("click",this.sendToKitchen.bind(this));$("cancelOrder").observe("click",this.cancelOrder.bind(this));
-$("joinOrders").observe("click",this.joinOrders.bind(this));$("backToTables").observe("click",this.backToTables.bind(this));$("changeTable").observe("click",this.changeTable.bind(this));this.preOrderCallbacks();this.prepareBuscarItem();this.setHeightDimensions();new Event.observe(window,"keydown",this.enableShortCuts.bind(this))}catch(c){alert(c)}}});function addToNumber(a,b){if(b.keyCode!=Event.KEY_RETURN){$("number").value+=a.value;if(""!=$("number").value)$("okButton").disabled=!1;$("number").select()}}function dropNumber(){new Effect.Shake("number",{duration:0.5});new Effect.Morph("number",{duration:0.5,style:{color:"#FFFFFF"},afterFinish:function(){$("number").value="";$("number").style.color="#000000"}});$("okButton").disabled=!0}function cancelNumber(){$("myWindow").close("cancel")}function acceptNumber(){$("myWindow").close("ok")}
-function big(a){$(a).className="bigButton2";$(a).style.fontSize="44px";new Effect.Morph(a,{duration:0.3,style:{fontSize:"30px"},afterFinish:function(){$(a).className="bigButton";$(a).style.width="70px";$(a).style.height="70px";$(a).style.fontSize="30px"}})}
-new Event.observe(window,"keyup",function(a){try{if($("myWindow")){$("number").select();var b=0,c=parseInt(a.keyCode);if(c==Event.KEY_BACKSPACE||c==Event.KEY_ESC)dropNumber(),new Event.stop(a);else if(c==Event.KEY_RETURN)$("okButton").click(),new Event.stop(a);else{if((190==c||110==c)&&-1==$("number").value.indexOf(".")){var d={};d.value=0==$("number").value.length?"0.":".";addToNumber(d,a);new Event.stop(a)}if(48<=c&&57>=c&&(b=a.keyCode-48,$("b"+b))){big($("b"+b));addToNumber($("b"+b),a);new Event.stop(a);
-return}96<=c&&105>=c&&(b=a.keyCode-96,$("b"+b)&&(big($("b"+b)),addToNumber($("b"+b),a),new Event.stop(a)))}}}catch(f){}});var VirtualKeyBoard=Class.create({initialize:function(){new Ajax.Request(Utils.getKumbiaURL("keyboard"),{method:"GET",onSuccess:function(a){if(!$("virtual-keyboard")){var b=document.createElement("DIV");b.id="virtual-keyboard";b.update(a.responseText);document.body.appendChild(b);b.select("div.key").each(function(a){a.observe("mousedown",function(a){var b=document.activeElement;if("INPUT"==b.tagName){var c=this.innerHTML;b.value="&nbsp;"!=c&&"<img"!=c.substr(0,4)?b.value+this.innerHTML:"&nbsp;"==
-c?b.value+" ":b.value.substr(0,b.value.length-1);b.fire("keyup");b.fire("keydown")}Event.stop(a)})});$("exit").observe("click",function(){$("virtual-keyboard").remove()})}}})}});
+
+
+
+/**
+ * Kumbia Enterprise Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New BSD License that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@loudertechnology.com so we can send you a copy immediately.
+ *
+ * @category 	Kumbia
+ * @package 	Tag
+ * @copyright	Copyright (c) 2008-2012 Louder Technology COL. (http://www.loudertechnology.com)
+ * @license 	New BSD License
+ * @version 	$Id$
+ */
+
+var Base = {
+
+	PROTOTYPE: 1,
+	JQUERY: 2,
+	EXT: 3,
+	MOOTOOLS: 4,
+
+	framework: 0,
+
+	bind: function(){
+        var _func = arguments[0] || null;
+        var _obj = arguments[1] || this;
+        var i = 0;
+        var _args = [];
+        for(var i=0;i<arguments.length;i++){
+        	if(i>1){
+        		_args[_args.length] = arguments[i];
+        	};
+        	i++;
+        };
+        return function(){
+			return _func.apply(_obj, _args);
+        };
+	},
+
+	_checkFramework: function(){
+		if(typeof Prototype != "undefined"){
+			Base.activeFramework = Base.PROTOTYPE;
+			return;
+		};
+		if(typeof jQuery != "undefined") {
+			Base.activeFramework = Base.JQUERY;
+			return;
+		};
+		if(typeof Ext != "undefined"){
+			Base.activeFramework = Base.EXT;
+			return;
+		};
+		if(typeof MooTools != "undefined"){
+			Base.activeFramework = Base.MOOTOOLS;
+			return;
+		};
+		return 0;
+	},
+
+	$: function(element){
+		return document.getElementById(element);
+	},
+
+	show: function(element){
+		document.getElementById(element).style.display = "";
+	},
+
+	hide: function(element){
+		document.getElementById(element).style.display = "none";
+	},
+
+	setValue: function(element, value){
+		document.getElementById(element).value = value;
+	},
+
+	getValue: function(element){
+		element = document.getElementById(element);
+		if(element.tagName=='SELECT'){
+			return element.options[element.selectedIndex].value;
+		} else {
+			return element.value;
+		}
+	},
+
+	up: function(element, levels){
+		var l = 0;
+		var finalElement = element;
+		while(finalElement){
+			finalElement = finalElement.parentNode;
+			if(l>=levels){
+				return finalElement;
+			}
+			l++;
+		};
+		return finalElement;
+	}
+
+};
+
+var NumericField = {
+
+	maskNum: function(evt){
+		evt = (evt) ? evt : ((window.event) ? window.event : null);
+		var kc = evt.keyCode;
+		if(!evt.ctrlKey&&!evt.metaKey){
+			var ev = (evt.altKey==false)&&(evt.shiftKey==false)&&((kc>=48&&kc<=57)||(kc>=96&&kc<=105)||(kc==8)||(kc==9)||(kc==13)||(kc==17)||(kc==36)||(kc==35)||(kc==37)||(kc==46)||(kc==39)||(kc==190)||(kc==110));
+			if(!ev){
+				ev = (evt.shiftKey==true&&(kc==9||(kc>=35&&kc<=39)));
+				if(!ev){
+					ev = (evt.altKey==true&&(kc==84||kc==82));
+				};
+			};
+			if(!ev){
+				evt.preventDefault();
+	    		evt.stopPropagation();
+	    		evt.stopped = true;
+	    		return false;
+			}
+		};
+		return true;
+	},
+
+	format: function(element){
+		if(element.value!==''){
+			var integerPart = '';
+			var decimalPart = '';
+			var decimalPosition = element.value.indexOf('.');
+			if(decimalPosition!=-1){
+				decimalPart = element.value.substr(decimalPosition);
+				integerPart = element.value.substr(0, decimalPosition);
+			} else {
+				integerPart = element.value;
+			};
+			document.title = integerPart+' '+decimalPart;
+		};
+	}
+
+};
+
+var DateCalendar = {
+
+	build: function(element, name, value){
+		var year = parseInt(value.substr(0, 4), 10);
+		var month = parseInt(value.substr(5, 2), 10);
+		var day = parseInt(value.substr(8, 2), 10);
+		DateCalendar._buildMonth(element, year, month, value);
+	},
+
+	_buildMonth: function(element, year, month, activeDate){
+		var numberDays = DateField.getNumberDays(year, month);
+		var firstDate = new Date(year, month-1, 1);
+		var lastDate = new Date(year, month-1, numberDays);
+		var html = '<table class="calendarTable" cellspacing="0">';
+		html+='<tr><td class="arrowPrev"><img src="'+$Kumbia.path+'img/prevw.gif"/></td>';
+		html+='<td colspan="5" class="monthName">'+DateCalendar.getMonthName(month)+'</td>';
+		html+='<td class="arrowNext"><img src="'+$Kumbia.path+'img/nextw.gif"/></td></tr>';
+		html+='<tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>Sáb</th></tr>';
+		html+='<tr>';
+		if(month==1){
+			var numberDaysPast = DateField.getNumberDays(year-1, 12);
+		} else {
+			var numberDaysPast = DateField.getNumberDays(year-1, month-1);
+		};
+		var dayOfWeek = firstDate.getDay();
+		for(var i=(numberDaysPast-dayOfWeek+1);i<numberDaysPast;i++){
+			html+='<td class="outMonthDay">'+(i+1)+'</td>';
+		};
+		var numberDay = 1;
+		var date;
+		while(numberDay<=numberDays){
+			if(month<10){
+				date = year+'-0'+month+'-'+numberDay;
+			} else {
+				date = year+'-'+month+'-'+numberDay;
+			}
+			if(activeDate==date){
+				html+='<td class="selectedDay" title="'+date+'">'+numberDay+'</td>';
+			} else {
+				html+='<td title="'+date+'">'+numberDay+'</td>';
+			};
+			if(dayOfWeek==6){
+				html+='</tr><tr>';
+				dayOfWeek = 0;
+			} else {
+				dayOfWeek++;
+			};
+			numberDay++;
+		};
+		numberDay = 1;
+		if(dayOfWeek<7){
+			for(var i=dayOfWeek;i<7;i++){
+				html+='<td class="outMonthDay">'+numberDay+'</td>';
+				numberDay++;
+			};
+		};
+		html+='</tr></table>';
+
+		var position = element.up(1).cumulativeOffset();
+		var calendarDiv = document.getElementById('calendarDiv');
+		if(calendarDiv){
+			calendarDiv.parentNode.removeChild(calendarDiv);
+		};
+		calendarDiv = document.createElement('DIV');
+		calendarDiv.id = 'calendarDiv';
+		calendarDiv.addClassName('calendar');
+		calendarDiv.update(html);
+		calendarDiv.style.top = (position[1]+22)+'px';
+		calendarDiv.style.left = (position[0])+'px';
+		document.body.appendChild(calendarDiv);
+		window.setTimeout(function(){
+			new Event.observe(window, 'click', DateCalendar.removeCalendar);
+		}, 150);
+	},
+
+	removeCalendar: function(event){
+		if(event.target.tagName!='INPUT'&&event.target.tagName!='SELECT'){
+			var calendarDiv = document.getElementById('calendarDiv');
+			if(calendarDiv){
+				calendarDiv.parentNode.removeChild(calendarDiv);
+			};
+			new Event.stopObserving(window, 'click', DateCalendar.removeCalendar);
+		}
+	},
+
+	getMonthName: function(month){
+		switch(month){
+			case 1:
+				return 'Enero';
+			case 2:
+				return 'Febrero';
+			case 3:
+				return 'Marzo';
+			case 4:
+				return 'Abril';
+			case 5:
+				return 'Mayo';
+			case 6:
+				return 'Junio';
+			case 7:
+				return 'Julio';
+			case 8:
+				return 'Agosto';
+			case 9:
+				return 'Septiembre';
+		}
+	}
+
+};
+
+var DateField = {
+
+	_monthTable: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+
+	_listeners: {},
+
+	observe: function(element, eventName, procedure){
+		if(typeof DateField._listeners[eventName] == "undefined"){
+			DateField._listeners[eventName] = {};
+		};
+		DateField._listeners[eventName][element.id] = {
+			'element': element,
+			'procedure': procedure
+		};
+	},
+
+	fire: function(element, eventName, elementValue){
+		if(typeof DateField._listeners[eventName] != "undefined"){
+			if(typeof DateField._listeners[eventName][element.id] != "undefined"){
+				var handler = DateField._listeners[eventName][element.id];
+				if(element==handler['element']){
+					handler['procedure'](elementValue);
+				}
+			}
+		};
+		return false;
+	},
+
+	getNumberDays: function(year, month){
+		var numberDays = DateField._monthTable[month-1];
+		if(month==2){
+			if(parseInt(year, 10)%4==0){
+				numberDays = 29;
+			}
+		};
+		return numberDays;
+	},
+
+	getElement: function(name, context){
+		if(typeof context == "undefined"){
+			return Base.$(name);
+		} else {
+			return context.up(4).querySelector('#'+name);
+		}
+	},
+
+	getValue: function(name, context){
+		var element = DateField.getElement(name, context);
+		if(element.tagName=='SELECT'){
+			return element.options[element.selectedIndex].value;
+		} else {
+			return element.value;
+		}
+	},
+
+	refresh: function(name, context){
+
+		var html = '', n, numberDays;
+		var year = DateField.getValue(name+'Year', context);
+		var month = DateField.getValue(name+'Month', context);
+		var day = DateField.getValue(name+'Day', context);
+		var daySelect = DateField.getElement(name+'Day', context);
+
+		var value = year+'-'+month+'-'+day;
+		var element = DateField.getElement(name, context);
+		element.value = value;
+
+		while(daySelect.lastChild){
+			daySelect.removeChild(daySelect.lastChild);
+		};
+		if(month.substr(0, 1)=='0'){
+			month = month.substr(1, 1);
+		};
+		var numberDays = DateField.getNumberDays(year, month);
+		for(var i=1;i<=numberDays;++i){
+			n = (i < 10) ? '0'+i : i;
+			if(n==day){
+				html+='<option value="'+n+'" selected="selected">'+n+'</option>';
+			} else {
+				html+='<option value="'+n+'">'+n+'</option>';
+			}
+		};
+		daySelect.innerHTML = html;
+		DateField.fire(element, 'change', value);
+	},
+
+	showCalendar: function(element, name){
+		DateCalendar.build(element, name, Base.getValue(name));
+	}
+
+};
+
+var TimeField = {
+
+	refresh: function(name, context){
+		var hour = DateField.getValue(name+'Hour', context);
+		var minutes = DateField.getValue(name+'Minutes', context);
+		var value = hour+':'+minutes;
+		DateField.getElement(name, context).value = value;
+	}
+
+};
+
+var Utils = {
+
+	getKumbiaURL: function(url){
+		if(typeof url == "undefined"){
+			url = "";
+		};
+		if($Kumbia.app!=""){
+			return $Kumbia.path+$Kumbia.app+"/"+url;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	getAppURL: function(url){
+		if(typeof url == "undefined"){
+			url = "";
+		};
+		if($Kumbia.app!=""){
+			return $Kumbia.path+$Kumbia.app+"/"+url;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	getURL: function(url){
+		if(typeof url == "undefined"){
+			return $Kumbia.path;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	redirectParentToAction: function(url){
+		new Utils.redirectToAction(url, window.parent);
+	},
+
+	redirectOpenerToAction: function(url){
+		new Utils.redirectToAction(url, window.opener);
+	},
+
+	redirectToAction: function(url, win){
+		win = win ? win : window;
+		win.location = Utils.getKumbiaURL() + url;
+	},
+
+	upperCaseFirst: function(str){
+		var first = str.substring(0, 1).toUpperCase();
+		return first+str.substr(1, str.length-1)
+	},
+
+	round: function(number, decimals){
+		var decimalPlace = Math.pow(100, decimals);
+		return Math.round(number * decimalPlace) / decimalPlace;
+	},
+
+	numberFormat: function(number){
+		var number = number.toString();
+		var decimalPosition = number.indexOf('.');
+		if(decimalPosition!=-1){
+			var decimals = number.substr(decimalPosition+1);
+			var integer = number.substring(0, decimalPosition);
+		} else {
+			var decimals = '00';
+			var integer = number;
+		};
+		var n = 1;
+		var formatedNumber = [];
+		var integer = integer.toArray();
+		for(var i=0;i<integer.length;i++){
+			if((integer.length-i)%3==0){
+				if(i!=0){
+					formatedNumber.unshift('.');
+				};
+			};
+			formatedNumber.unshift(integer[i])
+		};
+		return formatedNumber.reverse().join('')+','+decimals.substr(0, 2);
+	}
+
+};
+
+function ajaxRemoteForm(form, up, callback){
+	if(callback==undefined){
+		callback = {};
+	};
+	new Ajax.Updater(up, form.action, {
+		 method: "post",
+		 asynchronous: true,
+         evalScripts: true,
+         onSuccess: function(transport){
+			$(up).update(transport.responseText)
+		},
+		onLoaded: callback.before!=undefined ? callback.before: function(){},
+		onComplete: callback.success!=undefined ? callback.success: function(){},
+  		parameters: Form.serialize(form)
+    });
+  	return false;
+};
+
+var AJAX = {
+
+	doRequest: function(url, options){
+		var framework = Base.activeFramework;
+		if(typeof options == 'undefined'){
+			options = {};
+		};
+		switch(framework){
+			case Base.PROTOTYPE:
+				var callbackMap = {
+					'before': 'onLoading',
+					'success': 'onSuccess',
+					'complete': 'onComplete',
+					'error': 'onFailure'
+				};
+				$H(callbackMap).each(function(callback){
+					if(typeof options[callback[0]] != 'undefined'){
+						options[callback[1]] = function(procedure, transport){
+							procedure.bind(this, transport.responseText)();
+						}.bind(this, options[callback[0]]);
+					}
+				});
+				return new Ajax.Request(url, options);
+			case Base.JQUERY:
+				var paramMap = {
+					'method': 'type',
+					'parameters': 'data',
+					'asynchronous': 'async'
+				};
+				$.each(paramMap, function(index, value){
+					if(typeof options[index] != 'undefined'){
+						options[value] = options[index];
+					}
+				});
+				options.url = url;
+				return $.ajax(options);
+			case Base.EXT:
+				var paramMap = {
+					'before': 'beforerequest',
+					'error': 'failure',
+					'parameters': 'params'
+				};
+				var index;
+				for(index in paramMap){
+					if(typeof options[index] != 'undefined'){
+						options[paramMap[index]] = options[index];
+					}
+				};
+				options.url = url;
+				return Ext.Ajax.request(options);
+			case Base.MOOTOOLS:
+				var paramMap = {
+					'parameters': 'data',
+					'asynchronous': 'async',
+					'before': 'onRequest',
+					'success': 'onSuccess',
+					'error': 'onFailure',
+					'complete': 'onComplete'
+				};
+				var index;
+				for(index in paramMap){
+					if(typeof options[index] != 'undefined'){
+						options[paramMap[index]] = options[index];
+					}
+				};
+				options.url = url;
+				var request = new Request(options);
+				request.send();
+				return request;
+			break;
+		};
+	},
+
+	update: function(url, element, options){
+		if(typeof options == 'undefined'){
+			options = {};
+		};
+		options.success = function(responseText){
+			Base.$(element).innerHTML = responseText;
+		};
+		Base.bind(options.success, element, element);
+		return AJAX.doRequest(url, options);
+	}
+
+};
+
+AJAX.xmlRequest = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	return AJAX.doRequest(options.url, options)
+};
+
+AJAX.viewRequest = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	container = params.container;
+	options.evalScripts = true;
+	if(!document.getElementById(container)){
+		throw "CoreError: DOM Container '"+container+"' no encontrado";
+	};
+	return AJAX.update(container, options.url, options);
+};
+
+AJAX.execute = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	return AJAX.doRequest(options.url, options)
+}
+
+AJAX.query = function(queryAction, onSuccess){
+	var me;
+	new Ajax.Request(Utils.getKumbiaURL(queryAction), {
+		method: 'GET',
+		asynchronous: false,
+		onSuccess: function(transport){
+			var xml = transport.responseXML;
+			var data = xml.getElementsByTagName("data");
+			if(Prototype.Browser.IE){
+				xmlValue = data[0].text;
+			} else {
+				xmlValue = data[0].textContent;
+			};
+			me = xmlValue;
+		}
+	});
+	return me;
+}
+
+if(document.addEventListener){
+	document.addEventListener('DOMContentLoaded', Base._checkFramework, false);
+} else {
+	document.attachEvent('readystatechange', Base._checkFramework);
+};
+
+
+
+/** Kumbia - PHP Rapid Development Framework ***************************
+ *
+ * Copyright (C) 2005 Andrs Felipe Gutirrez (andresfelipe at vagoogle.net)
+ * NumberFormat: ProWebMasters.net based script
+ *
+ * This framework is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *****************************************************************************/
+
+function validaEmail(evt){
+    var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	if(document.all) {
+		kc = event.keyCode
+	} else {
+	 	kc = evt.keyCode
+	}
+	if(
+		(kc>=65&&kc<=90)||
+		(kc==50)||
+		(kc==8)||
+		(kc==9)||
+		(kc==17)||
+		(kc==16)||
+		(kc==35)||
+		(kc==36)||
+		(kc==46)||
+		(kc==109)||
+		(kc==189)||
+		(kc==190)||
+		(kc==189)||
+		(kc>=37&&kc<=40)||
+		((kc>=48&&kc<=57)&&evt.shiftKey==false&&evt.altKey==false)
+		) {
+		//Returns
+	} else {
+	  	if(document.all) evt.returnValue = false
+    	else evt.preventDefault()
+    }
+    //window.status = kc
+}
+
+/**
+ * Valida que los campos requeridos del formulario contengan datos.
+ * Recibe como parametros el objeto formulario y el nombre de los campos que se desean exigir.
+ * Retorna true si la validacion es correcta, false en caso contrario.
+ *
+ * Ej. de uso:
+ * form_remote_tag("cotroller/action", "update: div_id", "required: nombre_campo_1,nombre_campo_2")
+ *
+ * Como se ve en el ejemplo anterior, es necesario incluir el parametro 'required' y luego especificar los
+ * nombres de los campos requeridos separados por comas (,). En el ejemplo anterior 'nombre_campo_1' y
+ * 'nombre_campo_2' serian los nombres (name) de dos campos requeridos del formulario.
+ * @param Object form Objeto formulario.
+ * @param Array requiredFields Matriz con los nombres de los campos requeridos.
+ * @return boolean false en caso de que se encuentren campos requeridos sin rellenar, true en caso contrario.
+ */
+function validaForm(form, requiredFields){
+
+   var cont = 0;
+   var campos = new Array();
+
+   // Obtiene los campos requeridos que no contienen datos (si los hay)
+   for(var i=0;i<requiredFields.length;i++){
+   	   if($(requiredFields[i]).value == ''){
+   	   	   campos[cont++] = $(requiredFields[i]);
+   	   }
+   }
+
+   // Si faltan datos requeridos se muestra el efecto de resaltado sobre los campos.
+   if(cont >= 1){
+	   alert("Es necesario que ingrese los datos que se resaltarán");
+	   for(var i=0; i<cont; i++){
+	   	   new Effect.Highlight(campos[i].name, {startcolor:'#FF0000', endcolor:"#ffbbbb"});
+	   };
+	   campos[0].focus();
+   }
+
+   // Retorna false si hay campos requeridos sin rellenar; de lo contrario true.
+   return cont >= 1 ? false : true;
+}
+
+
+function validaText(evt){
+	var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	kc = evt.keyCode
+	window.status = kc
+	if(
+	(kc>=65&&kc<=90)||
+	(kc==50)||
+	(kc==8)||
+	(kc==9)||
+	(kc==17)||
+	(kc==16)||
+	(kc==32)||
+	(kc==186)||
+	(kc==190)||
+	(kc==192)||
+	(kc==222)||
+	(kc>=37&&kc<=40) //||
+	//((kc>=48&&kc<=57)&&evt.shiftKey==false&&evt.altKey==false)
+	) {
+		//Returns
+	} else {
+		if(document.all) evt.returnValue = false
+		else evt.preventDefault()
+	}
+}
+
+function valNumeric(evt){
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	if(
+	((evt.keyCode>=48&&evt.keyCode<=57)&&evt.shiftKey==false&&evt.altKey==false)||
+	((evt.keyCode>=96&&evt.keyCode<=105)&&evt.shiftKey==false&&evt.altKey==false) ||
+	( evt.keyCode==8   ||
+	evt.keyCode==9   ||
+	evt.keyCode==13  ||
+	evt.keyCode==16  ||
+	evt.keyCode==17  ||
+	evt.keyCode==36  ||
+	evt.keyCode==35  ||
+	evt.keyCode==46  ||
+	evt.keyCode==37  ||
+	evt.keyCode==39  ||
+	evt.keyCode==110 ||
+	evt.keyCode==119 ||
+	evt.keyCode==190)
+	){
+		//Lets that key value pass
+	} else {
+		if(document.all) {
+			evt.returnValue = false
+		} else evt.preventDefault()
+	}
+}
+
+function valDate(){
+	if(((event.keyCode!=8&&event.keyCode!=9&&event.keyCode!=36&&event.keyCode!=35&&event.keyCode!=46&&event.keyCode!=37&&event.keyCode!=39&&event.keyCode<48))||(event.keyCode>57&&(event.keyCode<96||(event.keyCode>105&&event.keyCode!=111&&event.keyCode!=189&&event.keyCode!=109)))||(event.shiftKey==true&&event.keyCode!=55)||event.altKey==true) {
+		window.event.returnValue = false
+	}
+}
+
+function keyUpper(obj){
+	obj.value = obj.value.toUpperCase();
+	saveValue(obj)
+}
+
+function keyUpper2(obj){
+	obj.value = obj.value.toUpperCase();
+}
+
+function keyUpper3(obj){
+	obj.value = obj.value.toUpperCase();
+}
+
+function checkDate(obj){
+	if(!obj.value) return;
+	var e = RegExp("([0-9]{4}[/-][0-9]{2}[/-][0-9]{2})", "i");
+	if(!obj.value) return;
+	if(e.exec(obj.value)==null) {
+		window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+		obj.className = "iError";
+	}
+	else {
+		d = obj.value.substr(0, 2)
+		m = obj.value.substr(3, 2)
+		a = obj.value.substr(6, 4)
+		if((d<1)||(d>31)){
+			window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+			obj.className = "iError";
+		} else {
+			if((m<1)||(m>12)){
+				window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+				obj.className = "iError";
+			} else {
+				window.status = "Listo";
+				obj.className = "iNormal";
+			}
+		}
+	}
+}
+
+function showConfirmPassword(obj){
+	if(!$('div_'+obj.name).visible()){
+		new Effect.Appear('div_'+obj.name)
+	}
+}
+
+function nextValidatePassword(obj){
+	if(!$('div_'+obj.name).visible()){
+		$('div_'+obj.name).focus()
+		$('div_'+obj.name).select()
+	}
+}
+
+function validatePassword(confirma, password){
+	if(confirma.value!=$(password).value){
+		alert('Los Passwords No son Iguales')
+		$(password).focus()
+		$(password).select()
+	} else {
+		new Effect.Fade('div_'+$(password).name)
+	}
+}
+
+function checkUnique(name, obj){
+	var i, n;
+	if(!obj.value){
+		return;
+	}
+	if(obj.value=="@"){
+		return;
+	}
+	n = 0;
+	for(i=0;i<=Fields.length-1;i++){
+		if(Fields[i]==name){
+			break;
+		}
+	}
+	for(j=0;j<=Values.length-1;j++){
+		if(Values[j][i]==obj.value){
+			if(n==1){
+				if(obj.tagName=='SELECT'){
+					alert('Esta Opción ya fué seleccionada por favor elija otra diferente');
+				}
+				obj.className = "iError";
+				if(obj.tagName=='INPUT'){
+					obj.select();
+				}
+				obj.focus();
+				return;
+			} else {
+				n++;
+			}
+		}
+	}
+	obj.className = 'iNormal'
+}
+
+function nextField(evt, oname){
+	var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	kc = evt.keyCode
+	if(kc==13){
+		for(i=0;i<=Fields.length-1;i++) {
+			if(oname==Fields[i]){
+				if(i==(Fields.length-1)){
+					if((document.getElementById("flid_"+Fields[0]).style.visibility!='hidden')&&
+					(document.getElementById("flid_"+Fields[0]).readOnly==false)&&
+					(document.getElementById("flid_"+Fields[0]).type!='hidden'))
+					document.getElementById("fl_id"+Fields[0]).focus()
+				} else {
+					if( (document.getElementById("flid_"+Fields[i+1]).style.visibility!='hidden')&&
+					(document.getElementById("flid_"+Fields[i+1]).readOnly==false)&&
+					(document.getElementById("flid_"+Fields[i+1]).type!='hidden')){
+						document.getElementById("flid_"+Fields[i+1]).focus()
+					}
+				}
+				return
+			}
+		}
+	}
+}
+
+function saveEmail(obj) {
+	document.getElementById("flid_"+obj).value = document.getElementById(obj+"_email1").value + "@" + document.getElementById(obj+"_email2").value
+}
+
+
+/**
+ * Kumbia Enterprise Framework
+ * Window Object Manipulation Base Functions
+ *
+ * @copyright	Copyright (c) 2008-2010 Louder Technology COL. (http://www.loudertechnology.com)
+ **/
+
+var WindowUtilities = {
+
+	getWindowScroll: function(parent) {
+		var T, L, W, H;
+		parent = parent || document.body;
+		if (parent != document.body) {
+			T = parent.scrollTop;
+			L = parent.scrollLeft;
+			W = parent.scrollWidth;
+			H = parent.scrollHeight;
+		}
+		else {
+			var w = window;
+			T = w.document.body.scrollTop;
+			L = w.document.body.scrollLeft;
+			W = w.innerWidth;
+			H = w.innerHeight;
+		}
+		return { top: T, left: L, width: W, height: H };
+	},
+
+	getPageSize: function(parent){
+		parent = parent || document.body;
+		var windowWidth, windowHeight;
+		var pageHeight, pageWidth;
+		if (parent != document.body) {
+			windowWidth = parent.getWidth();
+			windowHeight = parent.getHeight();
+			pageWidth = parent.scrollWidth;
+			pageHeight = parent.scrollHeight;
+		}
+		else {
+			var xScroll, yScroll;
+
+			if (window.innerHeight && window.scrollMaxY) {
+				xScroll = document.body.scrollWidth;
+				yScroll = window.innerHeight + window.scrollMaxY;
+			} else if (document.body.scrollHeight > document.body.offsetHeight){
+				xScroll = document.body.scrollWidth;
+				yScroll = document.body.scrollHeight;
+			} else {
+				xScroll = document.body.offsetWidth;
+				yScroll = document.body.offsetHeight;
+			}
+			if (self.innerHeight) {
+				windowWidth = self.innerWidth;
+				windowHeight = self.innerHeight;
+			} else if (document.documentElement && document.documentElement.clientHeight) {
+				windowWidth = document.documentElement.clientWidth;
+				windowHeight = document.documentElement.clientHeight;
+			} else if (document.body) {
+				windowWidth = document.body.clientWidth;
+				windowHeight = document.body.clientHeight;
+			}
+			if(yScroll < windowHeight){
+				pageHeight = windowHeight;
+			} else {
+				pageHeight = yScroll;
+			}
+			if(xScroll < windowWidth){
+				pageWidth = windowWidth;
+			} else {
+				pageWidth = xScroll;
+			}
+		}
+		return {pageWidth: pageWidth ,pageHeight: pageHeight , windowWidth: windowWidth, windowHeight: windowHeight};
+	}
+};
+
+$W = function(objectName) {
+	return document.frames('openWindow').document.getElementById(objectName)
+}
+
+var WINDOW = {
+
+	open: function(properties){
+		if($('myWindow')){
+			return;
+		};
+		var windowScroll = WindowUtilities.getWindowScroll(document.body);
+		var pageSize = WindowUtilities.getPageSize(document.body);
+		var obj = document.createElement("DIV");
+		if(!properties.title){
+			properties.title = ""
+		};
+		if(!properties.url){
+			properties.url = properties.action
+		};
+		left = parseInt((pageSize.windowWidth - (parseInt(properties.width)+36))/2);
+		left += windowScroll.left;
+		obj.style.left = left+"px"
+		if(typeof properties.width != "undefined"){
+			obj.style.width = properties.width;
+		};
+		if(typeof properties.height != "undefined"){
+			obj.style.height = (parseInt(properties.height)+10)+"px";
+		};
+		obj.hide();
+		var html = "<table cellspacing='0' cellpadding='0' width='100%'><tr>"+
+		"<td align='center' id='myWindowTitle'>"+properties.title+"</td></tr>"+
+		"<tr><td id='myWindowData'></td></tr></table>";
+		obj.innerHTML = html;
+		obj.id = "myWindow"
+		document.body.appendChild(obj);
+		//new Draggable(obj.id);
+		if (typeof properties.onclose != "undefined") {
+			WINDOW.onclose = properties.onclose;
+		};
+		if (typeof properties.onbeforeclose != "undefined") {
+			WINDOW.onbeforeclose = properties.onbeforeclose;
+		};
+		obj.close = function(action){
+			var myWindow = $("myWindow");
+			var shadowWin = $('shadow_win');
+			if(typeof properties.onbeforeclose != "undefined"){
+				if(properties.onbeforeclose.call(this, action)==false){
+					return;
+				}
+			};
+			if(typeof myWindow.onclose != "undefined"){
+				properties.onclose = myWindow.onclose;
+			};
+			document.body.removeChild(myWindow);
+			if (shadowWin) {
+				document.body.removeChild(shadowWin);
+			};
+			if (typeof properties.onclose != "undefined") {
+				if (properties.onclose) {
+					if (typeof properties.onclose.call != "undefined") {
+						properties.onclose.call(this, action);
+					}
+				}
+			}
+		};
+		new Ajax.Request(Utils.getKumbiaURL(properties.url), {
+			method: 'GET',
+			onSuccess: function(properties, t){
+				$('myWindowData').update(t.responseText);
+				if(typeof properties.afterRender != "undefined"){
+					properties.afterRender();
+				};
+				var div = document.createElement("DIV")
+				div.id = "shadow_win";
+				$(div).setOpacity(0.1);
+				document.body.appendChild(div);
+				$('myWindow').show();
+			}.bind(this, properties)
+		});
+	}
+}
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+var Modal = {
+
+	confirm: function(message, yesCallback){
+		document.body.scrollTop = 0;
+		new WINDOW.open({
+			url: "context",
+			title: "Confirmación",
+			width: "500px",
+			height: "200px",
+			afterRender: function(message){
+				$('contextMessage').update(message);
+				//$('okModal').activate();
+				$('okModal').observe('click', function(yesCallback){
+					$('myWindow').close();
+					yesCallback();
+				}.bind(this, yesCallback));
+				$('noModal').observe('click', function(){
+					$('myWindow').close();
+				});
+			}.bind(this, message, yesCallback)
+		});
+	}
+
+};
+
+var Growler = {
+
+	timeout: null,
+
+	addTimeout: function(d){
+		if(Growler.timeout!=null){
+			window.clearTimeout(Growler.timeout);
+			Growler.timeout = null;
+		};
+		Growler.timeout = window.setTimeout(function(d){
+			document.body.removeChild(d);
+			Growler.timeout = null;
+		}.bind(this, d), 3500)
+	},
+
+	show: function(msg){
+		var windowScroll = WindowUtilities.getWindowScroll(document.body);
+	    var pageSize = WindowUtilities.getPageSize(document.body);
+	    var d = $('growler');
+	    if(!d){
+			var d = document.createElement("DIV");
+			d.id = "growler";
+			d.innerHTML = msg;
+			d.hide();
+			document.body.appendChild(d);
+			d.setStyle({
+				top: (pageSize.windowHeight-(d.getHeight()+20)+windowScroll.top)+"px",
+				left: (pageSize.windowWidth-270+windowScroll.left)+"px"
+			});
+			d.show();
+			Growler.addTimeout(d);
+	    } else {
+	    	d.innerHTML = msg;
+	    	Growler.addTimeout(d);
+	    	new Effect.Shake(d, {duration:0.5});
+	    }
+	}
+};
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+var Pedido = Class.create({
+
+	id: 0,
+
+	tipoVenta: null,
+
+	_accountMasterId: 0,
+
+	_numeroCuenta: 0,
+
+	_tipoComanda: "M",
+
+	_searchMode: false,
+
+	_searching: false,
+
+	_pedirPersonas: "S",
+
+	_pedirAsientos: "S",
+
+	_numeroAsientos: 0,
+
+	_menuCache: [],
+
+	_modifiersCache: [],
+
+	_menuDetails: null,
+
+	_menuDetailsHeight: '300px',
+
+	_listaPedidoHeight: '300px',
+
+	_menuItemsButtons: [],
+
+	_cuentasElement: null,
+
+	_comandasElement: null,
+
+	_menuItemSelected: null,
+
+	_lastMenuSelected: null,
+
+	getMenuItems: function(element, id, event){
+
+		if(this._lastMenuSelected!=element){
+			element.className = "menuButtonSelected";
+			if(this._lastMenuSelected!=null){
+				this._lastMenuSelected.className = "menuButton";
+			};
+			this._lastMenuSelected = element;
+		};
+
+		if(typeof this._menuCache[id] == "undefined"){
+			new Ajax.Request(Utils.getKumbiaURL("order/getMenu/"+id), {
+				method: 'GET',
+				onSuccess: function(id, transport){
+					this._menuCache[id] = JSON.parse(transport.responseText);
+					this.updateMenuDetails(this._menuCache[id]);
+				}.bind(this, id)
+			});
+		} else {
+			this.updateMenuDetails(this._menuCache[id]);
+		}
+	},
+
+	adjustItemsList: function(items){
+		if(this._menuDetailsElement.style.height==''){
+			new Effect.Morph(this._menuDetailsElement, {
+				duration: 0.3,
+				style: {
+					height: this._menuDetailsHeight
+				}
+			});
+		};
+		if(items.length>8){
+			this._menuDetailsElement.style.overflowY = 'scroll';
+		} else {
+			this._menuDetailsElement.style.overflowY = 'auto';
+		}
+	},
+
+	updateMenuDetails: function(items)
+	{
+		this._menuDetailsElement.innerHTML = '';
+		for (var i = 0; i < items.length; i++) {
+			var button = document.createElement('BUTTON');
+			button.className = 'menuItemButton';
+			button.title = 'Precio: '+items[i].valor;
+			button.update(items[i].nombre);
+			button.observe('click', this.addItemToAccount.bind(this, button, items[i]));
+			this._menuDetailsElement.appendChild(button);
+
+			if (items.length == 1) {
+				//alert(items.length);
+				// this.addItemToAccount(button, items[0]);
+			}
+		};
+		
+		this.adjustItemsList(items);
+	},
+
+	updateModifiersDetails: function(items)
+	{
+		this._menuDetailsElement.innerHTML = '';
+		for (var i = 0;i < items.length; i++) {
+			var button = document.createElement('BUTTON');
+			button.className = 'menuItemButton';
+			if (i == 0) {
+				button.observe('click', this.addItemToAccount.bind(this, button, items[i]));
+			} else {
+				button.addClassName('modifierButton');
+				button.observe('click', this.addModifier.bind(this, button, items[i]));
+			};
+			button.title = 'Precio: '+items[i].valor;
+			button.update(items[i].nombre);
+			this._menuDetailsElement.appendChild(button);
+		};
+		this.adjustItemsList(items);
+	},
+
+	addItemToAccount: function(element, item)
+	{
+
+		if (element != this._menuItemSelected) {
+			element.addClassName("menuItemButtonSelected");
+			if (this._menuItemSelected) {
+				this._menuItemSelected.removeClassName("menuItemButtonSelected")
+			};
+			this._menuItemSelected = element;
+		};
+
+		new Ajax.Request(Utils.getKumbiaURL("order/addToList/"+item.id), {
+			method: 'GET',
+			onSuccess: function(item, transport){
+				this._preOrder.update(transport.responseText);
+				if (item.modifiers != 0) {
+					this.getModifiers(item.id);
+				};
+				this.preOrderCallbacks();
+				new Ajax.Request(Utils.getKumbiaURL('order/changeTipoVenta/'+$("tipo_venta").getValue()), {
+                                	method: 'GET',
+                                	onSuccess: this.refresh.bind(this)
+                        	});
+			}.bind(this, item),
+			onFailure: function(t){
+				this._preOrder.update(t.responseText);
+			}
+		});
+	},
+
+	getModifiers: function(id)
+	{
+		if (typeof this._modifiersCache[id] == "undefined") {
+			new Ajax.Request(Utils.getKumbiaURL("order/getModifiers/" + id), {
+				method: 'GET',
+				onSuccess: function(id, transport){
+					this._modifiersCache[id] = JSON.parse(transport.responseText);
+					this.updateModifiersDetails(this._modifiersCache[id]);
+				}.bind(this, id)
+			});
+		} else {
+			this.updateModifiersDetails(this._modifiersCache[id]);
+		}
+	},
+
+	addModifier: function(element, item) {
+		if (element!=this._menuItemSelected) {
+			element.addClassName("menuItemButtonSelected");
+			if (this._menuItemSelected) {
+				this._menuItemSelected.removeClassName("menuItemButtonSelected")
+			};
+			this._menuItemSelected = element;
+		};
+		new Ajax.Request(Utils.getKumbiaURL("order/addModifier/"+item.id), {
+			method: 'GET',
+			onSuccess: this.refresh.bind(this)
+		});
+	},
+
+	deleteModifier: function(element) {
+		Modal.confirm("¿Seguro desea eliminar el modificador '"+element.innerHTML+"'?", function(accountModifierId){
+			new Ajax.Request(Utils.getKumbiaURL("order/deleteModifier/"+accountModifierId), {
+				method: 'GET',
+				onSuccess: this.refresh.bind(this)
+			});
+		}.bind(this, element.lang));
+	},
+
+	addMenuItemsHotKeys: function(){
+		var avalLetters = [];
+		for(var i=65;i<91;i++){
+			var ch = String.fromCharCode(i).toLowerCase();
+			if(!HotKeys.include()){
+				avalLetters.push(ch);
+			}
+		};
+		iHotKeys = [];
+		MenuItemsHotKeys = [];
+		var menuButtons = $$(".menuItemButton");
+		for(var j=0;j<menuButtons.length;j++){
+			var element = menuButtons[j];
+			if(avalLetters.length>j){
+				element.innerHTML += "<span class='mcode'>&nbsp;("+avalLetters[j]+")</span>";
+				element.id = "mit"+j;
+				MenuItemsHotKeys.push(j);
+				iHotKeys.push(avalLetters[j]);
+			}
+			j++;
+		};
+	},
+
+	refresh: function(type){
+		if(typeof type != "string"){
+			type = ""
+		};
+		new Ajax.Request(Utils.getKumbiaURL("order/refresh/"+type), {
+			method: 'GET',
+			onSuccess: function(transport){
+				this._preOrder.update(transport.responseText);
+				this.preOrderCallbacks();
+				this.disabledInvoice();
+			}.bind(this)
+		});
+	},
+
+	closeRefresh: function(){
+		var myWindow = $('myWindow');
+		if (myWindow) {
+			myWindow.close();
+		};
+		this.refresh();
+	},
+
+	addAutomaticComanda: function() {
+		new Ajax.Request(Utils.getKumbiaURL("order/addNextComanda"), {
+			method: 'GET',
+			onSuccess: function(transport){
+				var number = JSON.parse(transport.responseText);
+				var option = document.createElement("OPTION");
+				option.value = number;
+				option.text = number;
+				this._comandasElement.appendChild(option);
+				this._comandasElement.selectedIndex = this._comandasElement.options.length-1;
+				this.pedirPersonas();
+			}.bind(this)
+		});
+	},
+
+	addComanda: function() {
+		new WINDOW.open({
+			title: "Digite el Número de Comanda",
+			action: 'numero',
+			width: "220px",
+			height: "390px",
+			background: "#c0c0c0",
+			onbeforeclose: function(action) {
+				if(action=='cancel'){
+					if(this._comandasElement.options.length==0){
+						return this.backToTables();
+					}
+				};
+				var numero = parseInt($('number').value, 10);
+				if(numero<=0){
+					if(this._comandasElement.options.length==0){
+						Growler.show('Debe ingresar un número de Comanda antes de empezar');
+						return false;
+					} else {
+						if(numero==0){
+							Growler.show('Debe ingresar un número de Comanda antes de empezar');
+						}
+						return;
+					}
+				};
+				this._addComandaInternal(numero);
+			}.bind(this)
+		});
+	},
+
+	_addComandaInternal: function(numero, skip){
+		new Ajax.Request(Utils.getKumbiaURL("order/existeComanda/"+numero), {
+			method: 'GET',
+			onSuccess: function(numero, skip, transport){
+
+				var response = JSON.parse(transport.responseText);
+				if(response>0){
+					Growler.show('Esta comanda ya existe en otra cuenta');
+					return false;
+				};
+
+				if (skip != true) {
+					var options = this._comandasElement.options;
+					for(var i=0;i<options.length;i++){
+						if(options[i].value==numero){
+							Growler.show('Esta comanda ya existe');
+							return false;
+						}
+					}
+				}
+
+				var option = document.createElement("OPTION");
+				option.value = numero;
+				option.text = numero;
+				this._comandasElement.appendChild(option);
+				this.setLastComanda(numero);
+				window.setTimeout(this.pedirPersonas.bind(this), 300);
+			}.bind(this, numero, skip)
+		});
+	},
+
+	/**
+	 * Elimina una comanda del pedido
+	 */
+	deleteComanda: function(){
+		new Ajax.Request(Utils.getKumbiaURL("order/getNumeroComandas"), {
+			method: 'GET',
+			onSuccess: function(transport){
+				var response = JSON.parse(transport.responseText);
+				if(response>1){
+					Modal.confirm('¿Esta seguro de eliminar esta comanda?', function(){
+						new Ajax.Request(Utils.getKumbiaURL("order/queryComanda/"+this._comandasElement.getValue()), {
+							method: 'GET',
+							onSuccess: function(transport){
+								var response = JSON.parse(transport.responseText);
+								if(response>0){
+									Growler.show('No se puede borrar esta comanda porque tiene items atendidos');
+									return false;
+								} else {
+									new Ajax.Request(Utils.getKumbiaURL("order/deleteComanda/"+this._comandasElement.getValue()), {
+										method: 'GET',
+										onSuccess: function(){
+											Growler.show("Se eliminó la comanda correctamente");
+											this.refresh();
+											this.setLastComanda();
+										}.bind(this)
+									});
+								}
+							}.bind(this)
+						});
+					}.bind(this));
+				} else {
+					Growler.show('No se puede eliminar la comanda porque es la única existente');
+					return false;
+				}
+			}.bind(this)
+		});
+	},
+
+	pedirPersonas: function(){
+		if(this._numeroAsientos==0){
+			if(this._pedirPersonas=="S"){
+				new WINDOW.open({
+					title: "Digite el Número de Personas",
+					action:'numero',
+					width: "220px",
+					height: "390px",
+					onbeforeclose: function(action){
+						if(action=="cancel"){
+							return this.backToTables();
+						};
+						var number = parseInt($('number').value, 10);
+						if(number>14){
+							Growler.show("El número de personas es muy alto");
+							return false;
+						};
+						if(number<1){
+							Growler.show("El número de personas es muy bajo");
+							return false;
+						};
+						this.addSillas(number);
+						this.setNumeroSillas(number);
+					}.bind(this)
+				});
+			}
+		}
+	},
+
+	setNumeroSillas: function(number){
+		new Ajax.Request(Utils.getKumbiaURL("order/setNumberAsientos/"+number), {
+			method: 'GET'
+		});
+	},
+
+	setActiveAsiento: function(number){
+		new Ajax.Request(Utils.getKumbiaURL("order/setActiveAsiento/"+number), {
+			method: 'GET'
+		});
+	},
+
+	addSillas: function(number){
+
+		var i = 0;
+		var number = parseInt(number, 10)+1;
+		for(i=1;i<=number;i++){
+			var chair = $("s"+i);
+			new Effect.Appear(chair, {
+				duration: 0.6
+			});
+			if(!chair.number){
+				new Event.observe(chair, "click", this.changeSelectedSilla.bind(this, i))
+			};
+			chair.number = i;
+			chair.show();
+			if(i==number){
+				new Effect.Opacity(chair, { duration: 0.5, to: 0.4 });
+			}
+		};
+		if(number>this._numeroAsientos){
+			this._numeroAsientos = number;
+		}
+	},
+
+	changeSelectedSilla: function(number){
+		for(var i=1;i<15;i++){
+			var silla = $("s"+i);
+			if(silla.visible()){
+				if(i==number){
+					silla.removeClassName("inactiveAsiento");
+					silla.addClassName("activeAsiento");
+					this.setActiveAsiento(number);
+				} else {
+					silla.removeClassName("activeAsiento");
+					silla.addClassName("inactiveAsiento");
+				}
+			}
+		}
+	},
+
+	addCuenta: function(){
+		new Ajax.Request(Utils.getKumbiaURL("order/addCuenta"), {
+			method: 'GET',
+			onSuccess: function(transport){
+
+				var nuevaCuenta = JSON.parse(transport.responseText);
+				var options = this._cuentasElement.options;
+				for(var i=0;i<options.length;i++){
+					if(options[i].value==nuevaCuenta){
+						nuevaCuenta++;
+						continue;
+					}
+				};
+
+				var option = document.createElement("OPTION");
+				option.value = nuevaCuenta;
+				option.text = nuevaCuenta;
+				this._cuentasElement.appendChild(option);
+
+				$("documento").value = 0;
+				$("nombre_cliente").value = 'PARTICULAR';
+				$("nombre_cliente_span").innerHTML = 'PARTICULAR';
+				$("habitacion_id").value = 0;
+				$("habitacion_id_span").innerHTML = "";
+				$("nota").value = "";
+				$("nota_span").innerHTML = "";
+
+				this.setLastCuenta();
+
+			}.bind(this)
+		});
+	},
+
+	setLastCuenta: function(){
+		this._cuentasElement.selectedIndex = this._cuentasElement.options.length - 1;
+		new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()));
+	},
+
+	deleteCuenta: function(){
+		new Ajax.Request(Utils.getKumbiaURL("order/getNumeroCuentas"), {
+			method: 'GET',
+			onSuccess: function(transport){
+				var response = JSON.parse(transport.responseText);
+				if(response>1){
+					Modal.confirm('¿Esta seguro de eliminar esta cuenta?', function(){
+						new Ajax.Request(Utils.getKumbiaURL("order/queryCuenta/"+this._cuentasElement.getValue()), {
+							method: 'GET',
+							onSuccess: function(transport){
+								var response = JSON.parse(transport.responseText);
+								if(response>0){
+									Growler.show('No se puede borrar esta cuenta porque tiene items atendidos');
+									return false;
+								} else {
+									new Ajax.Request(Utils.getKumbiaURL("order/deleteCuenta/"+this._cuentasElement.getValue()), {
+										method: 'GET',
+										onSuccess: function(){
+											Growler.show("Se eliminó la cuenta correctamente");
+											this.refresh();
+											this.setLastCuenta();
+										}.bind(this)
+									});
+								}
+							}.bind(this)
+						});
+					}.bind(this));
+				} else {
+					Growler.show('No se puede eliminar la cuenta porque es la única existente');
+					return false;
+				}
+			}.bind(this)
+		});
+	},
+
+	onChangeCuenta: function(){
+		new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()), {
+			onSuccess: function(transport){
+				var response = JSON.parse(transport.responseText);
+				if(response.status=='OK'){
+					$("documento").value = response.documento;
+					$("nombre_cliente").value = response.cliente;
+					$("nombre_cliente_span").innerHTML = response.cliente;
+					if(response.habitacion!=-1){
+						$("habitacion_id").value = response.habitacion;
+						$("habitacion_id_span").innerHTML = "["+response.habitacion+"]";
+					} else {
+						$("habitacion_id").value = 0;
+						$("habitacion_id_span").innerHTML = "";
+					};
+					if(response.nota!=null){
+						$("nota").value = response.nota;
+						$("nota_span").innerHTML = "<br><b>Nota:</b>"+response.nota;
+					} else {
+						$("nota").value = "";
+						$("nota_span").innerHTML = "";
+					};
+					$("tipo_venta").setValue(response.tipo_venta);
+					if(response.estado=='B'){
+						if(response.tipo_venta=='F'){
+							Growler.show("Ya se ha generado la factura en esta cuenta");
+						} else {
+							Growler.show("Ya se ha generado la orden de servicio en esta cuenta");
+						}
+					}
+				}
+			}
+		});
+	},
+
+	onChangeComanda: function(){
+		new Ajax.Request(Utils.getKumbiaURL("order/setComanda/"+this._comandasElement.getValue()), {
+			method: 'GET'
+		});
+		this._comandasElement.blur();
+	},
+
+	setLastComanda: function(number){
+		this._comandasElement.selectedIndex = this._comandasElement.options.length - 1;
+		new Ajax.Request(Utils.getKumbiaURL("order/setComanda/"+number), {
+			method: 'GET'
+		});
+	},
+
+	toggleComanda: function(element){
+		var trElement = element.up(1);
+		var comanda = element.innerHTML;
+		var select = document.createElement('SELECT');
+		var options = this._comandasElement.options;
+		for(var i=0;i<options.length;i++){
+			var option = document.createElement("OPTION");
+			option.value = options[i].value;
+			option.text = options[i].text;
+			if(option.value==comanda){
+				option.selected = true;
+			};
+			select.appendChild(option);
+		};
+		select.observe('change', this.changeItemComanda.bind(this, trElement.lang, select));
+		select.observe('blur', function(span, select){
+			span.innerHTML = select.getValue();
+			select.parentNode.removeChild(select);
+		}.bind(this, element, select));
+		element.innerHTML = "";
+		element.up().appendChild(select);
+		select.activate();
+	},
+
+	changeItemComanda: function(accountId, comanda){
+		new Ajax.Request(Utils.getKumbiaURL("order/changeItemComanda/"+accountId+"/"+comanda.getValue()), {
+			method: 'get',
+			onSuccess: this.refresh.bind(this)
+		});
+	},
+
+ 	toggleCuenta: function(element){
+ 		var trElement = element.up(1);
+		var cuenta = element.innerHTML.replace("[", "").replace("]", "");
+		var select = document.createElement('SELECT');
+		var options = this._cuentasElement.options;
+		for(var i=0;i<options.length;i++){
+			var option = document.createElement("OPTION");
+			option.value = options[i].value;
+			option.text = options[i].text;
+			if(option.value==cuenta){
+				option.selected = true;
+			};
+			select.appendChild(option);
+		};
+		select.observe('change', this.changeItemCuenta.bind(this, trElement.lang, select));
+		select.observe('blur', function(span, select){
+			span.innerHTML = "["+select.getValue()+"]";
+			select.parentNode.removeChild(select);
+		}.bind(this, element, select));
+		element.innerHTML = "";
+		element.up().appendChild(select);
+		select.activate();
+	},
+
+	changeItemCuenta: function(accountId, cuenta){
+		new Ajax.Request(Utils.getKumbiaURL("order/changeItemCuenta/"+accountId+"/"+cuenta.getValue()), {
+			method: 'get',
+			onSuccess: this.refresh.bind(this)
+		});
+	},
+
+	deleteItem: function(element){
+		var trElement = element.up(1);
+		var itemName = trElement.querySelector('span.itemName');
+		Modal.confirm("¿Seguro desea cancelar la cantidad pendiente de '"+itemName.innerHTML+"'?", function(){
+			new Effect.Fade(trElement, {
+				duration: 0.3,
+				afterFinish: function(trElement){
+					new Ajax.Request(Utils.getKumbiaURL("order/deleteItem/"+trElement.lang), {
+						method: 'GET',
+						onSuccess: this.refresh.bind(this)
+					});
+				}.bind(this, trElement)
+			});
+		}.bind(this, trElement))
+	},
+
+	changeDiscount: function(element){
+		var trElement = element.up(1);
+		new WINDOW.open({
+			title: "Digite el Porcentaje de Descuento",
+			action:'numero',
+			width: "220px",
+			height: "390px",
+			onbeforeclose: function(accountId, action){
+				if(action=="cancel"){
+					return;
+				};
+				var number = parseInt($('number').value, 10);
+				if(number>100){
+					Growler.show("El porcentaje de descuento no puede ser mayor a 100");
+					return false;
+				};
+				new Ajax.Request(Utils.getKumbiaURL("order/changeDiscount/"+accountId+"/"+number), {
+					method: 'GET',
+					onSuccess: this.refresh.bind(this)
+				});
+			}.bind(this, trElement.lang)
+		});
+	},
+
+	changeQuantity: function(element){
+		var trElement = element.up(1);
+		new WINDOW.open({
+			title: "Digite la Cantidad",
+			action:'numero',
+			width: "220px",
+			height: "370px",
+			onbeforeclose: function(accountId, action) {
+				if(action=="cancel"){
+					return;
+				};
+				var number = parseInt($('number').value, 10);
+				if(number=="0"){
+					Growler.show("La cantidad debe ser mayor a cero");
+					return false;
+				};
+				new Ajax.Request(Utils.getKumbiaURL("order/changeQuantity/"+accountId+"/"+number), {
+					method: 'GET',
+					onSuccess: this.refresh.bind(this)
+				});
+			}.bind(this, trElement.lang)
+		});
+	},
+
+	showInvoice: function(){
+		var type = $F('tipo_venta');
+		if($('documento').value!="0"){
+			if($('nombre_cliente').value!="PARTICULAR"){
+				if(type=='F'){
+					Modal.confirm('¿Seguro desea generar la Factura?', function(){
+						window.open(Utils.getKumbiaURL('factura/index/'+this._numeroCuenta+'/'+this._accountMasterId), null, 'width=300, height=700, toolbar=no, statusbar=no')
+						new Utils.redirectToAction('order/add/'+this._id);
+					}.bind(this));
+				} else {
+					//Socios
+					if(type=='S'){
+						Modal.confirm('¿Seguro desea asignar estos cargos a la factura de socios?', function(){
+							window.open(Utils.getKumbiaURL('factura/index/'+this._numeroCuenta+'/'+this._accountMasterId), null, 'width=300, height=700, toolbar=no, statusbar=no')
+							new Utils.redirectToAction('order/add/'+this._id);
+						}.bind(this));
+					} else {
+						Modal.confirm('¿Seguro desea generar la Orden de Servicio?', function(){
+							window.open(Utils.getKumbiaURL('factura/index/'+this._numeroCuenta+'/'+this._accountMasterId), null, 'width=300, height=700, toolbar=no, statusbar=no')
+							new Utils.redirectToAction('order/add/'+this._id);
+						}.bind(this));
+					}
+				};
+			} else {
+				if(type=='F'){
+					Growler.show('Debe especificar el cliente antes de generar la Factura');
+				} else {
+					Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
+				};
+				this.setCustomerName();
+				return;
+			}
+		} else {
+			if(type=='F'){
+				Growler.show('Debe especificar el cliente antes de generar la Factura');
+			} else {
+				Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
+			};
+			this.setCustomerName();
+			return;
+		}
+	},
+
+	deleteItems: function(){
+		var accountItems = [];
+		var checkItems = this._preOrder.querySelectorAll('input.checkItem');
+		for(var i=0;i<checkItems.length;i++){
+			if(checkItems[i].checked==true){
+				accountItems.push(checkItems[i].value)
+			}
+		};
+		if(accountItems.length>0){
+			Modal.confirm("¿Desea eliminar los items seleccionados?", function(accountItems){
+				new Ajax.Request(Utils.getKumbiaURL("order/cancelItems"), {
+					parameters: {
+						items: accountItems.join(",")
+					},
+					onSuccess: this.refresh.bind(this)
+				});
+			}.bind(this, accountItems));
+		} else {
+			Growler.show('Seleccione un item al menos a eliminar');
+		}
+	},
+
+	onChangeTipoVenta: function(element, event){
+		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
+		if(numItems>0){
+			if(element.getValue()=='F'){
+				$('gendoc').update("Imprimir<br>Factura");
+			} else {
+				$('gendoc').update("Imprimir<br>Order");
+			};
+			new Ajax.Request(Utils.getKumbiaURL('order/changeTipoVenta/'+element.getValue()), {
+				method: 'GET',
+				onSuccess: this.refresh.bind(this)
+			});
+		} else {
+			Growler.show('Agregue items a la cuenta antes de indicar el tipo de pedido');
+			new Event.stop(event);
+		}
+	},
+
+	enableShortCuts: function(event){
+		if(this._searchMode==false){
+			if(!$('myWindow')){
+				if(event.ctrlKey==true){
+					if(event.keyCode==49){
+						this.goToModifiers();
+						return;
+					};
+					if(event.keyCode==50){
+						this.setCustomerName();
+						return;
+					};
+					if(event.keyCode==51){
+						this.payAccount();
+						return;
+					};
+					if(event.keyCode==52){
+						this.showInvoice();
+						return;
+					};
+					if(event.keyCode==48){
+						this.showStatement();
+						return;
+					};
+				}
+				/*for(var k=0;k<MenuHotKeys.length;k++){
+					if(String.fromCharCode(event.keyCode).toLowerCase()==HotKeys[k]){
+						$('mi'+MenuHotKeys[k]).click();
+						return;
+					}
+				};
+				for(var k=0;k<MenuItemsHotKeys.length;k++){
+					if(String.fromCharCode(event.keyCode).toLowerCase()==iHotKeys[k]){
+						$('mit'+MenuItemsHotKeys[k]).click();
+						return;
+					}
+				}*/
+			}
+		}
+	},
+
+	selectItem: function(element){
+		var itemsSelected = this._preOrder.querySelectorAll('tr.itemSelected');
+		for(var i=0;i<itemsSelected.length;i++){
+			itemsSelected[i].removeClassName('itemSelected');
+		};
+		element.addClassName('itemSelected');
+		new Ajax.Request(Utils.getKumbiaURL("order/changeSelectedItem/"+element.lang), {
+			method: 'GET'
+		});
+	},
+
+	selectAllItems: function(){
+		var checkItems = this._preOrder.querySelectorAll('input.checkItem');
+		for(var i=0;i<checkItems.length;i++){
+			if(checkItems[i].disabled==false){
+				checkItems[i].checked = true;
+			}
+		}
+	},
+
+	prepareBuscarItem: function(){
+		var buscarItem = $("buscarItem");
+		buscarItem.observe("focus", function(event){
+			if(this.value=="Buscar por nombre"){
+				this.value = "";
+				this.style.color = "#000000";
+			}
+			this.activate();
+		});
+		buscarItem.observe("blur", function(event){
+			if(this.value==""){
+				this.value = "Buscar por nombre";
+				this.style.color = "#c0c0c0";
+			}
+		});
+		buscarItem.observe("keydown", function(event){
+			this._searchMode = true;
+		}.bind(this));
+		buscarItem.observe("change", function(buscarItem, event) {
+			var val = $("buscarItem").getValue();
+            if(val.length > 12 && this._searching == false){
+                    this._searching = true;
+                    new Ajax.Request(Utils.getKumbiaURL("order/searchItem"), {
+                            parameters: {
+                                    text: val
+                            },
+                            onSuccess: function(transport){
+                                    this.updateMenuDetails(JSON.parse(transport.responseText));
+                                    this._searching = false;
+                            }.bind(this),
+                            onFailure: function(transport){
+                                    alert(transport.responseText);
+                                    this._searching = false;
+                            }.bind(this)
+                    });
+            } else {
+                    this.updateMenuDetails([]);
+            }
+		}.bind(this));
+		buscarItem.observe("keyup", function(buscarItem, event){
+			if(this._searching == false){
+				if(buscarItem.value.length>1){
+					this._searching = true;
+					new Ajax.Request(Utils.getKumbiaURL("order/searchItem"), {
+						parameters: {
+							text: buscarItem.getValue()
+						},
+						onSuccess: function(transport){
+							this.updateMenuDetails(JSON.parse(transport.responseText));
+							this._searching = false;
+						}.bind(this),
+						onFailure: function(transport){
+							alert(transport.responseText);
+							this._searching = false;
+						}.bind(this)
+					});
+				} else {
+					this.updateMenuDetails([]);
+				}
+			};
+			this._searchMode = false;
+		}.bind(this, buscarItem));
+	},
+
+	changePrice: function(element){
+		new WINDOW.open({
+			title: "Digite el nuevo Precio Unitario",
+			action: 'numero',
+			width: "220px",
+			height: "390px",
+			background: "#c0c0c0",
+			onbeforeclose: function(element, action){
+				if(action=='cancel'){
+					return false;
+				};
+				var trElement = element.up(1);
+				var numero = parseInt($('number').value, 10);
+				if(numero>-1){
+					new Ajax.Request(Utils.getKumbiaURL("order/changePrice/"+trElement.lang+"/"+numero), {
+						onSuccess: this.refresh.bind(this)
+					});
+				}
+			}.bind(this, element)
+		});
+
+
+		/*var input = document.createElement('INPUT');
+		input.type = 'text';
+		input.size = '10';
+		input.maxlength = '12';
+		input.lang = element.lang;
+		input.value = element.innerHTML.replace("(", "").replace(')', '');
+		//input.observe('change', changePrice);
+		//input.observe('blur', changePrice);
+		input.observe('keyup', function(event){
+			if(event.keyCode==Event.KEY_RETURN){
+				this.blur();
+			}
+		});
+		element.innerHTML = "";
+		element.appendChild(input);
+		input.activate();*/
+	},
+
+	captureServicio: function()
+	{
+		new WINDOW.open({
+			title: "Digite la Propina",
+			action:'numero',
+			width: "220px",
+			height: "370px",
+			onbeforeclose: function(action){
+				if(action!='cancel'){
+					var number = $('number').getValue();
+					if(number!=''){
+						number = parseFloat(number, 10)
+					} else {
+						number = 0;
+					};
+					new Ajax.Request(Utils.getKumbiaURL('order/setPropina'), {
+						parameters: {
+							valor: number
+						},
+						onSuccess: function(){
+							$('servicio').setValue(number)
+						}.bind(this, number)
+					});
+					window.setTimeout(function(){
+						$('servicio').blur();
+					}, 200);
+				}
+			}
+		});
+	},
+
+	preOrderCallbacks: function()
+	{
+
+		var preOrder = this._preOrder;
+		var spans = preOrder.querySelectorAll('span.ccom');
+		for (var i = 0; i < spans.length;i++){
+			var element = spans[i];
+			element.title = "Haga Click Para Cambiar Comanda...";
+			element.observe('click', this.toggleComanda.bind(this, element));
+		};
+
+		var spans = preOrder.querySelectorAll('span.ccue');
+		for (var i = 0; i < spans.length;i++){
+			var element = spans[i];
+			element.title = "Haga Click Para Cambiar la Cuenta...";
+			element.observe('click', this.toggleCuenta.bind(this, element));
+		};
+
+		var spans = preOrder.querySelectorAll('span.cPrecio');
+		for (var i = 0; i < spans.length;i++){
+			var element = spans[i];
+			if(element.lang=="ch"){
+				element.title = "Haga Click Para Cambiar Precio...";
+				element.observe('click', this.changePrice.bind(this, element));
+			} else {
+				element.title = "Este item no permite modificar el precio";
+				element.observe('click', function(){
+					Growler.show("Este item no permite modificar el precio");
+				});
+			}
+		};
+
+		var orderRows = preOrder.querySelectorAll('tr.orderRow');
+		for(var i=0;i<orderRows.length;i++){
+			var element = orderRows[i];
+			element.observe('click', this.selectItem.bind(this, element));
+		};
+
+		var deleteModifiers = preOrder.querySelectorAll('.deleteModifier');
+		for(var i=0;i<deleteModifiers.length;i++){
+			deleteModifiers[i].observe('click', this.deleteModifier.bind(this, deleteModifiers[i]));
+			deleteModifiers[i].title = 'Eliminar este Modificador';
+		};
+
+		var changeQuantitys = preOrder.querySelectorAll('.changeQuantity');
+		for(var i=0;i<changeQuantitys.length;i++){
+			changeQuantitys[i].observe('click', this.changeQuantity.bind(this, changeQuantitys[i]));
+			changeQuantitys[i].title = 'Cambiar Cantidad Pedida';
+		};
+
+		var changeDiscounts = preOrder.querySelectorAll('.changeDiscount');
+		for(var i=0;i<changeDiscounts.length;i++){
+			changeDiscounts[i].observe('click', this.changeDiscount.bind(this, changeDiscounts[i]));
+			changeDiscounts[i].title = 'Cambiar Descuento';
+		};
+
+		var deleteItems = preOrder.querySelectorAll('img.deleteItem');
+		for(var i=0;i<deleteItems.length;i++){
+			deleteItems[i].observe('click', this.deleteItem.bind(this, deleteItems[i]));
+			deleteItems[i].title = 'Eliminar este Item';
+		};
+
+		var deleteDiscounts = preOrder.querySelectorAll('a.deleteDiscount');
+		for(var i=0;i<deleteDiscounts.length;i++){
+			deleteDiscounts[i].observe('click', this.deleteDiscount.bind(this, deleteDiscounts[i].lang));
+			deleteDiscounts[i].title = 'Eliminar este descuento';
+		};
+
+		this._cuentasElement = $('cuentas');
+		this._comandasElement = $('comandas');
+
+		this._cuentasElement.observe('change', this.onChangeCuenta.bind(this));
+		this._comandasElement.observe('change', this.onChangeComanda.bind(this));
+
+		var plusComanda = $('plusComanda');
+		plusComanda.observe('click', this.addComanda.bind(this));
+		plusComanda.title = "Agregar Comanda";
+
+		var minusComanda = $('minusComanda');
+		minusComanda.observe('click', this.deleteComanda.bind(this));
+		minusComanda.title = "Eliminar Comanda Actual";
+
+		var plusCuenta = $('plusCuenta');
+		plusCuenta.observe('click', this.addCuenta.bind(this));
+		plusCuenta.title = "Agregar Cuenta";
+
+		var minusComanda = $('minusCuenta');
+		minusComanda.observe('click', this.deleteCuenta.bind(this));
+		minusComanda.title = "Eliminar Cuenta Actual";
+
+		$('servicio').observe('focus', this.captureServicio.bind(this));
+		$('selectAllArrow').observe('click', this.selectAllItems.bind(this));
+
+		var tipoVenta = $('tipo_venta');
+		if(tipoVenta.getValue()=='F'){
+			$('gendoc').update("Imprimir<br>Factura");
+		} else {
+			$('gendoc').update("Imprimir<br>Orden");
+		};
+		tipoVenta.observe('change', this.onChangeTipoVenta.bind(this, tipoVenta));
+		if(this._pideAsientos=='N'){
+			$('asientosDiv').hide();
+		} else {
+			if(this._numeroAsientos>0){
+				this.addSillas(this._numeroAsientos-1);
+			}
+		};
+
+		var itemsChanged = this._preOrder.querySelectorAll('tr.itemChanged');
+		for(var i=0;i<itemsChanged.length;i++){
+			new Effect.Highlight(itemsChanged[i]);
+		};
+
+		this.adjustOrderList();
+
+	},
+
+	getDiscounts: function()
+	{
+		new WINDOW.open({
+			action: "order/discount",
+			width: "400px",
+			height:"400px",
+			title: "Aplicar un Descuento",
+			afterRender: function(){
+				var myWindow = $('myWindow');
+				var discountButtons = myWindow.querySelectorAll('button.commandButtonBig');
+				for (var i = 0; i < discountButtons.length; i++) {
+					discountButtons[i].observe('click', this.applyDiscount.bind(this, discountButtons[i].lang));
+				};
+			}.bind(this)
+		});
+	},
+
+	applyDiscount: function(id)
+	{
+		new Ajax.Request(Utils.getKumbiaURL("order/applyDiscount/" + id), {
+			onSuccess: function(){
+				$("myWindow").close();
+				this.refresh();
+			}.bind(this)
+		});
+	},
+
+	deleteDiscount: function(id)
+	{
+		new Ajax.Request(Utils.getKumbiaURL("order/deleteDiscount/" + id), {
+			onSuccess: this.refresh.bind(this)
+		});
+	},
+
+	cancelOrder: function()
+	{
+		Modal.confirm("¿Desea cancelar todas las cuentas en este pedido?", function(){
+			new Utils.redirectToAction("cancel/docancel");
+		});
+		/*new WINDOW.open({
+			action: "order/cancelOrder",
+			width: "550px",
+			height: "420px",
+			title: "Cancelar Pedido",
+			afterRender: this.addCustomerCallback.bind(this)
+		});*/
+	},
+
+	setCustomerName: function()
+	{
+		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
+		if (numItems > 0) {
+			var type = $F('tipo_venta');
+			if (type == 'H' || type == 'P') {
+				new WINDOW.open({
+					action: "order/customerName",
+					width: "940px",
+					height: "620px",
+					title: "Seleccionar Folio",
+					afterRender: this.addCustomerCallback.bind(this)
+				});
+			} else {
+				new WINDOW.open({
+					action: "order/customerName",
+					width: "500px",
+					height: "233px",
+					title: "Seleccionar Cliente",
+					afterRender: this.addCustomerCallback.bind(this)
+				});
+			}
+		} else {
+			Growler.show('Debe agregar items a la lista antes de definir el cliente');
+		}
+	},
+
+	addCustomerCallback: function(){
+		var aplSubmit = $("apl_submit");
+		if(aplSubmit){
+			aplSubmit.observe("click", function(){
+
+				if($('documento_cliente').getValue().trim() == ''){
+					$("documento_cliente").activate();
+					Growler.show('Debe indicar el número de documento del cliente');
+					return false;
+				}
+
+				if($('tipo_documento').getValue().trim() == '@'){
+					$("tipo_documento").activate();
+					Growler.show('Debe indicar el tipo de documento del cliente');
+					return false;
+				}
+
+				if($('tip_per_jur').getValue().trim() == '@'){
+					$("tip_per_jur").activate();
+					Growler.show('Debe indicar el tipo de persona del cliente');
+					return false;
+				}
+
+				if($('tip_per_jur').getValue() == 1){
+
+					if($('primer_nombre').getValue().trim() == ''){
+						$("primer_nombre").activate();
+						Growler.show('Debe digitar la razon social de la persona jurídica.');
+						return false;
+					}
+
+					if($('digitov').getValue().trim() == ''){
+						$("digitov").activate();
+						Growler.show('Debe indicar el digito de verificación.');
+						return false;
+					}
+				}else{
+
+					if($('primer_nombre').getValue().trim() == ''){
+						$("primer_nombre").activate();
+						Growler.show('Debe digitar el nombre del cliente.');
+						return false;
+					}
+
+					if($('primer_apellido').getValue().trim() == ''){
+						$("primer_apellido").activate();
+						Growler.show('Debe digitar el primer apellido del cliente.');
+						return false;
+					}
+
+				}
+
+				if($('telefono1').getValue().trim() == ''){
+					$("telefono1").activate();
+					Growler.show('Debe digitar el número telefonico.');
+					return false;
+				}
+				if($('email').getValue().trim() == ''){
+					$("email").activate();
+					Growler.show('Debe digitar el email del cliente.');
+					return false;
+				}
+				if($('flid_ciudades_dian').getValue().trim() == '' || $('flid_ciudades_dian').getValue().trim() == '0'){
+					$("ciudades_dian").activate();
+					Growler.show('Debe digitar la ciudad DIAN.');
+					return false;
+				}
+				if($('direccion').getValue().trim() == ''){
+					$("direccion").activate();
+					Growler.show('Debe digitar la dirección.');
+					return false;
+				}
+				if($('codigo_postal').getValue().trim() == ''){
+					$("codigo_postal").activate();
+					Growler.show('Debe digitar el codigo postal del cliente.');
+					return false;
+				}
+				if($('regimen_fiscal').getValue().trim() == '@'){
+					$("regimen_fiscal").activate();
+					Growler.show('Debe indicar el regimen fiscal.');
+					return false;
+				}				
+
+				ajaxRemoteForm($("myform"), "customer_messages");
+			});
+			var habitacion = $('habitacion');
+			if(habitacion){
+				window.setTimeout(function(){
+					$("numHabitacion").activate();
+				}, 200);
+				habitacion.observe('change', this.getHuespedInfo.bind(this, habitacion));
+				var huespedButtons = $$('.huespedButton');
+				for(var i=0;i<huespedButtons.length;i++){
+					huespedButtons[i].observe('click', this.selectThisFolio.bind(this, huespedButtons[i]))
+				}
+			} else {
+				window.setTimeout(function(){
+
+
+					if($("fecnac")){
+						$("fecnac").observe('change', function(){
+							var fecha = this.value.split("-");
+							if(fecha.length == 3 ){
+								$('fecnacMonth').setValue(fecha[1]).dispatchEvent(new Event("change"));
+								$('fecnacDay').setValue(fecha[2]).dispatchEvent(new Event("change"));
+								$('fecnacYear').setValue(fecha[0]).dispatchEvent(new Event("change"));
+							}else{
+								$('fecnacMonth').setValue('@').dispatchEvent(new Event("change"));
+							}
+						})
+					}
+					
+					if($("documento_cliente")){
+						$("documento_cliente").activate();
+					};
+
+					$("documento_cliente").observe('blur', function(){
+						if(this.value.trim() != ''){
+							new Ajax.Request(Utils.getKumbiaURL("pay/getClientName/"+this.value), {
+								onSuccess: function(transport){
+
+									var cliente = {};
+
+									$('primer_nombre').readOnly  = false;
+									$('segundo_nombre').readOnly  = false;
+									$('primer_apellido').readOnly  = false;
+									$('segundo_apellido').readOnly  = false;
+
+									if(transport.responseJSON != 'NO EXISTE EL CLIENTE EN LA BASE DE DATOS'){
+										
+										var cliente = JSON.parse(transport.responseJSON);
+
+										if(cliente.primer_nombre.trim() != '' && cliente.primer_nombre.trim() != null){
+											$('primer_nombre').readOnly  = true;
+											$('segundo_nombre').readOnly  = true;
+											$('primer_apellido').readOnly  = true;
+											$('segundo_apellido').readOnly  = true;
+										}
+
+									}else{
+
+										cliente.primer_nombre = '';
+										cliente.segundo_nombre = '';
+										cliente.primer_apellido = '';
+										cliente.segundo_apellido = '';
+										cliente.telefono1 = '';
+										cliente.email = '';
+										cliente.direccion = '';
+										cliente.ciudades_dian = '';
+										cliente.tipdoc = '@'
+										cliente.tip_per_jur = '@'
+										cliente.codigo_postal = ''
+										cliente.flid_ciudades_dian = '';
+										cliente.digitov = '';
+										cliente.regimen_fiscal = '@';
+
+										var today = new Date();
+										var dd = String(today.getDate()).padStart(2, '0');
+										var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+										var yyyy = today.getFullYear();
+
+										today =  yyyy + '-' + mm + '-' + dd;
+										cliente.fecnac = today;
+									}
+
+									$('primer_nombre').setValue(cliente.primer_nombre);
+									$('segundo_nombre').setValue(cliente.segundo_nombre);
+									$('primer_apellido').setValue(cliente.primer_apellido);
+									$('segundo_apellido').setValue(cliente.segundo_apellido);
+									$('telefono1').setValue(cliente.telefono1);
+									$('email').setValue(cliente.email);
+									$('direccion').setValue(cliente.direccion);
+									$('fecnac').setValue(cliente.fecnac);
+									$('fecnac').dispatchEvent(new Event("change"));
+									
+									$('ciudades_dian').setValue(cliente.ciudades_dian);
+									$('tipo_documento').setValue(cliente.tipdoc);
+									$('tip_per_jur').setValue(cliente.tip_per_jur);
+									$('digitov').setValue(cliente.digitov);
+									$('regimen_fiscal').setValue(cliente.regimen_fiscal);
+									
+									$('codigo_postal').setValue(cliente.codigo_postal);
+									
+									$('flid_ciudades_dian').setValue(cliente.flid_ciudades_dian);
+
+									$('tip_per_jur').dispatchEvent(new Event("change"));
+									
+									
+								}
+							});
+							
+							
+							new Ajax.Autocompleter("ciudades_dian", "ciudades_dian_choices", $Kumbia.path+'common/getCiudadesDian', {
+								paramName: "id",
+								minChars: 2,
+								tokens: [","],
+								afterUpdateElement: function (name, obj, li){
+									$("flid_"+name).value = li.id;
+								}.bind(this, 'ciudades_dian')
+						   });
+						   
+						   var textField = $("ciudades_dian");
+						   textField.observe('focus', function(name){
+							   if(this.value==""){
+								   $("flid_"+name).value = 0;
+							   };
+						   }.bind(textField, 'ciudades_dian'));
+						   
+				   
+						}
+					});
+
+					$("tip_per_jur").observe('change', function(){
+						document.querySelector('.nombre_x_persona').innerHTML = 'Primer nombre'
+						document.querySelectorAll('.div_juridicas').forEach(element => {
+							element.style.display = 'none';	
+						});
+
+						document.querySelectorAll('.div_naturales').forEach(element => {
+							element.style.display = '';	
+						});
+						document.querySelector('#primer_nombre').size = 17;
+
+						if($(this).getValue() == 1){
+							document.querySelector('.nombre_x_persona').innerHTML = 'Razon social'
+							document.querySelector('#primer_nombre').size = 40;
+							document.querySelectorAll('.div_juridicas').forEach(element => {
+								element.style.display = '';
+							});
+							document.querySelectorAll('.div_naturales').forEach(element => {
+								element.style.display = 'none';	
+							});
+	
+						}
+					})
+
+
+				}, 200);
+			}
+		} else {
+			var numeroAccion = $('numeroAccion');
+			if(numeroAccion){
+				window.setTimeout(function(){
+					$("numeroAccion").activate();
+				}, 200);
+				numeroAccion.observe('keyup', this.accionKeyup.bind(this, numeroAccion));
+				$('myWindow').setStyle({background: "#fff"});
+			} else {
+				$('myWindow').setStyle({
+					width: "400px",
+					height: "135px"
+				});
+			}
+		}
+	},
+
+	getHuespedInfo: function(element){
+		new Ajax.Request(Utils.getKumbiaURL('order/getHuespedInfo/'+element.getValue()), {
+			onSuccess: function(transport){
+				$('huesped_info').update(transport.responseText);
+			}
+		});
+	},
+
+	selectThisFolio: function(element){
+		$("habitacion").setValue(element.id);
+		ajaxRemoteForm($("myform"), "customer_messages");
+	},
+
+	getCustomerId: function(iid, xid){
+		$('documento_cliente').value = xid.id
+	},
+
+	accionKeyup: function(element, event)
+	{
+		if (element.value.length > 0) {
+			try
+			{
+				new Ajax.Request(Utils.getKumbiaURL('order/querySocios'), {
+					parameters: {
+						"numeroAccion": $F('numeroAccion'),
+						"tipoVenta": $F('tipo_venta')
+					},
+					onSuccess: function(t){
+						$('socios').update(t.responseText);
+						$$('.aplSubmit').each(function(element){
+							element.lang = element.title;
+							element.title = "";
+							element.observe('click', function(){
+								var folio = this.lang;
+								new Ajax.Request(Utils.getKumbiaURL('order/saveSocio'), {
+									parameters: {
+										"folio": folio
+									},
+									onSuccess: function(t){
+										$('customer_messages').update(t.responseText);
+									},
+									onFailure: function(t){
+										$('customer_messages').update(t.responseText);
+									}
+								})
+							});
+						});
+					},
+					onFailure: function(t){
+						alert(t.responseText);
+					}
+				});
+			}
+			catch(e) {
+				alert(e);
+			}
+		}
+	},
+
+	payAccount: function(){
+		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
+		var type = $F('tipo_venta');
+		if(numItems>0){
+			if($('nombre_cliente').value!="PARTICULAR"){
+				new Utils.redirectToAction('pay/index/0:'+this._cuentasElement.getValue())
+			} else {
+				if(type=='F'){
+					Growler.show('Debe especificar el cliente antes de generar la Factura');
+				} else {
+					Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
+				};
+				this.setCustomerName();
+				return;
+			}
+		} else {
+			Growler.show('Aun no puede liquidar la cuenta');
+		}
+	},
+
+	goToNotes: function(){
+		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
+		if(numItems>0){
+			window.location = Utils.getKumbiaURL('order/notes');
+		} else {
+			Growler.show('Agregue items al pedido antes de agregar notas');
+		}
+	},
+
+	showStatement: function(){
+		window.open(Utils.getKumbiaURL('factura?preview'), null, 'width=300, height=700, toolbar=no, statusbar=no')
+	},
+
+	sendToKitchen: function(){
+		new Utils.redirectToAction("order/sendToKitchen");
+	},
+
+	backToTables: function()
+	{
+		new Utils.redirectToAction("tables/back/" + this._salonId);
+	},
+
+	joinOrders: function()
+	{
+		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/joinOrders");
+	},
+
+	changeTable: function()
+	{
+		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/changeTable");
+	},
+
+	adjustOrderList: function()
+	{
+		var orderItems = $$("orderRow");
+		var listaPedido = $("listaPedido");
+		if (orderItems.length < 9) {
+			listaPedido.style.height = this._listaPedidoHeight;
+			listaPedido.style.overflowY = 'auto';
+		} else {
+			listaPedido.style.height = "380px";
+		};
+		var height = listaPedido.getHeight();
+		var itemsSelected = this._preOrder.querySelectorAll("tr.itemSelected");
+		for(var i = 0; i < itemsSelected.length; i++) {
+			var offset = itemsSelected[i].positionedOffset();
+			var scrollPos = (offset[1] - listaPedido.offsetTop - itemsSelected[i].getHeight() - 20);
+			if (scrollPos > 0) {
+				listaPedido.scrollTop = scrollPos;
+			} else {
+				listaPedido.scrollTop = 0;
+			};
+			break;
+		}
+	},
+
+	setHeightDimensions: function()
+	{
+		var height = $('mainTable').getHeight();
+		this._menuDetailsHeight = parseInt(height * 0.57, 10) + 'px';
+		this._listaPedidoHeight = parseInt(height * 0.55, 10) + 'px';
+	},
+
+	setAccountMasterId: function(accountMasterId)
+	{
+		this._accountMasterId = accountMasterId;
+	},
+
+	setNumeroCuenta: function()
+	{
+
+	},
+
+	disabledInvoice : function(){
+		$("showInvoice").disabled = false;
+		$("showInvoice").style.opacity = '1';
+		if($("tipo_venta").getValue() == 'F'){
+			$("showInvoice").disabled = true;
+			$("showInvoice").style.opacity = '0.2';
+		}
+	},
+
+	initialize: function(parameters)
+	{
+
+		try {
+
+			document.title = parameters.title;
+			this._tipoComanda = parameters.tipoComanda;
+			this._ventaA = parameters.ventaA;
+			this._pedirPersonas = parameters.pedirPersonas;
+			this._pedirAsientos = parameters.pedirAsientos;
+			this._numeroAsientos = parameters.numeroAsientos;
+			this._id = parameters.id;
+			this._salonId = parameters.salonId;
+			this._accountMasterId = parameters.accountMasterId;
+			this._numeroCuenta = parameters.numeroCuenta;
+
+			this._cuentasElement = $('cuentas');
+			this._comandasElement = $('comandas');
+
+			this._preOrder = $('preOrder');
+			this._menuDetailsElement = $("menuDetails");
+
+			var menuButtons = $$('button.menuButton');
+			for (var i = 0; i < menuButtons.length; i++) {
+				menuButtons[i].observe('click', this.getMenuItems.bind(this, menuButtons[i], menuButtons[i].lang));
+				menuButtons[i].lang = null;
+			};
+
+			if (this._comandasElement) {
+				if (this._comandasElement.options.length == 0) {
+					if (this._tipoComanda == "M") {
+						this.addComanda();
+					} else {
+						this.addAutomaticComanda();
+					};
+				} else {
+					this.pedirPersonas();
+				}
+			};
+
+			$('showInvoice').observe('click', this.showInvoice.bind(this));
+			$('goToNotes').observe('click', this.goToNotes.bind(this));
+			$('customerName').observe('click', this.setCustomerName.bind(this));
+			$('payAccount').observe('click', this.payAccount.bind(this));
+			$('deleteItems').observe('click', this.deleteItems.bind(this));
+			$('discounts').observe('click', this.getDiscounts.bind(this));
+			$('showStatement').observe('click', this.showStatement.bind(this));
+			$('sendToKitchen').observe('click', this.sendToKitchen.bind(this));
+			$('cancelOrder').observe('click', this.cancelOrder.bind(this));
+			$('joinOrders').observe('click', this.joinOrders.bind(this));
+			$('backToTables').observe('click', this.backToTables.bind(this));
+			$('changeTable').observe('click', this.changeTable.bind(this));
+
+			this.preOrderCallbacks();
+			this.prepareBuscarItem();
+			this.setHeightDimensions();
+
+			new Event.observe(window, "keydown", this.enableShortCuts.bind(this));
+
+
+			this.disabledInvoice()
+
+
+		} catch (e) {
+			alert(e);
+		}
+
+	}
+
+});
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+function addToNumber(obj, event){
+	if(event.keyCode!=Event.KEY_RETURN){
+	  	$('number').value+=obj.value;
+	  	if($('number').value!=""){
+		    $('okButton').disabled = false;
+		};
+		$('number').select();
+	}
+}
+
+function dropNumber(){
+	new Effect.Shake("number", {
+		duration: 0.5
+	});
+	new Effect.Morph("number", {
+		duration: 0.5,
+		style: {
+			color: "#FFFFFF"
+		},
+		afterFinish: function(){
+			$('number').value = "";
+			$('number').style.color = "#000000";
+		}
+	})
+	$('okButton').disabled = true;
+}
+
+function cancelNumber(){
+	$('myWindow').close('cancel');
+}
+
+function acceptNumber(){
+  	$('myWindow').close('ok');
+}
+
+function big(obj){
+	$(obj).className = "bigButton2";
+	$(obj).style.fontSize = "44px";
+	new Effect.Morph(obj, {
+		duration: 0.3,
+		style: {
+			fontSize: "30px"
+		},
+		afterFinish: function(){
+			$(obj).className = "bigButton";
+			$(obj).style.width = "70px";
+			$(obj).style.height = "70px";
+			$(obj).style.fontSize = "30px";
+		}
+	})
+}
+
+new Event.observe(window, "keyup", function(event){
+	try 
+	{
+		if($("myWindow")){
+			$('number').select();
+			var code = 0;
+			var ev = parseInt(event.keyCode);
+			if(ev==Event.KEY_BACKSPACE||ev==Event.KEY_ESC){
+				dropNumber();
+				new Event.stop(event);
+				return;
+			};
+			if(ev==Event.KEY_RETURN){
+				$("okButton").click();
+				new Event.stop(event);
+				return;
+			};
+			if(ev==190||ev==110){
+	  			if($('number').value.indexOf('.')==-1){
+					var punto = new Object();
+					if($('number').value.length==0){
+						punto.value = "0.";
+					} else {
+						punto.value = ".";
+					};
+					addToNumber(punto, event);
+					new Event.stop(event);
+				}
+			}
+			if(ev>=48&&ev<=57){
+				code = event.keyCode - 48;
+				if($("b"+code)){
+					big($("b"+code));
+					addToNumber($("b"+code), event);
+					new Event.stop(event);
+					return;
+				}
+			};
+			if(ev>=96&&ev<=105){
+				code = event.keyCode - 96;
+				if($("b"+code)){
+					big($("b"+code));
+					addToNumber($("b"+code), event);
+					new Event.stop(event);
+					return;
+				}
+			};
+		}
+	}
+	catch(e){
+		
+	}
+})
+
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+var VirtualKeyBoard = Class.create({
+
+	initialize: function(){
+		new Ajax.Request(Utils.getKumbiaURL('keyboard'), {
+			method: 'GET',
+			onSuccess: function(t){
+				if($('virtual-keyboard')){
+					return;
+				};
+				var keyboard = document.createElement('DIV');
+				keyboard.id = 'virtual-keyboard';
+				keyboard.update(t.responseText);
+				document.body.appendChild(keyboard);
+				keyboard.select('div.key').each(function(element){
+					element.observe('mousedown', function(event){
+						var activeElement = document.activeElement;
+						if(activeElement.tagName=='INPUT'){
+							var content = this.innerHTML;
+							if(content!='&nbsp;'&&content.substr(0, 4)!='<img'){
+								activeElement.value+=this.innerHTML;
+							} else {
+								if(content=='&nbsp;'){
+									activeElement.value+=' ';
+								} else {
+									activeElement.value = activeElement.value.substr(0, activeElement.value.length-1);
+								}
+							}
+							activeElement.fire('keyup');
+							activeElement.fire('keydown');
+						};
+						Event.stop(event);
+					})
+				});
+				$('exit').observe('click', function(){
+					$('virtual-keyboard').remove();
+				})
+			}
+		});
+	}
+
+});

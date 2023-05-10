@@ -83,7 +83,7 @@ if($salon_id!='@'){
 
 ?>
 <br>
-<table cellspacing="0">
+<table width="670" cellspacing="0">
 	<tr>
 		<th>Número</th>
 		<th>Ambiente</th>
@@ -94,10 +94,10 @@ if($salon_id!='@'){
 		<th>IVA</th>
 		<th>Impo</th>
 		<th>Servicio</th>
-		<th style="width: 100px;">Forma Pago</th>
 		<th>Total</th>
+		<th>Nota credito</th>
+		<th>Total neto</th>
 		<th>Estado</th>
-		<th></th>
 	</tr>
 <?php
 
@@ -112,11 +112,15 @@ $iva = 0;
 $impo = 0;
 $total = 0;
 $valor = 0;
+$nota = 0;
+$totalneto = 0;
 
 $query = new ActiveRecordJoin(array(
 	'entities' => array('Factura', 'Salon'),
 	'conditions' => $conditions,
 	'fields' => array(
+		'{#Factura}.id',
+		'{#Factura}.fecha',
 		'{#Factura}.prefijo_facturacion',
 		'{#Factura}.consecutivo_facturacion',
 		'{#Factura}.fecha',
@@ -128,36 +132,16 @@ $query = new ActiveRecordJoin(array(
 		'{#Factura}.total_impoconsumo',
 		'{#Factura}.total',
 		'{#Factura}.estado',
-		'{#Factura}.cuenta',
-		'{#Factura}.account_master_id',
-		'{#Factura}.tipo',
 		'salon' => '{#Salon}.nombre',
 	),
 	'order' => array('{#Factura}.consecutivo_facturacion')
 ));
 
-foreach($query->getResultSet() as $factura)
-{
-	$query_ = new ActiveRecordJoin(array(
-		'entities' => array('PagosFactura', 'FormasPago'),
-		'conditions' => "{#PagosFactura}.prefijo_facturacion = '$factura->prefijo_facturacion' AND {#PagosFactura}.consecutivo_facturacion='$factura->consecutivo_facturacion' AND {#PagosFactura}.tipo='$factura->tipo'",
-		'fields' => array(
-			'{#PagosFactura}.formas_pago_id',
-			'{#PagosFactura}.pago',
-			'formas_pago' => '{#FormasPago}.detalle',
-		),
-		'order' => array('{#PagosFactura}.consecutivo_facturacion')
-	));
+foreach($query->getResultSet() as $factura){
 
-	$formpago = "<table cellspacing='0' style='width: 350; border: none;'>";
-	foreach($query_->getResultSet() as $formaPago_)
-	{
-		$formpago .= "<tr>";
-		$formpago .= "<td style='width: 250; border: none;'>".$formaPago_->formas_pago."</td>";
-		$formpago .= "<td style='border: none;'>".Currency::number($formaPago_->pago, 2)."</td>";
-		$formpago .= "</tr>";
-	}
-	$formpago .= "</table>";
+	# NOTA CREDITO
+	$conditions = "factura_id = '$factura->id' AND fecha='$factura->fecha'";
+	$valor_nota = $NotaCredito->sum('total', "conditions: $conditions");
 
 	echo "<tr>";
 	echo "<td align='right'>", $factura->prefijo_facturacion, '-', $factura->consecutivo_facturacion, "</td>";
@@ -169,20 +153,21 @@ foreach($query->getResultSet() as $factura)
 	echo "<td align='right'>", Currency::number($factura->total_iva, 2), "</td>";
 	echo "<td align='right'>", Currency::number($factura->total_impoconsumo, 2), "</td>";
 	echo "<td align='right'>", Currency::number($factura->propina, 2), "</td>";
-	echo "<td align='right'>", $formpago ,"</td>";
 	echo "<td align='right'>", Currency::number($factura->total, 2), "</td>";
+	echo "<td align='right'>", Currency::number($valor_nota, 2), "</td>";
+	echo "<td align='right'>", Currency::number($factura->total-$valor_nota, 2), "</td>";
 	if($factura->estado=='A'){
 		$valor+=$factura->subtotal;
 		$propina+=$factura->propina;
 		$iva+=$factura->total_iva;
 		$impo+=$factura->total_impoconsumo;
 		$total+=$factura->total;
+		$nota+=$valor_nota;
+		$totalneto+=$factura->total-$valor_nota;
 		echo "<td align='left'>ACTIVA</td>";
 	} else {
 		echo "<td align='left'>INACTIVA</td>";
 	}
-	
-	echo '<td align="right"><a href="', Core::getInstancePath(), 'pos2/factura/index/',$factura->cuenta,'/',$factura->account_master_id,'?reprint" target="_new">Reimprimir</a></td>';
 	echo "</tr>";
 	$cantidad++;
 }
@@ -196,8 +181,8 @@ foreach($query->getResultSet() as $factura)
 	<td align="right"><b><?php echo Currency::number($impo, 2) ?></b></td>
 	<td align="right"><b><?php echo Currency::number($propina, 2) ?></b></td>
 	<td align="right"><b><?php echo Currency::number($total, 2) ?></b></td>
-	<td align="right"><b><?php echo Currency::number($total, 2) ?></b></td>
-	<td align="right"><b></b></td>
+	<td align="right"><b><?php echo Currency::number($nota, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($totalneto, 2) ?></b></td>
 	<td>&nbsp;</td>
 </tr>
 </table>
