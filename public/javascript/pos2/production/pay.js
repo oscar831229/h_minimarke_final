@@ -1834,6 +1834,12 @@ function pay(){
 		return;
 	}
 
+	// Validamos que exista resolución para venta factura
+	if(!resoluciones.existeResoluion()){
+		alert("No existe resolución para facturación - debe ser parametrizada por el administrador.");
+		return;
+	}
+
 	if (parseFloat($("total_saldo").getValue()).toFixed(2) < 0) {
 		Modal.confirm('¿El valor a pagar supera el pendiente. ¿Desea continuar?', function(){
 			
