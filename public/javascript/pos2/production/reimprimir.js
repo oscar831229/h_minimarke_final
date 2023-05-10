@@ -342,42 +342,1384 @@ this.translateToPx(b.start),a.style.height=this.translateToPx(b.end-b.start+this
 this.track.cumulativeOffset(),this.event=a,this.setValue(this.translateToValue((this.isVertical()?c[1]-b[1]:c[0]-b[0])-this.handleLength/2)),b=this.activeHandle.cumulativeOffset(),this.offsetX=c[0]-b[0],this.offsetY=c[1]-b[1];else{for(;-1==this.handles.indexOf(b)&&b.parentNode;)b=b.parentNode;if(-1!=this.handles.indexOf(b))this.activeHandle=b,this.activeHandleIdx=this.handles.indexOf(this.activeHandle),this.updateStyles(),b=this.activeHandle.cumulativeOffset(),this.offsetX=c[0]-b[0],this.offsetY=
 c[1]-b[1]}}Event.stop(a)}},update:function(a){if(this.active){if(!this.dragging)this.dragging=!0;this.draw(a);Prototype.Browser.WebKit&&window.scrollBy(0,0);Event.stop(a)}},draw:function(a){var b=[Event.pointerX(a),Event.pointerY(a)],c=this.track.cumulativeOffset();b[0]-=this.offsetX+c[0];b[1]-=this.offsetY+c[1];this.event=a;this.setValue(this.translateToValue(this.isVertical()?b[1]:b[0]));if(this.initialized&&this.options.onSlide)this.options.onSlide(1<this.values.length?this.values:this.value,this)},
 endDrag:function(a){this.active&&this.dragging&&(this.finishDrag(a,!0),Event.stop(a));this.dragging=this.active=!1},finishDrag:function(){this.dragging=this.active=!1;this.updateFinished()},updateFinished:function(){if(this.initialized&&this.options.onChange)this.options.onChange(1<this.values.length?this.values:this.value,this);this.event=null}});
+
+
+
+/**
+ * Kumbia Enterprise Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New BSD License that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@loudertechnology.com so we can send you a copy immediately.
+ *
+ * @category 	Kumbia
+ * @package 	Tag
+ * @copyright	Copyright (c) 2008-2012 Louder Technology COL. (http://www.loudertechnology.com)
+ * @license 	New BSD License
+ * @version 	$Id$
+ */
+
+var Base = {
+
+	PROTOTYPE: 1,
+	JQUERY: 2,
+	EXT: 3,
+	MOOTOOLS: 4,
+
+	framework: 0,
+
+	bind: function(){
+        var _func = arguments[0] || null;
+        var _obj = arguments[1] || this;
+        var i = 0;
+        var _args = [];
+        for(var i=0;i<arguments.length;i++){
+        	if(i>1){
+        		_args[_args.length] = arguments[i];
+        	};
+        	i++;
+        };
+        return function(){
+			return _func.apply(_obj, _args);
+        };
+	},
+
+	_checkFramework: function(){
+		if(typeof Prototype != "undefined"){
+			Base.activeFramework = Base.PROTOTYPE;
+			return;
+		};
+		if(typeof jQuery != "undefined") {
+			Base.activeFramework = Base.JQUERY;
+			return;
+		};
+		if(typeof Ext != "undefined"){
+			Base.activeFramework = Base.EXT;
+			return;
+		};
+		if(typeof MooTools != "undefined"){
+			Base.activeFramework = Base.MOOTOOLS;
+			return;
+		};
+		return 0;
+	},
+
+	$: function(element){
+		return document.getElementById(element);
+	},
+
+	show: function(element){
+		document.getElementById(element).style.display = "";
+	},
+
+	hide: function(element){
+		document.getElementById(element).style.display = "none";
+	},
+
+	setValue: function(element, value){
+		document.getElementById(element).value = value;
+	},
+
+	getValue: function(element){
+		element = document.getElementById(element);
+		if(element.tagName=='SELECT'){
+			return element.options[element.selectedIndex].value;
+		} else {
+			return element.value;
+		}
+	},
+
+	up: function(element, levels){
+		var l = 0;
+		var finalElement = element;
+		while(finalElement){
+			finalElement = finalElement.parentNode;
+			if(l>=levels){
+				return finalElement;
+			}
+			l++;
+		};
+		return finalElement;
+	}
+
+};
+
+var NumericField = {
+
+	maskNum: function(evt){
+		evt = (evt) ? evt : ((window.event) ? window.event : null);
+		var kc = evt.keyCode;
+		if(!evt.ctrlKey&&!evt.metaKey){
+			var ev = (evt.altKey==false)&&(evt.shiftKey==false)&&((kc>=48&&kc<=57)||(kc>=96&&kc<=105)||(kc==8)||(kc==9)||(kc==13)||(kc==17)||(kc==36)||(kc==35)||(kc==37)||(kc==46)||(kc==39)||(kc==190)||(kc==110));
+			if(!ev){
+				ev = (evt.shiftKey==true&&(kc==9||(kc>=35&&kc<=39)));
+				if(!ev){
+					ev = (evt.altKey==true&&(kc==84||kc==82));
+				};
+			};
+			if(!ev){
+				evt.preventDefault();
+	    		evt.stopPropagation();
+	    		evt.stopped = true;
+	    		return false;
+			}
+		};
+		return true;
+	},
+
+	format: function(element){
+		if(element.value!==''){
+			var integerPart = '';
+			var decimalPart = '';
+			var decimalPosition = element.value.indexOf('.');
+			if(decimalPosition!=-1){
+				decimalPart = element.value.substr(decimalPosition);
+				integerPart = element.value.substr(0, decimalPosition);
+			} else {
+				integerPart = element.value;
+			};
+			document.title = integerPart+' '+decimalPart;
+		};
+	}
+
+};
+
+var DateCalendar = {
+
+	build: function(element, name, value){
+		var year = parseInt(value.substr(0, 4), 10);
+		var month = parseInt(value.substr(5, 2), 10);
+		var day = parseInt(value.substr(8, 2), 10);
+		DateCalendar._buildMonth(element, year, month, value);
+	},
+
+	_buildMonth: function(element, year, month, activeDate){
+		var numberDays = DateField.getNumberDays(year, month);
+		var firstDate = new Date(year, month-1, 1);
+		var lastDate = new Date(year, month-1, numberDays);
+		var html = '<table class="calendarTable" cellspacing="0">';
+		html+='<tr><td class="arrowPrev"><img src="'+$Kumbia.path+'img/prevw.gif"/></td>';
+		html+='<td colspan="5" class="monthName">'+DateCalendar.getMonthName(month)+'</td>';
+		html+='<td class="arrowNext"><img src="'+$Kumbia.path+'img/nextw.gif"/></td></tr>';
+		html+='<tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>Sáb</th></tr>';
+		html+='<tr>';
+		if(month==1){
+			var numberDaysPast = DateField.getNumberDays(year-1, 12);
+		} else {
+			var numberDaysPast = DateField.getNumberDays(year-1, month-1);
+		};
+		var dayOfWeek = firstDate.getDay();
+		for(var i=(numberDaysPast-dayOfWeek+1);i<numberDaysPast;i++){
+			html+='<td class="outMonthDay">'+(i+1)+'</td>';
+		};
+		var numberDay = 1;
+		var date;
+		while(numberDay<=numberDays){
+			if(month<10){
+				date = year+'-0'+month+'-'+numberDay;
+			} else {
+				date = year+'-'+month+'-'+numberDay;
+			}
+			if(activeDate==date){
+				html+='<td class="selectedDay" title="'+date+'">'+numberDay+'</td>';
+			} else {
+				html+='<td title="'+date+'">'+numberDay+'</td>';
+			};
+			if(dayOfWeek==6){
+				html+='</tr><tr>';
+				dayOfWeek = 0;
+			} else {
+				dayOfWeek++;
+			};
+			numberDay++;
+		};
+		numberDay = 1;
+		if(dayOfWeek<7){
+			for(var i=dayOfWeek;i<7;i++){
+				html+='<td class="outMonthDay">'+numberDay+'</td>';
+				numberDay++;
+			};
+		};
+		html+='</tr></table>';
+
+		var position = element.up(1).cumulativeOffset();
+		var calendarDiv = document.getElementById('calendarDiv');
+		if(calendarDiv){
+			calendarDiv.parentNode.removeChild(calendarDiv);
+		};
+		calendarDiv = document.createElement('DIV');
+		calendarDiv.id = 'calendarDiv';
+		calendarDiv.addClassName('calendar');
+		calendarDiv.update(html);
+		calendarDiv.style.top = (position[1]+22)+'px';
+		calendarDiv.style.left = (position[0])+'px';
+		document.body.appendChild(calendarDiv);
+		window.setTimeout(function(){
+			new Event.observe(window, 'click', DateCalendar.removeCalendar);
+		}, 150);
+	},
+
+	removeCalendar: function(event){
+		if(event.target.tagName!='INPUT'&&event.target.tagName!='SELECT'){
+			var calendarDiv = document.getElementById('calendarDiv');
+			if(calendarDiv){
+				calendarDiv.parentNode.removeChild(calendarDiv);
+			};
+			new Event.stopObserving(window, 'click', DateCalendar.removeCalendar);
+		}
+	},
+
+	getMonthName: function(month){
+		switch(month){
+			case 1:
+				return 'Enero';
+			case 2:
+				return 'Febrero';
+			case 3:
+				return 'Marzo';
+			case 4:
+				return 'Abril';
+			case 5:
+				return 'Mayo';
+			case 6:
+				return 'Junio';
+			case 7:
+				return 'Julio';
+			case 8:
+				return 'Agosto';
+			case 9:
+				return 'Septiembre';
+		}
+	}
+
+};
+
+var DateField = {
+
+	_monthTable: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+
+	_listeners: {},
+
+	observe: function(element, eventName, procedure){
+		if(typeof DateField._listeners[eventName] == "undefined"){
+			DateField._listeners[eventName] = {};
+		};
+		DateField._listeners[eventName][element.id] = {
+			'element': element,
+			'procedure': procedure
+		};
+	},
+
+	fire: function(element, eventName, elementValue){
+		if(typeof DateField._listeners[eventName] != "undefined"){
+			if(typeof DateField._listeners[eventName][element.id] != "undefined"){
+				var handler = DateField._listeners[eventName][element.id];
+				if(element==handler['element']){
+					handler['procedure'](elementValue);
+				}
+			}
+		};
+		return false;
+	},
+
+	getNumberDays: function(year, month){
+		var numberDays = DateField._monthTable[month-1];
+		if(month==2){
+			if(parseInt(year, 10)%4==0){
+				numberDays = 29;
+			}
+		};
+		return numberDays;
+	},
+
+	getElement: function(name, context){
+		if(typeof context == "undefined"){
+			return Base.$(name);
+		} else {
+			return context.up(4).querySelector('#'+name);
+		}
+	},
+
+	getValue: function(name, context){
+		var element = DateField.getElement(name, context);
+		if(element.tagName=='SELECT'){
+			return element.options[element.selectedIndex].value;
+		} else {
+			return element.value;
+		}
+	},
+
+	refresh: function(name, context){
+
+		var html = '', n, numberDays;
+		var year = DateField.getValue(name+'Year', context);
+		var month = DateField.getValue(name+'Month', context);
+		var day = DateField.getValue(name+'Day', context);
+		var daySelect = DateField.getElement(name+'Day', context);
+
+		var value = year+'-'+month+'-'+day;
+		var element = DateField.getElement(name, context);
+		element.value = value;
+
+		while(daySelect.lastChild){
+			daySelect.removeChild(daySelect.lastChild);
+		};
+		if(month.substr(0, 1)=='0'){
+			month = month.substr(1, 1);
+		};
+		var numberDays = DateField.getNumberDays(year, month);
+		for(var i=1;i<=numberDays;++i){
+			n = (i < 10) ? '0'+i : i;
+			if(n==day){
+				html+='<option value="'+n+'" selected="selected">'+n+'</option>';
+			} else {
+				html+='<option value="'+n+'">'+n+'</option>';
+			}
+		};
+		daySelect.innerHTML = html;
+		DateField.fire(element, 'change', value);
+	},
+
+	showCalendar: function(element, name){
+		DateCalendar.build(element, name, Base.getValue(name));
+	}
+
+};
+
+var TimeField = {
+
+	refresh: function(name, context){
+		var hour = DateField.getValue(name+'Hour', context);
+		var minutes = DateField.getValue(name+'Minutes', context);
+		var value = hour+':'+minutes;
+		DateField.getElement(name, context).value = value;
+	}
+
+};
+
+var Utils = {
+
+	getKumbiaURL: function(url){
+		if(typeof url == "undefined"){
+			url = "";
+		};
+		if($Kumbia.app!=""){
+			return $Kumbia.path+$Kumbia.app+"/"+url;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	getAppURL: function(url){
+		if(typeof url == "undefined"){
+			url = "";
+		};
+		if($Kumbia.app!=""){
+			return $Kumbia.path+$Kumbia.app+"/"+url;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	getURL: function(url){
+		if(typeof url == "undefined"){
+			return $Kumbia.path;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	redirectParentToAction: function(url){
+		new Utils.redirectToAction(url, window.parent);
+	},
+
+	redirectOpenerToAction: function(url){
+		new Utils.redirectToAction(url, window.opener);
+	},
+
+	redirectToAction: function(url, win){
+		win = win ? win : window;
+		win.location = Utils.getKumbiaURL() + url;
+	},
+
+	upperCaseFirst: function(str){
+		var first = str.substring(0, 1).toUpperCase();
+		return first+str.substr(1, str.length-1)
+	},
+
+	round: function(number, decimals){
+		var decimalPlace = Math.pow(100, decimals);
+		return Math.round(number * decimalPlace) / decimalPlace;
+	},
+
+	numberFormat: function(number){
+		var number = number.toString();
+		var decimalPosition = number.indexOf('.');
+		if(decimalPosition!=-1){
+			var decimals = number.substr(decimalPosition+1);
+			var integer = number.substring(0, decimalPosition);
+		} else {
+			var decimals = '00';
+			var integer = number;
+		};
+		var n = 1;
+		var formatedNumber = [];
+		var integer = integer.toArray();
+		for(var i=0;i<integer.length;i++){
+			if((integer.length-i)%3==0){
+				if(i!=0){
+					formatedNumber.unshift('.');
+				};
+			};
+			formatedNumber.unshift(integer[i])
+		};
+		return formatedNumber.reverse().join('')+','+decimals.substr(0, 2);
+	}
+
+};
+
+function ajaxRemoteForm(form, up, callback){
+	if(callback==undefined){
+		callback = {};
+	};
+	new Ajax.Updater(up, form.action, {
+		 method: "post",
+		 asynchronous: true,
+         evalScripts: true,
+         onSuccess: function(transport){
+			$(up).update(transport.responseText)
+		},
+		onLoaded: callback.before!=undefined ? callback.before: function(){},
+		onComplete: callback.success!=undefined ? callback.success: function(){},
+  		parameters: Form.serialize(form)
+    });
+  	return false;
+};
+
+var AJAX = {
+
+	doRequest: function(url, options){
+		var framework = Base.activeFramework;
+		if(typeof options == 'undefined'){
+			options = {};
+		};
+		switch(framework){
+			case Base.PROTOTYPE:
+				var callbackMap = {
+					'before': 'onLoading',
+					'success': 'onSuccess',
+					'complete': 'onComplete',
+					'error': 'onFailure'
+				};
+				$H(callbackMap).each(function(callback){
+					if(typeof options[callback[0]] != 'undefined'){
+						options[callback[1]] = function(procedure, transport){
+							procedure.bind(this, transport.responseText)();
+						}.bind(this, options[callback[0]]);
+					}
+				});
+				return new Ajax.Request(url, options);
+			case Base.JQUERY:
+				var paramMap = {
+					'method': 'type',
+					'parameters': 'data',
+					'asynchronous': 'async'
+				};
+				$.each(paramMap, function(index, value){
+					if(typeof options[index] != 'undefined'){
+						options[value] = options[index];
+					}
+				});
+				options.url = url;
+				return $.ajax(options);
+			case Base.EXT:
+				var paramMap = {
+					'before': 'beforerequest',
+					'error': 'failure',
+					'parameters': 'params'
+				};
+				var index;
+				for(index in paramMap){
+					if(typeof options[index] != 'undefined'){
+						options[paramMap[index]] = options[index];
+					}
+				};
+				options.url = url;
+				return Ext.Ajax.request(options);
+			case Base.MOOTOOLS:
+				var paramMap = {
+					'parameters': 'data',
+					'asynchronous': 'async',
+					'before': 'onRequest',
+					'success': 'onSuccess',
+					'error': 'onFailure',
+					'complete': 'onComplete'
+				};
+				var index;
+				for(index in paramMap){
+					if(typeof options[index] != 'undefined'){
+						options[paramMap[index]] = options[index];
+					}
+				};
+				options.url = url;
+				var request = new Request(options);
+				request.send();
+				return request;
+			break;
+		};
+	},
+
+	update: function(url, element, options){
+		if(typeof options == 'undefined'){
+			options = {};
+		};
+		options.success = function(responseText){
+			Base.$(element).innerHTML = responseText;
+		};
+		Base.bind(options.success, element, element);
+		return AJAX.doRequest(url, options);
+	}
+
+};
+
+AJAX.xmlRequest = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	return AJAX.doRequest(options.url, options)
+};
+
+AJAX.viewRequest = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	container = params.container;
+	options.evalScripts = true;
+	if(!document.getElementById(container)){
+		throw "CoreError: DOM Container '"+container+"' no encontrado";
+	};
+	return AJAX.update(container, options.url, options);
+};
+
+AJAX.execute = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	return AJAX.doRequest(options.url, options)
+}
+
+AJAX.query = function(queryAction, onSuccess){
+	var me;
+	new Ajax.Request(Utils.getKumbiaURL(queryAction), {
+		method: 'GET',
+		asynchronous: false,
+		onSuccess: function(transport){
+			var xml = transport.responseXML;
+			var data = xml.getElementsByTagName("data");
+			if(Prototype.Browser.IE){
+				xmlValue = data[0].text;
+			} else {
+				xmlValue = data[0].textContent;
+			};
+			me = xmlValue;
+		}
+	});
+	return me;
+}
+
+if(document.addEventListener){
+	document.addEventListener('DOMContentLoaded', Base._checkFramework, false);
+} else {
+	document.attachEvent('readystatechange', Base._checkFramework);
+};
+
+
+
+/** Kumbia - PHP Rapid Development Framework ***************************
+ *
+ * Copyright (C) 2005 Andrs Felipe Gutirrez (andresfelipe at vagoogle.net)
+ * NumberFormat: ProWebMasters.net based script
+ *
+ * This framework is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *****************************************************************************/
+
+function validaEmail(evt){
+    var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	if(document.all) {
+		kc = event.keyCode
+	} else {
+	 	kc = evt.keyCode
+	}
+	if(
+		(kc>=65&&kc<=90)||
+		(kc==50)||
+		(kc==8)||
+		(kc==9)||
+		(kc==17)||
+		(kc==16)||
+		(kc==35)||
+		(kc==36)||
+		(kc==46)||
+		(kc==109)||
+		(kc==189)||
+		(kc==190)||
+		(kc==189)||
+		(kc>=37&&kc<=40)||
+		((kc>=48&&kc<=57)&&evt.shiftKey==false&&evt.altKey==false)
+		) {
+		//Returns
+	} else {
+	  	if(document.all) evt.returnValue = false
+    	else evt.preventDefault()
+    }
+    //window.status = kc
+}
+
+/**
+ * Valida que los campos requeridos del formulario contengan datos.
+ * Recibe como parametros el objeto formulario y el nombre de los campos que se desean exigir.
+ * Retorna true si la validacion es correcta, false en caso contrario.
+ *
+ * Ej. de uso:
+ * form_remote_tag("cotroller/action", "update: div_id", "required: nombre_campo_1,nombre_campo_2")
+ *
+ * Como se ve en el ejemplo anterior, es necesario incluir el parametro 'required' y luego especificar los
+ * nombres de los campos requeridos separados por comas (,). En el ejemplo anterior 'nombre_campo_1' y
+ * 'nombre_campo_2' serian los nombres (name) de dos campos requeridos del formulario.
+ * @param Object form Objeto formulario.
+ * @param Array requiredFields Matriz con los nombres de los campos requeridos.
+ * @return boolean false en caso de que se encuentren campos requeridos sin rellenar, true en caso contrario.
+ */
+function validaForm(form, requiredFields){
+
+   var cont = 0;
+   var campos = new Array();
+
+   // Obtiene los campos requeridos que no contienen datos (si los hay)
+   for(var i=0;i<requiredFields.length;i++){
+   	   if($(requiredFields[i]).value == ''){
+   	   	   campos[cont++] = $(requiredFields[i]);
+   	   }
+   }
+
+   // Si faltan datos requeridos se muestra el efecto de resaltado sobre los campos.
+   if(cont >= 1){
+	   alert("Es necesario que ingrese los datos que se resaltarán");
+	   for(var i=0; i<cont; i++){
+	   	   new Effect.Highlight(campos[i].name, {startcolor:'#FF0000', endcolor:"#ffbbbb"});
+	   };
+	   campos[0].focus();
+   }
+
+   // Retorna false si hay campos requeridos sin rellenar; de lo contrario true.
+   return cont >= 1 ? false : true;
+}
+
+
+function validaText(evt){
+	var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	kc = evt.keyCode
+	window.status = kc
+	if(
+	(kc>=65&&kc<=90)||
+	(kc==50)||
+	(kc==8)||
+	(kc==9)||
+	(kc==17)||
+	(kc==16)||
+	(kc==32)||
+	(kc==186)||
+	(kc==190)||
+	(kc==192)||
+	(kc==222)||
+	(kc>=37&&kc<=40) //||
+	//((kc>=48&&kc<=57)&&evt.shiftKey==false&&evt.altKey==false)
+	) {
+		//Returns
+	} else {
+		if(document.all) evt.returnValue = false
+		else evt.preventDefault()
+	}
+}
+
+function valNumeric(evt){
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	if(
+	((evt.keyCode>=48&&evt.keyCode<=57)&&evt.shiftKey==false&&evt.altKey==false)||
+	((evt.keyCode>=96&&evt.keyCode<=105)&&evt.shiftKey==false&&evt.altKey==false) ||
+	( evt.keyCode==8   ||
+	evt.keyCode==9   ||
+	evt.keyCode==13  ||
+	evt.keyCode==16  ||
+	evt.keyCode==17  ||
+	evt.keyCode==36  ||
+	evt.keyCode==35  ||
+	evt.keyCode==46  ||
+	evt.keyCode==37  ||
+	evt.keyCode==39  ||
+	evt.keyCode==110 ||
+	evt.keyCode==119 ||
+	evt.keyCode==190)
+	){
+		//Lets that key value pass
+	} else {
+		if(document.all) {
+			evt.returnValue = false
+		} else evt.preventDefault()
+	}
+}
+
+function valDate(){
+	if(((event.keyCode!=8&&event.keyCode!=9&&event.keyCode!=36&&event.keyCode!=35&&event.keyCode!=46&&event.keyCode!=37&&event.keyCode!=39&&event.keyCode<48))||(event.keyCode>57&&(event.keyCode<96||(event.keyCode>105&&event.keyCode!=111&&event.keyCode!=189&&event.keyCode!=109)))||(event.shiftKey==true&&event.keyCode!=55)||event.altKey==true) {
+		window.event.returnValue = false
+	}
+}
+
+function keyUpper(obj){
+	obj.value = obj.value.toUpperCase();
+	saveValue(obj)
+}
+
+function keyUpper2(obj){
+	obj.value = obj.value.toUpperCase();
+}
+
+function keyUpper3(obj){
+	obj.value = obj.value.toUpperCase();
+}
+
+function checkDate(obj){
+	if(!obj.value) return;
+	var e = RegExp("([0-9]{4}[/-][0-9]{2}[/-][0-9]{2})", "i");
+	if(!obj.value) return;
+	if(e.exec(obj.value)==null) {
+		window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+		obj.className = "iError";
+	}
+	else {
+		d = obj.value.substr(0, 2)
+		m = obj.value.substr(3, 2)
+		a = obj.value.substr(6, 4)
+		if((d<1)||(d>31)){
+			window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+			obj.className = "iError";
+		} else {
+			if((m<1)||(m>12)){
+				window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+				obj.className = "iError";
+			} else {
+				window.status = "Listo";
+				obj.className = "iNormal";
+			}
+		}
+	}
+}
+
+function showConfirmPassword(obj){
+	if(!$('div_'+obj.name).visible()){
+		new Effect.Appear('div_'+obj.name)
+	}
+}
+
+function nextValidatePassword(obj){
+	if(!$('div_'+obj.name).visible()){
+		$('div_'+obj.name).focus()
+		$('div_'+obj.name).select()
+	}
+}
+
+function validatePassword(confirma, password){
+	if(confirma.value!=$(password).value){
+		alert('Los Passwords No son Iguales')
+		$(password).focus()
+		$(password).select()
+	} else {
+		new Effect.Fade('div_'+$(password).name)
+	}
+}
+
+function checkUnique(name, obj){
+	var i, n;
+	if(!obj.value){
+		return;
+	}
+	if(obj.value=="@"){
+		return;
+	}
+	n = 0;
+	for(i=0;i<=Fields.length-1;i++){
+		if(Fields[i]==name){
+			break;
+		}
+	}
+	for(j=0;j<=Values.length-1;j++){
+		if(Values[j][i]==obj.value){
+			if(n==1){
+				if(obj.tagName=='SELECT'){
+					alert('Esta Opción ya fué seleccionada por favor elija otra diferente');
+				}
+				obj.className = "iError";
+				if(obj.tagName=='INPUT'){
+					obj.select();
+				}
+				obj.focus();
+				return;
+			} else {
+				n++;
+			}
+		}
+	}
+	obj.className = 'iNormal'
+}
+
+function nextField(evt, oname){
+	var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	kc = evt.keyCode
+	if(kc==13){
+		for(i=0;i<=Fields.length-1;i++) {
+			if(oname==Fields[i]){
+				if(i==(Fields.length-1)){
+					if((document.getElementById("flid_"+Fields[0]).style.visibility!='hidden')&&
+					(document.getElementById("flid_"+Fields[0]).readOnly==false)&&
+					(document.getElementById("flid_"+Fields[0]).type!='hidden'))
+					document.getElementById("fl_id"+Fields[0]).focus()
+				} else {
+					if( (document.getElementById("flid_"+Fields[i+1]).style.visibility!='hidden')&&
+					(document.getElementById("flid_"+Fields[i+1]).readOnly==false)&&
+					(document.getElementById("flid_"+Fields[i+1]).type!='hidden')){
+						document.getElementById("flid_"+Fields[i+1]).focus()
+					}
+				}
+				return
+			}
+		}
+	}
+}
+
+function saveEmail(obj) {
+	document.getElementById("flid_"+obj).value = document.getElementById(obj+"_email1").value + "@" + document.getElementById(obj+"_email2").value
+}
+
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+var Modal = {
+
+	confirm: function(message, yesCallback){
+		document.body.scrollTop = 0;
+		new WINDOW.open({
+			url: "context",
+			title: "Confirmación",
+			width: "500px",
+			height: "200px",
+			afterRender: function(message){
+				$('contextMessage').update(message);
+				//$('okModal').activate();
+				$('okModal').observe('click', function(yesCallback){
+					$('myWindow').close();
+					yesCallback();
+				}.bind(this, yesCallback));
+				$('noModal').observe('click', function(){
+					$('myWindow').close();
+				});
+			}.bind(this, message, yesCallback)
+		});
+	}
+
+};
+
+var Growler = {
+
+	timeout: null,
+
+	addTimeout: function(d){
+		if(Growler.timeout!=null){
+			window.clearTimeout(Growler.timeout);
+			Growler.timeout = null;
+		};
+		Growler.timeout = window.setTimeout(function(d){
+			document.body.removeChild(d);
+			Growler.timeout = null;
+		}.bind(this, d), 3500)
+	},
+
+	show: function(msg){
+		var windowScroll = WindowUtilities.getWindowScroll(document.body);
+	    var pageSize = WindowUtilities.getPageSize(document.body);
+	    var d = $('growler');
+	    if(!d){
+			var d = document.createElement("DIV");
+			d.id = "growler";
+			d.innerHTML = msg;
+			d.hide();
+			document.body.appendChild(d);
+			d.setStyle({
+				top: (pageSize.windowHeight-(d.getHeight()+20)+windowScroll.top)+"px",
+				left: (pageSize.windowWidth-270+windowScroll.left)+"px"
+			});
+			d.show();
+			Growler.addTimeout(d);
+	    } else {
+	    	d.innerHTML = msg;
+	    	Growler.addTimeout(d);
+	    	new Effect.Shake(d, {duration:0.5});
+	    }
+	}
+};
+
+
 /*
- 	New BSD License
- @version 	$Id$
+ * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
+ * in FIPS PUB 180-1
+ * Version 2.1a Copyright Paul Johnston 2000 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for details.
+ */
+
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
+var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
+var b64pad  = ""; /* base-64 pad character. "=" for strict RFC compliance   */
+var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
+
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+function hex_sha1(s){return binb2hex(core_sha1(str2binb(s),s.length * chrsz));}
+function b64_sha1(s){return binb2b64(core_sha1(str2binb(s),s.length * chrsz));}
+function str_sha1(s){return binb2str(core_sha1(str2binb(s),s.length * chrsz));}
+function hex_hmac_sha1(key, data){ return binb2hex(core_hmac_sha1(key, data));}
+function b64_hmac_sha1(key, data){ return binb2b64(core_hmac_sha1(key, data));}
+function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
+
+/*
+ * Perform a simple self-test to see if the VM is working
+ */
+function sha1_vm_test()
+{
+  return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
+}
+
+/*
+ * Calculate the SHA-1 of an array of big-endian words, and a bit length
+ */
+function core_sha1(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << (24 - len % 32);
+  x[((len + 64 >> 9) << 4) + 15] = len;
+
+  var w = Array(80);
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+  var e = -1009589776;
+
+  for(var i = 0; i < x.length; i += 16)
+  {
+    var olda = a;
+    var oldb = b;
+    var oldc = c;
+    var oldd = d;
+    var olde = e;
+
+    for(var j = 0; j < 80; j++)
+    {
+      if(j < 16) w[j] = x[i + j];
+      else w[j] = rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1);
+      var t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
+                       safe_add(safe_add(e, w[j]), sha1_kt(j)));
+      e = d;
+      d = c;
+      c = rol(b, 30);
+      b = a;
+      a = t;
+    }
+
+    a = safe_add(a, olda);
+    b = safe_add(b, oldb);
+    c = safe_add(c, oldc);
+    d = safe_add(d, oldd);
+    e = safe_add(e, olde);
+  }
+  return Array(a, b, c, d, e);
+
+}
+
+/*
+ * Perform the appropriate triplet combination function for the current
+ * iteration
+ */
+function sha1_ft(t, b, c, d)
+{
+  if(t < 20) return (b & c) | ((~b) & d);
+  if(t < 40) return b ^ c ^ d;
+  if(t < 60) return (b & c) | (b & d) | (c & d);
+  return b ^ c ^ d;
+}
+
+/*
+ * Determine the appropriate additive constant for the current iteration
+ */
+function sha1_kt(t)
+{
+  return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
+         (t < 60) ? -1894007588 : -899497514;
+}
+
+/*
+ * Calculate the HMAC-SHA1 of a key and some data
+ */
+function core_hmac_sha1(key, data)
+{
+  var bkey = str2binb(key);
+  if(bkey.length > 16) bkey = core_sha1(bkey, key.length * chrsz);
+
+  var ipad = Array(16), opad = Array(16);
+  for(var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
+  return core_sha1(opad.concat(hash), 512 + 160);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function safe_add(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+function rol(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * Convert an 8-bit or 16-bit string to an array of big-endian words
+ * In 8-bit function, characters >255 have their hi-byte silently ignored.
+ */
+function str2binb(str)
+{
+  var bin = Array();
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < str.length * chrsz; i += chrsz)
+    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i%32);
+  return bin;
+}
+
+/*
+ * Convert an array of big-endian words to a string
+ */
+function binb2str(bin)
+{
+  var str = "";
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < bin.length * 32; i += chrsz)
+    str += String.fromCharCode((bin[i>>5] >>> (32 - chrsz - i%32)) & mask);
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a hex string.
+ */
+function binb2hex(binarray)
+{
+  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i++)
+  {
+    str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) +
+           hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8  )) & 0xF);
+  }
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a base-64 string
+ */
+function binb2b64(binarray)
+{
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i += 3)
+  {
+    var triplet = (((binarray[i   >> 2] >> 8 * (3 -  i   %4)) & 0xFF) << 16)
+                | (((binarray[i+1 >> 2] >> 8 * (3 - (i+1)%4)) & 0xFF) << 8 )
+                |  ((binarray[i+2 >> 2] >> 8 * (3 - (i+2)%4)) & 0xFF);
+    for(var j = 0; j < 4; j++)
+    {
+      if(i * 8 + j * 6 > binarray.length * 32) str += b64pad;
+      else str += tab.charAt((triplet >> 6*(3-j)) & 0x3F);
+    }
+  }
+  return str;
+}
+
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+var Tabs = {
+
+	setActiveTab: function(element, number){
+		if(element.hasClassName("active_tab")){
+			return;
+		} else {
+			element.removeClassName("inactive_tab");
+		};
+		$$(".active_tab").each(function(tab_element){
+			tab_element.removeClassName("active_tab");
+		});
+		$$(".tab_basic").each(function(tab_element){
+			if(tab_element==element){
+				tab_element.addClassName("active_tab");
+			} else {
+				tab_element.addClassName("inactive_tab");
+			}
+		});
+		$$(".tab_content").each(function(tab_content){
+			if(tab_content.id!="tab"+number){
+				tab_content.hide();
+			}
+		});
+		$("tab"+number).show();
+	}
+
+};
+
+window.cancelNumber = function(){
+	new Utils.redirectToAction('appmenu')
+};
+
+window.acceptNumber = function(){
+	var type = $F('tipo_venta');
+	var message;
+	if($F("number").strip()!=''){
+		if(AJAX.query("reimprimir/exists/"+$F("number")+"/"+$F("salon_id")+"/"+$F("tipo_venta")+"/"+$F("prefijo"))=='yes'){
+			var url = Utils.getKumbiaURL('reimprimir/reprint/'+$F("number")+"/"+$F("salon_id")+"/"+$F("tipo_venta")+"/"+$F("prefijo"));
+			window.open(url, null, 'width=300, height=700, toolbar=no, statusbar=no');
+		} else {
+			if(type=='F'){
+				message = "No existe la factura "+$("number").value+" en el ambiente indicado";
+			} else {
+				message = "No existe la orden de servicio "+$("number").value+" en el ambiente indicado"
+			};
+			alert(message);
+		}
+	}
+};
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+function addToNumber(obj, event){
+	if(event.keyCode!=Event.KEY_RETURN){
+	  	$('number').value+=obj.value;
+	  	if($('number').value!=""){
+		    $('okButton').disabled = false;
+		};
+		$('number').select();
+	}
+}
+
+function dropNumber(){
+	new Effect.Shake("number", {
+		duration: 0.5
+	});
+	new Effect.Morph("number", {
+		duration: 0.5,
+		style: {
+			color: "#FFFFFF"
+		},
+		afterFinish: function(){
+			$('number').value = "";
+			$('number').style.color = "#000000";
+		}
+	})
+	$('okButton').disabled = true;
+}
+
+function cancelNumber(){
+	$('myWindow').close('cancel');
+}
+
+function acceptNumber(){
+  	$('myWindow').close('ok');
+}
+
+function big(obj){
+	$(obj).className = "bigButton2";
+	$(obj).style.fontSize = "44px";
+	new Effect.Morph(obj, {
+		duration: 0.3,
+		style: {
+			fontSize: "30px"
+		},
+		afterFinish: function(){
+			$(obj).className = "bigButton";
+			$(obj).style.width = "70px";
+			$(obj).style.height = "70px";
+			$(obj).style.fontSize = "30px";
+		}
+	})
+}
+
+
+window.addEventListener('load', function() {
+    new Event.observe(window.document.querySelector('#number'), "keyup", function(event){
+		try 
+		{
+			if($("myWindow")){
+				$('number').select();
+				var code = 0;
+				var ev = parseInt(event.keyCode);
+				if(ev==Event.KEY_BACKSPACE||ev==Event.KEY_ESC){
+					dropNumber();
+					new Event.stop(event);
+					return;
+				};
+				if(ev==Event.KEY_RETURN){
+					$("okButton").click();
+					new Event.stop(event);
+					return;
+				};
+				if(ev==190||ev==110){
+					  if($('number').value.indexOf('.')==-1){
+						var punto = new Object();
+						if($('number').value.length==0){
+							punto.value = "0.";
+						} else {
+							punto.value = ".";
+						};
+						addToNumber(punto, event);
+						new Event.stop(event);
+					}
+				}
+				if(ev>=48&&ev<=57){
+					code = event.keyCode - 48;
+					if($("b"+code)){
+						big($("b"+code));
+						addToNumber($("b"+code), event);
+						new Event.stop(event);
+						return;
+					}
+				};
+				if(ev>=96&&ev<=105){
+					code = event.keyCode - 96;
+					if($("b"+code)){
+						big($("b"+code));
+						addToNumber($("b"+code), event);
+						new Event.stop(event);
+						return;
+					}
+				};
+			}
+		}
+		catch(e){
+			
+		}
+	})
+});
+
+
+
+/*new Event.observe(window, "keyup", function(event){
+	var code = 0;
+	if(parseInt(event.keyCode)>=48&&parseInt(event.keyCode)<=57){
+		code = event.keyCode - 48;
+		if($("b"+code)){
+			big($("b"+code));
+			addToNumber($("b"+code), event);
+			new Event.stop(event);
+			return;
+		}
+	}
+	if(parseInt(event.keyCode)>=96&&parseInt(event.keyCode)<=105){
+		code = event.keyCode - 96;
+		if($("b"+code)){
+			big($("b"+code));
+			addToNumber($("b"+code), event);
+			new Event.stop(event);
+			return;
+		}
+	}
+	if(event.keyCode==Event.KEY_RETURN){
+		$("okButton").click();
+		new Event.stop(event);
+	}
+});
 */
-var Base={PROTOTYPE:1,JQUERY:2,EXT:3,MOOTOOLS:4,framework:0,bind:function(){for(var a=arguments[0]||null,b=arguments[1]||this,c=0,d=[],c=0;c<arguments.length;c++)1<c&&(d[d.length]=arguments[c]),c++;return function(){return a.apply(b,d)}},_checkFramework:function(){if("undefined"!=typeof Prototype)Base.activeFramework=Base.PROTOTYPE;else if("undefined"!=typeof jQuery)Base.activeFramework=Base.JQUERY;else if("undefined"!=typeof Ext)Base.activeFramework=Base.EXT;else if("undefined"!=typeof MooTools)Base.activeFramework=
-Base.MOOTOOLS;else return 0},$:function(a){return document.getElementById(a)},show:function(a){document.getElementById(a).style.display=""},hide:function(a){document.getElementById(a).style.display="none"},setValue:function(a,b){document.getElementById(a).value=b},getValue:function(a){a=document.getElementById(a);return"SELECT"==a.tagName?a.options[a.selectedIndex].value:a.value},up:function(a,b){for(var c=0,d=a;d;){d=d.parentNode;if(c>=b)break;c++}return d}},NumericField={maskNum:function(a){var a=
-a?a:window.event?window.event:null,b=a.keyCode;if(!a.ctrlKey&&!a.metaKey){var c=!1==a.altKey&&!1==a.shiftKey&&(48<=b&&57>=b||96<=b&&105>=b||8==b||9==b||13==b||17==b||36==b||35==b||37==b||46==b||39==b||190==b||110==b);c||(c=!0==a.shiftKey&&(9==b||35<=b&&39>=b))||(c=!0==a.altKey&&(84==b||82==b));if(!c)return a.preventDefault(),a.stopPropagation(),a.stopped=!0,!1}return!0},format:function(a){if(""!==a.value){var b="",c="",b=a.value.indexOf(".");-1!=b?(c=a.value.substr(b),b=a.value.substr(0,b)):b=a.value;
-document.title=b+" "+c}}},DateCalendar={build:function(a,b,c){var b=parseInt(c.substr(0,4),10),d=parseInt(c.substr(5,2),10);parseInt(c.substr(8,2),10);DateCalendar._buildMonth(a,b,d,c)},_buildMonth:function(a,b,c,d){var f=DateField.getNumberDays(b,c),g=new Date(b,c-1,1),e;e='<table class="calendarTable" cellspacing="0">'+('<tr><td class="arrowPrev"><img src="'+$Kumbia.path+'img/prevw.gif"/></td>');e+='<td colspan="5" class="monthName">'+DateCalendar.getMonthName(c)+"</td>";e+='<td class="arrowNext"><img src="'+
-$Kumbia.path+'img/nextw.gif"/></td></tr>';e+="<tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>S\u00e1b</th></tr><tr>";for(var h=1==c?DateField.getNumberDays(b-1,12):DateField.getNumberDays(b-1,c-1),g=g.getDay(),i=h-g+1;i<h;i++)e+='<td class="outMonthDay">'+(i+1)+"</td>";for(h=1;h<=f;)i=10>c?b+"-0"+c+"-"+h:b+"-"+c+"-"+h,e=d==i?e+('<td class="selectedDay" title="'+i+'">'+h+"</td>"):e+('<td title="'+i+'">'+h+"</td>"),6==g?(e+="</tr><tr>",g=0):g++,h++;h=1;if(7>g)for(i=
-g;7>i;i++)e+='<td class="outMonthDay">'+h+"</td>",h++;e+="</tr></table>";a=a.up(1).cumulativeOffset();(b=document.getElementById("calendarDiv"))&&b.parentNode.removeChild(b);b=document.createElement("DIV");b.id="calendarDiv";b.addClassName("calendar");b.update(e);b.style.top=a[1]+22+"px";b.style.left=a[0]+"px";document.body.appendChild(b);window.setTimeout(function(){new Event.observe(window,"click",DateCalendar.removeCalendar)},150)},removeCalendar:function(a){"INPUT"!=a.target.tagName&&"SELECT"!=
-a.target.tagName&&((a=document.getElementById("calendarDiv"))&&a.parentNode.removeChild(a),new Event.stopObserving(window,"click",DateCalendar.removeCalendar))},getMonthName:function(a){switch(a){case 1:return"Enero";case 2:return"Febrero";case 3:return"Marzo";case 4:return"Abril";case 5:return"Mayo";case 6:return"Junio";case 7:return"Julio";case 8:return"Agosto";case 9:return"Septiembre"}}},DateField={_monthTable:[31,28,31,30,31,30,31,31,30,31,30,31],_listeners:{},observe:function(a,b,c){"undefined"==
-typeof DateField._listeners[b]&&(DateField._listeners[b]={});DateField._listeners[b][a.id]={element:a,procedure:c}},fire:function(a,b,c){"undefined"!=typeof DateField._listeners[b]&&"undefined"!=typeof DateField._listeners[b][a.id]&&(b=DateField._listeners[b][a.id],a==b.element&&b.procedure(c));return!1},getNumberDays:function(a,b){var c=DateField._monthTable[b-1];2==b&&0==parseInt(a,10)%4&&(c=29);return c},getElement:function(a,b){return"undefined"==typeof b?Base.$(a):b.up(4).querySelector("#"+a)},
-getValue:function(a,b){var c=DateField.getElement(a,b);return"SELECT"==c.tagName?c.options[c.selectedIndex].value:c.value},refresh:function(a,b){var c="",d,f;d=DateField.getValue(a+"Year",b);f=DateField.getValue(a+"Month",b);var g=DateField.getValue(a+"Day",b),e=DateField.getElement(a+"Day",b),h=d+"-"+f+"-"+g,i=DateField.getElement(a,b);for(i.value=h;e.lastChild;)e.removeChild(e.lastChild);"0"==f.substr(0,1)&&(f=f.substr(1,1));f=DateField.getNumberDays(d,f);for(var k=1;k<=f;++k)d=10>k?"0"+k:k,c=d==
-g?c+('<option value="'+d+'" selected="selected">'+d+"</option>"):c+('<option value="'+d+'">'+d+"</option>");e.innerHTML=c;DateField.fire(i,"change",h)},showCalendar:function(a,b){DateCalendar.build(a,b,Base.getValue(b))}},TimeField={refresh:function(a,b){var c=DateField.getValue(a+"Hour",b),d=DateField.getValue(a+"Minutes",b);DateField.getElement(a,b).value=c+":"+d}},Utils={getKumbiaURL:function(a){"undefined"==typeof a&&(a="");return""!=$Kumbia.app?$Kumbia.path+$Kumbia.app+"/"+a:$Kumbia.path+a},
-getAppURL:function(a){"undefined"==typeof a&&(a="");return""!=$Kumbia.app?$Kumbia.path+$Kumbia.app+"/"+a:$Kumbia.path+a},getURL:function(a){return"undefined"==typeof a?$Kumbia.path:$Kumbia.path+a},redirectParentToAction:function(a){new Utils.redirectToAction(a,window.parent)},redirectOpenerToAction:function(a){new Utils.redirectToAction(a,window.opener)},redirectToAction:function(a,b){(b?b:window).location=Utils.getKumbiaURL()+a},upperCaseFirst:function(a){return a.substring(0,1).toUpperCase()+a.substr(1,
-a.length-1)},round:function(a,b){var c=Math.pow(100,b);return Math.round(a*c)/c},numberFormat:function(a){var a=a.toString(),b=a.indexOf(".");if(-1!=b)var c=a.substr(b+1),a=a.substring(0,b);else c="00";for(var b=[],a=a.toArray(),d=0;d<a.length;d++)0==(a.length-d)%3&&0!=d&&b.unshift("."),b.unshift(a[d]);return b.reverse().join("")+","+c.substr(0,2)}};
-function ajaxRemoteForm(a,b,c){void 0==c&&(c={});new Ajax.Updater(b,a.action,{method:"post",asynchronous:!0,evalScripts:!0,onSuccess:function(a){$(b).update(a.responseText)},onLoaded:void 0!=c.before?c.before:function(){},onComplete:void 0!=c.success?c.success:function(){},parameters:Form.serialize(a)});return!1}
-var AJAX={doRequest:function(a,b){var c=Base.activeFramework;"undefined"==typeof b&&(b={});switch(c){case Base.PROTOTYPE:return $H({before:"onLoading",success:"onSuccess",complete:"onComplete",error:"onFailure"}).each(function(a){"undefined"!=typeof b[a[0]]&&(b[a[1]]=function(a,b){a.bind(this,b.responseText)()}.bind(this,b[a[0]]))}),new Ajax.Request(a,b);case Base.JQUERY:return c={method:"type",parameters:"data",asynchronous:"async"},$.each(c,function(a,c){"undefined"!=typeof b[a]&&(b[c]=b[a])}),
-b.url=a,$.ajax(b);case Base.EXT:var c={before:"beforerequest",error:"failure",parameters:"params"},d;for(d in c)"undefined"!=typeof b[d]&&(b[c[d]]=b[d]);b.url=a;return Ext.Ajax.request(b);case Base.MOOTOOLS:c={parameters:"data",asynchronous:"async",before:"onRequest",success:"onSuccess",error:"onFailure",complete:"onComplete"};for(d in c)"undefined"!=typeof b[d]&&(b[c[d]]=b[d]);b.url=a;d=new Request(b);d.send();return d}},update:function(a,b,c){"undefined"==typeof c&&(c={});c.success=function(a){Base.$(b).innerHTML=
-a};Base.bind(c.success,b,b);return AJAX.doRequest(a,c)}};AJAX.xmlRequest=function(a){var b={};if("undefined"==typeof a.url&&"undefined"!=typeof a.action)b.url=Utils.getKumbiaURL(a.action);return AJAX.doRequest(b.url,b)};
-AJAX.viewRequest=function(a){var b={};if("undefined"==typeof a.url&&"undefined"!=typeof a.action)b.url=Utils.getKumbiaURL(a.action);container=a.container;b.evalScripts=!0;if(!document.getElementById(container))throw"CoreError: DOM Container '"+container+"' no encontrado";return AJAX.update(container,b.url,b)};AJAX.execute=function(a){var b={};if("undefined"==typeof a.url&&"undefined"!=typeof a.action)b.url=Utils.getKumbiaURL(a.action);return AJAX.doRequest(b.url,b)};
-AJAX.query=function(a){var b;new Ajax.Request(Utils.getKumbiaURL(a),{method:"GET",asynchronous:!1,onSuccess:function(a){a=a.responseXML.getElementsByTagName("data");b=xmlValue=Prototype.Browser.IE?a[0].text:a[0].textContent}});return b};document.addEventListener?document.addEventListener("DOMContentLoaded",Base._checkFramework,!1):document.attachEvent("readystatechange",Base._checkFramework);var WindowUtilities={getWindowScroll:function(a){var b,c,d,a=a||document.body;a!=document.body?(b=a.scrollTop,c=a.scrollLeft,d=a.scrollWidth,a=a.scrollHeight):(a=window,b=a.document.body.scrollTop,c=a.document.body.scrollLeft,d=a.innerWidth,a=a.innerHeight);return{top:b,left:c,width:d,height:a}},getPageSize:function(a){var a=a||document.body,b,c,d;if(a!=document.body)b=a.getWidth(),c=a.getHeight(),d=a.scrollWidth,a=a.scrollHeight;else{window.innerHeight&&window.scrollMaxY?(d=document.body.scrollWidth,
-a=window.innerHeight+window.scrollMaxY):document.body.scrollHeight>document.body.offsetHeight?(d=document.body.scrollWidth,a=document.body.scrollHeight):(d=document.body.offsetWidth,a=document.body.offsetHeight);if(self.innerHeight)b=self.innerWidth,c=self.innerHeight;else if(document.documentElement&&document.documentElement.clientHeight)b=document.documentElement.clientWidth,c=document.documentElement.clientHeight;else if(document.body)b=document.body.clientWidth,c=document.body.clientHeight;a=
-a<c?c:a;d=d<b?b:d}return{pageWidth:d,pageHeight:a,windowWidth:b,windowHeight:c}}};$W=function(a){return document.frames("openWindow").document.getElementById(a)};
-var WINDOW={open:function(a){if(!$("myWindow")){var b=WindowUtilities.getWindowScroll(document.body),c=WindowUtilities.getPageSize(document.body),d=document.createElement("DIV");if(!a.title)a.title="";if(!a.url)a.url=a.action;left=parseInt((c.windowWidth-(parseInt(a.width)+36))/2);left+=b.left;d.style.left=left+"px";if("undefined"!=typeof a.width)d.style.width=a.width;if("undefined"!=typeof a.height)d.style.height=parseInt(a.height)+10+"px";d.hide();d.innerHTML="<table cellspacing='0' cellpadding='0' width='100%'><tr><td align='center' id='myWindowTitle'>"+
-a.title+"</td></tr><tr><td id='myWindowData'></td></tr></table>";d.id="myWindow";document.body.appendChild(d);if("undefined"!=typeof a.onclose)WINDOW.onclose=a.onclose;if("undefined"!=typeof a.onbeforeclose)WINDOW.onbeforeclose=a.onbeforeclose;d.close=function(b){var c=$("myWindow"),d=$("shadow_win");if(!("undefined"!=typeof a.onbeforeclose&&!1==a.onbeforeclose.call(this,b))){if("undefined"!=typeof c.onclose)a.onclose=c.onclose;document.body.removeChild(c);d&&document.body.removeChild(d);"undefined"!=
-typeof a.onclose&&a.onclose&&"undefined"!=typeof a.onclose.call&&a.onclose.call(this,b)}};new Ajax.Request(Utils.getKumbiaURL(a.url),{method:"GET",onSuccess:function(a,b){$("myWindowData").update(b.responseText);"undefined"!=typeof a.afterRender&&a.afterRender();var c=document.createElement("DIV");c.id="shadow_win";$(c).setOpacity(0.1);document.body.appendChild(c);$("myWindow").show()}.bind(this,a)})}}};var Modal={confirm:function(a,b){document.body.scrollTop=0;new WINDOW.open({url:"context",title:"Confirmaci\u00f3n",width:"500px",height:"200px",afterRender:function(a){$("contextMessage").update(a);$("okModal").observe("click",function(a){$("myWindow").close();a()}.bind(this,b));$("noModal").observe("click",function(){$("myWindow").close()})}.bind(this,a,b)})}},Growler={timeout:null,addTimeout:function(a){if(null!=Growler.timeout)window.clearTimeout(Growler.timeout),Growler.timeout=null;Growler.timeout=
-window.setTimeout(function(a){document.body.removeChild(a);Growler.timeout=null}.bind(this,a),3500)},show:function(a){var b=WindowUtilities.getWindowScroll(document.body),c=WindowUtilities.getPageSize(document.body),d=$("growler");d?(d.innerHTML=a,Growler.addTimeout(d),new Effect.Shake(d,{duration:0.5})):(d=document.createElement("DIV"),d.id="growler",d.innerHTML=a,d.hide(),document.body.appendChild(d),d.setStyle({top:c.windowHeight-(d.getHeight()+20)+b.top+"px",left:c.windowWidth-270+b.left+"px"}),
-d.show(),Growler.addTimeout(d))}};function addToNumber(a,b){if(b.keyCode!=Event.KEY_RETURN){$("number").value+=a.value;if(""!=$("number").value)$("okButton").disabled=!1;$("number").select()}}function dropNumber(){new Effect.Shake("number",{duration:0.5});new Effect.Morph("number",{duration:0.5,style:{color:"#FFFFFF"},afterFinish:function(){$("number").value="";$("number").style.color="#000000"}});$("okButton").disabled=!0}function cancelNumber(){$("myWindow").close("cancel")}function acceptNumber(){$("myWindow").close("ok")}
-function big(a){$(a).className="bigButton2";$(a).style.fontSize="44px";new Effect.Morph(a,{duration:0.3,style:{fontSize:"30px"},afterFinish:function(){$(a).className="bigButton";$(a).style.width="70px";$(a).style.height="70px";$(a).style.fontSize="30px"}})}
-new Event.observe(window,"keyup",function(a){try{if($("myWindow")){$("number").select();var b=0,c=parseInt(a.keyCode);if(c==Event.KEY_BACKSPACE||c==Event.KEY_ESC)dropNumber(),new Event.stop(a);else if(c==Event.KEY_RETURN)$("okButton").click(),new Event.stop(a);else{if((190==c||110==c)&&-1==$("number").value.indexOf(".")){var d={};d.value=0==$("number").value.length?"0.":".";addToNumber(d,a);new Event.stop(a)}if(48<=c&&57>=c&&(b=a.keyCode-48,$("b"+b))){big($("b"+b));addToNumber($("b"+b),a);new Event.stop(a);
-return}96<=c&&105>=c&&(b=a.keyCode-96,$("b"+b)&&(big($("b"+b)),addToNumber($("b"+b),a),new Event.stop(a)))}}}catch(f){}});var hexcase=0,b64pad="",chrsz=8;function hex_sha1(a){return binb2hex(core_sha1(str2binb(a),a.length*chrsz))}function b64_sha1(a){return binb2b64(core_sha1(str2binb(a),a.length*chrsz))}function str_sha1(a){return binb2str(core_sha1(str2binb(a),a.length*chrsz))}function hex_hmac_sha1(a,b){return binb2hex(core_hmac_sha1(a,b))}function b64_hmac_sha1(a,b){return binb2b64(core_hmac_sha1(a,b))}function str_hmac_sha1(a,b){return binb2str(core_hmac_sha1(a,b))}
-function sha1_vm_test(){return"a9993e364706816aba3e25717850c26c9cd0d89d"==hex_sha1("abc")}
-function core_sha1(a,b){a[b>>5]|=128<<24-b%32;a[(b+64>>9<<4)+15]=b;for(var c=Array(80),d=1732584193,f=-271733879,g=-1732584194,e=271733878,h=-1009589776,i=0;i<a.length;i+=16){for(var k=d,l=f,m=g,n=e,o=h,j=0;80>j;j++){c[j]=16>j?a[i+j]:rol(c[j-3]^c[j-8]^c[j-14]^c[j-16],1);var p=safe_add(safe_add(rol(d,5),sha1_ft(j,f,g,e)),safe_add(safe_add(h,c[j]),sha1_kt(j))),h=e,e=g,g=rol(f,30),f=d,d=p}d=safe_add(d,k);f=safe_add(f,l);g=safe_add(g,m);e=safe_add(e,n);h=safe_add(h,o)}return[d,f,g,e,h]}
-function sha1_ft(a,b,c,d){return 20>a?b&c|~b&d:40>a?b^c^d:60>a?b&c|b&d|c&d:b^c^d}function sha1_kt(a){return 20>a?1518500249:40>a?1859775393:60>a?-1894007588:-899497514}function core_hmac_sha1(a,b){var c=str2binb(a);16<c.length&&(c=core_sha1(c,a.length*chrsz));for(var d=Array(16),f=Array(16),g=0;16>g;g++)d[g]=c[g]^909522486,f[g]=c[g]^1549556828;c=core_sha1(d.concat(str2binb(b)),512+b.length*chrsz);return core_sha1(f.concat(c),672)}
-function safe_add(a,b){var c=(a&65535)+(b&65535);return(a>>16)+(b>>16)+(c>>16)<<16|c&65535}function rol(a,b){return a<<b|a>>>32-b}function str2binb(a){for(var b=[],c=(1<<chrsz)-1,d=0;d<a.length*chrsz;d+=chrsz)b[d>>5]|=(a.charCodeAt(d/chrsz)&c)<<32-chrsz-d%32;return b}function binb2str(a){for(var b="",c=(1<<chrsz)-1,d=0;d<32*a.length;d+=chrsz)b+=String.fromCharCode(a[d>>5]>>>32-chrsz-d%32&c);return b}
-function binb2hex(a){for(var b=hexcase?"0123456789ABCDEF":"0123456789abcdef",c="",d=0;d<4*a.length;d++)c+=b.charAt(a[d>>2]>>8*(3-d%4)+4&15)+b.charAt(a[d>>2]>>8*(3-d%4)&15);return c}function binb2b64(a){for(var b="",c=0;c<4*a.length;c+=3)for(var d=(a[c>>2]>>8*(3-c%4)&255)<<16|(a[c+1>>2]>>8*(3-(c+1)%4)&255)<<8|a[c+2>>2]>>8*(3-(c+2)%4)&255,f=0;4>f;f++)b=8*c+6*f>32*a.length?b+b64pad:b+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charAt(d>>6*(3-f)&63);return b};var Tabs={setActiveTab:function(a,b){a.hasClassName("active_tab")||(a.removeClassName("inactive_tab"),$$(".active_tab").each(function(a){a.removeClassName("active_tab")}),$$(".tab_basic").each(function(b){b==a?b.addClassName("active_tab"):b.addClassName("inactive_tab")}),$$(".tab_content").each(function(a){a.id!="tab"+b&&a.hide()}),$("tab"+b).show())}};window.cancelNumber=function(){new Utils.redirectToAction("appmenu")};
-window.acceptNumber=function(){var a=$F("tipo_venta");""!=$F("number").strip()&&("yes"==AJAX.query("reimprimir/exists/"+$F("number")+"/"+$F("salon_id")+"/"+$F("tipo_venta"))?(a=Utils.getKumbiaURL("reimprimir/reprint/"+$F("number")+"/"+$F("salon_id")+"/"+$F("tipo_venta")),window.open(a,null,"width=300, height=700, toolbar=no, statusbar=no")):(a="F"==a?"No existe la factura "+$("number").value+" en el ambiente indicado":"No existe la orden de servicio "+$("number").value+" en el ambiente indicado",
-alert(a)))};

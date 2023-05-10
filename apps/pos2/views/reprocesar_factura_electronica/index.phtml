@@ -26,6 +26,7 @@ if($config->application->mode=='development'){
 	echo Tag::javascriptInclude('pos2/comunes');
 } else {
 	Tag::stylesheetLink('pos2/production/anular', false, 'v='.ControllerBase::APP_VERSION);
+	Tag::stylesheetLink('pos2/nota_credito');
 	echo Tag::javascriptInclude('pos2/production/reprocesar_factura_electronica', true, 'v='.ControllerBase::APP_VERSION);
 }
 

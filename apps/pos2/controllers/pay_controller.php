@@ -1211,8 +1211,14 @@ class PayController extends ApplicationController
 			$transaction->commit();
 
 			if($factura->tipo_venta == 'F' && $factura->tipo_factura == 'E' && $controlgenfac){
-				$xmlfactura = new procesarFacturas();
-				$xmlfactura->generarXML($factura->id);
+
+				try {
+					$xmlfactura = new procesarFacturas();
+					$xmlfactura->generarXML($factura->id);
+				} catch (Exception $e) {
+					$errror = $e->getMessage();
+				}
+				
 			}
 			
 			

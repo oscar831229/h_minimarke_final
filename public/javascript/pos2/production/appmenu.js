@@ -342,56 +342,1657 @@ this.translateToPx(b.start),a.style.height=this.translateToPx(b.end-b.start+this
 this.track.cumulativeOffset(),this.event=a,this.setValue(this.translateToValue((this.isVertical()?c[1]-b[1]:c[0]-b[0])-this.handleLength/2)),b=this.activeHandle.cumulativeOffset(),this.offsetX=c[0]-b[0],this.offsetY=c[1]-b[1];else{for(;-1==this.handles.indexOf(b)&&b.parentNode;)b=b.parentNode;if(-1!=this.handles.indexOf(b))this.activeHandle=b,this.activeHandleIdx=this.handles.indexOf(this.activeHandle),this.updateStyles(),b=this.activeHandle.cumulativeOffset(),this.offsetX=c[0]-b[0],this.offsetY=
 c[1]-b[1]}}Event.stop(a)}},update:function(a){if(this.active){if(!this.dragging)this.dragging=!0;this.draw(a);Prototype.Browser.WebKit&&window.scrollBy(0,0);Event.stop(a)}},draw:function(a){var b=[Event.pointerX(a),Event.pointerY(a)],c=this.track.cumulativeOffset();b[0]-=this.offsetX+c[0];b[1]-=this.offsetY+c[1];this.event=a;this.setValue(this.translateToValue(this.isVertical()?b[1]:b[0]));if(this.initialized&&this.options.onSlide)this.options.onSlide(1<this.values.length?this.values:this.value,this)},
 endDrag:function(a){this.active&&this.dragging&&(this.finishDrag(a,!0),Event.stop(a));this.dragging=this.active=!1},finishDrag:function(){this.dragging=this.active=!1;this.updateFinished()},updateFinished:function(){if(this.initialized&&this.options.onChange)this.options.onChange(1<this.values.length?this.values:this.value,this);this.event=null}});
+
+
+
+/**
+ * Kumbia Enterprise Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New BSD License that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@loudertechnology.com so we can send you a copy immediately.
+ *
+ * @category 	Kumbia
+ * @package 	Tag
+ * @copyright	Copyright (c) 2008-2012 Louder Technology COL. (http://www.loudertechnology.com)
+ * @license 	New BSD License
+ * @version 	$Id$
+ */
+
+var Base = {
+
+	PROTOTYPE: 1,
+	JQUERY: 2,
+	EXT: 3,
+	MOOTOOLS: 4,
+
+	framework: 0,
+
+	bind: function(){
+        var _func = arguments[0] || null;
+        var _obj = arguments[1] || this;
+        var i = 0;
+        var _args = [];
+        for(var i=0;i<arguments.length;i++){
+        	if(i>1){
+        		_args[_args.length] = arguments[i];
+        	};
+        	i++;
+        };
+        return function(){
+			return _func.apply(_obj, _args);
+        };
+	},
+
+	_checkFramework: function(){
+		if(typeof Prototype != "undefined"){
+			Base.activeFramework = Base.PROTOTYPE;
+			return;
+		};
+		if(typeof jQuery != "undefined") {
+			Base.activeFramework = Base.JQUERY;
+			return;
+		};
+		if(typeof Ext != "undefined"){
+			Base.activeFramework = Base.EXT;
+			return;
+		};
+		if(typeof MooTools != "undefined"){
+			Base.activeFramework = Base.MOOTOOLS;
+			return;
+		};
+		return 0;
+	},
+
+	$: function(element){
+		return document.getElementById(element);
+	},
+
+	show: function(element){
+		document.getElementById(element).style.display = "";
+	},
+
+	hide: function(element){
+		document.getElementById(element).style.display = "none";
+	},
+
+	setValue: function(element, value){
+		document.getElementById(element).value = value;
+	},
+
+	getValue: function(element){
+		element = document.getElementById(element);
+		if(element.tagName=='SELECT'){
+			return element.options[element.selectedIndex].value;
+		} else {
+			return element.value;
+		}
+	},
+
+	up: function(element, levels){
+		var l = 0;
+		var finalElement = element;
+		while(finalElement){
+			finalElement = finalElement.parentNode;
+			if(l>=levels){
+				return finalElement;
+			}
+			l++;
+		};
+		return finalElement;
+	}
+
+};
+
+var NumericField = {
+
+	maskNum: function(evt){
+		evt = (evt) ? evt : ((window.event) ? window.event : null);
+		var kc = evt.keyCode;
+		if(!evt.ctrlKey&&!evt.metaKey){
+			var ev = (evt.altKey==false)&&(evt.shiftKey==false)&&((kc>=48&&kc<=57)||(kc>=96&&kc<=105)||(kc==8)||(kc==9)||(kc==13)||(kc==17)||(kc==36)||(kc==35)||(kc==37)||(kc==46)||(kc==39)||(kc==190)||(kc==110));
+			if(!ev){
+				ev = (evt.shiftKey==true&&(kc==9||(kc>=35&&kc<=39)));
+				if(!ev){
+					ev = (evt.altKey==true&&(kc==84||kc==82));
+				};
+			};
+			if(!ev){
+				evt.preventDefault();
+	    		evt.stopPropagation();
+	    		evt.stopped = true;
+	    		return false;
+			}
+		};
+		return true;
+	},
+
+	format: function(element){
+		if(element.value!==''){
+			var integerPart = '';
+			var decimalPart = '';
+			var decimalPosition = element.value.indexOf('.');
+			if(decimalPosition!=-1){
+				decimalPart = element.value.substr(decimalPosition);
+				integerPart = element.value.substr(0, decimalPosition);
+			} else {
+				integerPart = element.value;
+			};
+			document.title = integerPart+' '+decimalPart;
+		};
+	}
+
+};
+
+var DateCalendar = {
+
+	build: function(element, name, value){
+		var year = parseInt(value.substr(0, 4), 10);
+		var month = parseInt(value.substr(5, 2), 10);
+		var day = parseInt(value.substr(8, 2), 10);
+		DateCalendar._buildMonth(element, year, month, value);
+	},
+
+	_buildMonth: function(element, year, month, activeDate){
+		var numberDays = DateField.getNumberDays(year, month);
+		var firstDate = new Date(year, month-1, 1);
+		var lastDate = new Date(year, month-1, numberDays);
+		var html = '<table class="calendarTable" cellspacing="0">';
+		html+='<tr><td class="arrowPrev"><img src="'+$Kumbia.path+'img/prevw.gif"/></td>';
+		html+='<td colspan="5" class="monthName">'+DateCalendar.getMonthName(month)+'</td>';
+		html+='<td class="arrowNext"><img src="'+$Kumbia.path+'img/nextw.gif"/></td></tr>';
+		html+='<tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>Sáb</th></tr>';
+		html+='<tr>';
+		if(month==1){
+			var numberDaysPast = DateField.getNumberDays(year-1, 12);
+		} else {
+			var numberDaysPast = DateField.getNumberDays(year-1, month-1);
+		};
+		var dayOfWeek = firstDate.getDay();
+		for(var i=(numberDaysPast-dayOfWeek+1);i<numberDaysPast;i++){
+			html+='<td class="outMonthDay">'+(i+1)+'</td>';
+		};
+		var numberDay = 1;
+		var date;
+		while(numberDay<=numberDays){
+			if(month<10){
+				date = year+'-0'+month+'-'+numberDay;
+			} else {
+				date = year+'-'+month+'-'+numberDay;
+			}
+			if(activeDate==date){
+				html+='<td class="selectedDay" title="'+date+'">'+numberDay+'</td>';
+			} else {
+				html+='<td title="'+date+'">'+numberDay+'</td>';
+			};
+			if(dayOfWeek==6){
+				html+='</tr><tr>';
+				dayOfWeek = 0;
+			} else {
+				dayOfWeek++;
+			};
+			numberDay++;
+		};
+		numberDay = 1;
+		if(dayOfWeek<7){
+			for(var i=dayOfWeek;i<7;i++){
+				html+='<td class="outMonthDay">'+numberDay+'</td>';
+				numberDay++;
+			};
+		};
+		html+='</tr></table>';
+
+		var position = element.up(1).cumulativeOffset();
+		var calendarDiv = document.getElementById('calendarDiv');
+		if(calendarDiv){
+			calendarDiv.parentNode.removeChild(calendarDiv);
+		};
+		calendarDiv = document.createElement('DIV');
+		calendarDiv.id = 'calendarDiv';
+		calendarDiv.addClassName('calendar');
+		calendarDiv.update(html);
+		calendarDiv.style.top = (position[1]+22)+'px';
+		calendarDiv.style.left = (position[0])+'px';
+		document.body.appendChild(calendarDiv);
+		window.setTimeout(function(){
+			new Event.observe(window, 'click', DateCalendar.removeCalendar);
+		}, 150);
+	},
+
+	removeCalendar: function(event){
+		if(event.target.tagName!='INPUT'&&event.target.tagName!='SELECT'){
+			var calendarDiv = document.getElementById('calendarDiv');
+			if(calendarDiv){
+				calendarDiv.parentNode.removeChild(calendarDiv);
+			};
+			new Event.stopObserving(window, 'click', DateCalendar.removeCalendar);
+		}
+	},
+
+	getMonthName: function(month){
+		switch(month){
+			case 1:
+				return 'Enero';
+			case 2:
+				return 'Febrero';
+			case 3:
+				return 'Marzo';
+			case 4:
+				return 'Abril';
+			case 5:
+				return 'Mayo';
+			case 6:
+				return 'Junio';
+			case 7:
+				return 'Julio';
+			case 8:
+				return 'Agosto';
+			case 9:
+				return 'Septiembre';
+		}
+	}
+
+};
+
+var DateField = {
+
+	_monthTable: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+
+	_listeners: {},
+
+	observe: function(element, eventName, procedure){
+		if(typeof DateField._listeners[eventName] == "undefined"){
+			DateField._listeners[eventName] = {};
+		};
+		DateField._listeners[eventName][element.id] = {
+			'element': element,
+			'procedure': procedure
+		};
+	},
+
+	fire: function(element, eventName, elementValue){
+		if(typeof DateField._listeners[eventName] != "undefined"){
+			if(typeof DateField._listeners[eventName][element.id] != "undefined"){
+				var handler = DateField._listeners[eventName][element.id];
+				if(element==handler['element']){
+					handler['procedure'](elementValue);
+				}
+			}
+		};
+		return false;
+	},
+
+	getNumberDays: function(year, month){
+		var numberDays = DateField._monthTable[month-1];
+		if(month==2){
+			if(parseInt(year, 10)%4==0){
+				numberDays = 29;
+			}
+		};
+		return numberDays;
+	},
+
+	getElement: function(name, context){
+		if(typeof context == "undefined"){
+			return Base.$(name);
+		} else {
+			return context.up(4).querySelector('#'+name);
+		}
+	},
+
+	getValue: function(name, context){
+		var element = DateField.getElement(name, context);
+		if(element.tagName=='SELECT'){
+			return element.options[element.selectedIndex].value;
+		} else {
+			return element.value;
+		}
+	},
+
+	refresh: function(name, context){
+
+		var html = '', n, numberDays;
+		var year = DateField.getValue(name+'Year', context);
+		var month = DateField.getValue(name+'Month', context);
+		var day = DateField.getValue(name+'Day', context);
+		var daySelect = DateField.getElement(name+'Day', context);
+
+		var value = year+'-'+month+'-'+day;
+		var element = DateField.getElement(name, context);
+		element.value = value;
+
+		while(daySelect.lastChild){
+			daySelect.removeChild(daySelect.lastChild);
+		};
+		if(month.substr(0, 1)=='0'){
+			month = month.substr(1, 1);
+		};
+		var numberDays = DateField.getNumberDays(year, month);
+		for(var i=1;i<=numberDays;++i){
+			n = (i < 10) ? '0'+i : i;
+			if(n==day){
+				html+='<option value="'+n+'" selected="selected">'+n+'</option>';
+			} else {
+				html+='<option value="'+n+'">'+n+'</option>';
+			}
+		};
+		daySelect.innerHTML = html;
+		DateField.fire(element, 'change', value);
+	},
+
+	showCalendar: function(element, name){
+		DateCalendar.build(element, name, Base.getValue(name));
+	}
+
+};
+
+var TimeField = {
+
+	refresh: function(name, context){
+		var hour = DateField.getValue(name+'Hour', context);
+		var minutes = DateField.getValue(name+'Minutes', context);
+		var value = hour+':'+minutes;
+		DateField.getElement(name, context).value = value;
+	}
+
+};
+
+var Utils = {
+
+	getKumbiaURL: function(url){
+		if(typeof url == "undefined"){
+			url = "";
+		};
+		if($Kumbia.app!=""){
+			return $Kumbia.path+$Kumbia.app+"/"+url;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	getAppURL: function(url){
+		if(typeof url == "undefined"){
+			url = "";
+		};
+		if($Kumbia.app!=""){
+			return $Kumbia.path+$Kumbia.app+"/"+url;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	getURL: function(url){
+		if(typeof url == "undefined"){
+			return $Kumbia.path;
+		} else {
+			return $Kumbia.path+url;
+		}
+	},
+
+	redirectParentToAction: function(url){
+		new Utils.redirectToAction(url, window.parent);
+	},
+
+	redirectOpenerToAction: function(url){
+		new Utils.redirectToAction(url, window.opener);
+	},
+
+	redirectToAction: function(url, win){
+		win = win ? win : window;
+		win.location = Utils.getKumbiaURL() + url;
+	},
+
+	upperCaseFirst: function(str){
+		var first = str.substring(0, 1).toUpperCase();
+		return first+str.substr(1, str.length-1)
+	},
+
+	round: function(number, decimals){
+		var decimalPlace = Math.pow(100, decimals);
+		return Math.round(number * decimalPlace) / decimalPlace;
+	},
+
+	numberFormat: function(number){
+		var number = number.toString();
+		var decimalPosition = number.indexOf('.');
+		if(decimalPosition!=-1){
+			var decimals = number.substr(decimalPosition+1);
+			var integer = number.substring(0, decimalPosition);
+		} else {
+			var decimals = '00';
+			var integer = number;
+		};
+		var n = 1;
+		var formatedNumber = [];
+		var integer = integer.toArray();
+		for(var i=0;i<integer.length;i++){
+			if((integer.length-i)%3==0){
+				if(i!=0){
+					formatedNumber.unshift('.');
+				};
+			};
+			formatedNumber.unshift(integer[i])
+		};
+		return formatedNumber.reverse().join('')+','+decimals.substr(0, 2);
+	}
+
+};
+
+function ajaxRemoteForm(form, up, callback){
+	if(callback==undefined){
+		callback = {};
+	};
+	new Ajax.Updater(up, form.action, {
+		 method: "post",
+		 asynchronous: true,
+         evalScripts: true,
+         onSuccess: function(transport){
+			$(up).update(transport.responseText)
+		},
+		onLoaded: callback.before!=undefined ? callback.before: function(){},
+		onComplete: callback.success!=undefined ? callback.success: function(){},
+  		parameters: Form.serialize(form)
+    });
+  	return false;
+};
+
+var AJAX = {
+
+	doRequest: function(url, options){
+		var framework = Base.activeFramework;
+		if(typeof options == 'undefined'){
+			options = {};
+		};
+		switch(framework){
+			case Base.PROTOTYPE:
+				var callbackMap = {
+					'before': 'onLoading',
+					'success': 'onSuccess',
+					'complete': 'onComplete',
+					'error': 'onFailure'
+				};
+				$H(callbackMap).each(function(callback){
+					if(typeof options[callback[0]] != 'undefined'){
+						options[callback[1]] = function(procedure, transport){
+							procedure.bind(this, transport.responseText)();
+						}.bind(this, options[callback[0]]);
+					}
+				});
+				return new Ajax.Request(url, options);
+			case Base.JQUERY:
+				var paramMap = {
+					'method': 'type',
+					'parameters': 'data',
+					'asynchronous': 'async'
+				};
+				$.each(paramMap, function(index, value){
+					if(typeof options[index] != 'undefined'){
+						options[value] = options[index];
+					}
+				});
+				options.url = url;
+				return $.ajax(options);
+			case Base.EXT:
+				var paramMap = {
+					'before': 'beforerequest',
+					'error': 'failure',
+					'parameters': 'params'
+				};
+				var index;
+				for(index in paramMap){
+					if(typeof options[index] != 'undefined'){
+						options[paramMap[index]] = options[index];
+					}
+				};
+				options.url = url;
+				return Ext.Ajax.request(options);
+			case Base.MOOTOOLS:
+				var paramMap = {
+					'parameters': 'data',
+					'asynchronous': 'async',
+					'before': 'onRequest',
+					'success': 'onSuccess',
+					'error': 'onFailure',
+					'complete': 'onComplete'
+				};
+				var index;
+				for(index in paramMap){
+					if(typeof options[index] != 'undefined'){
+						options[paramMap[index]] = options[index];
+					}
+				};
+				options.url = url;
+				var request = new Request(options);
+				request.send();
+				return request;
+			break;
+		};
+	},
+
+	update: function(url, element, options){
+		if(typeof options == 'undefined'){
+			options = {};
+		};
+		options.success = function(responseText){
+			Base.$(element).innerHTML = responseText;
+		};
+		Base.bind(options.success, element, element);
+		return AJAX.doRequest(url, options);
+	}
+
+};
+
+AJAX.xmlRequest = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	return AJAX.doRequest(options.url, options)
+};
+
+AJAX.viewRequest = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	container = params.container;
+	options.evalScripts = true;
+	if(!document.getElementById(container)){
+		throw "CoreError: DOM Container '"+container+"' no encontrado";
+	};
+	return AJAX.update(container, options.url, options);
+};
+
+AJAX.execute = function(params){
+	var options = {};
+	if(typeof params.url == "undefined" && typeof params.action != "undefined"){
+		options.url = Utils.getKumbiaURL(params.action);
+	};
+	return AJAX.doRequest(options.url, options)
+}
+
+AJAX.query = function(queryAction, onSuccess){
+	var me;
+	new Ajax.Request(Utils.getKumbiaURL(queryAction), {
+		method: 'GET',
+		asynchronous: false,
+		onSuccess: function(transport){
+			var xml = transport.responseXML;
+			var data = xml.getElementsByTagName("data");
+			if(Prototype.Browser.IE){
+				xmlValue = data[0].text;
+			} else {
+				xmlValue = data[0].textContent;
+			};
+			me = xmlValue;
+		}
+	});
+	return me;
+}
+
+if(document.addEventListener){
+	document.addEventListener('DOMContentLoaded', Base._checkFramework, false);
+} else {
+	document.attachEvent('readystatechange', Base._checkFramework);
+};
+
+
+
+/** Kumbia - PHP Rapid Development Framework ***************************
+ *
+ * Copyright (C) 2005 Andrs Felipe Gutirrez (andresfelipe at vagoogle.net)
+ * NumberFormat: ProWebMasters.net based script
+ *
+ * This framework is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This framework is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ *****************************************************************************/
+
+function validaEmail(evt){
+    var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	if(document.all) {
+		kc = event.keyCode
+	} else {
+	 	kc = evt.keyCode
+	}
+	if(
+		(kc>=65&&kc<=90)||
+		(kc==50)||
+		(kc==8)||
+		(kc==9)||
+		(kc==17)||
+		(kc==16)||
+		(kc==35)||
+		(kc==36)||
+		(kc==46)||
+		(kc==109)||
+		(kc==189)||
+		(kc==190)||
+		(kc==189)||
+		(kc>=37&&kc<=40)||
+		((kc>=48&&kc<=57)&&evt.shiftKey==false&&evt.altKey==false)
+		) {
+		//Returns
+	} else {
+	  	if(document.all) evt.returnValue = false
+    	else evt.preventDefault()
+    }
+    //window.status = kc
+}
+
+/**
+ * Valida que los campos requeridos del formulario contengan datos.
+ * Recibe como parametros el objeto formulario y el nombre de los campos que se desean exigir.
+ * Retorna true si la validacion es correcta, false en caso contrario.
+ *
+ * Ej. de uso:
+ * form_remote_tag("cotroller/action", "update: div_id", "required: nombre_campo_1,nombre_campo_2")
+ *
+ * Como se ve en el ejemplo anterior, es necesario incluir el parametro 'required' y luego especificar los
+ * nombres de los campos requeridos separados por comas (,). En el ejemplo anterior 'nombre_campo_1' y
+ * 'nombre_campo_2' serian los nombres (name) de dos campos requeridos del formulario.
+ * @param Object form Objeto formulario.
+ * @param Array requiredFields Matriz con los nombres de los campos requeridos.
+ * @return boolean false en caso de que se encuentren campos requeridos sin rellenar, true en caso contrario.
+ */
+function validaForm(form, requiredFields){
+
+   var cont = 0;
+   var campos = new Array();
+
+   // Obtiene los campos requeridos que no contienen datos (si los hay)
+   for(var i=0;i<requiredFields.length;i++){
+   	   if($(requiredFields[i]).value == ''){
+   	   	   campos[cont++] = $(requiredFields[i]);
+   	   }
+   }
+
+   // Si faltan datos requeridos se muestra el efecto de resaltado sobre los campos.
+   if(cont >= 1){
+	   alert("Es necesario que ingrese los datos que se resaltarán");
+	   for(var i=0; i<cont; i++){
+	   	   new Effect.Highlight(campos[i].name, {startcolor:'#FF0000', endcolor:"#ffbbbb"});
+	   };
+	   campos[0].focus();
+   }
+
+   // Retorna false si hay campos requeridos sin rellenar; de lo contrario true.
+   return cont >= 1 ? false : true;
+}
+
+
+function validaText(evt){
+	var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	kc = evt.keyCode
+	window.status = kc
+	if(
+	(kc>=65&&kc<=90)||
+	(kc==50)||
+	(kc==8)||
+	(kc==9)||
+	(kc==17)||
+	(kc==16)||
+	(kc==32)||
+	(kc==186)||
+	(kc==190)||
+	(kc==192)||
+	(kc==222)||
+	(kc>=37&&kc<=40) //||
+	//((kc>=48&&kc<=57)&&evt.shiftKey==false&&evt.altKey==false)
+	) {
+		//Returns
+	} else {
+		if(document.all) evt.returnValue = false
+		else evt.preventDefault()
+	}
+}
+
+function valNumeric(evt){
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	if(
+	((evt.keyCode>=48&&evt.keyCode<=57)&&evt.shiftKey==false&&evt.altKey==false)||
+	((evt.keyCode>=96&&evt.keyCode<=105)&&evt.shiftKey==false&&evt.altKey==false) ||
+	( evt.keyCode==8   ||
+	evt.keyCode==9   ||
+	evt.keyCode==13  ||
+	evt.keyCode==16  ||
+	evt.keyCode==17  ||
+	evt.keyCode==36  ||
+	evt.keyCode==35  ||
+	evt.keyCode==46  ||
+	evt.keyCode==37  ||
+	evt.keyCode==39  ||
+	evt.keyCode==110 ||
+	evt.keyCode==119 ||
+	evt.keyCode==190)
+	){
+		//Lets that key value pass
+	} else {
+		if(document.all) {
+			evt.returnValue = false
+		} else evt.preventDefault()
+	}
+}
+
+function valDate(){
+	if(((event.keyCode!=8&&event.keyCode!=9&&event.keyCode!=36&&event.keyCode!=35&&event.keyCode!=46&&event.keyCode!=37&&event.keyCode!=39&&event.keyCode<48))||(event.keyCode>57&&(event.keyCode<96||(event.keyCode>105&&event.keyCode!=111&&event.keyCode!=189&&event.keyCode!=109)))||(event.shiftKey==true&&event.keyCode!=55)||event.altKey==true) {
+		window.event.returnValue = false
+	}
+}
+
+function keyUpper(obj){
+	obj.value = obj.value.toUpperCase();
+	saveValue(obj)
+}
+
+function keyUpper2(obj){
+	obj.value = obj.value.toUpperCase();
+}
+
+function keyUpper3(obj){
+	obj.value = obj.value.toUpperCase();
+}
+
+function checkDate(obj){
+	if(!obj.value) return;
+	var e = RegExp("([0-9]{4}[/-][0-9]{2}[/-][0-9]{2})", "i");
+	if(!obj.value) return;
+	if(e.exec(obj.value)==null) {
+		window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+		obj.className = "iError";
+	}
+	else {
+		d = obj.value.substr(0, 2)
+		m = obj.value.substr(3, 2)
+		a = obj.value.substr(6, 4)
+		if((d<1)||(d>31)){
+			window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+			obj.className = "iError";
+		} else {
+			if((m<1)||(m>12)){
+				window.status = "EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO";
+				obj.className = "iError";
+			} else {
+				window.status = "Listo";
+				obj.className = "iNormal";
+			}
+		}
+	}
+}
+
+function showConfirmPassword(obj){
+	if(!$('div_'+obj.name).visible()){
+		new Effect.Appear('div_'+obj.name)
+	}
+}
+
+function nextValidatePassword(obj){
+	if(!$('div_'+obj.name).visible()){
+		$('div_'+obj.name).focus()
+		$('div_'+obj.name).select()
+	}
+}
+
+function validatePassword(confirma, password){
+	if(confirma.value!=$(password).value){
+		alert('Los Passwords No son Iguales')
+		$(password).focus()
+		$(password).select()
+	} else {
+		new Effect.Fade('div_'+$(password).name)
+	}
+}
+
+function checkUnique(name, obj){
+	var i, n;
+	if(!obj.value){
+		return;
+	}
+	if(obj.value=="@"){
+		return;
+	}
+	n = 0;
+	for(i=0;i<=Fields.length-1;i++){
+		if(Fields[i]==name){
+			break;
+		}
+	}
+	for(j=0;j<=Values.length-1;j++){
+		if(Values[j][i]==obj.value){
+			if(n==1){
+				if(obj.tagName=='SELECT'){
+					alert('Esta Opción ya fué seleccionada por favor elija otra diferente');
+				}
+				obj.className = "iError";
+				if(obj.tagName=='INPUT'){
+					obj.select();
+				}
+				obj.focus();
+				return;
+			} else {
+				n++;
+			}
+		}
+	}
+	obj.className = 'iNormal'
+}
+
+function nextField(evt, oname){
+	var kc;
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	kc = evt.keyCode
+	if(kc==13){
+		for(i=0;i<=Fields.length-1;i++) {
+			if(oname==Fields[i]){
+				if(i==(Fields.length-1)){
+					if((document.getElementById("flid_"+Fields[0]).style.visibility!='hidden')&&
+					(document.getElementById("flid_"+Fields[0]).readOnly==false)&&
+					(document.getElementById("flid_"+Fields[0]).type!='hidden'))
+					document.getElementById("fl_id"+Fields[0]).focus()
+				} else {
+					if( (document.getElementById("flid_"+Fields[i+1]).style.visibility!='hidden')&&
+					(document.getElementById("flid_"+Fields[i+1]).readOnly==false)&&
+					(document.getElementById("flid_"+Fields[i+1]).type!='hidden')){
+						document.getElementById("flid_"+Fields[i+1]).focus()
+					}
+				}
+				return
+			}
+		}
+	}
+}
+
+function saveEmail(obj) {
+	document.getElementById("flid_"+obj).value = document.getElementById(obj+"_email1").value + "@" + document.getElementById(obj+"_email2").value
+}
+
+
+
+/**
+ * Kumbia Enterprise Framework
+ * Window Object Manipulation Base Functions
+ *
+ * @copyright	Copyright (c) 2008-2010 Louder Technology COL. (http://www.loudertechnology.com)
+ **/
+
+var WindowUtilities = {
+
+	getWindowScroll: function(parent) {
+		var T, L, W, H;
+		parent = parent || document.body;
+		if (parent != document.body) {
+			T = parent.scrollTop;
+			L = parent.scrollLeft;
+			W = parent.scrollWidth;
+			H = parent.scrollHeight;
+		}
+		else {
+			var w = window;
+			T = w.document.body.scrollTop;
+			L = w.document.body.scrollLeft;
+			W = w.innerWidth;
+			H = w.innerHeight;
+		}
+		return { top: T, left: L, width: W, height: H };
+	},
+
+	getPageSize: function(parent){
+		parent = parent || document.body;
+		var windowWidth, windowHeight;
+		var pageHeight, pageWidth;
+		if (parent != document.body) {
+			windowWidth = parent.getWidth();
+			windowHeight = parent.getHeight();
+			pageWidth = parent.scrollWidth;
+			pageHeight = parent.scrollHeight;
+		}
+		else {
+			var xScroll, yScroll;
+
+			if (window.innerHeight && window.scrollMaxY) {
+				xScroll = document.body.scrollWidth;
+				yScroll = window.innerHeight + window.scrollMaxY;
+			} else if (document.body.scrollHeight > document.body.offsetHeight){
+				xScroll = document.body.scrollWidth;
+				yScroll = document.body.scrollHeight;
+			} else {
+				xScroll = document.body.offsetWidth;
+				yScroll = document.body.offsetHeight;
+			}
+			if (self.innerHeight) {
+				windowWidth = self.innerWidth;
+				windowHeight = self.innerHeight;
+			} else if (document.documentElement && document.documentElement.clientHeight) {
+				windowWidth = document.documentElement.clientWidth;
+				windowHeight = document.documentElement.clientHeight;
+			} else if (document.body) {
+				windowWidth = document.body.clientWidth;
+				windowHeight = document.body.clientHeight;
+			}
+			if(yScroll < windowHeight){
+				pageHeight = windowHeight;
+			} else {
+				pageHeight = yScroll;
+			}
+			if(xScroll < windowWidth){
+				pageWidth = windowWidth;
+			} else {
+				pageWidth = xScroll;
+			}
+		}
+		return {pageWidth: pageWidth ,pageHeight: pageHeight , windowWidth: windowWidth, windowHeight: windowHeight};
+	}
+};
+
+$W = function(objectName) {
+	return document.frames('openWindow').document.getElementById(objectName)
+}
+
+var WINDOW = {
+
+	open: function(properties){
+		if($('myWindow')){
+			return;
+		};
+		var windowScroll = WindowUtilities.getWindowScroll(document.body);
+		var pageSize = WindowUtilities.getPageSize(document.body);
+		var obj = document.createElement("DIV");
+		if(!properties.title){
+			properties.title = ""
+		};
+		if(!properties.url){
+			properties.url = properties.action
+		};
+		left = parseInt((pageSize.windowWidth - (parseInt(properties.width)+36))/2);
+		left += windowScroll.left;
+		obj.style.left = left+"px"
+		if(typeof properties.width != "undefined"){
+			obj.style.width = properties.width;
+		};
+		if(typeof properties.height != "undefined"){
+			obj.style.height = (parseInt(properties.height)+10)+"px";
+		};
+		obj.hide();
+		var html = "<table cellspacing='0' cellpadding='0' width='100%'><tr>"+
+		"<td align='center' id='myWindowTitle'>"+properties.title+"</td></tr>"+
+		"<tr><td id='myWindowData'></td></tr></table>";
+		obj.innerHTML = html;
+		obj.id = "myWindow"
+		document.body.appendChild(obj);
+		//new Draggable(obj.id);
+		if (typeof properties.onclose != "undefined") {
+			WINDOW.onclose = properties.onclose;
+		};
+		if (typeof properties.onbeforeclose != "undefined") {
+			WINDOW.onbeforeclose = properties.onbeforeclose;
+		};
+		obj.close = function(action){
+			var myWindow = $("myWindow");
+			var shadowWin = $('shadow_win');
+			if(typeof properties.onbeforeclose != "undefined"){
+				if(properties.onbeforeclose.call(this, action)==false){
+					return;
+				}
+			};
+			if(typeof myWindow.onclose != "undefined"){
+				properties.onclose = myWindow.onclose;
+			};
+			document.body.removeChild(myWindow);
+			if (shadowWin) {
+				document.body.removeChild(shadowWin);
+			};
+			if (typeof properties.onclose != "undefined") {
+				if (properties.onclose) {
+					if (typeof properties.onclose.call != "undefined") {
+						properties.onclose.call(this, action);
+					}
+				}
+			}
+		};
+		new Ajax.Request(Utils.getKumbiaURL(properties.url), {
+			method: 'GET',
+			onSuccess: function(properties, t){
+				$('myWindowData').update(t.responseText);
+				if(typeof properties.afterRender != "undefined"){
+					properties.afterRender();
+				};
+				var div = document.createElement("DIV")
+				div.id = "shadow_win";
+				$(div).setOpacity(0.1);
+				document.body.appendChild(div);
+				$('myWindow').show();
+			}.bind(this, properties)
+		});
+	}
+}
+
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+var Modal = {
+
+	confirm: function(message, yesCallback){
+		document.body.scrollTop = 0;
+		new WINDOW.open({
+			url: "context",
+			title: "Confirmación",
+			width: "500px",
+			height: "200px",
+			afterRender: function(message){
+				$('contextMessage').update(message);
+				//$('okModal').activate();
+				$('okModal').observe('click', function(yesCallback){
+					$('myWindow').close();
+					yesCallback();
+				}.bind(this, yesCallback));
+				$('noModal').observe('click', function(){
+					$('myWindow').close();
+				});
+			}.bind(this, message, yesCallback)
+		});
+	}
+
+};
+
+var Growler = {
+
+	timeout: null,
+
+	addTimeout: function(d){
+		if(Growler.timeout!=null){
+			window.clearTimeout(Growler.timeout);
+			Growler.timeout = null;
+		};
+		Growler.timeout = window.setTimeout(function(d){
+			document.body.removeChild(d);
+			Growler.timeout = null;
+		}.bind(this, d), 3500)
+	},
+
+	show: function(msg){
+		var windowScroll = WindowUtilities.getWindowScroll(document.body);
+	    var pageSize = WindowUtilities.getPageSize(document.body);
+	    var d = $('growler');
+	    if(!d){
+			var d = document.createElement("DIV");
+			d.id = "growler";
+			d.innerHTML = msg;
+			d.hide();
+			document.body.appendChild(d);
+			d.setStyle({
+				top: (pageSize.windowHeight-(d.getHeight()+20)+windowScroll.top)+"px",
+				left: (pageSize.windowWidth-270+windowScroll.left)+"px"
+			});
+			d.show();
+			Growler.addTimeout(d);
+	    } else {
+	    	d.innerHTML = msg;
+	    	Growler.addTimeout(d);
+	    	new Effect.Shake(d, {duration:0.5});
+	    }
+	}
+};
+
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+function openTables(){
+	Clave.authForModule('tables');
+}
+
+function cashIntro(){
+	Clave.authForModule('cashintro');
+}
+
+function cashOuttro(){
+	Clave.authForModule('cashouttro');
+}
+
+function pay(){
+	Clave.authForModule('pay');
+}
+
+function audit(){
+	Clave.authForModule('audit');
+}
+
+function cancelDineIn(){
+	Clave.authForModule('cancel');
+}
+
+function checkDineIn(){
+	Clave.authForModule('check');
+}
+
+function dineInStatus(){
+	Clave.authForModule('status');
+}
+
+function goReports(){
+	Clave.authForModule('reports');
+}
+
+function closeDay(){
+	Modal.confirm('¿Está seguro de hacer el cierre del día en el Sistema?', function(){
+		Clave.authForModule('close');
+	});
+}
+
+function revertDay(){
+	Modal.confirm('¿Está seguro de devolver la fecha del sistema al día anterior?', function(){
+		Clave.authForModule('revert');
+	});
+}
+
+function cancelFactura(){
+	Clave.authForModule('anula_factura');
+}
+
+function notaCredito(){
+	Clave.authForModule('nota_credito');
+}
+
+function ReprocesarFacturaraElectronica(){
+	Clave.authForModule('reprocesar_factura_electronica');
+}
+
+function ReprocesarNotaElectronica(){
+	Clave.authForModule('reprocesar_nota_electronica');
+}
+
+function reimprimirFactura(){
+	Clave.authForModule('reimprimir');
+}
+
+function admin(){
+	new Utils.redirectToAction('admin')
+}
+
+
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+function dropPassword(){
+	new Effect.Shake("view_pass", {duration: 0.4});
+	new Effect.Morph("view_pass", {
+		duration: 0.4,
+		style: {
+			color: "#FFFFFF"
+		},
+		afterFinish: function(){
+			$('view_pass').value = "";
+			$('view_pass').style.color = "#000000";
+		}
+	})
+	$('clave').value = "";
+	$('okButton').disabled = true;
+	if($("password_incorrecto")){
+		document.body.removeChild($("password_incorrecto"));
+	}
+}
+
+function cancelPassword(){
+	$("myWindow").close();
+}
+
+function acceptPassword(action){
+	new Ajax.Request(Utils.getKumbiaURL("clave/autenticar/"+hex_sha1($('clave').value)), {
+		method: 'GET',
+		onSuccess: function(transport){
+			var response = transport.responseText.evalJSON();
+			if(response==1){
+				new Utils.redirectToAction(action);
+			} else {
+				var windowScroll = WindowUtilities.getWindowScroll(document.body);
+		    	var pageSize = WindowUtilities.getPageSize(document.body);
+		    	var d = $('growler');
+		    	if(!d){
+					var d = document.createElement("DIV");
+					d.id = "growler";
+					d.setStyle({
+						top: (pageSize.windowHeight-50+windowScroll.top)+"px"
+					});
+					d.innerHTML = "<b>Contraseña Incorrecta</b>";
+					document.body.appendChild(d);
+					new Effect.Move("view_pass", {
+						duration: 0.1,
+						y: -10,
+						afterFinish: function(){
+							new Effect.Move("view_pass", {
+								duration: 0.1,
+								y: 10,
+								afterFinish: function(){
+									$('view_pass').value = "";
+									$('clave').value = '';
+									new Effect.Shake(d, {duration: 0.4});
+								}
+							});
+						}
+					});
+		    	} else {
+		    		$('view_pass').value = "";
+					$('clave').value = '';
+					new Effect.Shake(d, {duration: 0.4});
+		    	};
+			};
+		}
+	});
+}
+
+var Clave = {
+
+	addToPassword: function(pressed, event){
+		var value = "";
+		var oClave = $('clave');
+		var viewPass = $('view_pass');
+		this.blur();
+		if(pressed){
+			if(typeof event.keyCode != "undefined"){
+				if(event.keyCode==Event.KEY_RETURN||event.keyCode==0){
+					return;
+				}
+			} else {
+				return;
+			};
+		};
+		oClave.value+=this.value;
+		if(oClave.value!=""){
+			$('okButton').disabled = false;
+		};
+		viewPass.value = "";
+		for(var i=0;i<oClave.value.length;i++) {
+			viewPass.value+="*";
+		}
+	},
+
+	big: function(event){
+		this.className = "bigButton2";
+		this.style.fontSize = "44px";
+		new Effect.Morph(this, {
+			duration: 0.3,
+			style: {
+				fontSize: "30px"
+			},
+			afterFinish: function(){
+				this.className = "bigButton";
+				this.style.width = "70px";
+				this.style.height = "70px";
+				this.style.fontSize = "30px";
+			}.bind(this)
+		});
+		this.blur();
+	},
+
+	authForModule: function(action){
+		new WINDOW.open({
+			url: "clave/index/"+action,
+			title: "Digite su Clave",
+			width: "230px",
+			height: "380px",
+			afterRender: function(){
+				$$('.bigButton').each(function(element){
+					element.observe('click', Clave.addToPassword.bind(element, false));
+					element.observe('mousedown', Clave.big);
+				});
+				window.setTimeout(function(){
+					$('view_pass').activate();
+				}, 100);
+			}
+		});
+	}
+};
+
+new Event.observe(window, "keyup", function(event){
+	if($("myWindow")){
+		var code = 0;
+		var keyCode = parseInt(event.keyCode);
+		if(keyCode==Event.KEY_BACKSPACE||keyCode==Event.KEY_ESC){
+			dropPassword();
+			new Event.stop(event);
+			return;
+		};
+		if(keyCode==Event.KEY_RETURN){
+			$("okButton").click();
+			new Event.stop(event);
+			return;
+		};
+		if(keyCode>=48&&keyCode<=57){
+			code = keyCode - 48;
+			var bCode = $("b"+code);
+			if(bCode){
+				Clave.big.bind(bCode)(event);
+				Clave.addToPassword.bind(bCode)(true, event);
+				new Event.stop(event);
+				return;
+			}
+		};
+		if(keyCode>=96 && keyCode<=105){
+			code = keyCode - 96;
+			var bCode = $("b"+code);
+			if(bCode){
+				Clave.big.bind(bCode)(event);
+				Clave.addToPassword.bind(bCode)(true, event);
+				new Event.stop(event);
+				return;
+			}
+		}
+	}
+});
+
+function changePassword(){
+	acceptPassword = function(){
+		new Ajax.Request(Utils.getKumbiaURL("clave/autenticar/"+hex_sha1($('clave').value)), {
+			onSuccess: function(transport){
+				var response = transport.responseText.evalJSON();
+				if(response==1){
+					$("myWindow").onclose = function(){
+						acceptPassword = function(){
+							new Ajax.Request(Utils.getKumbiaURL('clave/change'), {
+								parameters: {
+									"nuevo": hex_sha1($('clave').value)
+								},
+								onSuccess: function(t){
+									$("myWindow").onclose = function(){
+
+									};
+									$("myWindow").close();
+									alert('Se cambió el password');
+									window.location = Utils.getKumbiaURL();
+								}
+							});
+						};
+						new WINDOW.open({
+							url: "clave/input/",
+							title: "Nueva Clave",
+							width: "220px",
+							height: "380px",
+							afterRender: function(){
+								$('clave').value="";
+								$$('.bigButton').each(function(element){
+									element.observe('click', Clave.addToPassword.bind(element, false));
+									element.observe('mousedown', Clave.big);
+								});
+							}
+						});
+					};
+					$("myWindow").close();
+				} else {
+					alert("Contraseña incorrecta")
+					window.location = Utils.getKumbiaURL();
+				}
+			}
+		});
+	};
+	cancelPassword = function(){
+		window.location = Utils.getKumbiaURL();
+	};
+	new WINDOW.open({
+		url: "clave/input/",
+		title: "Digite su Clave",
+		width: "220px",
+		height: "380px",
+		afterRender: function(){
+			$$('.bigButton').each(function(element){
+				element.observe('click', Clave.addToPassword.bind(element, false));
+				element.observe('mousedown', Clave.big);
+			});
+		}
+	});
+}
+
+
 /*
- 	New BSD License
- @version 	$Id$
-*/
-var Base={PROTOTYPE:1,JQUERY:2,EXT:3,MOOTOOLS:4,framework:0,bind:function(){for(var b=arguments[0]||null,c=arguments[1]||this,e=0,f=[],e=0;e<arguments.length;e++)1<e&&(f[f.length]=arguments[e]),e++;return function(){return b.apply(c,f)}},_checkFramework:function(){if("undefined"!=typeof Prototype)Base.activeFramework=Base.PROTOTYPE;else if("undefined"!=typeof jQuery)Base.activeFramework=Base.JQUERY;else if("undefined"!=typeof Ext)Base.activeFramework=Base.EXT;else if("undefined"!=typeof MooTools)Base.activeFramework=
-Base.MOOTOOLS;else return 0},$:function(b){return document.getElementById(b)},show:function(b){document.getElementById(b).style.display=""},hide:function(b){document.getElementById(b).style.display="none"},setValue:function(b,c){document.getElementById(b).value=c},getValue:function(b){b=document.getElementById(b);return"SELECT"==b.tagName?b.options[b.selectedIndex].value:b.value},up:function(b,c){for(var e=0,f=b;f;){f=f.parentNode;if(e>=c)break;e++}return f}},NumericField={maskNum:function(b){var b=
-b?b:window.event?window.event:null,c=b.keyCode;if(!b.ctrlKey&&!b.metaKey){var e=!1==b.altKey&&!1==b.shiftKey&&(48<=c&&57>=c||96<=c&&105>=c||8==c||9==c||13==c||17==c||36==c||35==c||37==c||46==c||39==c||190==c||110==c);e||(e=!0==b.shiftKey&&(9==c||35<=c&&39>=c))||(e=!0==b.altKey&&(84==c||82==c));if(!e)return b.preventDefault(),b.stopPropagation(),b.stopped=!0,!1}return!0},format:function(b){if(""!==b.value){var c="",e="",c=b.value.indexOf(".");-1!=c?(e=b.value.substr(c),c=b.value.substr(0,c)):c=b.value;
-document.title=c+" "+e}}},DateCalendar={build:function(b,c,e){var c=parseInt(e.substr(0,4),10),f=parseInt(e.substr(5,2),10);parseInt(e.substr(8,2),10);DateCalendar._buildMonth(b,c,f,e)},_buildMonth:function(b,c,e,f){var g=DateField.getNumberDays(c,e),k=new Date(c,e-1,1),h;h='<table class="calendarTable" cellspacing="0">'+('<tr><td class="arrowPrev"><img src="'+$Kumbia.path+'img/prevw.gif"/></td>');h+='<td colspan="5" class="monthName">'+DateCalendar.getMonthName(e)+"</td>";h+='<td class="arrowNext"><img src="'+
-$Kumbia.path+'img/nextw.gif"/></td></tr>';h+="<tr><th>Dom</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>S\u00e1b</th></tr><tr>";for(var l=1==e?DateField.getNumberDays(c-1,12):DateField.getNumberDays(c-1,e-1),k=k.getDay(),n=l-k+1;n<l;n++)h+='<td class="outMonthDay">'+(n+1)+"</td>";for(l=1;l<=g;)n=10>e?c+"-0"+e+"-"+l:c+"-"+e+"-"+l,h=f==n?h+('<td class="selectedDay" title="'+n+'">'+l+"</td>"):h+('<td title="'+n+'">'+l+"</td>"),6==k?(h+="</tr><tr>",k=0):k++,l++;l=1;if(7>k)for(n=
-k;7>n;n++)h+='<td class="outMonthDay">'+l+"</td>",l++;h+="</tr></table>";b=b.up(1).cumulativeOffset();(c=document.getElementById("calendarDiv"))&&c.parentNode.removeChild(c);c=document.createElement("DIV");c.id="calendarDiv";c.addClassName("calendar");c.update(h);c.style.top=b[1]+22+"px";c.style.left=b[0]+"px";document.body.appendChild(c);window.setTimeout(function(){new Event.observe(window,"click",DateCalendar.removeCalendar)},150)},removeCalendar:function(b){"INPUT"!=b.target.tagName&&"SELECT"!=
-b.target.tagName&&((b=document.getElementById("calendarDiv"))&&b.parentNode.removeChild(b),new Event.stopObserving(window,"click",DateCalendar.removeCalendar))},getMonthName:function(b){switch(b){case 1:return"Enero";case 2:return"Febrero";case 3:return"Marzo";case 4:return"Abril";case 5:return"Mayo";case 6:return"Junio";case 7:return"Julio";case 8:return"Agosto";case 9:return"Septiembre"}}},DateField={_monthTable:[31,28,31,30,31,30,31,31,30,31,30,31],_listeners:{},observe:function(b,c,e){"undefined"==
-typeof DateField._listeners[c]&&(DateField._listeners[c]={});DateField._listeners[c][b.id]={element:b,procedure:e}},fire:function(b,c,e){"undefined"!=typeof DateField._listeners[c]&&"undefined"!=typeof DateField._listeners[c][b.id]&&(c=DateField._listeners[c][b.id],b==c.element&&c.procedure(e));return!1},getNumberDays:function(b,c){var e=DateField._monthTable[c-1];2==c&&0==parseInt(b,10)%4&&(e=29);return e},getElement:function(b,c){return"undefined"==typeof c?Base.$(b):c.up(4).querySelector("#"+b)},
-getValue:function(b,c){var e=DateField.getElement(b,c);return"SELECT"==e.tagName?e.options[e.selectedIndex].value:e.value},refresh:function(b,c){var e="",f,g;f=DateField.getValue(b+"Year",c);g=DateField.getValue(b+"Month",c);var k=DateField.getValue(b+"Day",c),h=DateField.getElement(b+"Day",c),l=f+"-"+g+"-"+k,n=DateField.getElement(b,c);for(n.value=l;h.lastChild;)h.removeChild(h.lastChild);"0"==g.substr(0,1)&&(g=g.substr(1,1));g=DateField.getNumberDays(f,g);for(var p=1;p<=g;++p)f=10>p?"0"+p:p,e=f==
-k?e+('<option value="'+f+'" selected="selected">'+f+"</option>"):e+('<option value="'+f+'">'+f+"</option>");h.innerHTML=e;DateField.fire(n,"change",l)},showCalendar:function(b,c){DateCalendar.build(b,c,Base.getValue(c))}},TimeField={refresh:function(b,c){var e=DateField.getValue(b+"Hour",c),f=DateField.getValue(b+"Minutes",c);DateField.getElement(b,c).value=e+":"+f}},Utils={getKumbiaURL:function(b){"undefined"==typeof b&&(b="");return""!=$Kumbia.app?$Kumbia.path+$Kumbia.app+"/"+b:$Kumbia.path+b},
-getAppURL:function(b){"undefined"==typeof b&&(b="");return""!=$Kumbia.app?$Kumbia.path+$Kumbia.app+"/"+b:$Kumbia.path+b},getURL:function(b){return"undefined"==typeof b?$Kumbia.path:$Kumbia.path+b},redirectParentToAction:function(b){new Utils.redirectToAction(b,window.parent)},redirectOpenerToAction:function(b){new Utils.redirectToAction(b,window.opener)},redirectToAction:function(b,c){(c?c:window).location=Utils.getKumbiaURL()+b},upperCaseFirst:function(b){return b.substring(0,1).toUpperCase()+b.substr(1,
-b.length-1)},round:function(b,c){var e=Math.pow(100,c);return Math.round(b*e)/e},numberFormat:function(b){var b=b.toString(),c=b.indexOf(".");if(-1!=c)var e=b.substr(c+1),b=b.substring(0,c);else e="00";for(var c=[],b=b.toArray(),f=0;f<b.length;f++)0==(b.length-f)%3&&0!=f&&c.unshift("."),c.unshift(b[f]);return c.reverse().join("")+","+e.substr(0,2)}};
-function ajaxRemoteForm(b,c,e){void 0==e&&(e={});new Ajax.Updater(c,b.action,{method:"post",asynchronous:!0,evalScripts:!0,onSuccess:function(b){$(c).update(b.responseText)},onLoaded:void 0!=e.before?e.before:function(){},onComplete:void 0!=e.success?e.success:function(){},parameters:Form.serialize(b)});return!1}
-var AJAX={doRequest:function(b,c){var e=Base.activeFramework;"undefined"==typeof c&&(c={});switch(e){case Base.PROTOTYPE:return $H({before:"onLoading",success:"onSuccess",complete:"onComplete",error:"onFailure"}).each(function(b){"undefined"!=typeof c[b[0]]&&(c[b[1]]=function(b,c){b.bind(this,c.responseText)()}.bind(this,c[b[0]]))}),new Ajax.Request(b,c);case Base.JQUERY:return e={method:"type",parameters:"data",asynchronous:"async"},$.each(e,function(b,e){"undefined"!=typeof c[b]&&(c[e]=c[b])}),
-c.url=b,$.ajax(c);case Base.EXT:var e={before:"beforerequest",error:"failure",parameters:"params"},f;for(f in e)"undefined"!=typeof c[f]&&(c[e[f]]=c[f]);c.url=b;return Ext.Ajax.request(c);case Base.MOOTOOLS:e={parameters:"data",asynchronous:"async",before:"onRequest",success:"onSuccess",error:"onFailure",complete:"onComplete"};for(f in e)"undefined"!=typeof c[f]&&(c[e[f]]=c[f]);c.url=b;f=new Request(c);f.send();return f}},update:function(b,c,e){"undefined"==typeof e&&(e={});e.success=function(b){Base.$(c).innerHTML=
-b};Base.bind(e.success,c,c);return AJAX.doRequest(b,e)}};AJAX.xmlRequest=function(b){var c={};if("undefined"==typeof b.url&&"undefined"!=typeof b.action)c.url=Utils.getKumbiaURL(b.action);return AJAX.doRequest(c.url,c)};
-AJAX.viewRequest=function(b){var c={};if("undefined"==typeof b.url&&"undefined"!=typeof b.action)c.url=Utils.getKumbiaURL(b.action);container=b.container;c.evalScripts=!0;if(!document.getElementById(container))throw"CoreError: DOM Container '"+container+"' no encontrado";return AJAX.update(container,c.url,c)};AJAX.execute=function(b){var c={};if("undefined"==typeof b.url&&"undefined"!=typeof b.action)c.url=Utils.getKumbiaURL(b.action);return AJAX.doRequest(c.url,c)};
-AJAX.query=function(b){var c;new Ajax.Request(Utils.getKumbiaURL(b),{method:"GET",asynchronous:!1,onSuccess:function(b){b=b.responseXML.getElementsByTagName("data");c=xmlValue=Prototype.Browser.IE?b[0].text:b[0].textContent}});return c};document.addEventListener?document.addEventListener("DOMContentLoaded",Base._checkFramework,!1):document.attachEvent("readystatechange",Base._checkFramework);function validaEmail(b){var c,b=b?b:window.event?window.event:null;c=document.all?event.keyCode:b.keyCode;if(!(65<=c&&90>=c||50==c||8==c||9==c||17==c||16==c||35==c||36==c||46==c||109==c||189==c||190==c||189==c||37<=c&&40>=c||48<=c&&57>=c&&!1==b.shiftKey&&!1==b.altKey))document.all?b.returnValue=!1:b.preventDefault()}
-function validaForm(b,c){for(var e=0,f=[],g=0;g<c.length;g++)""==$(c[g]).value&&(f[e++]=$(c[g]));if(1<=e){alert("Es necesario que ingrese los datos que se resaltar\u00e1n");for(g=0;g<e;g++)new Effect.Highlight(f[g].name,{startcolor:"#FF0000",endcolor:"#ffbbbb"});f[0].focus()}return 1<=e?!1:!0}
-function validaText(b){var c,b=b?b:window.event?window.event:null;c=b.keyCode;window.status=c;if(!(65<=c&&90>=c||50==c||8==c||9==c||17==c||16==c||32==c||186==c||190==c||192==c||222==c||37<=c&&40>=c))document.all?b.returnValue=!1:b.preventDefault()}
-function valNumeric(b){b=b?b:window.event?window.event:null;if(!(48<=b.keyCode&&57>=b.keyCode&&!1==b.shiftKey&&!1==b.altKey||96<=b.keyCode&&105>=b.keyCode&&!1==b.shiftKey&&!1==b.altKey||8==b.keyCode||9==b.keyCode||13==b.keyCode||16==b.keyCode||17==b.keyCode||36==b.keyCode||35==b.keyCode||46==b.keyCode||37==b.keyCode||39==b.keyCode||110==b.keyCode||119==b.keyCode||190==b.keyCode))document.all?b.returnValue=!1:b.preventDefault()}
-function valDate(){if(8!=event.keyCode&&9!=event.keyCode&&36!=event.keyCode&&35!=event.keyCode&&46!=event.keyCode&&37!=event.keyCode&&39!=event.keyCode&&48>event.keyCode||57<event.keyCode&&(96>event.keyCode||105<event.keyCode&&111!=event.keyCode&&189!=event.keyCode&&109!=event.keyCode)||!0==event.shiftKey&&55!=event.keyCode||!0==event.altKey)window.event.returnValue=!1}function keyUpper(b){b.value=b.value.toUpperCase();saveValue(b)}function keyUpper2(b){b.value=b.value.toUpperCase()}
-function keyUpper3(b){b.value=b.value.toUpperCase()}
-function checkDate(b){if(b.value&&b.value)null==/([0-9]{4}[/-][0-9]{2}[/-][0-9]{2})/i.exec(b.value)?(window.status="EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO",b.className="iError"):(d=b.value.substr(0,2),m=b.value.substr(3,2),a=b.value.substr(6,4),1>d||31<d?(window.status="EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO",b.className="iError"):1>m||12<m?(window.status="EL CAMPO TIENE UN FORMATO DE FECHA INCORRECTO",b.className="iError"):(window.status="Listo",b.className="iNormal"))}
-function showConfirmPassword(b){$("div_"+b.name).visible()||new Effect.Appear("div_"+b.name)}function nextValidatePassword(b){$("div_"+b.name).visible()||($("div_"+b.name).focus(),$("div_"+b.name).select())}function validatePassword(b,c){b.value!=$(c).value?(alert("Los Passwords No son Iguales"),$(c).focus(),$(c).select()):new Effect.Fade("div_"+$(c).name)}
-function checkUnique(b,c){var e,f;if(c.value&&"@"!=c.value){for(e=f=0;e<=Fields.length-1&&!(Fields[e]==b);e++);for(j=0;j<=Values.length-1;j++)if(Values[j][e]==c.value){if(1==f){"SELECT"==c.tagName&&alert("Esta Opci\u00f3n ya fu\u00e9 seleccionada por favor elija otra diferente");c.className="iError";"INPUT"==c.tagName&&c.select();c.focus();return}f++}c.className="iNormal"}}
-function nextField(b,c){b=b?b:window.event?window.event:null;if(13==b.keyCode)for(i=0;i<=Fields.length-1;i++)if(c==Fields[i]){i==Fields.length-1?"hidden"!=document.getElementById("flid_"+Fields[0]).style.visibility&&!1==document.getElementById("flid_"+Fields[0]).readOnly&&"hidden"!=document.getElementById("flid_"+Fields[0]).type&&document.getElementById("fl_id"+Fields[0]).focus():"hidden"!=document.getElementById("flid_"+Fields[i+1]).style.visibility&&!1==document.getElementById("flid_"+Fields[i+
-1]).readOnly&&"hidden"!=document.getElementById("flid_"+Fields[i+1]).type&&document.getElementById("flid_"+Fields[i+1]).focus();break}}function saveEmail(b){document.getElementById("flid_"+b).value=document.getElementById(b+"_email1").value+"@"+document.getElementById(b+"_email2").value};var WindowUtilities={getWindowScroll:function(b){var c,e,f,b=b||document.body;b!=document.body?(c=b.scrollTop,e=b.scrollLeft,f=b.scrollWidth,b=b.scrollHeight):(b=window,c=b.document.body.scrollTop,e=b.document.body.scrollLeft,f=b.innerWidth,b=b.innerHeight);return{top:c,left:e,width:f,height:b}},getPageSize:function(b){var b=b||document.body,c,e,f;if(b!=document.body)c=b.getWidth(),e=b.getHeight(),f=b.scrollWidth,b=b.scrollHeight;else{window.innerHeight&&window.scrollMaxY?(f=document.body.scrollWidth,
-b=window.innerHeight+window.scrollMaxY):document.body.scrollHeight>document.body.offsetHeight?(f=document.body.scrollWidth,b=document.body.scrollHeight):(f=document.body.offsetWidth,b=document.body.offsetHeight);if(self.innerHeight)c=self.innerWidth,e=self.innerHeight;else if(document.documentElement&&document.documentElement.clientHeight)c=document.documentElement.clientWidth,e=document.documentElement.clientHeight;else if(document.body)c=document.body.clientWidth,e=document.body.clientHeight;b=
-b<e?e:b;f=f<c?c:f}return{pageWidth:f,pageHeight:b,windowWidth:c,windowHeight:e}}};$W=function(b){return document.frames("openWindow").document.getElementById(b)};
-var WINDOW={open:function(b){if(!$("myWindow")){var c=WindowUtilities.getWindowScroll(document.body),e=WindowUtilities.getPageSize(document.body),f=document.createElement("DIV");if(!b.title)b.title="";if(!b.url)b.url=b.action;left=parseInt((e.windowWidth-(parseInt(b.width)+36))/2);left+=c.left;f.style.left=left+"px";if("undefined"!=typeof b.width)f.style.width=b.width;if("undefined"!=typeof b.height)f.style.height=parseInt(b.height)+10+"px";f.hide();f.innerHTML="<table cellspacing='0' cellpadding='0' width='100%'><tr><td align='center' id='myWindowTitle'>"+
-b.title+"</td></tr><tr><td id='myWindowData'></td></tr></table>";f.id="myWindow";document.body.appendChild(f);if("undefined"!=typeof b.onclose)WINDOW.onclose=b.onclose;if("undefined"!=typeof b.onbeforeclose)WINDOW.onbeforeclose=b.onbeforeclose;f.close=function(c){var e=$("myWindow"),f=$("shadow_win");if(!("undefined"!=typeof b.onbeforeclose&&!1==b.onbeforeclose.call(this,c))){if("undefined"!=typeof e.onclose)b.onclose=e.onclose;document.body.removeChild(e);f&&document.body.removeChild(f);"undefined"!=
-typeof b.onclose&&b.onclose&&"undefined"!=typeof b.onclose.call&&b.onclose.call(this,c)}};new Ajax.Request(Utils.getKumbiaURL(b.url),{method:"GET",onSuccess:function(b,c){$("myWindowData").update(c.responseText);"undefined"!=typeof b.afterRender&&b.afterRender();var e=document.createElement("DIV");e.id="shadow_win";$(e).setOpacity(0.1);document.body.appendChild(e);$("myWindow").show()}.bind(this,b)})}}};var Modal={confirm:function(b,c){document.body.scrollTop=0;new WINDOW.open({url:"context",title:"Confirmaci\u00f3n",width:"500px",height:"200px",afterRender:function(b){$("contextMessage").update(b);$("okModal").observe("click",function(b){$("myWindow").close();b()}.bind(this,c));$("noModal").observe("click",function(){$("myWindow").close()})}.bind(this,b,c)})}},Growler={timeout:null,addTimeout:function(b){if(null!=Growler.timeout)window.clearTimeout(Growler.timeout),Growler.timeout=null;Growler.timeout=
-window.setTimeout(function(b){document.body.removeChild(b);Growler.timeout=null}.bind(this,b),3500)},show:function(b){var c=WindowUtilities.getWindowScroll(document.body),e=WindowUtilities.getPageSize(document.body),f=$("growler");f?(f.innerHTML=b,Growler.addTimeout(f),new Effect.Shake(f,{duration:0.5})):(f=document.createElement("DIV"),f.id="growler",f.innerHTML=b,f.hide(),document.body.appendChild(f),f.setStyle({top:e.windowHeight-(f.getHeight()+20)+c.top+"px",left:e.windowWidth-270+c.left+"px"}),
-f.show(),Growler.addTimeout(f))}};function openTables(){Clave.authForModule("tables")}function cashIntro(){Clave.authForModule("cashintro")}function cashOuttro(){Clave.authForModule("cashouttro")}function pay(){Clave.authForModule("pay")}function audit(){Clave.authForModule("audit")}function cancelDineIn(){Clave.authForModule("cancel")}function checkDineIn(){Clave.authForModule("check")}function dineInStatus(){Clave.authForModule("status")}function goReports(){Clave.authForModule("reports")}
-function closeDay(){Modal.confirm("\u00bfEst\u00e1 seguro de hacer el cierre del d\u00eda en el Sistema?",function(){Clave.authForModule("close")})}function revertDay(){Modal.confirm("\u00bfEst\u00e1 seguro de devolver la fecha del sistema al d\u00eda anterior?",function(){Clave.authForModule("revert")})}function cancelFactura(){Clave.authForModule("anula_factura")}function reimprimirFactura(){Clave.authForModule("reimprimir")}function admin(){new Utils.redirectToAction("admin")};function dropPassword(){new Effect.Shake("view_pass",{duration:0.4});new Effect.Morph("view_pass",{duration:0.4,style:{color:"#FFFFFF"},afterFinish:function(){$("view_pass").value="";$("view_pass").style.color="#000000"}});$("clave").value="";$("okButton").disabled=!0;$("password_incorrecto")&&document.body.removeChild($("password_incorrecto"))}function cancelPassword(){$("myWindow").close()}
-function acceptPassword(b){new Ajax.Request(Utils.getKumbiaURL("clave/autenticar/"+hex_sha1($("clave").value)),{method:"GET",onSuccess:function(c){if(1==c.responseText.evalJSON())new Utils.redirectToAction(b);else{var c=WindowUtilities.getWindowScroll(document.body),e=WindowUtilities.getPageSize(document.body),f=$("growler");f?($("view_pass").value="",$("clave").value="",new Effect.Shake(f,{duration:0.4})):(f=document.createElement("DIV"),f.id="growler",f.setStyle({top:e.windowHeight-50+c.top+"px"}),
-f.innerHTML="<b>Contrase\u00f1a Incorrecta</b>",document.body.appendChild(f),new Effect.Move("view_pass",{duration:0.1,y:-10,afterFinish:function(){new Effect.Move("view_pass",{duration:0.1,y:10,afterFinish:function(){$("view_pass").value="";$("clave").value="";new Effect.Shake(f,{duration:0.4})}})}}))}}})}
-var Clave={addToPassword:function(b,c){var e=$("clave"),f=$("view_pass");this.blur();if(b)if("undefined"!=typeof c.keyCode){if(c.keyCode==Event.KEY_RETURN||0==c.keyCode)return}else return;e.value+=this.value;if(""!=e.value)$("okButton").disabled=!1;f.value="";for(var g=0;g<e.value.length;g++)f.value+="*"},big:function(){this.className="bigButton2";this.style.fontSize="44px";new Effect.Morph(this,{duration:0.3,style:{fontSize:"30px"},afterFinish:function(){this.className="bigButton";this.style.width=
-"70px";this.style.height="70px";this.style.fontSize="30px"}.bind(this)});this.blur()},authForModule:function(b){new WINDOW.open({url:"clave/index/"+b,title:"Digite su Clave",width:"230px",height:"380px",afterRender:function(){$$(".bigButton").each(function(b){b.observe("click",Clave.addToPassword.bind(b,!1));b.observe("mousedown",Clave.big)});window.setTimeout(function(){$("view_pass").activate()},100)}})}};
-new Event.observe(window,"keyup",function(b){if($("myWindow")){var c=0,c=parseInt(b.keyCode);if(c==Event.KEY_BACKSPACE||c==Event.KEY_ESC)dropPassword(),new Event.stop(b);else if(c==Event.KEY_RETURN)$("okButton").click(),new Event.stop(b);else{if(48<=c&&57>=c){var e=$("b"+(c-48));if(e){Clave.big.bind(e)(b);Clave.addToPassword.bind(e)(!0,b);new Event.stop(b);return}}if(96<=c&&105>=c&&(e=$("b"+(c-96))))Clave.big.bind(e)(b),Clave.addToPassword.bind(e)(!0,b),new Event.stop(b)}}});
-function changePassword(){acceptPassword=function(){new Ajax.Request(Utils.getKumbiaURL("clave/autenticar/"+hex_sha1($("clave").value)),{onSuccess:function(b){1==b.responseText.evalJSON()?($("myWindow").onclose=function(){acceptPassword=function(){new Ajax.Request(Utils.getKumbiaURL("clave/change"),{parameters:{nuevo:hex_sha1($("clave").value)},onSuccess:function(){$("myWindow").onclose=function(){};$("myWindow").close();alert("Se cambi\u00f3 el password");window.location=Utils.getKumbiaURL()}})};
-new WINDOW.open({url:"clave/input/",title:"Nueva Clave",width:"220px",height:"380px",afterRender:function(){$("clave").value="";$$(".bigButton").each(function(b){b.observe("click",Clave.addToPassword.bind(b,!1));b.observe("mousedown",Clave.big)})}})},$("myWindow").close()):(alert("Contrase\u00f1a incorrecta"),window.location=Utils.getKumbiaURL())}})};cancelPassword=function(){window.location=Utils.getKumbiaURL()};new WINDOW.open({url:"clave/input/",title:"Digite su Clave",width:"220px",height:"380px",
-afterRender:function(){$$(".bigButton").each(function(b){b.observe("click",Clave.addToPassword.bind(b,!1));b.observe("mousedown",Clave.big)})}})};var hexcase=0,b64pad="",chrsz=8;function hex_sha1(b){return binb2hex(core_sha1(str2binb(b),b.length*chrsz))}function b64_sha1(b){return binb2b64(core_sha1(str2binb(b),b.length*chrsz))}function str_sha1(b){return binb2str(core_sha1(str2binb(b),b.length*chrsz))}function hex_hmac_sha1(b,c){return binb2hex(core_hmac_sha1(b,c))}function b64_hmac_sha1(b,c){return binb2b64(core_hmac_sha1(b,c))}function str_hmac_sha1(b,c){return binb2str(core_hmac_sha1(b,c))}
-function sha1_vm_test(){return"a9993e364706816aba3e25717850c26c9cd0d89d"==hex_sha1("abc")}
-function core_sha1(b,c){b[c>>5]|=128<<24-c%32;b[(c+64>>9<<4)+15]=c;for(var e=Array(80),f=1732584193,g=-271733879,k=-1732584194,h=271733878,l=-1009589776,n=0;n<b.length;n+=16){for(var p=f,q=g,r=k,s=h,t=l,o=0;80>o;o++){e[o]=16>o?b[n+o]:rol(e[o-3]^e[o-8]^e[o-14]^e[o-16],1);var u=safe_add(safe_add(rol(f,5),sha1_ft(o,g,k,h)),safe_add(safe_add(l,e[o]),sha1_kt(o))),l=h,h=k,k=rol(g,30),g=f,f=u}f=safe_add(f,p);g=safe_add(g,q);k=safe_add(k,r);h=safe_add(h,s);l=safe_add(l,t)}return[f,g,k,h,l]}
-function sha1_ft(b,c,e,f){return 20>b?c&e|~c&f:40>b?c^e^f:60>b?c&e|c&f|e&f:c^e^f}function sha1_kt(b){return 20>b?1518500249:40>b?1859775393:60>b?-1894007588:-899497514}function core_hmac_sha1(b,c){var e=str2binb(b);16<e.length&&(e=core_sha1(e,b.length*chrsz));for(var f=Array(16),g=Array(16),k=0;16>k;k++)f[k]=e[k]^909522486,g[k]=e[k]^1549556828;e=core_sha1(f.concat(str2binb(c)),512+c.length*chrsz);return core_sha1(g.concat(e),672)}
-function safe_add(b,c){var e=(b&65535)+(c&65535);return(b>>16)+(c>>16)+(e>>16)<<16|e&65535}function rol(b,c){return b<<c|b>>>32-c}function str2binb(b){for(var c=[],e=(1<<chrsz)-1,f=0;f<b.length*chrsz;f+=chrsz)c[f>>5]|=(b.charCodeAt(f/chrsz)&e)<<32-chrsz-f%32;return c}function binb2str(b){for(var c="",e=(1<<chrsz)-1,f=0;f<32*b.length;f+=chrsz)c+=String.fromCharCode(b[f>>5]>>>32-chrsz-f%32&e);return c}
-function binb2hex(b){for(var c=hexcase?"0123456789ABCDEF":"0123456789abcdef",e="",f=0;f<4*b.length;f++)e+=c.charAt(b[f>>2]>>8*(3-f%4)+4&15)+c.charAt(b[f>>2]>>8*(3-f%4)&15);return e}function binb2b64(b){for(var c="",e=0;e<4*b.length;e+=3)for(var f=(b[e>>2]>>8*(3-e%4)&255)<<16|(b[e+1>>2]>>8*(3-(e+1)%4)&255)<<8|b[e+2>>2]>>8*(3-(e+2)%4)&255,g=0;4>g;g++)c=8*e+6*g>32*b.length?c+b64pad:c+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charAt(f>>6*(3-g)&63);return c};
+ * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
+ * in FIPS PUB 180-1
+ * Version 2.1a Copyright Paul Johnston 2000 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for details.
+ */
+
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
+var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
+var b64pad  = ""; /* base-64 pad character. "=" for strict RFC compliance   */
+var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
+
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+function hex_sha1(s){return binb2hex(core_sha1(str2binb(s),s.length * chrsz));}
+function b64_sha1(s){return binb2b64(core_sha1(str2binb(s),s.length * chrsz));}
+function str_sha1(s){return binb2str(core_sha1(str2binb(s),s.length * chrsz));}
+function hex_hmac_sha1(key, data){ return binb2hex(core_hmac_sha1(key, data));}
+function b64_hmac_sha1(key, data){ return binb2b64(core_hmac_sha1(key, data));}
+function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
+
+/*
+ * Perform a simple self-test to see if the VM is working
+ */
+function sha1_vm_test()
+{
+  return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
+}
+
+/*
+ * Calculate the SHA-1 of an array of big-endian words, and a bit length
+ */
+function core_sha1(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << (24 - len % 32);
+  x[((len + 64 >> 9) << 4) + 15] = len;
+
+  var w = Array(80);
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+  var e = -1009589776;
+
+  for(var i = 0; i < x.length; i += 16)
+  {
+    var olda = a;
+    var oldb = b;
+    var oldc = c;
+    var oldd = d;
+    var olde = e;
+
+    for(var j = 0; j < 80; j++)
+    {
+      if(j < 16) w[j] = x[i + j];
+      else w[j] = rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1);
+      var t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
+                       safe_add(safe_add(e, w[j]), sha1_kt(j)));
+      e = d;
+      d = c;
+      c = rol(b, 30);
+      b = a;
+      a = t;
+    }
+
+    a = safe_add(a, olda);
+    b = safe_add(b, oldb);
+    c = safe_add(c, oldc);
+    d = safe_add(d, oldd);
+    e = safe_add(e, olde);
+  }
+  return Array(a, b, c, d, e);
+
+}
+
+/*
+ * Perform the appropriate triplet combination function for the current
+ * iteration
+ */
+function sha1_ft(t, b, c, d)
+{
+  if(t < 20) return (b & c) | ((~b) & d);
+  if(t < 40) return b ^ c ^ d;
+  if(t < 60) return (b & c) | (b & d) | (c & d);
+  return b ^ c ^ d;
+}
+
+/*
+ * Determine the appropriate additive constant for the current iteration
+ */
+function sha1_kt(t)
+{
+  return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
+         (t < 60) ? -1894007588 : -899497514;
+}
+
+/*
+ * Calculate the HMAC-SHA1 of a key and some data
+ */
+function core_hmac_sha1(key, data)
+{
+  var bkey = str2binb(key);
+  if(bkey.length > 16) bkey = core_sha1(bkey, key.length * chrsz);
+
+  var ipad = Array(16), opad = Array(16);
+  for(var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
+  return core_sha1(opad.concat(hash), 512 + 160);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function safe_add(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+function rol(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * Convert an 8-bit or 16-bit string to an array of big-endian words
+ * In 8-bit function, characters >255 have their hi-byte silently ignored.
+ */
+function str2binb(str)
+{
+  var bin = Array();
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < str.length * chrsz; i += chrsz)
+    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i%32);
+  return bin;
+}
+
+/*
+ * Convert an array of big-endian words to a string
+ */
+function binb2str(bin)
+{
+  var str = "";
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < bin.length * 32; i += chrsz)
+    str += String.fromCharCode((bin[i>>5] >>> (32 - chrsz - i%32)) & mask);
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a hex string.
+ */
+function binb2hex(binarray)
+{
+  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i++)
+  {
+    str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) +
+           hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8  )) & 0xF);
+  }
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a base-64 string
+ */
+function binb2b64(binarray)
+{
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i += 3)
+  {
+    var triplet = (((binarray[i   >> 2] >> 8 * (3 -  i   %4)) & 0xFF) << 16)
+                | (((binarray[i+1 >> 2] >> 8 * (3 - (i+1)%4)) & 0xFF) << 8 )
+                |  ((binarray[i+2 >> 2] >> 8 * (3 - (i+2)%4)) & 0xFF);
+    for(var j = 0; j < 4; j++)
+    {
+      if(i * 8 + j * 6 > binarray.length * 32) str += b64pad;
+      else str += tab.charAt((triplet >> 6*(3-j)) & 0x3F);
+    }
+  }
+  return str;
+}

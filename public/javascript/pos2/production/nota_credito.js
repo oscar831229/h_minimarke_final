@@ -1225,6 +1225,7 @@ function saveEmail(obj) {
 }
 
 
+
 /**
  * Kumbia Enterprise Framework
  * Window Object Manipulation Base Functions
@@ -1384,6 +1385,7 @@ var WINDOW = {
 }
 
 
+
 /**
  * Hotel Front-Office Solution
  *
@@ -1461,1653 +1463,6 @@ var Growler = {
 	}
 };
 
-
-/**
- * Hotel Front-Office Solution
- *
- * LICENSE
- *
- * This source file is subject to license that is bundled
- * with this package in the file docs/LICENSE.txt.
- *
- * @package 	Back-Office
- * @copyright 	BH-TECK Inc. 2009-2010
- * @version		$Id$
- */
-
-var Pedido = Class.create({
-
-	id: 0,
-
-	tipoVenta: null,
-
-	_accountMasterId: 0,
-
-	_numeroCuenta: 0,
-
-	_tipoComanda: "M",
-
-	_searchMode: false,
-
-	_searching: false,
-
-	_pedirPersonas: "S",
-
-	_pedirAsientos: "S",
-
-	_numeroAsientos: 0,
-
-	_menuCache: [],
-
-	_modifiersCache: [],
-
-	_menuDetails: null,
-
-	_menuDetailsHeight: '300px',
-
-	_listaPedidoHeight: '300px',
-
-	_menuItemsButtons: [],
-
-	_cuentasElement: null,
-
-	_comandasElement: null,
-
-	_menuItemSelected: null,
-
-	_lastMenuSelected: null,
-
-	getMenuItems: function(element, id, event){
-
-		if(this._lastMenuSelected!=element){
-			element.className = "menuButtonSelected";
-			if(this._lastMenuSelected!=null){
-				this._lastMenuSelected.className = "menuButton";
-			};
-			this._lastMenuSelected = element;
-		};
-
-		if(typeof this._menuCache[id] == "undefined"){
-			new Ajax.Request(Utils.getKumbiaURL("order/getMenu/"+id), {
-				method: 'GET',
-				onSuccess: function(id, transport){
-					this._menuCache[id] = JSON.parse(transport.responseText);
-					this.updateMenuDetails(this._menuCache[id]);
-				}.bind(this, id)
-			});
-		} else {
-			this.updateMenuDetails(this._menuCache[id]);
-		}
-	},
-
-	adjustItemsList: function(items){
-		if(this._menuDetailsElement.style.height==''){
-			new Effect.Morph(this._menuDetailsElement, {
-				duration: 0.3,
-				style: {
-					height: this._menuDetailsHeight
-				}
-			});
-		};
-		if(items.length>8){
-			this._menuDetailsElement.style.overflowY = 'scroll';
-		} else {
-			this._menuDetailsElement.style.overflowY = 'auto';
-		}
-	},
-
-	updateMenuDetails: function(items)
-	{
-		this._menuDetailsElement.innerHTML = '';
-		for (var i = 0; i < items.length; i++) {
-			var button = document.createElement('BUTTON');
-			button.className = 'menuItemButton';
-			button.title = 'Precio: '+items[i].valor;
-			button.update(items[i].nombre);
-			button.observe('click', this.addItemToAccount.bind(this, button, items[i]));
-			this._menuDetailsElement.appendChild(button);
-
-			if (items.length == 1) {
-				//alert(items.length);
-				// this.addItemToAccount(button, items[0]);
-			}
-		};
-		
-		this.adjustItemsList(items);
-	},
-
-	updateModifiersDetails: function(items)
-	{
-		this._menuDetailsElement.innerHTML = '';
-		for (var i = 0;i < items.length; i++) {
-			var button = document.createElement('BUTTON');
-			button.className = 'menuItemButton';
-			if (i == 0) {
-				button.observe('click', this.addItemToAccount.bind(this, button, items[i]));
-			} else {
-				button.addClassName('modifierButton');
-				button.observe('click', this.addModifier.bind(this, button, items[i]));
-			};
-			button.title = 'Precio: '+items[i].valor;
-			button.update(items[i].nombre);
-			this._menuDetailsElement.appendChild(button);
-		};
-		this.adjustItemsList(items);
-	},
-
-	addItemToAccount: function(element, item)
-	{
-
-		if (element != this._menuItemSelected) {
-			element.addClassName("menuItemButtonSelected");
-			if (this._menuItemSelected) {
-				this._menuItemSelected.removeClassName("menuItemButtonSelected")
-			};
-			this._menuItemSelected = element;
-		};
-
-		new Ajax.Request(Utils.getKumbiaURL("order/addToList/"+item.id), {
-			method: 'GET',
-			onSuccess: function(item, transport){
-				this._preOrder.update(transport.responseText);
-				if (item.modifiers != 0) {
-					this.getModifiers(item.id);
-				};
-				this.preOrderCallbacks();
-				new Ajax.Request(Utils.getKumbiaURL('order/changeTipoVenta/'+$("tipo_venta").getValue()), {
-                                	method: 'GET',
-                                	onSuccess: this.refresh.bind(this)
-                        	});
-			}.bind(this, item),
-			onFailure: function(t){
-				this._preOrder.update(t.responseText);
-			}
-		});
-	},
-
-	getModifiers: function(id)
-	{
-		if (typeof this._modifiersCache[id] == "undefined") {
-			new Ajax.Request(Utils.getKumbiaURL("order/getModifiers/" + id), {
-				method: 'GET',
-				onSuccess: function(id, transport){
-					this._modifiersCache[id] = JSON.parse(transport.responseText);
-					this.updateModifiersDetails(this._modifiersCache[id]);
-				}.bind(this, id)
-			});
-		} else {
-			this.updateModifiersDetails(this._modifiersCache[id]);
-		}
-	},
-
-	addModifier: function(element, item) {
-		if (element!=this._menuItemSelected) {
-			element.addClassName("menuItemButtonSelected");
-			if (this._menuItemSelected) {
-				this._menuItemSelected.removeClassName("menuItemButtonSelected")
-			};
-			this._menuItemSelected = element;
-		};
-		new Ajax.Request(Utils.getKumbiaURL("order/addModifier/"+item.id), {
-			method: 'GET',
-			onSuccess: this.refresh.bind(this)
-		});
-	},
-
-	deleteModifier: function(element) {
-		Modal.confirm("¿Seguro desea eliminar el modificador '"+element.innerHTML+"'?", function(accountModifierId){
-			new Ajax.Request(Utils.getKumbiaURL("order/deleteModifier/"+accountModifierId), {
-				method: 'GET',
-				onSuccess: this.refresh.bind(this)
-			});
-		}.bind(this, element.lang));
-	},
-
-	addMenuItemsHotKeys: function(){
-		var avalLetters = [];
-		for(var i=65;i<91;i++){
-			var ch = String.fromCharCode(i).toLowerCase();
-			if(!HotKeys.include()){
-				avalLetters.push(ch);
-			}
-		};
-		iHotKeys = [];
-		MenuItemsHotKeys = [];
-		var menuButtons = $$(".menuItemButton");
-		for(var j=0;j<menuButtons.length;j++){
-			var element = menuButtons[j];
-			if(avalLetters.length>j){
-				element.innerHTML += "<span class='mcode'>&nbsp;("+avalLetters[j]+")</span>";
-				element.id = "mit"+j;
-				MenuItemsHotKeys.push(j);
-				iHotKeys.push(avalLetters[j]);
-			}
-			j++;
-		};
-	},
-
-	refresh: function(type){
-		if(typeof type != "string"){
-			type = ""
-		};
-		new Ajax.Request(Utils.getKumbiaURL("order/refresh/"+type), {
-			method: 'GET',
-			onSuccess: function(transport){
-				this._preOrder.update(transport.responseText);
-				this.preOrderCallbacks();
-				this.disabledInvoice();
-			}.bind(this)
-		});
-	},
-
-	closeRefresh: function(){
-		var myWindow = $('myWindow');
-		if (myWindow) {
-			myWindow.close();
-		};
-		this.refresh();
-	},
-
-	addAutomaticComanda: function() {
-		new Ajax.Request(Utils.getKumbiaURL("order/addNextComanda"), {
-			method: 'GET',
-			onSuccess: function(transport){
-				var number = JSON.parse(transport.responseText);
-				var option = document.createElement("OPTION");
-				option.value = number;
-				option.text = number;
-				this._comandasElement.appendChild(option);
-				this._comandasElement.selectedIndex = this._comandasElement.options.length-1;
-				this.pedirPersonas();
-			}.bind(this)
-		});
-	},
-
-	addComanda: function() {
-		new WINDOW.open({
-			title: "Digite el Número de Comanda",
-			action: 'numero',
-			width: "220px",
-			height: "390px",
-			background: "#c0c0c0",
-			onbeforeclose: function(action) {
-				if(action=='cancel'){
-					if(this._comandasElement.options.length==0){
-						return this.backToTables();
-					}
-				};
-				var numero = parseInt($('number').value, 10);
-				if(numero<=0){
-					if(this._comandasElement.options.length==0){
-						Growler.show('Debe ingresar un número de Comanda antes de empezar');
-						return false;
-					} else {
-						if(numero==0){
-							Growler.show('Debe ingresar un número de Comanda antes de empezar');
-						}
-						return;
-					}
-				};
-				this._addComandaInternal(numero);
-			}.bind(this)
-		});
-	},
-
-	_addComandaInternal: function(numero, skip){
-		new Ajax.Request(Utils.getKumbiaURL("order/existeComanda/"+numero), {
-			method: 'GET',
-			onSuccess: function(numero, skip, transport){
-
-				var response = JSON.parse(transport.responseText);
-				if(response>0){
-					Growler.show('Esta comanda ya existe en otra cuenta');
-					return false;
-				};
-
-				if (skip != true) {
-					var options = this._comandasElement.options;
-					for(var i=0;i<options.length;i++){
-						if(options[i].value==numero){
-							Growler.show('Esta comanda ya existe');
-							return false;
-						}
-					}
-				}
-
-				var option = document.createElement("OPTION");
-				option.value = numero;
-				option.text = numero;
-				this._comandasElement.appendChild(option);
-				this.setLastComanda(numero);
-				window.setTimeout(this.pedirPersonas.bind(this), 300);
-			}.bind(this, numero, skip)
-		});
-	},
-
-	/**
-	 * Elimina una comanda del pedido
-	 */
-	deleteComanda: function(){
-		new Ajax.Request(Utils.getKumbiaURL("order/getNumeroComandas"), {
-			method: 'GET',
-			onSuccess: function(transport){
-				var response = JSON.parse(transport.responseText);
-				if(response>1){
-					Modal.confirm('¿Esta seguro de eliminar esta comanda?', function(){
-						new Ajax.Request(Utils.getKumbiaURL("order/queryComanda/"+this._comandasElement.getValue()), {
-							method: 'GET',
-							onSuccess: function(transport){
-								var response = JSON.parse(transport.responseText);
-								if(response>0){
-									Growler.show('No se puede borrar esta comanda porque tiene items atendidos');
-									return false;
-								} else {
-									new Ajax.Request(Utils.getKumbiaURL("order/deleteComanda/"+this._comandasElement.getValue()), {
-										method: 'GET',
-										onSuccess: function(){
-											Growler.show("Se eliminó la comanda correctamente");
-											this.refresh();
-											this.setLastComanda();
-										}.bind(this)
-									});
-								}
-							}.bind(this)
-						});
-					}.bind(this));
-				} else {
-					Growler.show('No se puede eliminar la comanda porque es la única existente');
-					return false;
-				}
-			}.bind(this)
-		});
-	},
-
-	pedirPersonas: function(){
-		if(this._numeroAsientos==0){
-			if(this._pedirPersonas=="S"){
-				new WINDOW.open({
-					title: "Digite el Número de Personas",
-					action:'numero',
-					width: "220px",
-					height: "390px",
-					onbeforeclose: function(action){
-						if(action=="cancel"){
-							return this.backToTables();
-						};
-						var number = parseInt($('number').value, 10);
-						if(number>14){
-							Growler.show("El número de personas es muy alto");
-							return false;
-						};
-						if(number<1){
-							Growler.show("El número de personas es muy bajo");
-							return false;
-						};
-						this.addSillas(number);
-						this.setNumeroSillas(number);
-					}.bind(this)
-				});
-			}
-		}
-	},
-
-	setNumeroSillas: function(number){
-		new Ajax.Request(Utils.getKumbiaURL("order/setNumberAsientos/"+number), {
-			method: 'GET'
-		});
-	},
-
-	setActiveAsiento: function(number){
-		new Ajax.Request(Utils.getKumbiaURL("order/setActiveAsiento/"+number), {
-			method: 'GET'
-		});
-	},
-
-	addSillas: function(number){
-
-		var i = 0;
-		var number = parseInt(number, 10)+1;
-		for(i=1;i<=number;i++){
-			var chair = $("s"+i);
-			new Effect.Appear(chair, {
-				duration: 0.6
-			});
-			if(!chair.number){
-				new Event.observe(chair, "click", this.changeSelectedSilla.bind(this, i))
-			};
-			chair.number = i;
-			chair.show();
-			if(i==number){
-				new Effect.Opacity(chair, { duration: 0.5, to: 0.4 });
-			}
-		};
-		if(number>this._numeroAsientos){
-			this._numeroAsientos = number;
-		}
-	},
-
-	changeSelectedSilla: function(number){
-		for(var i=1;i<15;i++){
-			var silla = $("s"+i);
-			if(silla.visible()){
-				if(i==number){
-					silla.removeClassName("inactiveAsiento");
-					silla.addClassName("activeAsiento");
-					this.setActiveAsiento(number);
-				} else {
-					silla.removeClassName("activeAsiento");
-					silla.addClassName("inactiveAsiento");
-				}
-			}
-		}
-	},
-
-	addCuenta: function(){
-		new Ajax.Request(Utils.getKumbiaURL("order/addCuenta"), {
-			method: 'GET',
-			onSuccess: function(transport){
-
-				var nuevaCuenta = JSON.parse(transport.responseText);
-				var options = this._cuentasElement.options;
-				for(var i=0;i<options.length;i++){
-					if(options[i].value==nuevaCuenta){
-						nuevaCuenta++;
-						continue;
-					}
-				};
-
-				var option = document.createElement("OPTION");
-				option.value = nuevaCuenta;
-				option.text = nuevaCuenta;
-				this._cuentasElement.appendChild(option);
-
-				$("documento").value = 0;
-				$("nombre_cliente").value = 'PARTICULAR';
-				$("nombre_cliente_span").innerHTML = 'PARTICULAR';
-				$("habitacion_id").value = 0;
-				$("habitacion_id_span").innerHTML = "";
-				$("nota").value = "";
-				$("nota_span").innerHTML = "";
-
-				this.setLastCuenta();
-
-			}.bind(this)
-		});
-	},
-
-	setLastCuenta: function(){
-		this._cuentasElement.selectedIndex = this._cuentasElement.options.length - 1;
-		new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()));
-	},
-
-	deleteCuenta: function(){
-		new Ajax.Request(Utils.getKumbiaURL("order/getNumeroCuentas"), {
-			method: 'GET',
-			onSuccess: function(transport){
-				var response = JSON.parse(transport.responseText);
-				if(response>1){
-					Modal.confirm('¿Esta seguro de eliminar esta cuenta?', function(){
-						new Ajax.Request(Utils.getKumbiaURL("order/queryCuenta/"+this._cuentasElement.getValue()), {
-							method: 'GET',
-							onSuccess: function(transport){
-								var response = JSON.parse(transport.responseText);
-								if(response>0){
-									Growler.show('No se puede borrar esta cuenta porque tiene items atendidos');
-									return false;
-								} else {
-									new Ajax.Request(Utils.getKumbiaURL("order/deleteCuenta/"+this._cuentasElement.getValue()), {
-										method: 'GET',
-										onSuccess: function(){
-											Growler.show("Se eliminó la cuenta correctamente");
-											this.refresh();
-											this.setLastCuenta();
-										}.bind(this)
-									});
-								}
-							}.bind(this)
-						});
-					}.bind(this));
-				} else {
-					Growler.show('No se puede eliminar la cuenta porque es la única existente');
-					return false;
-				}
-			}.bind(this)
-		});
-	},
-
-	onChangeCuenta: function(){
-		new Ajax.Request(Utils.getKumbiaURL("order/setCuenta/"+this._cuentasElement.getValue()), {
-			onSuccess: function(transport){
-				var response = JSON.parse(transport.responseText);
-				if(response.status=='OK'){
-					$("documento").value = response.documento;
-					$("nombre_cliente").value = response.cliente;
-					$("nombre_cliente_span").innerHTML = response.cliente;
-					if(response.habitacion!=-1){
-						$("habitacion_id").value = response.habitacion;
-						$("habitacion_id_span").innerHTML = "["+response.habitacion+"]";
-					} else {
-						$("habitacion_id").value = 0;
-						$("habitacion_id_span").innerHTML = "";
-					};
-					if(response.nota!=null){
-						$("nota").value = response.nota;
-						$("nota_span").innerHTML = "<br><b>Nota:</b>"+response.nota;
-					} else {
-						$("nota").value = "";
-						$("nota_span").innerHTML = "";
-					};
-					$("tipo_venta").setValue(response.tipo_venta);
-					if(response.estado=='B'){
-						if(response.tipo_venta=='F'){
-							Growler.show("Ya se ha generado la factura en esta cuenta");
-						} else {
-							Growler.show("Ya se ha generado la orden de servicio en esta cuenta");
-						}
-					}
-				}
-			}
-		});
-	},
-
-	onChangeComanda: function(){
-		new Ajax.Request(Utils.getKumbiaURL("order/setComanda/"+this._comandasElement.getValue()), {
-			method: 'GET'
-		});
-		this._comandasElement.blur();
-	},
-
-	setLastComanda: function(number){
-		this._comandasElement.selectedIndex = this._comandasElement.options.length - 1;
-		new Ajax.Request(Utils.getKumbiaURL("order/setComanda/"+number), {
-			method: 'GET'
-		});
-	},
-
-	toggleComanda: function(element){
-		var trElement = element.up(1);
-		var comanda = element.innerHTML;
-		var select = document.createElement('SELECT');
-		var options = this._comandasElement.options;
-		for(var i=0;i<options.length;i++){
-			var option = document.createElement("OPTION");
-			option.value = options[i].value;
-			option.text = options[i].text;
-			if(option.value==comanda){
-				option.selected = true;
-			};
-			select.appendChild(option);
-		};
-		select.observe('change', this.changeItemComanda.bind(this, trElement.lang, select));
-		select.observe('blur', function(span, select){
-			span.innerHTML = select.getValue();
-			select.parentNode.removeChild(select);
-		}.bind(this, element, select));
-		element.innerHTML = "";
-		element.up().appendChild(select);
-		select.activate();
-	},
-
-	changeItemComanda: function(accountId, comanda){
-		new Ajax.Request(Utils.getKumbiaURL("order/changeItemComanda/"+accountId+"/"+comanda.getValue()), {
-			method: 'get',
-			onSuccess: this.refresh.bind(this)
-		});
-	},
-
- 	toggleCuenta: function(element){
- 		var trElement = element.up(1);
-		var cuenta = element.innerHTML.replace("[", "").replace("]", "");
-		var select = document.createElement('SELECT');
-		var options = this._cuentasElement.options;
-		for(var i=0;i<options.length;i++){
-			var option = document.createElement("OPTION");
-			option.value = options[i].value;
-			option.text = options[i].text;
-			if(option.value==cuenta){
-				option.selected = true;
-			};
-			select.appendChild(option);
-		};
-		select.observe('change', this.changeItemCuenta.bind(this, trElement.lang, select));
-		select.observe('blur', function(span, select){
-			span.innerHTML = "["+select.getValue()+"]";
-			select.parentNode.removeChild(select);
-		}.bind(this, element, select));
-		element.innerHTML = "";
-		element.up().appendChild(select);
-		select.activate();
-	},
-
-	changeItemCuenta: function(accountId, cuenta){
-		new Ajax.Request(Utils.getKumbiaURL("order/changeItemCuenta/"+accountId+"/"+cuenta.getValue()), {
-			method: 'get',
-			onSuccess: this.refresh.bind(this)
-		});
-	},
-
-	deleteItem: function(element){
-		var trElement = element.up(1);
-		var itemName = trElement.querySelector('span.itemName');
-		Modal.confirm("¿Seguro desea cancelar la cantidad pendiente de '"+itemName.innerHTML+"'?", function(){
-			new Effect.Fade(trElement, {
-				duration: 0.3,
-				afterFinish: function(trElement){
-					new Ajax.Request(Utils.getKumbiaURL("order/deleteItem/"+trElement.lang), {
-						method: 'GET',
-						onSuccess: this.refresh.bind(this)
-					});
-				}.bind(this, trElement)
-			});
-		}.bind(this, trElement))
-	},
-
-	changeDiscount: function(element){
-		var trElement = element.up(1);
-		new WINDOW.open({
-			title: "Digite el Porcentaje de Descuento",
-			action:'numero',
-			width: "220px",
-			height: "390px",
-			onbeforeclose: function(accountId, action){
-				if(action=="cancel"){
-					return;
-				};
-				var number = parseInt($('number').value, 10);
-				if(number>100){
-					Growler.show("El porcentaje de descuento no puede ser mayor a 100");
-					return false;
-				};
-				new Ajax.Request(Utils.getKumbiaURL("order/changeDiscount/"+accountId+"/"+number), {
-					method: 'GET',
-					onSuccess: this.refresh.bind(this)
-				});
-			}.bind(this, trElement.lang)
-		});
-	},
-
-	changeQuantity: function(element){
-		var trElement = element.up(1);
-		new WINDOW.open({
-			title: "Digite la Cantidad",
-			action:'numero',
-			width: "220px",
-			height: "370px",
-			onbeforeclose: function(accountId, action) {
-				if(action=="cancel"){
-					return;
-				};
-				var number = parseInt($('number').value, 10);
-				if(number=="0"){
-					Growler.show("La cantidad debe ser mayor a cero");
-					return false;
-				};
-				new Ajax.Request(Utils.getKumbiaURL("order/changeQuantity/"+accountId+"/"+number), {
-					method: 'GET',
-					onSuccess: this.refresh.bind(this)
-				});
-			}.bind(this, trElement.lang)
-		});
-	},
-
-	showInvoice: function(){
-		var type = $F('tipo_venta');
-		if($('documento').value!="0"){
-			if($('nombre_cliente').value!="PARTICULAR"){
-				if(type=='F'){
-					Modal.confirm('¿Seguro desea generar la Factura?', function(){
-						window.open(Utils.getKumbiaURL('factura/index/'+this._numeroCuenta+'/'+this._accountMasterId), null, 'width=300, height=700, toolbar=no, statusbar=no')
-						new Utils.redirectToAction('order/add/'+this._id);
-					}.bind(this));
-				} else {
-					//Socios
-					if(type=='S'){
-						Modal.confirm('¿Seguro desea asignar estos cargos a la factura de socios?', function(){
-							window.open(Utils.getKumbiaURL('factura/index/'+this._numeroCuenta+'/'+this._accountMasterId), null, 'width=300, height=700, toolbar=no, statusbar=no')
-							new Utils.redirectToAction('order/add/'+this._id);
-						}.bind(this));
-					} else {
-						Modal.confirm('¿Seguro desea generar la Orden de Servicio?', function(){
-							window.open(Utils.getKumbiaURL('factura/index/'+this._numeroCuenta+'/'+this._accountMasterId), null, 'width=300, height=700, toolbar=no, statusbar=no')
-							new Utils.redirectToAction('order/add/'+this._id);
-						}.bind(this));
-					}
-				};
-			} else {
-				if(type=='F'){
-					Growler.show('Debe especificar el cliente antes de generar la Factura');
-				} else {
-					Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
-				};
-				this.setCustomerName();
-				return;
-			}
-		} else {
-			if(type=='F'){
-				Growler.show('Debe especificar el cliente antes de generar la Factura');
-			} else {
-				Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
-			};
-			this.setCustomerName();
-			return;
-		}
-	},
-
-	deleteItems: function(){
-		var accountItems = [];
-		var checkItems = this._preOrder.querySelectorAll('input.checkItem');
-		for(var i=0;i<checkItems.length;i++){
-			if(checkItems[i].checked==true){
-				accountItems.push(checkItems[i].value)
-			}
-		};
-		if(accountItems.length>0){
-			Modal.confirm("¿Desea eliminar los items seleccionados?", function(accountItems){
-				new Ajax.Request(Utils.getKumbiaURL("order/cancelItems"), {
-					parameters: {
-						items: accountItems.join(",")
-					},
-					onSuccess: this.refresh.bind(this)
-				});
-			}.bind(this, accountItems));
-		} else {
-			Growler.show('Seleccione un item al menos a eliminar');
-		}
-	},
-
-	onChangeTipoVenta: function(element, event){
-		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
-		if(numItems>0){
-			if(element.getValue()=='F'){
-				$('gendoc').update("Imprimir<br>Factura");
-			} else {
-				$('gendoc').update("Imprimir<br>Order");
-			};
-			new Ajax.Request(Utils.getKumbiaURL('order/changeTipoVenta/'+element.getValue()), {
-				method: 'GET',
-				onSuccess: this.refresh.bind(this)
-			});
-		} else {
-			Growler.show('Agregue items a la cuenta antes de indicar el tipo de pedido');
-			new Event.stop(event);
-		}
-	},
-
-	enableShortCuts: function(event){
-		if(this._searchMode==false){
-			if(!$('myWindow')){
-				if(event.ctrlKey==true){
-					if(event.keyCode==49){
-						this.goToModifiers();
-						return;
-					};
-					if(event.keyCode==50){
-						this.setCustomerName();
-						return;
-					};
-					if(event.keyCode==51){
-						this.payAccount();
-						return;
-					};
-					if(event.keyCode==52){
-						this.showInvoice();
-						return;
-					};
-					if(event.keyCode==48){
-						this.showStatement();
-						return;
-					};
-				}
-				/*for(var k=0;k<MenuHotKeys.length;k++){
-					if(String.fromCharCode(event.keyCode).toLowerCase()==HotKeys[k]){
-						$('mi'+MenuHotKeys[k]).click();
-						return;
-					}
-				};
-				for(var k=0;k<MenuItemsHotKeys.length;k++){
-					if(String.fromCharCode(event.keyCode).toLowerCase()==iHotKeys[k]){
-						$('mit'+MenuItemsHotKeys[k]).click();
-						return;
-					}
-				}*/
-			}
-		}
-	},
-
-	selectItem: function(element){
-		var itemsSelected = this._preOrder.querySelectorAll('tr.itemSelected');
-		for(var i=0;i<itemsSelected.length;i++){
-			itemsSelected[i].removeClassName('itemSelected');
-		};
-		element.addClassName('itemSelected');
-		new Ajax.Request(Utils.getKumbiaURL("order/changeSelectedItem/"+element.lang), {
-			method: 'GET'
-		});
-	},
-
-	selectAllItems: function(){
-		var checkItems = this._preOrder.querySelectorAll('input.checkItem');
-		for(var i=0;i<checkItems.length;i++){
-			if(checkItems[i].disabled==false){
-				checkItems[i].checked = true;
-			}
-		}
-	},
-
-	prepareBuscarItem: function(){
-		var buscarItem = $("buscarItem");
-		buscarItem.observe("focus", function(event){
-			if(this.value=="Buscar por nombre"){
-				this.value = "";
-				this.style.color = "#000000";
-			}
-			this.activate();
-		});
-		buscarItem.observe("blur", function(event){
-			if(this.value==""){
-				this.value = "Buscar por nombre";
-				this.style.color = "#c0c0c0";
-			}
-		});
-		buscarItem.observe("keydown", function(event){
-			this._searchMode = true;
-		}.bind(this));
-		buscarItem.observe("change", function(buscarItem, event) {
-			var val = $("buscarItem").getValue();
-            if(val.length > 12 && this._searching == false){
-                    this._searching = true;
-                    new Ajax.Request(Utils.getKumbiaURL("order/searchItem"), {
-                            parameters: {
-                                    text: val
-                            },
-                            onSuccess: function(transport){
-                                    this.updateMenuDetails(JSON.parse(transport.responseText));
-                                    this._searching = false;
-                            }.bind(this),
-                            onFailure: function(transport){
-                                    alert(transport.responseText);
-                                    this._searching = false;
-                            }.bind(this)
-                    });
-            } else {
-                    this.updateMenuDetails([]);
-            }
-		}.bind(this));
-		buscarItem.observe("keyup", function(buscarItem, event){
-			if(this._searching == false){
-				if(buscarItem.value.length>1){
-					this._searching = true;
-					new Ajax.Request(Utils.getKumbiaURL("order/searchItem"), {
-						parameters: {
-							text: buscarItem.getValue()
-						},
-						onSuccess: function(transport){
-							this.updateMenuDetails(JSON.parse(transport.responseText));
-							this._searching = false;
-						}.bind(this),
-						onFailure: function(transport){
-							alert(transport.responseText);
-							this._searching = false;
-						}.bind(this)
-					});
-				} else {
-					this.updateMenuDetails([]);
-				}
-			};
-			this._searchMode = false;
-		}.bind(this, buscarItem));
-	},
-
-	changePrice: function(element){
-		new WINDOW.open({
-			title: "Digite el nuevo Precio Unitario",
-			action: 'numero',
-			width: "220px",
-			height: "390px",
-			background: "#c0c0c0",
-			onbeforeclose: function(element, action){
-				if(action=='cancel'){
-					return false;
-				};
-				var trElement = element.up(1);
-				var numero = parseInt($('number').value, 10);
-				if(numero>-1){
-					new Ajax.Request(Utils.getKumbiaURL("order/changePrice/"+trElement.lang+"/"+numero), {
-						onSuccess: this.refresh.bind(this)
-					});
-				}
-			}.bind(this, element)
-		});
-
-
-		/*var input = document.createElement('INPUT');
-		input.type = 'text';
-		input.size = '10';
-		input.maxlength = '12';
-		input.lang = element.lang;
-		input.value = element.innerHTML.replace("(", "").replace(')', '');
-		//input.observe('change', changePrice);
-		//input.observe('blur', changePrice);
-		input.observe('keyup', function(event){
-			if(event.keyCode==Event.KEY_RETURN){
-				this.blur();
-			}
-		});
-		element.innerHTML = "";
-		element.appendChild(input);
-		input.activate();*/
-	},
-
-	captureServicio: function()
-	{
-		new WINDOW.open({
-			title: "Digite la Propina",
-			action:'numero',
-			width: "220px",
-			height: "370px",
-			onbeforeclose: function(action){
-				if(action!='cancel'){
-					var number = $('number').getValue();
-					if(number!=''){
-						number = parseFloat(number, 10)
-					} else {
-						number = 0;
-					};
-					new Ajax.Request(Utils.getKumbiaURL('order/setPropina'), {
-						parameters: {
-							valor: number
-						},
-						onSuccess: function(){
-							$('servicio').setValue(number)
-						}.bind(this, number)
-					});
-					window.setTimeout(function(){
-						$('servicio').blur();
-					}, 200);
-				}
-			}
-		});
-	},
-
-	preOrderCallbacks: function()
-	{
-
-		var preOrder = this._preOrder;
-		var spans = preOrder.querySelectorAll('span.ccom');
-		for (var i = 0; i < spans.length;i++){
-			var element = spans[i];
-			element.title = "Haga Click Para Cambiar Comanda...";
-			element.observe('click', this.toggleComanda.bind(this, element));
-		};
-
-		var spans = preOrder.querySelectorAll('span.ccue');
-		for (var i = 0; i < spans.length;i++){
-			var element = spans[i];
-			element.title = "Haga Click Para Cambiar la Cuenta...";
-			element.observe('click', this.toggleCuenta.bind(this, element));
-		};
-
-		var spans = preOrder.querySelectorAll('span.cPrecio');
-		for (var i = 0; i < spans.length;i++){
-			var element = spans[i];
-			if(element.lang=="ch"){
-				element.title = "Haga Click Para Cambiar Precio...";
-				element.observe('click', this.changePrice.bind(this, element));
-			} else {
-				element.title = "Este item no permite modificar el precio";
-				element.observe('click', function(){
-					Growler.show("Este item no permite modificar el precio");
-				});
-			}
-		};
-
-		var orderRows = preOrder.querySelectorAll('tr.orderRow');
-		for(var i=0;i<orderRows.length;i++){
-			var element = orderRows[i];
-			element.observe('click', this.selectItem.bind(this, element));
-		};
-
-		var deleteModifiers = preOrder.querySelectorAll('.deleteModifier');
-		for(var i=0;i<deleteModifiers.length;i++){
-			deleteModifiers[i].observe('click', this.deleteModifier.bind(this, deleteModifiers[i]));
-			deleteModifiers[i].title = 'Eliminar este Modificador';
-		};
-
-		var changeQuantitys = preOrder.querySelectorAll('.changeQuantity');
-		for(var i=0;i<changeQuantitys.length;i++){
-			changeQuantitys[i].observe('click', this.changeQuantity.bind(this, changeQuantitys[i]));
-			changeQuantitys[i].title = 'Cambiar Cantidad Pedida';
-		};
-
-		var changeDiscounts = preOrder.querySelectorAll('.changeDiscount');
-		for(var i=0;i<changeDiscounts.length;i++){
-			changeDiscounts[i].observe('click', this.changeDiscount.bind(this, changeDiscounts[i]));
-			changeDiscounts[i].title = 'Cambiar Descuento';
-		};
-
-		var deleteItems = preOrder.querySelectorAll('img.deleteItem');
-		for(var i=0;i<deleteItems.length;i++){
-			deleteItems[i].observe('click', this.deleteItem.bind(this, deleteItems[i]));
-			deleteItems[i].title = 'Eliminar este Item';
-		};
-
-		var deleteDiscounts = preOrder.querySelectorAll('a.deleteDiscount');
-		for(var i=0;i<deleteDiscounts.length;i++){
-			deleteDiscounts[i].observe('click', this.deleteDiscount.bind(this, deleteDiscounts[i].lang));
-			deleteDiscounts[i].title = 'Eliminar este descuento';
-		};
-
-		this._cuentasElement = $('cuentas');
-		this._comandasElement = $('comandas');
-
-		this._cuentasElement.observe('change', this.onChangeCuenta.bind(this));
-		this._comandasElement.observe('change', this.onChangeComanda.bind(this));
-
-		var plusComanda = $('plusComanda');
-		plusComanda.observe('click', this.addComanda.bind(this));
-		plusComanda.title = "Agregar Comanda";
-
-		var minusComanda = $('minusComanda');
-		minusComanda.observe('click', this.deleteComanda.bind(this));
-		minusComanda.title = "Eliminar Comanda Actual";
-
-		var plusCuenta = $('plusCuenta');
-		plusCuenta.observe('click', this.addCuenta.bind(this));
-		plusCuenta.title = "Agregar Cuenta";
-
-		var minusComanda = $('minusCuenta');
-		minusComanda.observe('click', this.deleteCuenta.bind(this));
-		minusComanda.title = "Eliminar Cuenta Actual";
-
-		$('servicio').observe('focus', this.captureServicio.bind(this));
-		$('selectAllArrow').observe('click', this.selectAllItems.bind(this));
-
-		var tipoVenta = $('tipo_venta');
-		if(tipoVenta.getValue()=='F'){
-			$('gendoc').update("Imprimir<br>Factura");
-		} else {
-			$('gendoc').update("Imprimir<br>Orden");
-		};
-		tipoVenta.observe('change', this.onChangeTipoVenta.bind(this, tipoVenta));
-		if(this._pideAsientos=='N'){
-			$('asientosDiv').hide();
-		} else {
-			if(this._numeroAsientos>0){
-				this.addSillas(this._numeroAsientos-1);
-			}
-		};
-
-		var itemsChanged = this._preOrder.querySelectorAll('tr.itemChanged');
-		for(var i=0;i<itemsChanged.length;i++){
-			new Effect.Highlight(itemsChanged[i]);
-		};
-
-		this.adjustOrderList();
-
-	},
-
-	getDiscounts: function()
-	{
-		new WINDOW.open({
-			action: "order/discount",
-			width: "400px",
-			height:"400px",
-			title: "Aplicar un Descuento",
-			afterRender: function(){
-				var myWindow = $('myWindow');
-				var discountButtons = myWindow.querySelectorAll('button.commandButtonBig');
-				for (var i = 0; i < discountButtons.length; i++) {
-					discountButtons[i].observe('click', this.applyDiscount.bind(this, discountButtons[i].lang));
-				};
-			}.bind(this)
-		});
-	},
-
-	applyDiscount: function(id)
-	{
-		new Ajax.Request(Utils.getKumbiaURL("order/applyDiscount/" + id), {
-			onSuccess: function(){
-				$("myWindow").close();
-				this.refresh();
-			}.bind(this)
-		});
-	},
-
-	deleteDiscount: function(id)
-	{
-		new Ajax.Request(Utils.getKumbiaURL("order/deleteDiscount/" + id), {
-			onSuccess: this.refresh.bind(this)
-		});
-	},
-
-	cancelOrder: function()
-	{
-		Modal.confirm("¿Desea cancelar todas las cuentas en este pedido?", function(){
-			new Utils.redirectToAction("cancel/docancel");
-		});
-		/*new WINDOW.open({
-			action: "order/cancelOrder",
-			width: "550px",
-			height: "420px",
-			title: "Cancelar Pedido",
-			afterRender: this.addCustomerCallback.bind(this)
-		});*/
-	},
-
-	setCustomerName: function()
-	{
-		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
-		if (numItems > 0) {
-			var type = $F('tipo_venta');
-			if (type == 'H' || type == 'P') {
-				new WINDOW.open({
-					action: "order/customerName",
-					width: "940px",
-					height: "620px",
-					title: "Seleccionar Folio",
-					afterRender: this.addCustomerCallback.bind(this)
-				});
-			} else {
-				new WINDOW.open({
-					action: "order/customerName",
-					width: "500px",
-					height: "233px",
-					title: "Seleccionar Cliente",
-					afterRender: this.addCustomerCallback.bind(this)
-				});
-			}
-		} else {
-			Growler.show('Debe agregar items a la lista antes de definir el cliente');
-		}
-	},
-
-	addCustomerCallback: function(){
-		var aplSubmit = $("apl_submit");
-		if(aplSubmit){
-			aplSubmit.observe("click", function(){
-
-				if($('documento_cliente').getValue().trim() == ''){
-					$("documento_cliente").activate();
-					Growler.show('Debe indicar el número de documento del cliente');
-					return false;
-				}
-
-				if($('tipo_documento').getValue().trim() == '@'){
-					$("tipo_documento").activate();
-					Growler.show('Debe indicar el tipo de documento del cliente');
-					return false;
-				}
-
-				if($('tip_per_jur').getValue().trim() == '@'){
-					$("tip_per_jur").activate();
-					Growler.show('Debe indicar el tipo de persona del cliente');
-					return false;
-				}
-
-				if($('tip_per_jur').getValue() == 1){
-
-					if($('primer_nombre').getValue().trim() == ''){
-						$("primer_nombre").activate();
-						Growler.show('Debe digitar la razon social de la persona jurídica.');
-						return false;
-					}
-
-					if($('digitov').getValue().trim() == ''){
-						$("digitov").activate();
-						Growler.show('Debe indicar el digito de verificación.');
-						return false;
-					}
-				}else{
-
-					if($('primer_nombre').getValue().trim() == ''){
-						$("primer_nombre").activate();
-						Growler.show('Debe digitar el nombre del cliente.');
-						return false;
-					}
-
-					if($('primer_apellido').getValue().trim() == ''){
-						$("primer_apellido").activate();
-						Growler.show('Debe digitar el primer apellido del cliente.');
-						return false;
-					}
-
-				}
-
-				if($('telefono1').getValue().trim() == ''){
-					$("telefono1").activate();
-					Growler.show('Debe digitar el número telefonico.');
-					return false;
-				}
-				if($('email').getValue().trim() == ''){
-					$("email").activate();
-					Growler.show('Debe digitar el email del cliente.');
-					return false;
-				}
-				if($('flid_ciudades_dian').getValue().trim() == '' || $('flid_ciudades_dian').getValue().trim() == '0'){
-					$("ciudades_dian").activate();
-					Growler.show('Debe digitar la ciudad DIAN.');
-					return false;
-				}
-				if($('direccion').getValue().trim() == ''){
-					$("direccion").activate();
-					Growler.show('Debe digitar la dirección.');
-					return false;
-				}
-				if($('codigo_postal').getValue().trim() == ''){
-					$("codigo_postal").activate();
-					Growler.show('Debe digitar el codigo postal del cliente.');
-					return false;
-				}
-				if($('regimen_fiscal').getValue().trim() == '@'){
-					$("regimen_fiscal").activate();
-					Growler.show('Debe indicar el regimen fiscal.');
-					return false;
-				}				
-
-				ajaxRemoteForm($("myform"), "customer_messages");
-			});
-			var habitacion = $('habitacion');
-			if(habitacion){
-				window.setTimeout(function(){
-					$("numHabitacion").activate();
-				}, 200);
-				habitacion.observe('change', this.getHuespedInfo.bind(this, habitacion));
-				var huespedButtons = $$('.huespedButton');
-				for(var i=0;i<huespedButtons.length;i++){
-					huespedButtons[i].observe('click', this.selectThisFolio.bind(this, huespedButtons[i]))
-				}
-			} else {
-				window.setTimeout(function(){
-
-
-					if($("fecnac")){
-						$("fecnac").observe('change', function(){
-							var fecha = this.value.split("-");
-							if(fecha.length == 3 ){
-								$('fecnacMonth').setValue(fecha[1]).dispatchEvent(new Event("change"));
-								$('fecnacDay').setValue(fecha[2]).dispatchEvent(new Event("change"));
-								$('fecnacYear').setValue(fecha[0]).dispatchEvent(new Event("change"));
-							}else{
-								$('fecnacMonth').setValue('@').dispatchEvent(new Event("change"));
-							}
-						})
-					}
-					
-					if($("documento_cliente")){
-						$("documento_cliente").activate();
-					};
-
-					$("documento_cliente").observe('blur', function(){
-						if(this.value.trim() != ''){
-							new Ajax.Request(Utils.getKumbiaURL("pay/getClientName/"+this.value), {
-								onSuccess: function(transport){
-
-									var cliente = {};
-
-									$('primer_nombre').readOnly  = false;
-									$('segundo_nombre').readOnly  = false;
-									$('primer_apellido').readOnly  = false;
-									$('segundo_apellido').readOnly  = false;
-
-									if(transport.responseJSON != 'NO EXISTE EL CLIENTE EN LA BASE DE DATOS'){
-										
-										var cliente = JSON.parse(transport.responseJSON);
-
-										if(cliente.primer_nombre.trim() != '' && cliente.primer_nombre.trim() != null){
-											$('primer_nombre').readOnly  = true;
-											$('segundo_nombre').readOnly  = true;
-											$('primer_apellido').readOnly  = true;
-											$('segundo_apellido').readOnly  = true;
-										}
-
-									}else{
-
-										cliente.primer_nombre = '';
-										cliente.segundo_nombre = '';
-										cliente.primer_apellido = '';
-										cliente.segundo_apellido = '';
-										cliente.telefono1 = '';
-										cliente.email = '';
-										cliente.direccion = '';
-										cliente.ciudades_dian = '';
-										cliente.tipdoc = '@'
-										cliente.tip_per_jur = '@'
-										cliente.codigo_postal = ''
-										cliente.flid_ciudades_dian = '';
-										cliente.digitov = '';
-										cliente.regimen_fiscal = '@';
-
-										var today = new Date();
-										var dd = String(today.getDate()).padStart(2, '0');
-										var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-										var yyyy = today.getFullYear();
-
-										today =  yyyy + '-' + mm + '-' + dd;
-										cliente.fecnac = today;
-									}
-
-									$('primer_nombre').setValue(cliente.primer_nombre);
-									$('segundo_nombre').setValue(cliente.segundo_nombre);
-									$('primer_apellido').setValue(cliente.primer_apellido);
-									$('segundo_apellido').setValue(cliente.segundo_apellido);
-									$('telefono1').setValue(cliente.telefono1);
-									$('email').setValue(cliente.email);
-									$('direccion').setValue(cliente.direccion);
-									$('fecnac').setValue(cliente.fecnac);
-									$('fecnac').dispatchEvent(new Event("change"));
-									
-									$('ciudades_dian').setValue(cliente.ciudades_dian);
-									$('tipo_documento').setValue(cliente.tipdoc);
-									$('tip_per_jur').setValue(cliente.tip_per_jur);
-									$('digitov').setValue(cliente.digitov);
-									$('regimen_fiscal').setValue(cliente.regimen_fiscal);
-									
-									$('codigo_postal').setValue(cliente.codigo_postal);
-									
-									$('flid_ciudades_dian').setValue(cliente.flid_ciudades_dian);
-
-									$('tip_per_jur').dispatchEvent(new Event("change"));
-									
-									
-								}
-							});
-							
-							
-							new Ajax.Autocompleter("ciudades_dian", "ciudades_dian_choices", $Kumbia.path+'common/getCiudadesDian', {
-								paramName: "id",
-								minChars: 2,
-								tokens: [","],
-								afterUpdateElement: function (name, obj, li){
-									$("flid_"+name).value = li.id;
-								}.bind(this, 'ciudades_dian')
-						   });
-						   
-						   var textField = $("ciudades_dian");
-						   textField.observe('focus', function(name){
-							   if(this.value==""){
-								   $("flid_"+name).value = 0;
-							   };
-						   }.bind(textField, 'ciudades_dian'));
-						   
-				   
-						}
-					});
-
-					$("tip_per_jur").observe('change', function(){
-						document.querySelector('.nombre_x_persona').innerHTML = 'Primer nombre'
-						document.querySelectorAll('.div_juridicas').forEach(element => {
-							element.style.display = 'none';	
-						});
-
-						document.querySelectorAll('.div_naturales').forEach(element => {
-							element.style.display = '';	
-						});
-						document.querySelector('#primer_nombre').size = 17;
-
-						if($(this).getValue() == 1){
-							document.querySelector('.nombre_x_persona').innerHTML = 'Razon social'
-							document.querySelector('#primer_nombre').size = 40;
-							document.querySelectorAll('.div_juridicas').forEach(element => {
-								element.style.display = '';
-							});
-							document.querySelectorAll('.div_naturales').forEach(element => {
-								element.style.display = 'none';	
-							});
-	
-						}
-					})
-
-
-				}, 200);
-			}
-		} else {
-			var numeroAccion = $('numeroAccion');
-			if(numeroAccion){
-				window.setTimeout(function(){
-					$("numeroAccion").activate();
-				}, 200);
-				numeroAccion.observe('keyup', this.accionKeyup.bind(this, numeroAccion));
-				$('myWindow').setStyle({background: "#fff"});
-			} else {
-				$('myWindow').setStyle({
-					width: "400px",
-					height: "135px"
-				});
-			}
-		}
-	},
-
-	getHuespedInfo: function(element){
-		new Ajax.Request(Utils.getKumbiaURL('order/getHuespedInfo/'+element.getValue()), {
-			onSuccess: function(transport){
-				$('huesped_info').update(transport.responseText);
-			}
-		});
-	},
-
-	selectThisFolio: function(element){
-		$("habitacion").setValue(element.id);
-		ajaxRemoteForm($("myform"), "customer_messages");
-	},
-
-	getCustomerId: function(iid, xid){
-		$('documento_cliente').value = xid.id
-	},
-
-	accionKeyup: function(element, event)
-	{
-		if (element.value.length > 0) {
-			try
-			{
-				new Ajax.Request(Utils.getKumbiaURL('order/querySocios'), {
-					parameters: {
-						"numeroAccion": $F('numeroAccion'),
-						"tipoVenta": $F('tipo_venta')
-					},
-					onSuccess: function(t){
-						$('socios').update(t.responseText);
-						$$('.aplSubmit').each(function(element){
-							element.lang = element.title;
-							element.title = "";
-							element.observe('click', function(){
-								var folio = this.lang;
-								new Ajax.Request(Utils.getKumbiaURL('order/saveSocio'), {
-									parameters: {
-										"folio": folio
-									},
-									onSuccess: function(t){
-										$('customer_messages').update(t.responseText);
-									},
-									onFailure: function(t){
-										$('customer_messages').update(t.responseText);
-									}
-								})
-							});
-						});
-					},
-					onFailure: function(t){
-						alert(t.responseText);
-					}
-				});
-			}
-			catch(e) {
-				alert(e);
-			}
-		}
-	},
-
-	payAccount: function(){
-		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
-		var type = $F('tipo_venta');
-		if(numItems>0){
-			if($('nombre_cliente').value!="PARTICULAR"){
-				new Utils.redirectToAction('pay/index/0:'+this._cuentasElement.getValue())
-			} else {
-				if(type=='F'){
-					Growler.show('Debe especificar el cliente antes de generar la Factura');
-				} else {
-					Growler.show('Debe especificar el cliente antes de generar la Orden de Servicio');
-				};
-				this.setCustomerName();
-				return;
-			}
-		} else {
-			Growler.show('Aun no puede liquidar la cuenta');
-		}
-	},
-
-	goToNotes: function(){
-		var numItems = this._preOrder.querySelectorAll('tr.orderRow').length;
-		if(numItems>0){
-			window.location = Utils.getKumbiaURL('order/notes');
-		} else {
-			Growler.show('Agregue items al pedido antes de agregar notas');
-		}
-	},
-
-	showStatement: function(){
-		window.open(Utils.getKumbiaURL('factura?preview'), null, 'width=300, height=700, toolbar=no, statusbar=no')
-	},
-
-	sendToKitchen: function(){
-		new Utils.redirectToAction("order/sendToKitchen");
-	},
-
-	backToTables: function()
-	{
-		new Utils.redirectToAction("tables/back/" + this._salonId);
-	},
-
-	joinOrders: function()
-	{
-		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/joinOrders");
-	},
-
-	changeTable: function()
-	{
-		new Utils.redirectToAction("tables/chooseTable/" + this._id + "/"+this._salonId+"/changeTable");
-	},
-
-	adjustOrderList: function()
-	{
-		var orderItems = $$("orderRow");
-		var listaPedido = $("listaPedido");
-		if (orderItems.length < 9) {
-			listaPedido.style.height = this._listaPedidoHeight;
-			listaPedido.style.overflowY = 'auto';
-		} else {
-			listaPedido.style.height = "380px";
-		};
-		var height = listaPedido.getHeight();
-		var itemsSelected = this._preOrder.querySelectorAll("tr.itemSelected");
-		for(var i = 0; i < itemsSelected.length; i++) {
-			var offset = itemsSelected[i].positionedOffset();
-			var scrollPos = (offset[1] - listaPedido.offsetTop - itemsSelected[i].getHeight() - 20);
-			if (scrollPos > 0) {
-				listaPedido.scrollTop = scrollPos;
-			} else {
-				listaPedido.scrollTop = 0;
-			};
-			break;
-		}
-	},
-
-	setHeightDimensions: function()
-	{
-		var height = $('mainTable').getHeight();
-		this._menuDetailsHeight = parseInt(height * 0.57, 10) + 'px';
-		this._listaPedidoHeight = parseInt(height * 0.55, 10) + 'px';
-	},
-
-	setAccountMasterId: function(accountMasterId)
-	{
-		this._accountMasterId = accountMasterId;
-	},
-
-	setNumeroCuenta: function()
-	{
-
-	},
-
-	disabledInvoice : function(){
-		$("showInvoice").disabled = false;
-		$("showInvoice").style.opacity = '1';
-		if($("tipo_venta").getValue() == 'F'){
-			$("showInvoice").disabled = true;
-			$("showInvoice").style.opacity = '0.2';
-		}
-	},
-
-	initialize: function(parameters)
-	{
-
-		try {
-
-			document.title = parameters.title;
-			this._tipoComanda = parameters.tipoComanda;
-			this._ventaA = parameters.ventaA;
-			this._pedirPersonas = parameters.pedirPersonas;
-			this._pedirAsientos = parameters.pedirAsientos;
-			this._numeroAsientos = parameters.numeroAsientos;
-			this._id = parameters.id;
-			this._salonId = parameters.salonId;
-			this._accountMasterId = parameters.accountMasterId;
-			this._numeroCuenta = parameters.numeroCuenta;
-
-			this._cuentasElement = $('cuentas');
-			this._comandasElement = $('comandas');
-
-			this._preOrder = $('preOrder');
-			this._menuDetailsElement = $("menuDetails");
-
-			var menuButtons = $$('button.menuButton');
-			for (var i = 0; i < menuButtons.length; i++) {
-				menuButtons[i].observe('click', this.getMenuItems.bind(this, menuButtons[i], menuButtons[i].lang));
-				menuButtons[i].lang = null;
-			};
-
-			if (this._comandasElement) {
-				if (this._comandasElement.options.length == 0) {
-					if (this._tipoComanda == "M") {
-						this.addComanda();
-					} else {
-						this.addAutomaticComanda();
-					};
-				} else {
-					this.pedirPersonas();
-				}
-			};
-
-			$('showInvoice').observe('click', this.showInvoice.bind(this));
-			$('goToNotes').observe('click', this.goToNotes.bind(this));
-			$('customerName').observe('click', this.setCustomerName.bind(this));
-			$('payAccount').observe('click', this.payAccount.bind(this));
-			$('deleteItems').observe('click', this.deleteItems.bind(this));
-			$('discounts').observe('click', this.getDiscounts.bind(this));
-			$('showStatement').observe('click', this.showStatement.bind(this));
-			$('sendToKitchen').observe('click', this.sendToKitchen.bind(this));
-			$('cancelOrder').observe('click', this.cancelOrder.bind(this));
-			$('joinOrders').observe('click', this.joinOrders.bind(this));
-			$('backToTables').observe('click', this.backToTables.bind(this));
-			$('changeTable').observe('click', this.changeTable.bind(this));
-
-			this.preOrderCallbacks();
-			this.prepareBuscarItem();
-			this.setHeightDimensions();
-
-			new Event.observe(window, "keydown", this.enableShortCuts.bind(this));
-
-
-			this.disabledInvoice()
-
-
-		} catch (e) {
-			alert(e);
-		}
-
-	}
-
-});
 
 
 /**
@@ -3231,6 +1586,210 @@ new Event.observe(window, "keyup", function(event){
 
 
 
+/*
+ * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
+ * in FIPS PUB 180-1
+ * Version 2.1a Copyright Paul Johnston 2000 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for details.
+ */
+
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
+var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
+var b64pad  = ""; /* base-64 pad character. "=" for strict RFC compliance   */
+var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
+
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+function hex_sha1(s){return binb2hex(core_sha1(str2binb(s),s.length * chrsz));}
+function b64_sha1(s){return binb2b64(core_sha1(str2binb(s),s.length * chrsz));}
+function str_sha1(s){return binb2str(core_sha1(str2binb(s),s.length * chrsz));}
+function hex_hmac_sha1(key, data){ return binb2hex(core_hmac_sha1(key, data));}
+function b64_hmac_sha1(key, data){ return binb2b64(core_hmac_sha1(key, data));}
+function str_hmac_sha1(key, data){ return binb2str(core_hmac_sha1(key, data));}
+
+/*
+ * Perform a simple self-test to see if the VM is working
+ */
+function sha1_vm_test()
+{
+  return hex_sha1("abc") == "a9993e364706816aba3e25717850c26c9cd0d89d";
+}
+
+/*
+ * Calculate the SHA-1 of an array of big-endian words, and a bit length
+ */
+function core_sha1(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << (24 - len % 32);
+  x[((len + 64 >> 9) << 4) + 15] = len;
+
+  var w = Array(80);
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+  var e = -1009589776;
+
+  for(var i = 0; i < x.length; i += 16)
+  {
+    var olda = a;
+    var oldb = b;
+    var oldc = c;
+    var oldd = d;
+    var olde = e;
+
+    for(var j = 0; j < 80; j++)
+    {
+      if(j < 16) w[j] = x[i + j];
+      else w[j] = rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1);
+      var t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
+                       safe_add(safe_add(e, w[j]), sha1_kt(j)));
+      e = d;
+      d = c;
+      c = rol(b, 30);
+      b = a;
+      a = t;
+    }
+
+    a = safe_add(a, olda);
+    b = safe_add(b, oldb);
+    c = safe_add(c, oldc);
+    d = safe_add(d, oldd);
+    e = safe_add(e, olde);
+  }
+  return Array(a, b, c, d, e);
+
+}
+
+/*
+ * Perform the appropriate triplet combination function for the current
+ * iteration
+ */
+function sha1_ft(t, b, c, d)
+{
+  if(t < 20) return (b & c) | ((~b) & d);
+  if(t < 40) return b ^ c ^ d;
+  if(t < 60) return (b & c) | (b & d) | (c & d);
+  return b ^ c ^ d;
+}
+
+/*
+ * Determine the appropriate additive constant for the current iteration
+ */
+function sha1_kt(t)
+{
+  return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
+         (t < 60) ? -1894007588 : -899497514;
+}
+
+/*
+ * Calculate the HMAC-SHA1 of a key and some data
+ */
+function core_hmac_sha1(key, data)
+{
+  var bkey = str2binb(key);
+  if(bkey.length > 16) bkey = core_sha1(bkey, key.length * chrsz);
+
+  var ipad = Array(16), opad = Array(16);
+  for(var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
+  return core_sha1(opad.concat(hash), 512 + 160);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function safe_add(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+function rol(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * Convert an 8-bit or 16-bit string to an array of big-endian words
+ * In 8-bit function, characters >255 have their hi-byte silently ignored.
+ */
+function str2binb(str)
+{
+  var bin = Array();
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < str.length * chrsz; i += chrsz)
+    bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (32 - chrsz - i%32);
+  return bin;
+}
+
+/*
+ * Convert an array of big-endian words to a string
+ */
+function binb2str(bin)
+{
+  var str = "";
+  var mask = (1 << chrsz) - 1;
+  for(var i = 0; i < bin.length * 32; i += chrsz)
+    str += String.fromCharCode((bin[i>>5] >>> (32 - chrsz - i%32)) & mask);
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a hex string.
+ */
+function binb2hex(binarray)
+{
+  var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i++)
+  {
+    str += hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8+4)) & 0xF) +
+           hex_tab.charAt((binarray[i>>2] >> ((3 - i%4)*8  )) & 0xF);
+  }
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a base-64 string
+ */
+function binb2b64(binarray)
+{
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var str = "";
+  for(var i = 0; i < binarray.length * 4; i += 3)
+  {
+    var triplet = (((binarray[i   >> 2] >> 8 * (3 -  i   %4)) & 0xFF) << 16)
+                | (((binarray[i+1 >> 2] >> 8 * (3 - (i+1)%4)) & 0xFF) << 8 )
+                |  ((binarray[i+2 >> 2] >> 8 * (3 - (i+2)%4)) & 0xFF);
+    for(var j = 0; j < 4; j++)
+    {
+      if(i * 8 + j * 6 > binarray.length * 32) str += b64pad;
+      else str += tab.charAt((triplet >> 6*(3-j)) & 0x3F);
+    }
+  }
+  return str;
+}
+
+
 /**
  * Hotel Front-Office Solution
  *
@@ -3244,44 +1803,944 @@ new Event.observe(window, "keyup", function(event){
  * @version		$Id$
  */
 
-var VirtualKeyBoard = Class.create({
+var Tabs = {
 
-	initialize: function(){
-		new Ajax.Request(Utils.getKumbiaURL('keyboard'), {
-			method: 'GET',
-			onSuccess: function(t){
-				if($('virtual-keyboard')){
-					return;
-				};
-				var keyboard = document.createElement('DIV');
-				keyboard.id = 'virtual-keyboard';
-				keyboard.update(t.responseText);
-				document.body.appendChild(keyboard);
-				keyboard.select('div.key').each(function(element){
-					element.observe('mousedown', function(event){
-						var activeElement = document.activeElement;
-						if(activeElement.tagName=='INPUT'){
-							var content = this.innerHTML;
-							if(content!='&nbsp;'&&content.substr(0, 4)!='<img'){
-								activeElement.value+=this.innerHTML;
-							} else {
-								if(content=='&nbsp;'){
-									activeElement.value+=' ';
-								} else {
-									activeElement.value = activeElement.value.substr(0, activeElement.value.length-1);
-								}
-							}
-							activeElement.fire('keyup');
-							activeElement.fire('keydown');
-						};
-						Event.stop(event);
-					})
-				});
-				$('exit').observe('click', function(){
-					$('virtual-keyboard').remove();
-				})
+	setActiveTab: function(element, number){
+		if(element.hasClassName("active_tab")){
+			return;
+		} else {
+			element.removeClassName("inactive_tab");
+		}
+		$$(".active_tab").each(function(tab_element){
+			tab_element.removeClassName("active_tab");
+		});
+		$$(".tab_basic").each(function(tab_element){
+			if(tab_element==element){
+				tab_element.addClassName("active_tab");
+			} else {
+				tab_element.addClassName("inactive_tab");
 			}
 		});
+		$$(".tab_content").each(function(tab_content){
+			if(tab_content.id!="tab"+number){
+				tab_content.hide();
+			}
+		});
+		$("tab"+number).show();
 	}
 
+};
+
+
+window.cancelNumber = function(){
+	new Utils.redirectToAction('appmenu')
+}
+
+try {
+	window.acceptNumber = function(){
+		if($F("number").strip()!=''){
+			new Ajax.Request("anula_factura/exists/"+$F("number")+"/"+$F("salon_id"), {
+				onSuccess: function(transport){
+					var response = transport.responseText.evalJSON();
+					if(response=='yes'){
+						if(confirm("¿Seguro desea anular la orden/factura No. "+$F("number")+"?")){
+							new Utils.redirectToAction('anula_factura/anula/'+hex_sha1($("number").value)+"/"+$F("salon_id")+"/"+$F("tipo_venta"))
+						}
+					} else {
+						alert("No existe la factura/orden "+$("number").value+" en el ambiente indicado");
+					}
+				}
+			});
+		}
+	}
+}
+catch(e){
+	alert(e.stack)
+}
+
+
+new Event.observe(window, "load", function(){
+
 });
+
+var nota = {
+
+	data : [],
+
+	formas_pago : [],
+
+	total_pago : 0,
+
+	total_nota : 0,
+
+	total_propina : 0,
+
+	consultarFactura:function(element){
+
+		if($('consecutivo_facturacion').getValue().trim() == ''){
+			nota.alert("Debe digitar la factura de referencia.", 'warning');
+			return false;
+		}
+
+		document.querySelector('.loading').style.display = '';
+		$s('#consultar').style.display = "none";
+
+		setTimeout(function(){
+
+			new Ajax.Request("nota_credito/findFactura/"+$('prefijo_facturacion').getValue().trim()+"/"+$('consecutivo_facturacion').getValue().trim(), {
+				onSuccess: function(transport){
+
+					var response = transport.responseText.evalJSON();
+					document.querySelector('.loading').style.display = 'none';
+
+					if(response.success){
+	
+						// No se encontro la factura
+						if(response.data.factura == false){
+							nota.alert('No existe la factura', 'danger');
+							return false;
+						}
+	
+						// La busqueda corresponde a orden de servicio
+						if(response.data.factura.tipo == 'O'){
+							nota.alert('Los datos corresponde a una orden de servicio', 'danger');
+							return false;
+						}
+	
+						nota.data = response.data;
+						nota.loadDetalles();
+						nota.loadFormasPago();
+						document.querySelector('#total_propina').value = parseFloat(nota.data.factura.propina);
+						document.querySelector('#total_pagos').value = parseFloat(0);
+						document.querySelector('#total_propina_nota').value = parseFloat(nota.total_propina);
+						document.querySelector('#total_propina_nota').readOnly = false;
+						if(parseFloat(nota.data.factura.propina) <= 0){
+							document.querySelector('#total_propina_nota').readOnly = true;
+						}
+						document.querySelector('#cliente').innerHTML = nota.data.factura.nombre + ' - ' + nota.data.factura.cedula;
+						$s('#consultar').style.display = "none";
+						$s('#nueva').style.display = "";
+	
+						document.querySelector('#prefijo_facturacion').readOnly = true;
+						document.querySelector('#consecutivo_facturacion').readOnly = true;
+	
+					} else {
+						$s('#consultar').style.display = "";
+						nota.alert(response.message, 'danger');
+					}
+				}
+			});
+
+		}, 3000);
+
+	},
+
+	alert : function(message, $type = 'success'){
+
+		var notificator = new Notification(document.querySelector('.notification'));
+
+		switch ($type) {
+			case 'success':
+				notificator.success(message);
+				break;
+
+			case 'danger':
+				notificator.error(message);				
+				break;
+
+			case 'warning':
+				notificator.warning(message);
+				break;				
+		
+			default:
+				notificator.info(message);
+				break;
+		}
+
+	},
+
+	loadDetalles : function(){
+		
+		var tr = '';
+		var totalfac = 0;
+		var totalnoc = 0;
+
+		$each(nota.data.detalle, function(index, detalle){
+
+			if(detalle.cannot == undefined){
+				detalle.cannot = '';
+			}
+
+			var value_nota = 0;
+			if(detalle.cannot != '')
+				value_nota = detalle.total / detalle.cantidad * detalle.cannot;
+
+
+			var valtaxe = detalle.iva > 0 ? detalle.iva : detalle.impo;
+			totalfac = totalfac + parseFloat(detalle.total);
+			detalle.total = parseFloat(detalle.total);
+			totalnoc = totalnoc + parseFloat(value_nota);
+
+			tr  +=  '<tr>'
+				+	'	<td class="al-l">'+  detalle.nombre +'</td>'
+				+	'	<td class="al-c">'+ detalle.cantidad +'</td>'
+				+	'	<td class="al-c"><input type="number" data-index="'+index+'" maxlength="'+detalle.cantidad.length+'"  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength); if(this.dataset.maxcan<this.value) this.value = this.dataset.maxcan" style="width: 40px;" min="1" max="'+detalle.cantidad+'" data-maxcan="'+detalle.cantidad+'" value="'+detalle.cannot+'" onblur="nota.add(this); nota.totalPago()"></td>'	
+				+	'	<td class="al-r">'+ formatNumber.new(detalle.total) +'</td>'
+				+	'	<td class="al-r valnot">'+ formatNumber.new(value_nota) +'</td>'
+				+	'</tr>'
+		});
+
+		document.querySelector('#tbldetalle tbody').innerHTML=tr;
+		document.querySelector('.totalfac').innerHTML=formatNumber.new(totalfac);
+		document.querySelector('.totalnoc').innerHTML=formatNumber.new(totalnoc);
+
+		// Cargar notas credito creadas
+		var tr = '';
+		$each(nota.data.notas, function(index, componente){
+
+			var auxnota = componente.data;
+			var _self = componente._self
+			tr  +=  '<tr>'
+				+	'	<td class="al-c">'+ auxnota.prefijo_documento + '-'+ auxnota.consecutivo_documento +'</td>'
+				+	'	<td class="al-c">'+ auxnota.fecha +'</td>'
+				+	'	<td class="al-r">'+ formatNumber.new(auxnota.total) +'</td>'
+				+	'	<td class="al-c"><button class="btnprint btnimg" onclick="nota.printGenerate(\''+_self+'\')">'+ nota.data.iconprint +'</button></td>'
+				+	'</tr>'
+		});
+		
+
+		document.querySelector('#tblnotas tbody').innerHTML=tr;
+		
+
+	},
+
+	loadFormasPago: function(){
+
+		var select = '<select name="forpag" style="width: 200px;" onchange="nota.addForma(this)">'
+				   + '<option value="@">Seleccione...</option>';
+
+		$each(nota.data.formas_pago, function(index, forma){
+			select += '<option value="'+forma.id+'">'+forma.detalle+'</option>';
+		})
+
+		select += '</select>';
+
+
+		var tr = '';
+		for (i=0; i < nota.data.pago_factura.length; i++) {
+			tr  += '<tr id="tr0" bgcolor="#FFFFFF">'
+				+'	<td align="center">'
+				+   select 
+				+'	</td>'
+				+'	<td align="center">'
+				+'		<input type="text" onkeydown="valNumeric(event);" name="valor_factura" style="width: 100px;" onblur="nota.addForma(this); nota.totalPago()">'
+				+'	</td>'	
+				+'	<td align="center">'
+				+'		<input type="text" onkeydown="valNumeric(event);" name="valor" style="width: 100px;" onblur="nota.addForma(this); nota.totalPago()">'
+				+'	</td>'	
+				+'	<td align="center">'
+				+'		<input type="text" onkeydown="valNumeric(event);" name="numero" style="width: 100px;" onblur="nota.addForma(this)">'
+				+'	</td>'
+				+'	<td align="center">'
+				+'		<input type="date" onkeydown="valNumeric(event);" name="fecha" style="width: 150x;" onblur="nota.addForma(this)">'
+				+'	</td>'
+				+'</tr>'
+		}
+
+		document.querySelector('#tblformaspago tbody').innerHTML=tr;
+
+		$each(nota.data.pago_factura, function(index, forma){
+			var indextr = index + 1;
+
+			var tr = document.querySelector("#tblformaspago tbody tr:nth-child("+indextr+")");
+			tr.querySelector('select[name=forpag]').value = forma.formas_pago_id;
+			tr.querySelector('input[name=numero]').value = forma.numero;
+			tr.querySelector('input[name=fecha]').value = forma.fecha;
+			tr.querySelector('input[name=valor]').value = forma.valor;
+			tr.querySelector('input[name=valor_factura]').value = parseFloat(forma.pago);
+
+			tr.querySelector('select[name=forpag]').disabled = true;
+			tr.querySelector('input[name=valor_factura]').disabled = true;
+
+			nota.formas_pago[nota.formas_pago.length] = {
+				forpag : forma.formas_pago_id,
+				numero : forma.valor,
+				fecha  : forma.fecha,
+				valor  : forma.valor,
+				valor_factura : parseFloat(forma.pago),
+				pagos_factura_id : forma.pagos_factura_id,
+				factura_id : forma.factura_id
+			}
+
+		});
+
+	},
+
+	addForma : function(element){
+
+		var index = element.closest('tr').rowIndex;
+
+		if(nota.formas_pago[index - 1] == undefined){
+			nota.formas_pago[index - 1] = {
+				forpag : '@',
+				numero : '',
+				fecha  : '',
+				valor  : ''
+			}
+		}
+
+		var value = element.value;
+		var name = element.name;
+
+		var valor_factura = nota.formas_pago[index - 1]['valor_factura']
+
+		if(valor_factura < value){
+			value = valor_factura
+			element.value = value
+			nota.alert('El valor digitado es mayor a la forma de pago.', 'warning');
+		}
+		nota.formas_pago[index - 1][name] = value;
+	},
+
+	newForma: function(){
+
+		nota.formas_pago[nota.formas_pago.length] = {
+			forpag : '@',
+			numero : '',
+			fecha  : '',
+			valor  : ''
+		}
+
+		nota.loadFormasPago();
+	},
+
+	deleteForma : function(element){
+		var index = element.closest('tr').rowIndex;
+		nota.formas_pago.splice( index - 1, 1 );
+		nota.loadFormasPago();
+	},
+
+	add : function(element){
+		var value = element.value;
+		var index = element.dataset.index;
+		nota.data.detalle[index].cannot = value;
+		nota.loadValueNota();
+	},
+
+	loadValueNota : function(){
+
+		var totalnoc = 0;
+
+		
+		$each(nota.data.detalle, function(index, detalle){
+
+			var value_nota = 0;
+			if(detalle.cannot != '' && detalle.cannot != 0)
+				value_nota = detalle.total / detalle.cantidad * detalle.cannot;
+
+			totalnoc = totalnoc + parseFloat(value_nota);
+			var indextr = index +1;
+			var tr = document.querySelector("#tbldetalle tbody tr:nth-child("+indextr+")");
+			tr.querySelector('.valnot').innerHTML= value_nota;
+
+		});
+
+		document.querySelector('.totalnoc').innerHTML=formatNumber.new(totalnoc);
+		nota.total_nota = totalnoc;
+
+	},
+
+	totalPago : function(){
+
+		nota.total_pago = 0;
+
+		$each(document.querySelectorAll("#tblformaspago tbody tr"),function(index, tr){
+			value = tr.querySelector('input[name=valor]').value;
+			if(value != ''){
+				nota.total_pago += parseFloat(value);
+			}
+		})
+
+		document.querySelector('#total_pagos').value = formatNumber.new(nota.total_pago);
+		document.querySelector('#total_saldo').value = formatNumber.new(parseFloat(nota.total_nota) + parseFloat(nota.total_propina) - parseFloat(nota.total_pago));
+		
+	},
+
+	setPropina : function(element){
+
+		var value = element.value;
+		if(value > parseFloat(nota.data.factura.propina)){
+			element.value = parseFload(nota.data.factura.propina)
+		}
+
+		nota.total_propina = element.value;
+		nota.totalPago();
+
+	},
+
+	nuevaConsulta : function(){
+
+		$s('#consultar').style.display = "";
+		$s('#nueva').style.display = "none";
+
+		document.querySelector('#prefijo_facturacion').readOnly = false;
+		document.querySelector('#consecutivo_facturacion').readOnly = false;
+		document.querySelector('#tbldetalle tbody').innerHTML = '';
+		document.querySelector('#tblformaspago tbody').innerHTML = '';
+		document.querySelector('#tblnotas tbody').innerHTML = '';
+		document.querySelector('#total_propina').value = 0;
+		document.querySelector('#total_propina_nota').value = 0;
+		document.querySelector('#total_pagos').value = 0;
+		document.querySelector('#total_saldo').value = 0;
+		document.querySelector('#prefijo_facturacion').value = '';
+		document.querySelector('#consecutivo_facturacion').value = '';
+		document.querySelector('#prefijo_facturacion').focus();
+		document.querySelector('.totalfac').innerHTML = '';
+		document.querySelector('.totalnoc').innerHTML = '';
+		document.querySelector('#cliente').innerHTML = '';
+		document.querySelector('.okButton').style.display = '';
+
+		
+		nota.formas_pago = [];
+		nota.data = [];
+
+	},
+
+	pay : function(){
+
+		if((nota.total_pago - nota.total_nota - nota.total_propina) != 0){
+			nota.alert('No puede existir saldo', 'warning');
+			return false;
+		}
+
+		if((nota.total_nota + nota.total_propina) == 0){
+			nota.alert('No existen valores de nota a registrar', 'warning');
+			return false;
+		}
+
+		if(!confirm("¿Seguro desea crear la nota credito.?")){
+			return false;
+		}
+
+		nota.data.factura.total_nota_credi = nota.total_nota;
+		nota.data.factura.propina_nota_credi = nota.total_propina;
+
+		document.querySelector('.saveloading').style.display = '';
+		document.querySelector('.okButton').style.display = 'none';
+		
+
+		setTimeout(function(){ 
+
+			new Ajax.Request('nota_credito/save', {
+				method: 'POST',
+				parameters: {
+					'formas_pago': JSON.stringify(nota.formas_pago),
+					'factura': JSON.stringify(nota.data.factura),
+					'detalle': JSON.stringify(nota.data.detalle),
+				},
+				onSuccess: function(transport){
+
+					var response = transport.responseText.evalJSON();
+					document.querySelector('.saveloading').style.display = 'none';
+
+					if(response.success){
+						nota.alert('Nota credito realizada con exito', 'success');
+						nota.printGenerate(response.data.urlprint);
+						var consultar = document.querySelector('#consultar');
+						consultar.dispatchEvent(new Event('click'));
+					} else {
+						document.querySelector('.okButton').style.display = '';
+						nota.alert(response.message, 'danger');
+					}
+										
+				}
+			})
+
+		}, 3000);
+
+	},
+
+	printGenerate: function(_self){
+		window.open(_self, null, "width=300, height=700, toolbar=no, statusbar=no")
+	},
+
+	consultarFacturaAsociada : function(prefijo_facturacion, consecutivo_facturacion){
+		nota.nuevaConsulta();
+		document.querySelector('#prefijo_facturacion').value = prefijo_facturacion; 
+		document.querySelector('#consecutivo_facturacion').value = consecutivo_facturacion; 
+
+		var tab = document.querySelectorAll('.tab_basic')[0];
+		tab.dispatchEvent(new Event('click'));
+
+		var consultar = document.querySelector('#consultar');
+		consultar.dispatchEvent(new Event('click'));
+
+	}
+
+
+
+}
+
+// Recorrer objetos 
+function $each(objeto,callback){
+
+	if(whatIsIt(objeto)=='Array'){
+		for(i = 0;i<objeto.length; i++){
+			callback(i,objeto[i]);
+		}
+	}else if(whatIsIt(objeto)=='Object'){
+	     
+		// Obteniendo todas las claves del JSON
+		for (var clave in objeto){
+		  // Controlando que json realmente tenga esa propiedad
+		  if (objeto.hasOwnProperty(clave)) {
+		    callback(clave,objeto[clave])
+		  }
+
+		}
+
+	}else{
+		for(i = 0;i<objeto.length; i++){
+			callback(i,objeto[i]);
+		}
+	}
+}
+
+
+// Selector id
+function $c(selector){
+	
+	var typeSelector = selector.substr(0,1)
+	var selector = selector.substr(1)
+
+	if(typeSelector == '.')
+		return document.getElementsByClassName(selector);
+
+	if(typeSelector == '#')
+		return document.getElementById(selector);
+	
+	
+}
+
+// selector individual
+function $s(selector){
+	return document.querySelector(selector);
+}
+
+// Selector all
+function $sa(selector){
+	return document.querySelectorAll(selector);
+}
+
+
+function normal_tr(element){
+
+	var tr = element.parentNode.parentNode;
+	if(element.hasClassName('calendar_date')){
+		tr = tr.parentNode.parentNode.parentNode.parentNode;
+		tr = tr.parentNode.parentNode.parentNode.parentNode;
+	};
+	tr.style.background = 'transparent';
+	var childs = tr.childElements();
+	childs[0].setStyle({
+		borderLeft: 'none',
+		borderTop: 'none',
+		borderBottom: 'none',
+		fontWeight: 'normal'
+	});
+
+	if(childs[1] != undefined)
+		childs[1].setStyle({
+			borderRight: 'none',
+			borderTop: 'none',
+			borderBottom: 'none',
+		});
+};
+
+
+
+function showErrores(errores, all_fields, index_all = ''){
+
+	if(index_all == ''){
+		var fiels = Object.keys(all_fields)
+	}else{
+		var fiels = Object.keys(all_fields[index_all])
+	}
+
+	for(var j=0;j<=fiels.length;j++){
+		if($(fiels[j])){
+			normal_tr($(fiels[j]))
+		}
+	};
+
+    if(errores.length == 0)
+    	return false;		
+
+	var element = $(errores[0]);
+	if(element.hasClassName("calendar_date")){
+		element = element.parentNode;
+	};
+	new Effect.ScrollTo(element, {
+		duration: 0.5,
+		afterFinish: function(errores){
+			var windowScroll = WindowUtilities.getWindowScroll(document.body);
+    		var pageSize = WindowUtilities.getPageSize(document.body);
+    		if(!$("error_list_div")){
+				var d = document.createElement("DIV");
+				d.id = "error_list_div";
+    		} else {
+    			d = $("error_list_div");
+    		};
+			new Effect.Highlight(errores[0], { startcolor: "#ff0000"});
+			$(errores[0]).activate();
+			d.hide();
+			d.innerHTML = "<strong>Se requieren lo siguiente:</strong><br>";
+			for(var i=0;i<errores.length;i++){
+				var element = $(errores[i]);
+				d.innerHTML+= "El campo \""+ nombreCampo(errores[i],index_all)+"\" no puede estar vacio<br>";
+				if(i>5){
+					d.innerHTML+= "<div align='right' style='color:white'>&nbsp;"+(errores.length-i)+" errores m&aacute;s...</div>";
+					break;
+				}
+			};
+			for(var i=0;i<errores.length;i++){
+				var element = $(errores[i]);
+				highlight_tr(element);
+			};
+			d.className = "error_list";
+			d.style.top = (pageSize.windowHeight-170+windowScroll.top)+"px";
+			d.show();
+			document.body.appendChild(d);
+			d.style.top = (pageSize.windowHeight-d.getHeight()+windowScroll.top)+"px";
+			if(showErrorTimeout){
+				window.clearTimeout(showErrorTimeout)
+			};
+			showErrorTimeout = window.setTimeout(function(){
+				new Effect.Fade($("error_list_div"), { duration: 0.5 })
+			}, 7000);
+		}.bind(this, errores)
+	});
+};
+
+
+
+function highlight_tr(element) {
+	var tr = element.parentNode.parentNode;
+	if (element.hasClassName('calendar_date')) {
+		tr = tr.parentNode.parentNode.parentNode.parentNode;
+		tr = tr.parentNode.parentNode.parentNode.parentNode;
+	};
+	tr.style.background = '#D4E0F1';
+	var childs = tr.childElements();
+	childs[0].setStyle({
+		borderLeft: '1px solid #D4E0F1',
+		borderTop: '1px solid #D4E0F1',
+		borderBottom: '1px solid #D4E0F1',
+		fontWeight: 'bold'
+	});
+	if(childs[1] != undefined)
+		childs[1].setStyle({
+			borderRight: '1px solid #D4E0F1',
+			borderTop: '1px solid #D4E0F1',
+			borderBottom: '1px solid #D4E0F1',
+		});
+};
+
+function nombreCampo(index,index_all){
+	
+	if(index_all == '')
+		return all_fields[index]
+	else{
+		return all_fields[index_all][index]
+	}
+}
+
+
+
+function valNumeric(evt){
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	var kc = evt.keyCode;
+	var ev = (evt.altKey==false)&&(evt.shiftKey==false)&&((kc>=48&&kc<=57)||(kc>=96&&kc<=105)||(kc==8)||(kc==9)||(kc==13)||(kc==17)||(kc==36)||(kc==35)||(kc==37)||(kc==46)||(kc==39)||(kc==190));
+	if(!ev){
+		new Event.stop(evt);
+	}
+};
+
+function valAlphaNum(evt){
+	evt = (evt) ? evt : ((window.event) ? window.event : null);
+	var kc = evt.keyCode;
+	if(evt.shiftKey==true&&kc==53){
+		return;
+	}
+	var ev = (evt.altKey==false)&&(evt.shiftKey==false)&&((kc>=65&&kc<=90)||(kc>=48&&kc<=57)||(kc>=96&&kc<=105)||(kc==8)||(kc==9)||(kc==13)||(kc==17)||(kc==36)||(kc==35)||(kc==37)||(kc==39)||(kc==46));
+	if(!ev){
+		new Event.stop(evt);
+	}
+};
+
+
+function saveMasterData(action, index_all = ''){
+
+	var obj;
+	if(emptydata.length>0){
+		if(!confirm("El Formulario tiene errores\nDesea Continuar?")) {
+			return;
+		}
+	};
+
+	if(index_all == '')
+		var Fields = Object.keys(all_fields);
+	else 
+		var Fields = Object.keys(all_fields[index_all]);
+
+	for(var i=0;i<Fields.length;i++){
+		if($(Fields[i])){
+			obj = document.createElement("INPUT");
+			obj.type = "hidden";
+			obj.name = Fields[i];
+			if($(Fields[i]).type=='checkbox'){
+				obj.value = $(Fields[i]).checked;
+			} else {
+				obj.value = $(Fields[i]).value;
+			};
+			document.saveDataForm.appendChild(obj);
+		}
+	};
+    
+    //Action
+	obj = document.createElement("INPUT");
+	obj.type = "hidden";
+	obj.name = "subaction";
+	obj.value = action;
+
+	document.saveDataForm.appendChild(obj);
+
+	obj = document.createElement("INPUT");
+	obj.type = "hidden";
+	obj.name = "form";
+	obj.value = index_all;
+
+	document.saveDataForm.appendChild(obj);
+
+	document.saveDataForm.submit();
+
+};
+
+
+function whatIsIt(object) {
+
+
+	var stringConstructor = "test".constructor;
+	var arrayConstructor = [].constructor;
+	var objectConstructor = {}.constructor;
+
+    if (object === null) {
+        return "null";
+    }
+    else if (object === undefined) {
+        return "undefined";
+    }
+    else if (object.constructor === stringConstructor) {
+        return "String";
+    }
+    else if (object.constructor === arrayConstructor) {
+        return "Array";
+    }
+    else if (object.constructor === objectConstructor) {
+        return "Object";
+    }
+    else {
+        return "don't know";
+    }
+}
+
+
+function validarDatosObligatorios(salector_name = 'body'){
+
+	emptydata = []
+
+	// Se recorren los campos que estan con la class required
+	$each(document.querySelectorAll(salector_name + " .required"),function(index,element){
+
+		if(element.value == "" || element.value == '@'){
+			emptydata[emptydata.length] = element.id
+		}
+	})
+
+	if(salector_name == 'body')
+    	showErrores(emptydata,all_fields);
+    else
+    	showErrores(emptydata,all_fields, salector_name);
+
+    if(emptydata.length>0)
+    	return false;	
+
+	return true
+
+}
+
+
+function getDatosSend(var_object){
+
+	var Fields = Object.keys(var_object);
+
+	var response = {};
+
+	for(var i=0; i<Fields.length; i++){
+		if($(Fields[i])){
+			response[Fields[i]] = $(Fields[i]).value
+		}
+	};
+
+	return response;
+
+}
+
+
+function number_format(number,decimals,dec_point,thousands_sep) {
+    number  = number*1;//makes sure `number` is numeric value
+    var str = number.toFixed(decimals?decimals:0).toString().split('.');
+    var parts = [];
+    for ( var i=str[0].length; i>0; i-=3 ) {
+        parts.unshift(str[0].substring(Math.max(0,i-3),i));
+    }
+    str[0] = parts.join(thousands_sep?thousands_sep:',');
+    return str.join(dec_point?dec_point:'.');
+}
+
+
+function Notification(htmlElement) {
+    
+    this.htmlElement = htmlElement;
+    this.text = htmlElement.querySelector('.text');
+    this.isRunning = false;
+    this.timeout;
+    
+    this.bindEvents();
+};
+
+Notification.prototype.bindEvents = function() {
+	var self = this;
+   
+}
+
+Notification.prototype.info = function(message) {
+    if(this.isRunning) return false;
+    
+    this.text.innerHTML = message;
+	this.htmlElement.className = 'notification info';
+    
+    this.show();
+}
+
+Notification.prototype.warning = function(message) {
+    if(this.isRunning) return false;
+    
+    this.text.innerHTML = message;
+	this.htmlElement.className = 'notification warning';
+    
+    this.show();
+}
+
+Notification.prototype.error = function(message) {
+    if(this.isRunning) return false;
+    
+    this.text.innerHTML = message;
+	 this.htmlElement.className = 'notification error';
+    
+     this.show();
+}
+
+Notification.prototype.success = function(message) {
+
+    if(this.isRunning) return false;
+    
+    this.text.innerHTML = message;
+	 this.htmlElement.className = 'notification success';
+     
+     this.show();
+}
+
+Notification.prototype.show = function() {
+    if(!this.htmlElement.classList.contains('visible'))
+        this.htmlElement.classList.add('visible');
+    
+    this.isRunning = true;
+    this.autoReset();
+};
+    
+Notification.prototype.autoReset = function() {
+	var self = this;
+    this.timeout = window.setTimeout(function() {
+        self.reset();
+    }, 5000);
+}
+
+Notification.prototype.reset = function() {
+	this.htmlElement.className = "notification";
+    this.isRunning = false;
+};
+
+
+var formatNumber = {
+
+	separador: ".", // separador para los miles
+	sepDecimal: ',', // separador para los decimales
+
+	formatear:function (num){
+		num +='';
+		var splitStr = num.split('.');
+		var splitLeft = splitStr[0];
+		var splitRight = splitStr.length > 1 ? this.sepDecimal + splitStr[1] : '';
+		var regx = /(\d+)(\d{3})/;
+		while (regx.test(splitLeft)) {
+			splitLeft = splitLeft.replace(regx, '$1' + this.separador + '$2');
+		}
+		return this.simbol + splitLeft +splitRight;
+	},
+	new:function(num, simbol){
+		this.simbol = simbol ||'';
+		return this.formatear(num);
+	},
+
+	round : function (number, max = 2) {
+
+		if (typeof number !== 'number' || isNaN(number)) {
+		  throw new TypeError('Número inválido: ' + number);  
+		}
+		
+		if (typeof max !== 'number' || isNaN(max)) {
+		  throw new TypeError('Máximo de dígitos inválido: ' + max); 
+		}
+		
+		let fractionalPart = number.toString().split('.')[1];
+		
+		if (!fractionalPart || fractionalPart.length <= 2) {
+		  return number;
+		}
+		
+		return Number(number.toFixed(max));
+
+	},
+
+}
+
+btn = {
+
+    loading : function(element){
+
+		var loadingText = $(element).data('loading-text') == undefined ? '<i class="fa fa-spinner fa-spin"></i>' : $(element).data('loading-text');
+
+        if ($(element).html() !== loadingText) {
+            $(element).data('original-text', $(element).html());
+            $(element).html(loadingText);
+            $(element).prop( "disabled", true );
+        }
+    },
+
+    reset : function(element){
+        $(element).html($(element).data('original-text'));
+        $(element).prop( "disabled", false );
+    }
+
+}

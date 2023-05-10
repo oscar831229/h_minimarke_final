@@ -306,18 +306,20 @@ ESTE DOCUMENTO NO ES UNA <br>FACTURA DE VENTA
 
 <script type='text/javascript'>
 	new Event.observe(window, "load", function(){
-		<?php  
-		if($redirec_pay){
-		?>
+		
 		window.setTimeout(function(){
+			<?php  
+			if($redirec_pay){
+			?>
 			<?php if($preview==false&&$reprint==false): ?>
 			new Utils.redirectOpenerToAction("pay/index/<?php echo $factura->account_master_id ?>:<?php echo $accountCuenta->cuenta ?>");
 			<?php endif; ?>
+			<?php 
+			}
+			?>
 			window.print();
 		}, 500);
-		<?php 
-		}
-		?>
+		
 	});
 </script>
 
