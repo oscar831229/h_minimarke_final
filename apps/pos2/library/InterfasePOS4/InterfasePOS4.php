@@ -25,6 +25,8 @@ class InterfasePOS4 extends UserComponent {
 
 	private $_numberErrors = 0;
 
+	private $_errors = [];
+
 	private $_recetap = array();
 
 	private $_recetal = array();
@@ -45,6 +47,7 @@ class InterfasePOS4 extends UserComponent {
 	 */
 	public function __construct($consolidateCentro=true){
 		$this->_consolidateCentro = $consolidateCentro;
+		
 	}
 
 	/**
@@ -112,6 +115,7 @@ class InterfasePOS4 extends UserComponent {
 			if(!empty($fecha))
 				$conditions .= " AND fecha='{$fecha}'";
 
+			
 			$factura = $this->Factura->findFirst(array($conditions, 'columns' => 'prefijo_facturacion,consecutivo_facturacion,tipo,estado,usuarios_id'));
 			$this->_facturas[$prefac][$numfac] = $factura;
 		} else {
@@ -244,10 +248,32 @@ class InterfasePOS4 extends UserComponent {
 		return $this->_descargue;
 	}
 
-	public function loadItemsToDownload($transaction, $fechaProceso){
+	public function loadItemsToDownload($transaction, $fechaProceso, $type = 'date'){
+		
 		$numero = 0;
 		$this->Invepos->setTransaction($transaction);
-		foreach($this->Invepos->findForUpdate("fecha='$fechaProceso' AND estado='N'") as $invepos){
+
+		$condictions = '';
+
+		# TIPO DE DESCARGA A REALIZAR AUTOMATICA
+		switch ($type) {
+			case 'date':
+				$condictions = "fecha='$fechaProceso' AND estado='N'";
+				break;
+			
+			case 'invoice':
+				$condictions = "prefac='$fechaProceso->prefijo_facturacion' AND numfac='$fechaProceso->consecutivo_facturacion' AND fecha = '$fechaProceso->fecha_facturacion' AND estado='N'";
+				$fechaProceso = $fechaProceso->fecha_facturacion;
+				$this->Factura->setTransaction($transaction);
+				break;
+			
+			default:
+				throw new Exception("No se ha indicado el tipo de descarga, fecha o factura", 1);
+				break;
+		}
+
+
+		foreach($this->Invepos->findForUpdate($condictions) as $invepos){
 			$factura = $this->_getFactura($invepos->getPrefac(), $invepos->getNumfac(), $fechaProceso);
 			if($factura!=false){
 				if($factura->estado=='N'){
@@ -272,11 +298,28 @@ class InterfasePOS4 extends UserComponent {
 			$usuarioId = 0;
 			$codigoAlmacen = $invepos->getAlmacen();
 			$centroCosto = $invepos->getCentroCosto();
+
+			# Validar si existe notas credito del producto a descargar
+			$cantidadnc = 0;
+			$cantidadunc  = 0;
+			foreach ($invepos->getInveposnc() as $inveposnc) {
+				if($inveposnc->getFecha() == $invepos->getFecha()){
+					$cantidadnc += $inveposnc->getCantidad();
+					$cantidadunc += $inveposnc->getCantidadu();
+				}
+			}
+
+			# Suprimimos productos por nota credito
+			$cantidad  = $invepos->getCantidad() - $cantidadnc;
+			$cantidadu = $invepos->getCantidadu() - $cantidadunc;
+
 			if($invepos->getTipo()=='I'){
-				$this->_addCantidad($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $invepos->getCantidad(), $invepos->getCantidadu());
+				if($cantidad > 0 || $cantidadu > 0)
+					$this->_addCantidad($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $cantidad, $cantidadu);
 			} else {
 				if($invepos->getTipo()=='R'){
-					$this->itemsDeReceta($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $invepos->getCantidad());
+					if($cantidad > 0 || $cantidadu > 0)
+						$this->itemsDeReceta($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $cantidad);
 				} else {
 					if($invepos->getTipo()!='N'){
 						$menuItem = $invepos->getMenusItems();
@@ -287,11 +330,23 @@ class InterfasePOS4 extends UserComponent {
 								Flash::error("El tipo de costo del item código '{$invepos->menus_items_id}' es desconocido");
 							}
 						}
+
+						# CONTROL DE ERRORES DESCARGA POR FACTURA
+						if($type == 'invoice'){
+							if($menuItem){
+								$this->_errors[] = "El tipo de costo de '{$menuItem->nombre}' es desconocido";
+							} else {
+								$this->_errors[] = "El tipo de costo del item código '{$invepos->menus_items_id}' es desconocido";
+							}
+						}
 						$this->_numberErrors++;
 					}
 				}
 			}
+
 			$invepos->setEstado('S');
+			$invepos->setCantidadnc($cantidadnc);
+			$invepos->setCantidadunc($cantidadunc);
 			if($invepos->save()==false){
 				if($this->_verbose==true){
 					foreach($invepos->getMessages() as $message){
@@ -309,7 +364,6 @@ class InterfasePOS4 extends UserComponent {
 
 	public function download($onlyDescarga=false, $transaction=null, $strict=false, $fechaProceso=null){
 
-		
 		$this->_numberErrors = 0;
 		$controllerRequest = ControllerRequest::getInstance();
 		if($fechaProceso==null){
@@ -505,6 +559,7 @@ class InterfasePOS4 extends UserComponent {
 				if($procesoDefinitivo == 'S'){
 					$this->registarHistoricoCostosItemsDescargados($transaction, $fechaProceso);
 				}
+
 				$controllerRequest = ControllerRequest::getInstance();
 				if($procesoDefinitivo=='S'){
 					Flash::success('Se realizó la descarga de inventarios correctamente');
@@ -608,7 +663,7 @@ class InterfasePOS4 extends UserComponent {
 				'porcentaje_impoconsumo' => '{#MenusItems}.porcentaje_impoconsumo',
 				'costo' => '{#MenusItems}.costo',
 			),
-			'order' => 'nombre'
+			'order' => '{#Invepos}.id'
 		));
 
 		$costo = new CostoInventario();
@@ -698,5 +753,239 @@ class InterfasePOS4 extends UserComponent {
 		}
 	}
 
+	public function downloadInvoice($prefijo_facturacion, $consecutivo_facturacion, $fecha){
+
+		$this->_numberErrors = 0;
+		$this->_errors = [];
+		$transaction = TransactionManager::getUserTransaction();
+		$procesoDefinitivo = 'S';
+
+		# NO CONTROLAR LOS STOCKS DE INVENTARIO
+		Tatico::setControlStocks(false);
+		
+		try {
+
+			IdentityManager::mimicUser('admin');
+			$invoice  = new StdClass;
+			$invoice->prefijo_facturacion = $prefijo_facturacion;
+			$invoice->consecutivo_facturacion = $consecutivo_facturacion;
+			$invoice->fecha_facturacion = $fecha;
+			$fechaProceso = $fecha;
+
+			$this->loadItemsToDownload($transaction, $invoice, 'invoice');
+		
+			if($this->_numberErrors==0){
+				$comprobs = array();
+				$referencias = array();
+				foreach($this->_descargue as $usuarioId => $usuarioItems){
+					foreach($usuarioItems as $numeroAlmacen => $centroItems){
+						foreach($centroItems as $centroCosto => $items){
+							try {
+
+								$comprob = sprintf('C%02s', $numeroAlmacen);
+								$tatico = new Tatico($comprob, 0, $fechaProceso);
+								$tatico->setControlNegatives(false);
+								
+
+								$movement = array(
+									'Comprobante' => $comprob,
+									'Fecha' => $fechaProceso,
+									'Almacen' => $numeroAlmacen,
+									'Tipo' => 'E',
+									'CentroCosto' => $centroCosto,
+									'NPedido' => 0,
+									'Autoriza' => '',
+									'Solicita' => '',
+									'FechaVencimiento' => $fechaProceso,
+									'Estado' => 'C',
+									'Observaciones' => 'DESCARGA AUTOMATICA DEL PUNTO DE VENTA POR FACTURA '.$prefijo_facturacion.'-'.$consecutivo_facturacion.' FECHA:'.$fechaProceso,
+									'VTotal' => 0
+								);
+								$addDetail = array();
+								foreach($items as $codigo => $item){
+									if($item['cantidad']>0){
+										$addDetail[] = array(
+											'Item' => $codigo,
+											'Cantidad' => $item['cantidad'],
+											'Valor' => 0
+										);
+									}
+									if($item['cantidadu']>0){
+										$addDetail[] = array(
+											'Item' => $codigo,
+											'CantidadTragos' => $item['cantidadu'],
+											'Valor' => 0
+										);
+									}
+									$referencias[$numeroAlmacen][$codigo] = true;
+								}
+								$movement['Detail'] = $addDetail;
+								$movement['removeDetail'] = array();
+								$tatico->addMovement($movement);
+								$comprobs[] = $tatico->getLastConsecutivos();
+							}
+							catch(TaticoException $te){
+								throw new Exception('Inventarios: '.$te->getMessage(), 1);
+								return;
+							}
+						}
+					}
+				}
+
+				$controllerRequest = ControllerRequest::getInstance();
+				new POSAudit("REALIZÓ LA DESCARGA DE INVENTARIOS DE LA FACTURA $prefijo_facturacion - $consecutivo_facturacion");
+
+			} else {
+				throw new Exception('Por favor corrija las inconsistencias antes de continuar:'.implode('; ', $this->_errors), 1);
+			}
+
+		}
+		catch(TransactionFailed $e){
+			throw new Exception($e->getMessage(), 1);
+		}
+
+	}
+
+	public function adjustCreditNote($nota_credito_id){
+
+		$this->_numberErrors = 0;
+		$this->_errors = [];
+		$transaction = TransactionManager::getUserTransaction();
+		$procesoDefinitivo = 'S';
+	
+		# NO CONTROLAR LOS STOCKS DE INVENTARIO
+		Tatico::setControlStocks(false);
+		
+		try {
+			
+			$this->NotaCredito->setTransaction($transaction);
+			$nota_credito = $this->NotaCredito->findFirst($nota_credito_id);
+			$factura = $this->Factura->findFirst($nota_credito->factura_id);
+
+			if(!$nota_credito){
+				throw new Exception('No existe la nota credito que realiza el ajuste.', 1);
+			}
+
+			IdentityManager::mimicUser('admin');
+			$this->loadItemsToCreditNote($transaction, $nota_credito);
+
+			if($this->_numberErrors==0){
+				$comprobs = array();
+				$referencias = array();
+				foreach($this->_descargue as $usuarioId => $usuarioItems){
+					foreach($usuarioItems as $numeroAlmacen => $centroItems){
+						foreach($centroItems as $centroCosto => $items){
+							try {
+								$comprob = sprintf('A%02s', $numeroAlmacen);
+								$tatico = new Tatico($comprob, 0, $nota_credito->fecha);
+								$tatico->setControlNegatives(false);
+								$tatico->ajustCreditNote = true;
+
+								$movement = array(
+									'Comprobante' => $comprob,
+									'Fecha' => $nota_credito->fecha,
+									'Almacen' => $numeroAlmacen,
+									'CentroCosto' => $centroCosto,
+									'NPedido' => 0,
+									'Autoriza' => '',
+									'Solicita' => '',
+									'FechaVencimiento' => $nota_credito->fecha,
+									'Estado' => 'C',
+									'Observaciones' => 'AJUSTE AUTOMATICA AMBIENTE '.$factura->salon_nombre.' NOTA CREDITO '.$nota_credito->prefijo_documento.'-'.$nota_credito->consecutivo_documento.' FECHA:'.$nota_credito->fecha.' EN LA FACTURA '.$factura->prefijo_facturacion.'-'.$factura->consecutivo_facturacion,
+									'VTotal' => 0
+								);
+								$addDetail = array();
+								foreach($items as $codigo => $item){
+									if($item['cantidad']>0){
+										$addDetail[] = array(
+											'Item' => $codigo,
+											'Cantidad' => $item['cantidad'],
+											'Valor' => 0,
+											'Tipo'=> 'SUMAR'
+										);
+									}
+									if($item['cantidadu']>0){
+										$addDetail[] = array(
+											'Item' => $codigo,
+											'CantidadTragos' => $item['cantidadu'],
+											'Valor' => 0,
+											'Tipo'=> 'SUMAR'
+										);
+									}
+									$referencias[$numeroAlmacen][$codigo] = true;
+								}
+								$movement['Detail'] = $addDetail;
+								$movement['removeDetail'] = array();
+
+								$tatico->addMovement($movement);
+								$comprobs[] = $tatico->getLastConsecutivos();
+								
+							}
+							catch(TaticoException $te){
+								throw new Exception('Inventarios: '.$te->getMessage(), 1);
+								return;
+							}
+						}
+					}
+				}
+
+				$controllerRequest = ControllerRequest::getInstance();
+				new POSAudit("REALIZÓ EL AJUSTES DE INVENTARIO A LA NOTA CREDITO $nota_credito->prefijo_documento - $nota_credito->consecutivo_documento");
+
+			} else {
+				throw new Exception('Por favor corrija las inconsistencias antes de continuar:'.implode('; ', $this->_errors), 1);
+			}
+
+		}
+		catch(TransactionFailed $e){
+			throw new Exception($e->getMessage(), 1);
+		}
+
+	}
+
+
+	public function loadItemsToCreditNote($transaction, $nota_credito){
+
+		$numero = 0;
+		$this->Inveposnc->setTransaction($transaction);
+
+		foreach($this->Inveposnc->findForUpdate("nota_credito_id='$nota_credito->id' AND estado='N'") as $invepos){
+
+			$usuarioId = 0;
+			$codigoAlmacen = $invepos->getAlmacen();
+			$centroCosto = $invepos->getCentroCosto();
+			if($invepos->getTipo()=='I'){
+				$this->_addCantidad($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $invepos->getCantidad(), $invepos->getCantidadu());
+			} else {
+				if($invepos->getTipo()=='R'){
+					$this->itemsDeReceta($usuarioId, $codigoAlmacen, $centroCosto, $invepos->getCodigo(), $invepos->getCantidad());
+				} else {
+					if($invepos->getTipo()!='N'){
+						$menuItem = $invepos->getMenusItems();
+						if($menuItem){
+							$this->_errors[] = "El tipo de costo de '{$menuItem->nombre}' es desconocido";
+						} else {
+							$this->_errors[] = "El tipo de costo del item código '{$invepos->menus_items_id}' es desconocido";
+						}
+						$this->_numberErrors++;
+					}
+				}
+			}
+			$invepos->setEstado('S');
+			if($invepos->save()==false){
+				$error = [];
+				if($this->_verbose==true){
+					foreach($invepos->getMessages() as $message){
+						$error[] = $message->getMessage();
+					}
+				}
+				throw new Exception("Error ".imploe(';', $error), 1);
+			}
+			$numero++;
+			if($numero%50==0){
+				GarbageCollector::collectCycles();
+			}
+		}
+	}
 
 }

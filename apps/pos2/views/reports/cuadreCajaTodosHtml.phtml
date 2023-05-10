@@ -82,18 +82,40 @@ if($salon_id!='@'){
 }
 
 $movimiento = array();
+$movimientonc = [];
 $tiposFormas = array();
-$facturas = $Factura->find(array($conditions, 'columns' => 'prefijo_facturacion,consecutivo_facturacion,tipo,usuarios_id,salon_id,total'));
+$tiposFormasnc = [];
+$facturas = $Factura->find(array($conditions, 'columns' => 'id, fecha, prefijo_facturacion,consecutivo_facturacion,tipo,usuarios_id,salon_id,total'));
+$pagosnotascredito = [];
 foreach($facturas as $factura){
 	if($factura->tipo=='F'){
+
 		foreach($factura->getPagosFactura() as $pagoFactura){
 			if(!isset($movimiento[$factura->salon_id][$factura->usuarios_id][$pagoFactura->formas_pago_id])){
 				$movimiento[$factura->salon_id][$factura->usuarios_id][$pagoFactura->formas_pago_id] = $pagoFactura->pago;
+				$movimiento[$factura->salon_id][$factura->usuarios_id]['NCNETO'.$pagoFactura->formas_pago_id] = $pagoFactura->pago;
 			} else {
 				$movimiento[$factura->salon_id][$factura->usuarios_id][$pagoFactura->formas_pago_id] += $pagoFactura->pago;
+				$movimiento[$factura->salon_id][$factura->usuarios_id]['NCNETO'.$pagoFactura->formas_pago_id] += $pagoFactura->pago;
 			}
 			$tiposFormas[$pagoFactura->formas_pago_id] = true;
 		}
+
+		foreach($NotaCredito->find("factura_id = '$factura->id' AND fecha = '$factura->fecha'") as $key => $nota){
+
+			# FORMAS PAGO NOTA CREDITO
+			foreach($nota->getNotaCreditoPago() as $index => $pagoFactura){
+				if(!isset($movimiento[$factura->salon_id][$factura->usuarios_id]['NC'.$pagoFactura->formas_pago_id])){
+					$movimiento[$factura->salon_id][$factura->usuarios_id]['NC'.$pagoFactura->formas_pago_id] = -$pagoFactura->pago;
+					$movimiento[$factura->salon_id][$factura->usuarios_id]['NCNETO'.$pagoFactura->formas_pago_id] -= $pagoFactura->pago;
+				} else {
+					$movimiento[$factura->salon_id][$factura->usuarios_id]['NC'.$pagoFactura->formas_pago_id] -= $pagoFactura->pago;
+					$movimiento[$factura->salon_id][$factura->usuarios_id]['NCNETO'.$pagoFactura->formas_pago_id] -= $pagoFactura->pago;
+				}
+				$tiposFormasnc[$pagoFactura->formas_pago_id] = true;
+			}
+		}
+
 	} else {
 		if(!isset($movimiento[$factura->salon_id][$factura->usuarios_id][-1])){
 			$movimiento[$factura->salon_id][$factura->usuarios_id][-1] = $factura->total;
@@ -104,15 +126,54 @@ foreach($facturas as $factura){
 	}
 }
 
+$formaspagofinal = [];
+foreach ($tiposFormas as $formas_pago_id => $value) {
+	if($formas_pago_id != -1){
+		$formaPago = $FormasPago->findFirst($formas_pago_id);
+		$descripcion = '';
+		if($formaPago==false){
+			$descripcion = 'NO EXISTE';
+		} else {
+			$descripcion = $formaPago->detalle;
+		}
+
+		$formaspagofinal[] = [
+			'formas_pago_id' => $formas_pago_id,
+			'detalle' => $descripcion
+		];
+
+		if(isset($tiposFormasnc[$formas_pago_id] )){
+			$formaspagofinal[] = [
+				'formas_pago_id' => 'NC'.$formas_pago_id,
+				'detalle' => 'NC '.$descripcion
+			];
+
+			$formaspagofinal[] = [
+				'formas_pago_id' => 'NCNETO'.$formas_pago_id,
+				'detalle' => 'NETO '.$descripcion
+			];
+		}
+	}else{
+		$formaspagofinal[] = [
+			'formas_pago_id' => $formas_pago_id,
+			'detalle' => 'HABITACIÓN/FOLIO'
+		];
+
+	}
+}
+
+#echo json_encode($formaspagofinal);exit;
+
 echo '<table cellspacing="0" cellpadding="0">';
 
 $usuarios = array();
 $formasPago = array();
 $tiposFormas = array_keys($tiposFormas);
 $totalesFormasTodos = array();
+$formaspagoncexist = [];
 foreach($movimiento as $salonId => $movimientoSalon){
 
-	$numberRows = count($tiposFormas)+2;
+	$numberRows = count($formaspagofinal)+2;
 
 	echo '<td style="height: 30px;border-left:none;" colspan="'.$numberRows.'" valign="bottom">';
 	$salon = $Salon->findFirst($salonId);
@@ -125,22 +186,18 @@ foreach($movimiento as $salonId => $movimientoSalon){
 
 	$totalesFormas = array();
 	echo '<tr><th>&nbsp;</th>';
-	foreach($tiposFormas as $formaPagoId){
-		if(!isset($formasPago[$formaPagoId])){
-			if($formaPagoId!=-1){
-				$formaPago = $FormasPago->findFirst($formaPagoId);
-				if($formaPago==false){
-					$formasPago[$formaPagoId] = 'NO EXISTE';
-				} else {
-					$formasPago[$formaPagoId] = $formaPago->detalle;
-				}
-			} else {
-				$formasPago[$formaPagoId] = 'HABITACIÓN/FOLIO';
-			}
-			$totalesFormasTodos[$formaPagoId] = 0;
+	foreach($formaspagofinal as $formapago){
+		if($formapago['formas_pago_id']!=-1){
+			echo '<th>', $formapago['detalle'], '</th>';
+		} else {
+			echo '<th>', $formapago['detalle'], '</th>';
 		}
-		echo '<th>', $formasPago[$formaPagoId], '</th>';
-		$totalesFormas[$formaPagoId] = 0;
+
+		if(!isset($totalesFormasTodos[$formapago['formas_pago_id']])){
+			$totalesFormasTodos[$formapago['formas_pago_id']] = 0;
+		}
+				
+		$totalesFormas[$formapago['formas_pago_id']] = 0;
 	}
 	echo '<th style="border-right: 1px solid #969696;">TOTAL</th>';
 	echo '</tr>';
@@ -158,12 +215,16 @@ foreach($movimiento as $salonId => $movimientoSalon){
 		$totalCajero = 0;
 		$nombre = $usuarios[$usuarioId];
 		echo '<tr><td>', $nombre, '</td>';
-		foreach($tiposFormas as $formaPagoId){
-			if(isset($movimientoUsuario[$formaPagoId])){
-				echo '<td align="right">', Currency::money($movimientoUsuario[$formaPagoId]), '</td>';
-				$totalCajero+=$movimientoUsuario[$formaPagoId];
-				$totalesFormas[$formaPagoId] += $movimientoUsuario[$formaPagoId];
-				$totalesFormasTodos[$formaPagoId] += $movimientoUsuario[$formaPagoId];
+		foreach($formaspagofinal as $pago){
+			if(isset($movimientoUsuario[$pago['formas_pago_id']])){
+
+				echo '<td align="right">', Currency::money($movimientoUsuario[$pago['formas_pago_id']]), '</td>';
+				if(strpos($pago['formas_pago_id'],'NETO') === false){
+					$totalCajero+=$movimientoUsuario[$pago['formas_pago_id']];
+				}
+				$totalesFormas[$pago['formas_pago_id']] += $movimientoUsuario[$pago['formas_pago_id']];
+				$totalesFormasTodos[$pago['formas_pago_id']] += $movimientoUsuario[$pago['formas_pago_id']];
+
 			} else {
 				echo '<td align="right">0.00</td>';
 			}
@@ -174,9 +235,11 @@ foreach($movimiento as $salonId => $movimientoSalon){
 
 	$totalAmbiente = 0;
 	echo '<tr><td align="right"><b>TOTAL</b></td>';
-	foreach($tiposFormas as $formaPagoId){
-		echo '<td align="right">', Currency::money($totalesFormas[$formaPagoId]), '</td>';
-		$totalAmbiente+=$totalesFormas[$formaPagoId];
+	foreach($formaspagofinal as $formaPago){
+		echo '<td align="right">', Currency::money($totalesFormas[$formaPago['formas_pago_id']]), '</td>';
+		if(strpos($formaPago['formas_pago_id'],'NETO') === false){
+			$totalAmbiente+=$totalesFormas[$formaPago['formas_pago_id']];
+		}
 	}
 	echo '<td align="right" style="border-right: 1px solid #969696;">', Currency::money($totalAmbiente), '</td>';
 	echo '</tr>';
@@ -188,9 +251,11 @@ if(isset($numberRows)){
 
 	$totalGeneral = 0;
 	echo '<tr><td align="right" style="border-top: 1px solid #969696;"><b>TOTAL TODOS</b></td>';
-	foreach($tiposFormas as $formaPagoId){
-		echo '<td align="right" style="border-top: 1px solid #969696;">', Currency::money($totalesFormasTodos[$formaPagoId]), '</td>';
-		$totalGeneral+=$totalesFormasTodos[$formaPagoId];
+	foreach($formaspagofinal as $formaPago){
+		echo '<td align="right" style="border-top: 1px solid #969696;">', Currency::money($totalesFormasTodos[$formaPago['formas_pago_id']]), '</td>';
+		if(strpos($formaPago['formas_pago_id'],'NETO') === false){
+			$totalGeneral+=$totalesFormasTodos[$formaPago['formas_pago_id']];
+		}
 	}
 	echo '<td align="right" style="border-right: 1px solid #969696;border-top: 1px solid #969696;">', Currency::money($totalGeneral), '</td>';
 	echo '</tr>';

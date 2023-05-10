@@ -1,0 +1,10 @@
+[pos]
+hotel = hminimarket
+ramocol = rminimarket
+pos = pminimarket
+interpos = On
+printing_type = client
+online_inve = On
+company_exention = Off
+back_version = 6.0
+is_club = Off

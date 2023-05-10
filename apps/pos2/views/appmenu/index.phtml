@@ -76,11 +76,14 @@ if(Date::isEquals($DatosHotel->getFecha(), $Datos->getFecha())==true){
 		array('admin', 'Administración<br>Sistema', 'admin.png', 'admin()'),
 		array('reports', 'Reportes', 'printer2.png', 'goReports()'),
 		array('anula_factura', 'Anular Factura/Orden', 'anular.png', 'cancelFactura()'),
+		array('nota_credito', 'Nota credito', 'notacredito.jpg', 'notaCredito()'),
 		array('reimprimir', 'Reimprimir Factura/Orden', 'reimprimir.png', 'reimprimirFactura()'),
 		array('clave', 'Cambio Clave', 'key.png', 'changePassword()'),
 		array('audit', 'Auditoría Sistema', 'audit.png', 'audit()'),
 		array('revert', 'Devolver Día', "$devolverDiaPath.png", 'revertDay()'),
 		array('close', 'Cerrar Día', "$cerrarDiaPath.png", 'closeDay()'),
+		array('reprocesar_factura_electronica', 'Reprocesar factura electrónica', 'xml_factura.jpg', 'ReprocesarFacturaraElectronica()'),
+		array('reprocesar_nota_electronica', 'Reprocesar nota credito electrónica', 'xml_nota_credito.png', 'ReprocesarNotaElectronica()')
 	);
 
 } else {

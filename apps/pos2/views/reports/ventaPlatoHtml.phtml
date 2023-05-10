@@ -126,10 +126,12 @@ function getHabitacion($id)
 } 
 
 
+$db = DbBase::rawConnect();
+
 
 foreach($tipos as $tipo => $detalle){
 	echo '<h3>', $detalle, '</h3>';
-
+	if($tipo != 'F'){
 ?>
 <table width="670" cellspacing="0">
 	<tr>
@@ -144,6 +146,31 @@ foreach($tipos as $tipo => $detalle){
 		<th>Valor Total</th>
 	</tr>
 <?php
+	}else{
+?>
+<table width="670" cellspacing="0">
+	<tr>
+	<tr>
+		<th>Código</th>
+		<th>Grupo Men&uacute;</th>
+		<th>Nro. Habitaci&oacute;n/Nombre</th>
+		<th>Descripción</th>
+		<th>Cantidad F</th>
+		<th>Cantidad NC</th>
+		<th>Cantidad</th>
+		<th>Porc. Costo</th>
+		<th>Costo F</th>
+		<th>Costo NC</th>
+		<th>Costo</th>
+		<th>Precio Venta F</th>
+		<th>Precio Venta NC</th>
+		<th>Precio Venta</th>
+		<th>Valor Total F</th>
+		<th>Valor Total NC</th>
+		<th>Valor Total</th>
+	</tr>
+<?php		
+	}
 
 	/*$conditions = "{#AccountMaster}.estado = 'L' AND {#Account}.estado = 'L'";
 	if($fecha_inicial==$fecha_final){
@@ -180,40 +207,65 @@ foreach($tipos as $tipo => $detalle){
 		'order' => array('{#Menus}.nombre', '{#MenusItems}.nombre')
 	));*/
 
-	$conditions = "{#Factura}.estado = 'A'";
+	$conditions = "f.estado = 'A'";
 	if($fecha_inicial==$fecha_final){
-		$conditions.= " AND {#Factura}.fecha = '$fecha_inicial'";
+		$conditions.= " AND f.fecha = '$fecha_inicial'";
 	} else {
-		$conditions.= " AND {#Factura}.fecha >= '$fecha_inicial' AND {#Factura}.fecha <= '$fecha_final'";
+		$conditions.= " AND f.fecha >= '$fecha_inicial' AND f.fecha <= '$fecha_final'";
 	}
 
 	if($salon_id!='@'){
-		$conditions.=" AND {#Factura}.salon_id = '$salon_id'";
+		$conditions.=" AND f.salon_id = '$salon_id'";
 	}
 
 	if($tipoItem!='@'){
-		$conditions.=" AND {#Factura}.tipo = '$tipoItem'";
+		$conditions.=" AND f.tipo = '$tipoItem'";
 	}
 
-	$conditions.=" AND {#Factura}.tipo_venta = '$tipo'";
-	$query = new ActiveRecordJoin(array(
-		'entities' => array('Factura', 'DetalleFactura', 'MenusItems', 'Menus'),
-		'conditions' => $conditions,
-		'groupFields' => array(
-			'menu' => '{#Menus}.nombre',
-					  '{#MenusItems}.nombre',
-					  '{#MenusItems}.id',
-					  '{#Factura}.habitacion_id'
+	$conditions.=" AND f.tipo_venta = '$tipo'";
 
-		),
-		'sumatory' => array(
-			'{#DetalleFactura}.cantidad',
-			'costo' => '{#MenusItems}.costo*{#DetalleFactura}.cantidad',
-			'valor' => '{#DetalleFactura}.valor',
-			'total' => '{#DetalleFactura}.total',
-		),
-		'order' => array('{#Menus}.nombre', '{#MenusItems}.nombre')
-	));
+	// $query = new ActiveRecordJoin(array(
+	// 	'entities' => array('Factura', 'DetalleFactura', 'MenusItems', 'Menus'),
+	// 	'conditions' => $conditions,
+	// 	'groupFields' => array(
+	// 		'menu' => '{#Menus}.nombre',
+	// 		'{#MenusItems}.nombre',
+	// 		'{#MenusItems}.id',
+	// 		'{#Factura}.habitacion_id',
+	// 		'{#MenusItems}.costo'
+	// 	),
+	// 	'sumatory' => array(
+	// 		'{#DetalleFactura}.cantidad',
+	// 		'costo' => '{#MenusItems}.costo*{#DetalleFactura}.cantidad',
+	// 		'valor' => '{#DetalleFactura}.valor',
+	// 		'total' => '{#DetalleFactura}.total',
+	// 	),
+	// 	'order' => array('{#Menus}.nombre', '{#MenusItems}.nombre')
+	// ));
+
+	$query = "SELECT 
+				m.nombre AS menu, 
+				mi.nombre, 
+				mi.id, 
+				f.habitacion_id, 
+				SUM(df.cantidad) AS cantidadf, 
+				SUM(IFNULL(ncd.cantidad,0)) AS cantidadnc,
+				SUM(mi.costo*df.cantidad) AS costof, 
+				SUM(mi.costo*IFNULL(ncd.cantidad,0)) AS costonc, 
+				SUM(df.valor) AS valorf,
+				SUM(IFNULL(ncd.valor,0)) AS valornc,
+				SUM(df.total) AS totalf,
+				SUM(IFNULL(ncd.total,0)) AS totalnc
+			FROM factura f
+			INNER JOIN detalle_factura df ON df.prefijo_facturacion = f.prefijo_facturacion AND df.consecutivo_facturacion = f.consecutivo_facturacion AND df.tipo = f.tipo
+			INNER JOIN menus_items mi ON mi.id = df.menus_items_id
+			LEFT JOIN nota_credito nc ON nc.factura_id = f.id  AND nc.fecha = f.fecha
+			LEFT JOIN nota_credito_detalle ncd ON ncd.nota_credito_id = nc.id AND ncd.detalle_factura_id = df.id
+			INNER JOIN menus m ON m.id = mi.menus_id
+			WHERE 
+				$conditions
+			GROUP BY m.nombre, mi.nombre, mi.id, f.habitacion_id 
+			ORDER BY m.nombre,mi.nombre";
 
 	// echo"alejo". $query->getSQLQuery();exit;
 
@@ -221,27 +273,80 @@ foreach($tipos as $tipo => $detalle){
 	$total = 0;
 	$valor = 0;
 	$cantidad = 0;
-	foreach($query->getResultSet() as $item){
-		echo "<tr>";
-			echo "<td align='left'>", $item->id, "</td>";
-			echo "<td align='left'>", $item->menu, "</td>";
-			echo "<td align='left'>", ($item->habitacion_id > 0) ? getHabitacion($item->habitacion_id) : "&nbsp;" , "</td>";
-			echo "<td align='left'>", $item->nombre, "</td>";
-			echo "<td align='right'>", $item->cantidad, "</td>";
-			if($item->valor!=0){
-				echo "<td align='right'>", (LocaleMath::round($item->costo*100/$item->valor, 2)), "</td>";
-			} else {
-				echo "<td align='right'>0</td>";
-			}
-			echo "<td align='right'>", Currency::number($item->costo, 2), "</td>";
-			echo "<td align='right'>", Currency::number($item->valor, 2), "</td>";
-			echo "<td align='right'>", Currency::number($item->total, 2), "</td>";
-		echo "</tr>";
-		$costo += $item->costo;
-		$valor += $item->valor;
-		$total += $item->total;
-		$cantidad += $item->cantidad;
+
+	$costonc = 0;
+	$totalnc = 0;
+	$valornc = 0;
+	$cantidadnc = 0;
+
+	foreach($db->inQueryAssoc($query) as $item){
+
+		$item = (object) $item;
+
+		if($tipo != 'F'){
+
+			echo "<tr>";
+				echo "<td align='left'>", $item->id, "</td>";
+				echo "<td align='left'>", $item->menu, "</td>";
+				echo "<td align='left'>", ($item->habitacion_id > 0) ? getHabitacion($item->habitacion_id) : "&nbsp;" , "</td>";
+				echo "<td align='left'>", $item->nombre, "</td>";
+				echo "<td align='right'>", $item->cantidadf, "</td>";
+				if($item->valorf!=0){
+					echo "<td align='right'>", (LocaleMath::round($item->costof*100/$item->valorf, 2)), "</td>";
+				} else {
+					echo "<td align='right'>0</td>";
+				}
+				echo "<td align='right'>", Currency::number($item->costof, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->valorf, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->totalf, 2), "</td>";
+			echo "</tr>";
+
+			$costo += $item->costof;
+			$valor += $item->valorf;
+			$total += $item->totalf;
+			$cantidad += $item->cantidadf;
+
+		}else{
+			echo "<tr>";
+				echo "<td align='left'>", $item->id, "</td>";
+				echo "<td align='left'>", $item->menu, "</td>";
+				echo "<td align='left'>", ($item->habitacion_id > 0) ? getHabitacion($item->habitacion_id) : "&nbsp;" , "</td>";
+				echo "<td align='left'>", $item->nombre, "</td>";
+				echo "<td align='right'>", $item->cantidadf, "</td>";
+				echo "<td align='right'>", $item->cantidadnc, "</td>";
+				echo "<td align='right'>", $item->cantidadf - $item->cantidadnc, "</td>";
+				if($item->valorf!=0){
+					echo "<td align='right'>", (LocaleMath::round(($item->costof - $item->costonc)*100/$item->valorf, 2)), "</td>";
+				} else {
+					echo "<td align='right'>0</td>";
+				}
+				echo "<td align='right'>", Currency::number($item->costof, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->costonc, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->costof - $item->costonc, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->valorf, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->valornc, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->valorf - $item->valornc, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->totalf, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->totalnc, 2), "</td>";
+				echo "<td align='right'>", Currency::number($item->totalf - $item->totalnc, 2), "</td>";
+			echo "</tr>";
+
+			$costo += $item->costof;
+			$valor += $item->valorf;
+			$total += $item->totalf;
+			$cantidad += $item->cantidadf;
+
+			$costonc += $item->costonc;
+			$valornc += $item->valornc;
+			$totalnc += $item->totalnc;
+			$cantidadnc += $item->cantidadnc;
+
+
+		}
 	}
+
+
+	if($tipo != 'F'){
 
 ?>
 <tr>
@@ -254,7 +359,29 @@ foreach($tipos as $tipo => $detalle){
 </tr>
 </table>
 
-<?php } ?>
+<?php 
+    }else {
+?>
+<tr>
+	<td colspan="4">&nbsp;</td>
+	<td align="right"><b><?php echo $cantidad ?></b></td>
+	<td align="right"><b><?php echo $cantidadnc ?></b></td>
+	<td align="right"><b><?php echo $cantidad - $cantidadnc ?></b></td>
+	<td align="right">&nbsp;</td>
+	<td align="right"><b><?php echo Currency::number($costo, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($costonc, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($costo - $costonc, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($valor, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($valornc, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($valor - $valornc, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($total, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($totalnc, 2) ?></b></td>
+	<td align="right"><b><?php echo Currency::number($total - $totalnc, 2) ?></b></td>
+</tr>
+</table>
+<?php		
+	}
+} ?>
 
 </body>
 </html>

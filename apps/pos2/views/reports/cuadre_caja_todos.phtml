@@ -64,11 +64,16 @@ $total = 0;
 $totalIva = 0;
 $tipo_venta = "";
 $totalPropina = 0;
+$totalproponanc = 0;
 $cajeros_total = array();
 $usuarios = array();
 $totalTipoVenta = 0;
 $totalAlimentos = 0;
 $totalBebidas = 0;
+$totalivanc = 0;
+$totalnotafull = 0;
+$formaspagonc = array();
+$totalfinalnc = 0;
 if($salon_id!='@'){
 	$conditions = "fecha >= '$fecha_inicial' AND fecha <= '$fecha_final' and estado = 'A' AND salon_id = '{$salon_id}'";
 } else {
@@ -87,8 +92,16 @@ foreach($Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutivo
 	$nombre = $usuarios[$factura->usuarios_id];
 	if($tipo_venta!=$factura->tipo_venta){
 		if($tipo_venta!=''){
-			echo "<tr><td colspan='4'>---------------------------------------</td></tr>";
-			echo '<tr><td align="right" colspan="3">TOTAL</td><td align="right">', Currency::number($totalTipoVenta, 0), '</td></tr>';
+			if($tipo_venta == 'F'){
+				echo "<tr><td colspan='3'>---------------------------------------</td></tr>";
+				echo '<tr><td align="right" colspan="3">TOTAL</td><td align="right">', Currency::number($totalTipoVenta, 0), '</td></tr>';
+				echo '<tr><td align="right" colspan="3">NOTA CREDITO</td><td align="right">', Currency::number($totalnotafull, 0), '</td></tr>';
+				echo '<tr><td align="right" colspan="3">TOTAL NETO</td><td align="right">', Currency::number($totalTipoVenta-$totalnotafull, 0), '</td></tr>';
+			}else{
+				echo "<tr><td colspan='4'>---------------------------------------</td></tr>";
+				echo '<tr><td align="right" colspan="3">TOTAL</td><td align="right">', Currency::number($totalTipoVenta, 0), '</td></tr>';
+			}
+			$totalnotafull = 0;
 			$totalTipoVenta = 0;
 		}
 		$tipoVenta = $TipoVenta->findFirst("id='$factura->tipo_venta'");
@@ -139,12 +152,60 @@ foreach($Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutivo
 	echo "<td align='right'>", Currency::number($factura->total), "</td>";
 	echo "</tr>";
 	if($factura->tipo_venta=='F'){
+
+		# NOTA CREDITO FACTURA
+		$totalncfactura = 0;
+		$totalpropinanc = 0;
+
+		foreach($NotaCredito->find("factura_id = '$factura->id' AND fecha = '$factura->fecha'") as $key => $nota){
+			echo "<tr>";
+			echo "<td align='center'>&nbsp;</td>";
+			echo "<td align='left' colspan='2'>{$nota->prefijo_documento}-{$nota->consecutivo_documento}&nbsp;</td>";
+			echo "<td align='right'>-",Currency::number($nota->total),"</td>";
+			echo "</tr>";
+			$totalncfactura = $nota->total;
+			$totalivanc += $nota->total_iva;
+			$totalnotafull += $nota->total;
+			$totalpropinanc = $nota->propina;
+
+			# FORMAS PAGO NOTA CREDITO
+			foreach($nota->getNotaCreditoPago() as $index => $forpag){
+				$detalle = $forpag->getFormasPago()->detalle;
+				if(!isset($formaspagonc[$detalle])){
+					$formaspagonc[$detalle] = 0;
+				}
+				$formaspagonc[$detalle] += $forpag->pago;
+			}
+
+		}
+
+		if($totalncfactura > 0){
+			echo "<tr>";
+			echo "<td align='center'>&nbsp;</td>";
+			echo "<td align='left'>&nbsp;</td>";
+			echo "<td align='left'>&nbsp;</td>";
+			echo "<td align='right'>---------</td>";
+			echo "</tr>";
+			echo "<tr>";
+			echo "<td align='center'>&nbsp;</td>";
+			echo "<td align='left'>&nbsp;</td>";
+			echo "<td align='left'>&nbsp;</td>";
+			echo "<td align='right'>",Currency::number($factura->total-$totalncfactura),"</td>";
+			echo "</tr>";
+		}
+
+
 		if(!isset($cajeros_total[$UsuariosPos->id])){
 			$cajeros_total[$UsuariosPos->id] = array();
 			$cajeros_total[$UsuariosPos->id]['nombre'] = $nombre;
 			$cajeros_total[$UsuariosPos->id]['valor'] = 0;
+			$cajeros_total[$UsuariosPos->id]['valornc'] = 0;
 		}
+
 		$cajeros_total[$UsuariosPos->id]['valor'] += $factura->total;
+		$cajeros_total[$UsuariosPos->id]['valornc'] += $totalncfactura;
+
+
 		$conditions = "prefijo_facturacion='{$factura->prefijo_facturacion}' AND consecutivo_facturacion='{$factura->consecutivo_facturacion}' AND tipo='{$factura->tipo}'";
 		foreach($PagosFactura->find($conditions) as $pagoFactura){
 			$formaPago = $pagoFactura->getFormasPago();
@@ -161,6 +222,7 @@ foreach($Factura->find($conditions, "order: tipo_venta, usuarios_id, consecutivo
 		}
 	}
 	$total+=$factura->total;
+	$totalfinalnc+=$totalncfactura;
 	$totalIva+=$factura->total_iva;
 	$totalTipoVenta+=$factura->total;
 	$totalAlimentos+=$factura->total_alimentos;
@@ -180,17 +242,20 @@ if($tipo_venta!=''){
 <?php
 
 foreach($cajeros_total as $cajero){
+	if($cajero['valornc'] > 0){
+		echo 'VALOR FACTURADO '.$cajero['nombre'].': ', Currency::number($cajero['valor']), '<br/>';
+		echo 'NOTAS CREDITO '.$cajero['nombre'].': ', Currency::number($cajero['valornc']), '<br/>';
+		$cajero['valor'] = $cajero['valor'] - $cajero['valornc'];
+	}
 	echo 'TOTAL FACTURAS '.$cajero['nombre'].': ', Currency::number($cajero['valor']), '<br/>';
+	
 }
 
 ?>
 <br/>
-TOTAL ALIMENTOS : <?php echo Currency::number($totalAlimentos) ?><br/>
-TOTAL BEBIDAS : <?php echo Currency::number($totalBebidas) ?><br/>
-<br/>
-TOTAL PROPINA : <?php echo Currency::number($totalPropina) ?><br/>
-TOTAL IVA : <?php echo Currency::number($totalIva) ?><br/>
-TOTAL TODO: <?php echo Currency::number($total) ?><br/>
+TOTAL PROPINA : <?php echo Currency::number($totalPropina-$totalpropinanc) ?><br/>
+TOTAL IVA : <?php echo Currency::number($totalIva-$totalivanc) ?><br/>
+TOTAL TODO: <?php echo Currency::number($total-$totalfinalnc) ?><br/>
 <br/>
 <br/>
 <?php
@@ -198,6 +263,16 @@ TOTAL TODO: <?php echo Currency::number($total) ?><br/>
 if(isset($formasPago)){
 	foreach($formasPago as $formaPago => $valor){
 		echo $formaPago.': ', Currency::number($valor), '<br/>';
+		if(isset($formaspagonc[$formaPago])){
+			$valor = $valor - $formaspagonc[$formaPago];
+			echo 'NC-'.$formaPago.': -', Currency::number($formaspagonc[$formaPago]), '<br/>';
+			echo 'NETO-'.$formaPago.': ', Currency::number($valor), '<br/>';
+			unset($formaspagonc[$formaPago]);
+		}
+	}
+
+	foreach($formaspagonc as $detalle => $valor){
+		echo 'NOTA CREDITO-'.$detalle.': ', Currency::number($valor), '<br/>';
 	}
 }
 

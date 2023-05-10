@@ -35,13 +35,14 @@ View::getContent();
 <div style='width:270px;'>
 <pre>
 <?php
-
-function center($text, $size) {
-	if (mb_strlen($text) >= $size) {
-		return $text;
+if(!function_exists('center')){
+	function center($text, $size) {
+		if (mb_strlen($text) >= $size) {
+			return $text;
+		}
+		$spaces = str_repeat(' ', ($size - mb_strlen($text))/2);
+		return $spaces . $text . $spaces;
 	}
-	$spaces = str_repeat(' ', ($size - mb_strlen($text))/2);
-	return $spaces . $text . $spaces;
 }
 
 echo center($factura->nombre_cadena, 35), "\n";
@@ -51,7 +52,13 @@ echo center($factura->nombre_hotel, 35)."\n";
 echo center($factura->direccion, 35)."\n";
 echo center("Tel. ".$factura->telefonos, 35)."\n";
 if ($preview == false) {
-	echo center(($factura->tipo=='O' ? 'ORDEN DE SERVICIO ' : 'FACTURA DE VENTA').' No. '.
+	$nombre_documento = '';
+	if($factura->tipo=='O'){
+		$nombre_documento = 'ORDEN DE SERVICIO ';
+	}else{
+		$nombre_documento = $factura->tipo_factura == 'E' ? 'FACTURA ELECTRÓNICA DE VENTA' : 'FACTURA DE VENTA';
+	}
+	echo center($nombre_documento.' No. '.
 	($factura->tipo=='O' ? '' : $factura->prefijo_facturacion.'-').$factura->consecutivo_facturacion, 35)."\n";
 	if ($factura->tipo == "F") {
 		echo center("RESOLUCIÓN NO ".$factura->resolucion, 35)."\n";

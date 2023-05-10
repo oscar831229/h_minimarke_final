@@ -67,6 +67,7 @@ function center($text, $size){
 <?php
 
 	$total = 0;
+	$totalnc = 0;
 	$total_iva = 0;
 	$items = array();
 	if($salon_id=='@'){
@@ -74,13 +75,21 @@ function center($text, $size){
 	} else {
 		$conditions = "date(hora) >= '$fecha_inicial' AND date(hora) <= '$fecha_final' AND estado='L' AND salon_id = '{$salon_id}'";
 	}
+
+	$db = DbBase::rawConnect();
+
 	foreach($AccountMaster->find($conditions) as $accountMaster){
 		$accounts = $Account->find("account_master_id='$accountMaster->id' and estado = 'L'");
 		foreach($accounts as $account){
+
 			if(!isset($items[$account->menus_items_id])){
 				$items[$account->menus_items_id] = array(
 					'cantidad' => 0,
-					'valor' => 0
+					'valor' => 0,
+					'nota_credito' => [
+						'cantidad' => 0,
+						'valor' => 0
+					]
 				);
 			}
 			$items[$account->menus_items_id]['cantidad']+=$account->cantidad;
@@ -89,6 +98,27 @@ function center($text, $size){
 			} else {
 				$items[$account->menus_items_id]['valor']+=$account->total*$account->cantidad;
 			}
+
+			# CAPTURAMOS EL ACCOUN CUENTA PARA VALIDAR QUE SEA FACTURA.
+			$accountCuenta = $account->getAccountCuentas();
+			if($accountCuenta->tipo_venta == 'F'){
+
+				$sql = "SELECT 
+							ncd.*, 
+							a.id, 
+							nc.fecha FROM nota_credito nc
+						INNER JOIN nota_credito_detalle ncd ON ncd.nota_credito_id = nc.id
+						INNER JOIN detalle_factura df ON df.id = ncd.detalle_factura_id
+						INNER JOIN account a ON a.id = df.account_id
+						WHERE a.id = '$account->id' AND nc.fecha = date('$accountMaster->hora')";
+
+				foreach($db->inQueryAssoc($sql) as $key => $producto){
+					$items[$account->menus_items_id]['nota_credito']['valor']+=$producto['total'];
+					$items[$account->menus_items_id]['nota_credito']['cantidad']+=$producto['cantidad'];
+				}
+
+			}
+
 		}
 	}
 	foreach($items as $item_id => $item){
@@ -99,10 +129,37 @@ function center($text, $size){
 		} else {
 			echo "<td align='left'>NO EXISTE ITEM</td>";
 		}
-		echo "<td align='center'>{$item['cantidad']}</td>";
+		echo "<td align='center'>&nbsp;{$item['cantidad']}</td>";
 		echo "<td align='right'>", Currency::number($item['valor']), "</td>";
 		echo "</tr>";
+
+		
+		if($item['nota_credito']['cantidad'] > 0){
+			echo "<tr>";
+			echo "<td align='left'></td>";
+			echo "<td align='center'>-{$item['nota_credito']['cantidad']}</td>";
+			echo "<td align='right'>", Currency::number($item['nota_credito']['valor']), "</td>";
+			echo "</tr>";
+
+			$cantidad = $item['cantidad']-$item['nota_credito']['cantidad'];
+			$valor = $item['valor'] - $item['nota_credito']['valor'];
+
+			echo "<tr>";
+			echo "<td align='left'></td>";
+			echo "<td align='center'>&nbsp;{$cantidad}</td>";
+			echo "<td align='right'>", Currency::number($valor), "</td>";
+			echo "</tr>";
+			echo "<tr>";
+			echo "<td colspan='3'>---------------------------------</td>";
+			echo "</tr>";
+
+			$totalnc += $item['nota_credito']['valor'];
+
+		}
+
+
 		$total += $item['valor'];
+		
 	}
 ?>
 </table>
@@ -110,7 +167,9 @@ function center($text, $size){
 --------------------------------------
 </pre>
 <div style='pading: 20px; width:250px' align='right'>
-TOTAL : <?php echo Currency::number($total) ?>
+TOTAL  : <?php echo Currency::number($total) ?><br>
+TOTAL NOTA CREDITO  : <?php echo Currency::number($totalnc) ?><br>
+TOTAL NETO  : <?php echo Currency::number($total-$totalnc) ?>
 </div>
 </body>
 </html>

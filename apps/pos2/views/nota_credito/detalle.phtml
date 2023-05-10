@@ -1,0 +1,127 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+?>
+	
+
+	<p style="font-size: 14px; font-family: revert;font-weight: lighter;">Cliente: <span id='cliente'></span></p>
+	<br>
+	<br>
+
+	<table cellspacing="0" width="100%" id='tbldetalle'>
+		<thead>
+			<tr>
+				<th>Item</th>
+				<th>Cantidad</th>
+				<th>Nota</th>
+				<th>Total</th>
+				<th>Total nota</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+		<thead>
+			<tr>
+				<th class="al-r" colspan="3">TOTALES</th>
+				<th class="totalfac"></th>
+				<th class="totalnoc"></th>
+			</tr>
+		</thead>
+	</table>
+
+	<!-- <div align='right'>
+		<div id="add_forma_div" style="margin-top:15px;">
+			<table cellspacing="0">
+				<tr>
+					<td width="15%">
+						<img width='15' height='15' style="cursor: pointer;" src='<?php echo Core::getInstancePath() ?>img/pos2/plus.gif' onclick="nota.newForma()" border='0'/>
+					</td>
+					<td>
+						Agregar Forma de Pago
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div> -->
+
+	<br/>
+	<div align="center">
+		<form autocomplete="off">
+		<table align='center' cellspacing="0" cellpadding='0' id='tblformaspago'>
+			<thead>
+				<tr>
+					<th width="30%">Forma de Pago</th>
+					<th width="40%">Valor</th>
+					<th width="40%">Valor NC</th>
+					<th width="20%">Número</th>
+					<th width="20%">Fecha</th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+		</form>
+
+		<table id="totales" style="margin-top:15px;">
+			<tbody>
+				<tr class='tr_tot'>
+					<td align='right'><label for="total_propina">PROPINA</label></td>
+					<td>
+						<input type='text' class='Propina' name='total_propina' readonly="readonly" id='total_propina' value="0"/>
+					</td>
+					<td>
+						<input type='text' class='Propina' name='total_propina_nota' id='total_propina_nota' value="0" onblur="nota.setPropina(this)"/>
+					</td>
+				</tr>
+				<tr class='tr_tot'>
+					<td align='right'><label for="total_pagos">TOTAL PAGO</label></td>
+					<td>
+						<input type='text' name='total_pagos' id='total_pagos' readonly="readonly" value="0"/>
+					</td>
+					<td align='center' rowspan="3">
+						<?php 
+							echo Tag::button("value: Grabar", "class: okButton","style: cursor:pointer;", "onclick: nota.pay()");
+							echo Tag::image('spin.gif','style: display:none;', 'class: saveloading') 							
+						?>
+					</td>
+				</tr>
+				<tr class='tr_tot'>
+					<td align='right'><label for="total_saldo">TOTAL SALDO</label></td>
+					<td>
+						<input type='text' class='Saldo' name='total_saldo' id='total_saldo' readonly="readonly" value="0"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<br>
+		<br>
+		<p style="font-size: 14px; font-family: revert;font-weight: lighter;">Notas crédito</p>
+		<table cellspacing="0" width="100%" id='tblnotas'>
+			<thead>
+				<tr>
+					<th>Numero</th>
+					<th>Fecha</th>
+					<th>Total</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+
+
+	</div>
+<br/>
+

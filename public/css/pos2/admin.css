@@ -628,6 +628,20 @@ div.edit {
 	background-repeat: no-repeat;
 }
 
+#datos_carvajal_link {
+	padding-left: 30px;
+	background-image: url("../../img/pos2/icons/dian.png");
+	background-position: 5px 10px;
+	background-repeat: no-repeat;
+}
+
+#resolucion_factura_link {
+	padding-left: 30px;
+	background-image: url("../../img/pos2/icons/resolucionico.png");
+	background-position: 5px 10px;
+	background-repeat: no-repeat;
+}
+
 #usuarios_link {
 	padding-left: 30px;
 	background-image: url("../../img/pos2/icons/users-2.png");

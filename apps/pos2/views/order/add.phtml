@@ -118,7 +118,7 @@ if($salon->venta_a!='A'){
 			 	<table align="center">
 			 	 	<tr>
 			 	 		<td>
-							<button class='commandButton' id="showInvoice" disabled>
+							<button class='commandButton' id="showInvoice">
 								<?php echo Tag::image("pos2/print-p.png", "width: 23") ?><br>
 					 			<b><span id="gendoc">Imprimir<br>Orden</span></b><br>
 					 		</button>
@@ -226,8 +226,6 @@ if($salon->venta_a!='A'){
  	<?php echo Tag::image('pos2/keyboard.png') ?>
  </div>-->
 
-
-
 <?php
 
 if (Session::getData('current_master_id_ult')) {
@@ -244,7 +242,6 @@ if (Session::getData('current_master_id_ult')) {
 	}
 	
 }
-
 
 echo '
 <script type="text/javascript">

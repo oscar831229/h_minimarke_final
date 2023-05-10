@@ -20,7 +20,7 @@ if($config->application->mode=='development'){
 	Tag::stylesheetLink('pos2/reimprimir');
 	echo Tag::javascriptLibrary('windows');
 	echo Tag::javascriptInclude('pos2/modal');
-	echo Tag::javascriptInclude('pos2/numero');
+	// echo Tag::javascriptInclude('pos2/numero');
 	echo Tag::javascriptInclude('pos2/hash');
 	echo Tag::javascriptInclude('pos2/reimprimir');
 } else {
@@ -68,6 +68,10 @@ echo View::getContent(); ?>
 																<option value='C'>COMANDA</option>
 															</select>
 														</td>
+													</tr>
+													<tr>
+														<td align="right"><b>Prefijo</b></td>
+														<td><input type="text" id="prefijo" value="" size="12" name="prefijo" onblur="this.value = this.value.toUpperCase()"></td>
 													</tr>
 													<tr>
 														<td colspan="2" align="center">

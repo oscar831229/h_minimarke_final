@@ -16,7 +16,8 @@
 class FacturaController extends ApplicationController
 {
 
-	public function indexAction($currentCuenta=0, $currentMaster=0){
+	public function indexAction($currentCuenta=0, $currentMaster=0)
+	{
 
 		$preview = $this->getRequestInstance()->isSetQueryParam('preview');
 		$reprint = $this->getRequestInstance()->isSetQueryParam('reprint');
@@ -29,7 +30,6 @@ class FacturaController extends ApplicationController
 		if($currentCuenta<=0){
 			$currentCuenta = Session::get('numero_cuenta', 'int');
 		}
-
 
 		$accountCuenta = $this->AccountCuentas->findFirst("account_master_id=$currentMaster AND cuenta=$currentCuenta");
 		if ($accountCuenta == false) {
@@ -56,6 +56,8 @@ class FacturaController extends ApplicationController
 
 		$transaction = TransactionManager::getUserTransaction();
 		$Facturacion = new Facturacion();
+		$Facturacion->preview = $preview;
+		$Facturacion->reprint = $reprint;
 		$response = $Facturacion->genVoice($accountCuenta, $transaction);
 
 		if(!$response['success']){
@@ -66,13 +68,13 @@ class FacturaController extends ApplicationController
 			}
 			return $this->routeToAction('showErrores');
 		}else{
-			
+
 			# Confirmar cambios facturación
-			$transaction->commit();
+			if($preview==false && $reprint==false){
+				$transaction->commit();
+			}
 
 		    $redirec_pay = $accountCuenta->estado == 'B' ? true:false;
-
-			
 			$this->setParamToView('redirec_pay',$redirec_pay);
 			$this->setParamToView('factura',$response['Factura']);
 			$this->setParamToView('detalleFactura', $response['detalleFactura']);
@@ -80,6 +82,7 @@ class FacturaController extends ApplicationController
 			$this->setParamToView('preview', $preview);
 			$this->setParamToView('reprint', $reprint);
 			$this->setParamToView('accountCuenta', $accountCuenta);
+			
 		}
 	}
 
@@ -118,6 +121,4 @@ class FacturaController extends ApplicationController
 
 		}
 	}
-
 }
-

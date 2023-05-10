@@ -61,7 +61,26 @@ class Invepos extends ActiveRecord {
 	 * @var string
 	 */
 	protected $estado;
+	
+	/**
+	 * @var integer
+	 */
+	protected $account_id;
+	
+	/**
+	 * @var integer
+	 */
+	protected $account_modifiers_id;
 
+	/**
+	 * @var integer
+	 */
+	protected $cantidadnc;
+
+	/**
+	 * @var integer
+	 */
+	protected $cantidadunc;
 
 	/**
 	 * Metodo para establecer el valor del campo id
@@ -158,8 +177,32 @@ class Invepos extends ActiveRecord {
 	public function setEstado($estado){
 		$this->estado = $estado;
 	}
+	
+	
+	/**
+	 * Metodo para establecer el valor del campo account_id
+	 * @param integer $account_id
+	 */
+	public function setAccountId($account_id){
+		$this->account_id = $account_id;
+	}
+	
+	/**
+	 * Metodo para establecer el valor del campo account_modifiers_id
+	 * @param integer $account_id
+	 */
+	public function setAccountModifiersId($account_modifiers_id){
+		$this->account_modifiers_id = $account_modifiers_id;
+	}
 
+	public function setCantidadnc($cantidadnc){
+		$this->cantidadnc = $cantidadnc;
+	}
 
+	public function setCantidadunc($cantidadunc){
+		$this->cantidadunc = $cantidadunc;
+	}
+	
 	/**
 	 * Devuelve el valor del campo id
 	 * @return integer
@@ -255,10 +298,36 @@ class Invepos extends ActiveRecord {
 	public function getEstado(){
 		return $this->estado;
 	}
+	
+	/**
+	 * Devuelve valor del campo account_id
+	 * @param integer $account_id
+	 */
+	public function getAccountId($account_id){
+		return $this->account_id;
+	}
+	
+	
+	/**
+	 * Devuelve el valor del campo account_modifiers_id
+	 * @param integer $account_id
+	 */
+	public function getAccountModifiersId($account_modifiers_id){
+		return $this->account_modifiers_id;
+	}
+
+	public function getCantidadnc(){
+		return $this->cantidadnc;
+	}
+
+	public function getCantidadunc(){
+		return $this->cantidadunc;
+	}
 
 	protected function initialize()
 	{
 		$this->belongsTo('MenusItems');
+		$this->hasMany('Inveposnc');
 	}
 
 }

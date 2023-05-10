@@ -17,6 +17,7 @@ $config = CoreConfig::readAppConfig();
 if($config->application->mode=='development'){
 	Tag::stylesheetLink('pos2/tables');
 	echo Tag::javascriptInclude('pos2/tables');
+	echo Tag::javascriptInclude('pos2/windows');
 	echo Tag::javascriptInclude('pos2/keyboard');
 } else {
 	Tag::stylesheetLink('pos2/production/tables', false, 'v='.ControllerBase::APP_VERSION);
@@ -191,6 +192,23 @@ if ($salon->venta_a=='H') {
 </div>
 
 <?php
+
+
+if (Session::getData('current_master_id_ult')) {
+
+	$account_master_id = Session::getData('current_master_id_ult');
+	$account_cuenta = Session::getData('current_cuenta_ult');
+
+	if(!empty($account_master_id)){
+		Session::setData('current_master_id_ult',0);
+		echo '
+			<script type="text/javascript">
+				window.open(Utils.getKumbiaURL("factura/index/'.$account_cuenta.'/'.$account_master_id.'"), null, "width=300, height=700, toolbar=no, statusbar=no")
+			</script>';
+	}
+	
+}
+
 
 if($sendkitchen){
 	if(file_exists('public/temp/'.$sendkitchen.'.html')){

@@ -56,6 +56,27 @@ $accessList = array(
 		),
 		'require' => 'appmenu'
 	),
+	'nota_credito' => array(
+		'description' => 'Nota credito',
+		'actions' => array(
+			'index' => 'Nota credito',
+		),
+		'require' => 'appmenu'
+	),
+	'reprocesar_factura_electronica' => array(
+		'description' => 'Reprocesar factura electrónica',
+		'actions' => array(
+			'index' => 'Reprocesar factura electronica',
+		),
+		'require' => 'appmenu'
+	),
+	'reprocesar_nota_electronica' => array(
+		'description' => 'Reprocesar nota credito electrónica',
+		'actions' => array(
+			'index' => 'Reprocesar nota credito electronica',
+		),
+		'require' => 'appmenu'
+	),
 	'appmenu' => array(
 		'description' => 'Punto de Venta',
 		'actions' => array(
@@ -404,6 +425,32 @@ $accessList = array(
 			'query' => 'Consultar a ambientes del sistema',
 			'browse' => 'Visualizar a ambientes del sistema',
 			'query' => 'Generar reporte de ambientes del sistema',
+		),
+		'require' => 'admin'
+	),
+	'datos_carvajal' => array(
+		'description' => 'Parametrización datos Carvajal Facturación electrónica',
+		'actions' => array(
+			'index' => 'Ingresar',
+			'insert' => 'Adicionar',
+			'update' => 'Modificar',
+			'delete' => 'Borrar',
+			'query' => 'Consultar',
+			'browse' => 'Visualizar',
+			'query' => 'Generar reporte',
+		),
+		'require' => 'admin'
+	),
+	'resolucion_factura' => array(
+		'description' => 'Parametrización resoluciones factura',
+		'actions' => array(
+			'index' => 'Ingresar',
+			'insert' => 'Adicionar',
+			'update' => 'Modificar',
+			'delete' => 'Borrar',
+			'query' => 'Consultar',
+			'browse' => 'Visualizar',
+			'query' => 'Generar reporte',
 		),
 		'require' => 'admin'
 	),

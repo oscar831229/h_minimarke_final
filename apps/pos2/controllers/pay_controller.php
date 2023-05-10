@@ -45,7 +45,7 @@ class PayController extends ApplicationController
 				$conditions = "account_master_id='{$this->pay[0]}' AND cuenta='{$this->pay[1]}'";
 				$accountCuenta = $this->AccountCuentas->findFirst($conditions);
 				if ($accountCuenta) {
-					if ($accountCuenta->estado == 'B' || $accountCuenta->estado == 'A'){
+					if ($accountCuenta->estado == 'B'){
 						if ($accountCuenta->tipo_venta != 'F') {
 							if(Router::wasRouted() == false){
 								return $this->routeTo(array('action' => 'savePay', 'id' => $this->pay[0].':'.$this->pay[1]));
@@ -65,11 +65,18 @@ class PayController extends ApplicationController
 		} else {
 			$this->pay = array();
 		}
-		$this->loadModel('AccountMaster', 'SalonMesas', 'Salon', 'AccountCuentas');
+		$this->loadModel('AccountMaster', 'SalonMesas', 'Salon', 'AccountCuentas', 'ResolucionFactura');
 	}
 
 	public function loadAccountAction($id = null)
 	{
+
+		# ESTADOS CUENTAS
+		# A -> INICIAL
+		# B -> CON FACTURA
+		# L -> LIQUIDADA
+		# C -> ANULADA
+
 		$cuentas = array();
 		$this->setResponse('view');
 		if ($id) {
@@ -81,7 +88,7 @@ class PayController extends ApplicationController
 			foreach ($this->cuentas as $cuenta) {
 				$conditions = "cuenta='{$cuenta[1]}' AND account_master_id='{$cuenta[0]}'";
 				$accountCuenta = $this->AccountCuentas->findFirst($conditions);
-				if ($accountCuenta->estado <> 'B' && $accountCuenta->estado <> 'A') {
+				if ($accountCuenta->estado <> 'B' && !($accountCuenta->estado = 'A' && $accountCuenta->tipo_venta == 'F')) {
 					$accountMaster = $this->AccountMaster->findFirst($accountCuenta->account_master_id);
 					if ($accountMaster) {
 						$this->salon_mesas_id = $accountMaster->salon_mesas_id;
@@ -174,16 +181,28 @@ class PayController extends ApplicationController
 	{
 		$controllerRequest = $this->getRequestInstance();
 		if($controllerRequest->isAjax()){
-			$this->setResponse('xml');
+			$this->setResponse('json');
 			$cedula = $this->filter($cedula, 'alpha', 'extraspaces');
 			if (!$cedula) {
 				return '';
 			}
 			if ($this->Clientes->count("cedula='$cedula'") > 0) {
-				$cliente = $this->Clientes->findFirst("cedula='$cedula'");
-				if ($cliente->cedula != '0') {
-					return $cliente->nombre;
-				}
+
+				$db = DbBase::rawConnect();
+				$config = CoreConfig::readFromActiveApplication('app.ini');
+
+				$querySQL = "SELECT 
+					c.*, 
+					CONCAT(cd.nombre_pais,' / ', cd.nombre_depto, ' / ', cd.nombre_ciudad) AS ciudades_dian, 
+					IFNULL(cd.id, 0) AS flid_ciudades_dian 
+				FROM {$config->pos->hotel}.clientes AS c
+					LEFT JOIN {$config->pos->hotel}.ciudades_dian AS cd ON cd.id = c.ciudades_dian
+				WHERE c.cedula = '{$cedula }'";
+
+				$results = $db->query($querySQL);
+				$cliente = mysql_fetch_array($results, MYSQL_ASSOC);
+				return  $this->jsonEncode($cliente);
+
 			}
 			return 'NO EXISTE EL CLIENTE EN LA BASE DE DATOS';
 		}
@@ -222,6 +241,7 @@ class PayController extends ApplicationController
 
 	public function savePayAction($id=null)
 	{
+
 		$controllerRequest = ControllerRequest::getInstance();
 
 		try {
@@ -244,9 +264,7 @@ class PayController extends ApplicationController
 			$this->Account->setTransaction($transaction);
 			$this->Datos->findFirst();
 
-			# Variable respuesta de facturación de cuenta
-			$response = null;
-
+			$controlgenfac = false;
 			foreach($cuentas as $cuenta){
 				$cuenta[0] = $this->filter($cuenta[0], 'int');
 				$cuenta[1] = $this->filter($cuenta[1], 'int');
@@ -256,14 +274,26 @@ class PayController extends ApplicationController
 					Flash::error('No existe la cuenta '.$cuenta[0].':'.$cuenta[1]);
 					$transaction->rollback();
 				} else {
+
+
 					# Validamos si la cuenta esta sin facturar
-					if($accountCuenta->estado =='A'){
+					if($accountCuenta->estado =='A' && $accountCuenta->tipo_venta == 'F'){
+
+						# VALIDAR RESOLUCIÓN
+						$resolucion_id = $this->getPostParam('autorizacion');					
+						if(empty($resolucion_id) || $resolucion_id == '@'){
+							Flash::error('Error no existe resolución para liquidar la cuenta - indique la resolución de facturación.');
+							$transaction->rollback();
+						}
 						
 						$Facturacion = new Facturacion();
+						$Facturacion->setIdResolucion($resolucion_id);
 						$response = $Facturacion->genVoice($accountCuenta, $transaction);
+						$controlgenfac = $Facturacion->cuenta_liquidada ? false : true;
 
 						# Si ocurrio algun error al crear la factura
 						if(!$response['success']){
+							
 							Flash::error('Error al generar la factura: '.$response['error'].' Cuenta: '.$cuenta[0].':'.$cuenta[1]);
 							$transaction->rollback();
 						}
@@ -276,6 +306,7 @@ class PayController extends ApplicationController
 			}
 
 			$factura = $accountCuenta->getFactura();
+
 			if ($factura == false) {
 				if ($factura == false) {
 					if ($accountCuenta->tipo_venta == 'F') {
@@ -367,10 +398,50 @@ class PayController extends ApplicationController
 				$total = 0;
 
 				$menuItem = $this->MenusItems->findFirst($account->menus_items_id);
+
+				$modis = 0;
+				$modifier_base = 0;
+				$modifier_iva = 0;
+				$modifier_impo = 0;
+				$modifiers = $this->AccountModifiers->find("account_id='{$account->id}'");
+
+				foreach ($modifiers as $modifier) {
+					$modis += $modifier->valor;
+				}
+
+				#Calcular la base del modificar y iva o impo
+				if ($menuItem->porcentaje_iva > 0) {
+					if ($accountCuenta->tipo_venta == 'F') {
+						$modifier_base = $modis / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+						$modifier_iva = $modis - ($modis / (1 + ($menuItem->porcentaje_iva / 100)));
+					} else {
+						if (Facturacion::_esExento($accountCuenta, $menuItem)) {
+							$modifier_base = $modis / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+							$modifier_iva = 0;
+						} else {
+							$modifier_base = $modis / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+							$modifier_iva = $modis - ($modis / (1 + ($menuItem->porcentaje_iva / 100)));
+						}
+					}
+					$account->impo = 0;
+				} else {
+					$modifier_base = $modis / (($menuItem->porcentaje_impoconsumo + $menuItem->porcentaje_servicio) / 100 + 1);
+					$modifier_impo = $modis - ($modis / (1 + ($menuItem->porcentaje_impoconsumo / 100)));
+					$modifier_iva = 0;
+				}
+
 				if($menuItem==false){
 					Flash::error('El item "'.$account->menus_items_id.'" no existe');
 					$transaction->rollback();
 				}
+
+				$account->valor += $modifier_base;
+				$account->iva   += $modifier_iva;
+				$account->impo  += $modifier_impo;
+				$account->total += $modis;
+
+				
+
 				if ($account->descuento > 0) {
 					$valor = ($account->valor - ($account->valor * $account->descuento / 100)) * $account->cantidad;
 					$iva = ($account->iva - ($account->iva * $account->descuento / 100)) * $account->cantidad;
@@ -557,6 +628,9 @@ class PayController extends ApplicationController
 									$invepos->setCodigo($menuItem->codigo_referencia);
 									$invepos->setMenusItemsId($menuItem->id);
 									$invepos->setCantidad($account->cantidad);
+									$invepos->setAccountId($account->id);
+									$invepos->setAccountModifiersId(0);
+
 
 									if ($menuItem->descontar != 'T') {
 										$invepos->setCantidad($account->cantidad);
@@ -576,6 +650,7 @@ class PayController extends ApplicationController
 								}
 							}
 
+							# REGISTRO DE MODIFICADORES DESCARGABLES
 							foreach($account->getAccountModifiers() as $accountModifier){
 
 								$modifier = $accountModifier->getModifiers();
@@ -622,6 +697,10 @@ class PayController extends ApplicationController
 									$invepos->setCodigo($modifier->codigo_referencia);
 									$invepos->setMenusItemsId($menuItem->id);
 									$invepos->setCantidad($account->cantidad);
+									$invepos->setAccountId($account->id);
+									$invepos->setAccountModifiersId($accountModifier->id);
+
+
 									if($menuItem->descontar!='T'){
 										$invepos->setCantidad($account->cantidad);
 										$invepos->setCantidadu(0);
@@ -950,6 +1029,14 @@ class PayController extends ApplicationController
 				$valorPago = $this->getPostParam('pago'.$i, 'double');
 				$redeban = $this->getPostParam('redeban'.$i);
 				if($valorPago>0){
+
+					# VALIDAR FORMA DE PAGO
+					$formas_pago_id = $this->getPostParam('forma'.$i, 'int');
+					if(empty($formas_pago_id)){
+						Flash::error('La forma de pago numero '.$i.' es invalida. valor:'.$formas_pago_id);
+						$transaction->rollback();
+					}
+
 					$pago = new PagosFactura();
 					$pago->setTransaction($transaction);
 					$pago->prefijo_facturacion = $accountCuenta->prefijo;
@@ -1080,26 +1167,64 @@ class PayController extends ApplicationController
 				}
 			}
 
-			if ($salon->descarga_online=='S') {
-				if (class_exists('InterfasePOS2')) {
-					new InterfasePOS2(false, true, $transaction, false, (string)$this->Datos->getFecha());
+			# DESCARGA EN LINEA DE INVENTARIOS
+			if ($salon->descarga_online=='S'  && $accountCuenta->tipo_venta == 'F') {
+
+				$config = CoreConfig::readFromActiveApplication('app.ini');
+
+				if (!isset($config->pos->back_version)) {
+					$interpos = new InterfasePOS4();
 				} else {
-					throw new Exception("Clase 'InterfasePOS2' no esta cargada ", 1);
+					if (version_compare($config->pos->back_version, '6.0', '>=')) {
+						$interpos = new InterfasePOS4();
+					} else {
+						throw new TransactionFailed('No esta definida la descarga InterFasePOS4',1,null);
+					}
 				}
+
+				# REALIZAR DESCARGA POR FACTURA
+				// $interpos->downloadInvoice($accountCuenta->prefijo, $accountCuenta->numero, $fechaSistema);
 
 			}
 
 			if($transaction->isValid()==false){
+				$transaction->rollback();
 				throw new TransactionFailed('Transacción abortada al descargar de inventarios',1,null);
 			}
 
+			# GENERA XML FACTURACIÓN ELECTRONICA 
+			if($factura->tipo_venta == 'F' && $factura->tipo_factura == 'E' && $controlgenfac){
+
+				# VALIDAMOS QUE EXISTA LAS LIBRERIAS DE PROCESAMIENTO XML CARVAL
+				if(!file_exists(KEF_ABS_PATH.'../fepos/factura_cajasan/procesar_facturas.class.php'))
+				throw new Exception("No existe la libreria de procesamiento xml carvajal", 1);
+
+				# CARGAR LA LIBRERIA DE PROCESAMIENTO XML
+				require_once KEF_ABS_PATH.'../fepos/factura_cajasan/procesar_facturas.class.php';
+
+				# VALIDAR QUE LA CLASE EXISTA
+				if(!class_exists('procesarFacturas'))
+					throw new Exception("No existe exite la clase de procesamiento de xml de carvajal", 1);
+
+			}
+
 			$transaction->commit();
+
+			if($factura->tipo_venta == 'F' && $factura->tipo_factura == 'E' && $controlgenfac){
+				$xmlfactura = new procesarFacturas();
+				$xmlfactura->generarXML($factura->id);
+			}
+			
+			
+			if($accountCuenta->tipo_venta == 'F'){
+				Session::setData('current_master_id_ult', $accountCuenta->account_master_id);
+				Session::setData("current_cuenta_ult", $accountCuenta->cuenta);
+			}
+
 			if($cerrarPedido==false){
 				return $this->redirect('order/add/'.$accountMaster->salon_mesas_id);
 			} else {
 				GarbageCollector::freeControllerData('order');
-				Session::setData('current_master_id_ult', $accountCuenta->account_master_id);
-				Session::setData("current_cuenta_ult", $accountCuenta->cuenta);
 				return $this->redirect('tables/index/'.$accountMaster->salon_id);
 			}
 
@@ -1107,7 +1232,6 @@ class PayController extends ApplicationController
 		catch(DbLockAdquisitionException $e){
 			Flash::error("No se pudo efectuar la cancelación del pago (".$e->getLine().")");
 			Flash::error("La base de datos está bloqueada en este momento, por favor intente nuevamente en un momento");
-
 		}
 		catch(TransactionFailed $e){
 			Flash::error("No se pudo efectuar la cancelación del pago (".$e->getLine().")");
@@ -1141,6 +1265,41 @@ class PayController extends ApplicationController
 
 	public function loadInterposAction(){
 		$interpos = new InterfasePOS();
+	}
+
+	public function lookInvoiceResolutionsAction($salon_id, $pago_total){
+		
+		$controllerRequest = $this->getRequestInstance();
+		if($controllerRequest->isAjax()){
+
+			$this->setResponse('json');
+			$salon_id = $this->filter($salon_id, 'int');
+			$pago_total = $this->filter($pago_total, 'float');
+
+			$salon = $this->Salon->find($salon_id);
+			if(!$salon){
+				return [];
+			}
+
+			$tipo_factura = $salon->factu_elect_monto_desde <= $pago_total ? 'E' : 'P';
+
+			if($tipo_factura == 'E'){
+				$conditions = "salon_id = '{$salon_id}' AND estado = 'A' AND tipo_factura = '{$tipo_factura}'";
+				$resolutions =   $this->ResolucionFactura->find($conditions);
+			}else{
+				$conditions = "salon_id = '{$salon_id}' AND estado = 'A'";
+				$resolutions =   $this->ResolucionFactura->find($conditions, 'order: tipo_factura desc, id');
+			}
+			
+			
+			$return = [];
+			foreach ($resolutions as $key => $resolution) {
+				$return[] = $resolution;
+			}
+
+			return $return;
+
+		}
 	}
 
 }

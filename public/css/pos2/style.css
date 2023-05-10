@@ -265,3 +265,7 @@ table.shadow-table {
 table#shadow-div-descendant {
 	min-height: 500px;
 }
+
+#flid_conceptos_id{
+	width: 150px !important;
+}

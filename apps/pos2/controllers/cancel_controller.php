@@ -63,7 +63,14 @@ class CancelController extends ApplicationController
 					if($this->Account->count("account_master_id='$accountMasterId' AND estado IN ('A', 'B')")){
 						Flash::notice('El pedido tenia items atendidos');
 					}
+
 					foreach($accountMaster->getAccountCuentas() as $accountCuenta){
+
+						# Verificar que la cuenta no este liquidada
+						if($accountCuenta->estado == 'L'){
+							continue;
+						}
+
 						if($accountCuenta->numero>0){
 							$factura = $accountCuenta->getFactura();
 							if($factura!=false){
@@ -97,7 +104,13 @@ class CancelController extends ApplicationController
 							$transaction->rollback();
 						}
 					}
+
 					foreach($accountMaster->getAccount() as $account){
+
+						if($account->estado == 'L'){
+							continue;
+						}
+
 						$account->estado = 'C';
 						if($account->save()==false){
 							foreach($account->getMessages() as $message){

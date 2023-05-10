@@ -106,8 +106,7 @@ var Pedido = Class.create({
 
 			if (items.length == 1) {
 				//alert(items.length);
-				this.addItemToAccount(button, items[0]);
-				document.getElementById("buscarItem").value="";
+				// this.addItemToAccount(button, items[0]);
 			}
 		};
 		
@@ -233,6 +232,7 @@ var Pedido = Class.create({
 			onSuccess: function(transport){
 				this._preOrder.update(transport.responseText);
 				this.preOrderCallbacks();
+				this.disabledInvoice();
 			}.bind(this)
 		});
 	},
@@ -1162,6 +1162,85 @@ var Pedido = Class.create({
 		var aplSubmit = $("apl_submit");
 		if(aplSubmit){
 			aplSubmit.observe("click", function(){
+
+				if($('documento_cliente').getValue().trim() == ''){
+					$("documento_cliente").activate();
+					Growler.show('Debe indicar el número de documento del cliente');
+					return false;
+				}
+
+				if($('tipo_documento').getValue().trim() == '@'){
+					$("tipo_documento").activate();
+					Growler.show('Debe indicar el tipo de documento del cliente');
+					return false;
+				}
+
+				if($('tip_per_jur').getValue().trim() == '@'){
+					$("tip_per_jur").activate();
+					Growler.show('Debe indicar el tipo de persona del cliente');
+					return false;
+				}
+
+				if($('tip_per_jur').getValue() == 1){
+
+					if($('primer_nombre').getValue().trim() == ''){
+						$("primer_nombre").activate();
+						Growler.show('Debe digitar la razon social de la persona jurídica.');
+						return false;
+					}
+
+					if($('digitov').getValue().trim() == ''){
+						$("digitov").activate();
+						Growler.show('Debe indicar el digito de verificación.');
+						return false;
+					}
+				}else{
+
+					if($('primer_nombre').getValue().trim() == ''){
+						$("primer_nombre").activate();
+						Growler.show('Debe digitar el nombre del cliente.');
+						return false;
+					}
+
+					if($('primer_apellido').getValue().trim() == ''){
+						$("primer_apellido").activate();
+						Growler.show('Debe digitar el primer apellido del cliente.');
+						return false;
+					}
+
+				}
+
+				if($('telefono1').getValue().trim() == ''){
+					$("telefono1").activate();
+					Growler.show('Debe digitar el número telefonico.');
+					return false;
+				}
+				if($('email').getValue().trim() == ''){
+					$("email").activate();
+					Growler.show('Debe digitar el email del cliente.');
+					return false;
+				}
+				if($('flid_ciudades_dian').getValue().trim() == '' || $('flid_ciudades_dian').getValue().trim() == '0'){
+					$("ciudades_dian").activate();
+					Growler.show('Debe digitar la ciudad DIAN.');
+					return false;
+				}
+				if($('direccion').getValue().trim() == ''){
+					$("direccion").activate();
+					Growler.show('Debe digitar la dirección.');
+					return false;
+				}
+				if($('codigo_postal').getValue().trim() == ''){
+					$("codigo_postal").activate();
+					Growler.show('Debe digitar el codigo postal del cliente.');
+					return false;
+				}
+				if($('regimen_fiscal').getValue().trim() == '@'){
+					$("regimen_fiscal").activate();
+					Growler.show('Debe indicar el regimen fiscal.');
+					return false;
+				}				
+
 				ajaxRemoteForm($("myform"), "customer_messages");
 			});
 			var habitacion = $('habitacion');
@@ -1176,14 +1255,146 @@ var Pedido = Class.create({
 				}
 			} else {
 				window.setTimeout(function(){
-					if($("nombre")){
-						$("nombre").activate();
+
+
+					if($("fecnac")){
+						$("fecnac").observe('change', function(){
+							var fecha = this.value.split("-");
+							if(fecha.length == 3 ){
+								$('fecnacMonth').setValue(fecha[1]).dispatchEvent(new Event("change"));
+								$('fecnacDay').setValue(fecha[2]).dispatchEvent(new Event("change"));
+								$('fecnacYear').setValue(fecha[0]).dispatchEvent(new Event("change"));
+							}else{
+								$('fecnacMonth').setValue('@').dispatchEvent(new Event("change"));
+							}
+						})
+					}
+					
+					if($("documento_cliente")){
+						$("documento_cliente").activate();
 					};
-					new Ajax.Autocompleter("nombre", "nombre_choices", Utils.getKumbiaURL('order/queryCustomers'), {
-						afterUpdateElement: function(detail, selected){
-							$('documento_cliente').setValue(selected.id);
+
+					$("documento_cliente").observe('blur', function(){
+						if(this.value.trim() != ''){
+							new Ajax.Request(Utils.getKumbiaURL("pay/getClientName/"+this.value), {
+								onSuccess: function(transport){
+
+									var cliente = {};
+
+									$('primer_nombre').readOnly  = false;
+									$('segundo_nombre').readOnly  = false;
+									$('primer_apellido').readOnly  = false;
+									$('segundo_apellido').readOnly  = false;
+
+									if(transport.responseJSON != 'NO EXISTE EL CLIENTE EN LA BASE DE DATOS'){
+										
+										var cliente = JSON.parse(transport.responseJSON);
+
+										if(cliente.primer_nombre.trim() != '' && cliente.primer_nombre.trim() != null){
+											$('primer_nombre').readOnly  = true;
+											$('segundo_nombre').readOnly  = true;
+											$('primer_apellido').readOnly  = true;
+											$('segundo_apellido').readOnly  = true;
+										}
+
+									}else{
+
+										cliente.primer_nombre = '';
+										cliente.segundo_nombre = '';
+										cliente.primer_apellido = '';
+										cliente.segundo_apellido = '';
+										cliente.telefono1 = '';
+										cliente.email = '';
+										cliente.direccion = '';
+										cliente.ciudades_dian = '';
+										cliente.tipdoc = '@'
+										cliente.tip_per_jur = '@'
+										cliente.codigo_postal = ''
+										cliente.flid_ciudades_dian = '';
+										cliente.digitov = '';
+										cliente.regimen_fiscal = '@';
+
+										var today = new Date();
+										var dd = String(today.getDate()).padStart(2, '0');
+										var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+										var yyyy = today.getFullYear();
+
+										today =  yyyy + '-' + mm + '-' + dd;
+										cliente.fecnac = today;
+									}
+
+									$('primer_nombre').setValue(cliente.primer_nombre);
+									$('segundo_nombre').setValue(cliente.segundo_nombre);
+									$('primer_apellido').setValue(cliente.primer_apellido);
+									$('segundo_apellido').setValue(cliente.segundo_apellido);
+									$('telefono1').setValue(cliente.telefono1);
+									$('email').setValue(cliente.email);
+									$('direccion').setValue(cliente.direccion);
+									$('fecnac').setValue(cliente.fecnac);
+									$('fecnac').dispatchEvent(new Event("change"));
+									
+									$('ciudades_dian').setValue(cliente.ciudades_dian);
+									$('tipo_documento').setValue(cliente.tipdoc);
+									$('tip_per_jur').setValue(cliente.tip_per_jur);
+									$('digitov').setValue(cliente.digitov);
+									$('regimen_fiscal').setValue(cliente.regimen_fiscal);
+									
+									$('codigo_postal').setValue(cliente.codigo_postal);
+									
+									$('flid_ciudades_dian').setValue(cliente.flid_ciudades_dian);
+
+									$('tip_per_jur').dispatchEvent(new Event("change"));
+									
+									
+								}
+							});
+							
+							
+							new Ajax.Autocompleter("ciudades_dian", "ciudades_dian_choices", $Kumbia.path+'common/getCiudadesDian', {
+								paramName: "id",
+								minChars: 2,
+								tokens: [","],
+								afterUpdateElement: function (name, obj, li){
+									$("flid_"+name).value = li.id;
+								}.bind(this, 'ciudades_dian')
+						   });
+						   
+						   var textField = $("ciudades_dian");
+						   textField.observe('focus', function(name){
+							   if(this.value==""){
+								   $("flid_"+name).value = 0;
+							   };
+						   }.bind(textField, 'ciudades_dian'));
+						   
+				   
 						}
 					});
+
+					$("tip_per_jur").observe('change', function(){
+						document.querySelector('.nombre_x_persona').innerHTML = 'Primer nombre'
+						document.querySelectorAll('.div_juridicas').forEach(element => {
+							element.style.display = 'none';	
+						});
+
+						document.querySelectorAll('.div_naturales').forEach(element => {
+							element.style.display = '';	
+						});
+						document.querySelector('#primer_nombre').size = 17;
+
+						if($(this).getValue() == 1){
+							document.querySelector('.nombre_x_persona').innerHTML = 'Razon social'
+							document.querySelector('#primer_nombre').size = 40;
+							document.querySelectorAll('.div_juridicas').forEach(element => {
+								element.style.display = '';
+							});
+							document.querySelectorAll('.div_naturales').forEach(element => {
+								element.style.display = 'none';	
+							});
+	
+						}
+					})
+
+
 				}, 200);
 			}
 		} else {
@@ -1355,6 +1566,15 @@ var Pedido = Class.create({
 
 	},
 
+	disabledInvoice : function(){
+		$("showInvoice").disabled = false;
+		$("showInvoice").style.opacity = '1';
+		if($("tipo_venta").getValue() == 'F'){
+			$("showInvoice").disabled = true;
+			$("showInvoice").style.opacity = '0.2';
+		}
+	},
+
 	initialize: function(parameters)
 	{
 
@@ -1413,6 +1633,11 @@ var Pedido = Class.create({
 			this.setHeightDimensions();
 
 			new Event.observe(window, "keydown", this.enableShortCuts.bind(this));
+
+
+			this.disabledInvoice()
+
+
 		} catch (e) {
 			alert(e);
 		}

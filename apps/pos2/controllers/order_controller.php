@@ -15,6 +15,7 @@
 
 class OrderController extends ApplicationController
 {
+
 	/**
 	 * Numero de menus_items actual
 	 *
@@ -802,31 +803,19 @@ class OrderController extends ApplicationController
 					}
 				}
 
-				/*$conditions = "
-				salon_mesas_id=".$this->account_id." AND
-				menus_items_id='$id' AND
-				comanda = '".$this->numero_comanda."' AND
-				cuenta = '".$this->numero_cuenta."' AND
-				asiento = '".$this->silla."' AND
-				estado IN ('S', 'A')";
-				$account = $this->Account->findFirst($conditions);
-				if ($account == false) {*/
-					$account = new Account();
-					$account->setTransaction($transaction);
-					$account->salon_mesas_id = $this->account_id;
-					$account->account_master_id = $accountMaster->id;
-					$account->menus_items_id = $id;
-					$account->cantidad_atendida = 0;
-					$account->descuento = 0;
-					$account->asiento = $this->silla;
-					$account->comanda = $this->numero_comanda;
-					$account->cuenta = $this->numero_cuenta;
-					$account->tiempo = Date::getCurrentTime();
-					$account->tiempo_final = '';
-					$account->cantidad = 1;
-				/*} else {
-					$account->cantidad++;
-				}*/
+				$account = new Account();
+				$account->setTransaction($transaction);
+				$account->salon_mesas_id = $this->account_id;
+				$account->account_master_id = $accountMaster->id;
+				$account->menus_items_id = $id;
+				$account->cantidad_atendida = 0;
+				$account->descuento = 0;
+				$account->asiento = $this->silla;
+				$account->comanda = $this->numero_comanda;
+				$account->cuenta = $this->numero_cuenta;
+				$account->tiempo = Date::getCurrentTime();
+				$account->tiempo_final = '';
+				$account->cantidad = 1;
 				$account->estado = 'S';
 
 				$this->tipo_venta = $accountCuenta->tipo_venta;
@@ -1955,6 +1944,7 @@ class OrderController extends ApplicationController
 			$this->setParamToView('accountCuenta', $accountCuenta);
 		}
 		$this->loadModel('Habitacion');
+		$this->setParamToView('type_documents', $this->tipdoc->find('order: detalle'));
 	}
 
 	/**
@@ -2236,35 +2226,96 @@ class OrderController extends ApplicationController
 
 			$transaction = TransactionManager::getUserTransaction();
 			$this->AccountCuentas->setTransaction($transaction);
-			$this->Clientes->setTransaction($transaction);
 
 			$tipo = $this->getPostParam('tipo');
 			if($tipo=='P'){
 
+				$tipo_persona = $this->getPostParam('tip_per_jur');
 				$cedula = $this->getPostParam('documento_cliente', 'alpha');
 				if(!$cedula){
 					Flash::error('Debe digitar el documento del Cliente');
 					return;
 				}
 
-				/* $cedula = $this->_filterId($cedula);
+				/*$cedula = $this->_filterId($cedula);
 				if(!$cedula){
 					return;
-				} */
+				}*/
 
-				$nombre = $this->getPostParam('nombre', 'extraspaces', 'striptags');
-				if($nombre=='NO EXISTE EL CLIENTE EN LA BASE DE DATOS'){
-					Flash::error('Nombre de cliente invalido');
-					return;
+				# NOMBRES PEROSNA O RAZON SOCIAL
+				$primer_nombre = $this->getPostParam('primer_nombre', 'extraspaces', 'striptags');
+				$segundo_nombre = $this->getPostParam('segundo_nombre', 'extraspaces', 'striptags');
+				$primer_apellido = $this->getPostParam('primer_apellido', 'extraspaces', 'striptags');
+				$segundo_apellido = $this->getPostParam('segundo_apellido', 'extraspaces', 'striptags');
+				
+
+				# DATOS PERSONA JURIDICA
+				$digito_verificacion = $this->getPostParam('digitov');
+
+
+				# SI ES PERSONA NATURAL VALIDAMOS LOS PRIMER NOMBRE - PRIMER APELLIDO
+				if($tipo_persona == 2){
+
+					if(empty($primer_nombre)){
+						Flash::error('Primer nombre es un campo obligatorio.');
+						return;
+					}
+	
+					if(empty($primer_apellido)){
+						Flash::error('Primer apellido es un campo obligatorio.');
+						return;
+					}
+
+					$digito_verificacion = '';
+
+				}else{
+
+					if(empty($primer_nombre)){
+						Flash::error('Primer nombre es un campo obligatorio.');
+						return;
+					}
+
+					if(trim($digito_verificacion) == ''){
+						Flash::error('El digito de verificación es obligatorio para personas jurídicas.');
+						return;
+					}
+
+					$segundo_nombre = '';
+					$primer_apellido = ' ';
+					$segundo_apellido = '';
+
 				}
-				$existeCliente = $this->Clientes->count("cedula='$cedula'");
-				if($existeCliente==0){
+				
+				# COMPLETAR NOMBRE CLIENTE O RAZON SOCIAL.
+				$nombre_completo[] = $primer_nombre;
+
+				if(!empty($segundo_nombre))
+					$nombre_completo[] = $segundo_nombre;
+
+				$nombre_completo[] = $primer_apellido;
+
+				if(!empty($segundo_apellido))
+					$nombre_completo[] = $segundo_apellido;
+
+				$nombre = implode(' ',$nombre_completo);
+
+				$telefono1 = $this->getPostParam('telefono1', 'alpha');
+				$email = $this->getPostParam('email');
+				$direccion = $this->getPostParam('direccion', 'alpha');
+				$fecnac = $this->getPostParam('fecnac', 'date');
+				
+				$tipo_documento = $this->getPostParam('tipo_documento');
+				$ciudad_dian = $this->getPostParam('flid_ciudades_dian');
+				$codigo_postal = $this->getPostParam('codigo_postal');
+				$regimen_fiscal = $this->getPostParam('regimen_fiscal');
+
+
+				$cliente = $this->Clientes->findFirst("cedula='$cedula'");
+				if(!$cliente){
+
 					$cliente = new Clientes();
 					$cliente->setTransaction($transaction);
-					$cliente->tipdoc = 13;
-					$cliente->cedula = $cedula;
 					$cliente->sexo = 'M';
-					$cliente->nombre = $nombre;
 					$cliente->locnac = 135;
 					$cliente->feccre = Date::getCurrentDate();
 					$cliente->credito = 'N';
@@ -2274,23 +2325,33 @@ class OrderController extends ApplicationController
 					$cliente->tipinf = 'N';
 					$cliente->estado = 'N';
 					$cliente->estsis = 'A';
-					if($cliente->save()==true){
-						Flash::success('Se creó el nuevo cliente correctamente');
-					} else {
-						foreach($cliente->getMessages() as $message){
-							Flash::error($message->getMessage());
-						}
-						Flash::error('Ocurrió un error al crear el cliente');
-					}
 				}
-				
-				$actualizarCliente = $this->Clientes->findFirst("cedula='$cedula'");
-				$actualizarCliente->nombre = $nombre;
-				if($actualizarCliente->save()==false){
+
+				$cliente->tipdoc = $tipo_documento;
+				$cliente->cedula = $cedula;
+				$cliente->tip_per_jur = $tipo_persona;
+				$cliente->nombre = $nombre;
+				$cliente->primer_nombre = $primer_nombre;
+				$cliente->segundo_nombre = $segundo_nombre;
+				$cliente->primer_apellido = $primer_apellido;
+				$cliente->segundo_apellido = $segundo_apellido;				
+				$cliente->telefono1 = $telefono1;
+				$cliente->email = $email;
+				$cliente->ciudades_dian = $ciudad_dian;
+				$cliente->direccion = $direccion;
+				$cliente->codigo_postal = $codigo_postal;
+				$cliente->fecnac = $fecnac;
+				$cliente->digitov = $digito_verificacion;
+				$cliente->regimen_fiscal = $regimen_fiscal;
+
+				if($cliente->save()==true){
+					Flash::success('Se creó el nuevo cliente correctamente');
+				} else {
 					foreach($cliente->getMessages() as $message){
 						Flash::error($message->getMessage());
 					}
-					Flash::error('Ocurrió un error al actualizar el cliente');
+					Flash::error('Ocurrió un error al crear el cliente');
+					return false;
 				}
 
 				$conditions = "account_master_id='".$this->current_master."' AND cuenta = '".$this->numero_cuenta."' AND estado = 'A'";

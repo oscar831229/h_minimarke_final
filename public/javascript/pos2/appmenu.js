@@ -64,6 +64,18 @@ function cancelFactura(){
 	Clave.authForModule('anula_factura');
 }
 
+function notaCredito(){
+	Clave.authForModule('nota_credito');
+}
+
+function ReprocesarFacturaraElectronica(){
+	Clave.authForModule('reprocesar_factura_electronica');
+}
+
+function ReprocesarNotaElectronica(){
+	Clave.authForModule('reprocesar_nota_electronica');
+}
+
 function reimprimirFactura(){
 	Clave.authForModule('reimprimir');
 }

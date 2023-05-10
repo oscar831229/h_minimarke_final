@@ -1,0 +1,124 @@
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+div#myWindow {
+	position: static;
+	z-index: 0;
+}
+
+.titulop {
+	font-family: Verdana,sans-serif;
+	font-size: 24px;
+	margin-left: 10px;
+}
+
+.active_tab {
+	border: 1px solid #dadada;
+	border-bottom: none;
+	font-size: 13px;
+	cursor: pointer;
+	padding: 7px;
+	background: #fafafa;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+.inactive_tab {
+	font-size: 13px;
+	border:1px solid #dadada;
+	background: #dadada;
+	cursor: pointer;
+	text-transform: uppercase;
+	color: #5C6063;
+	font-weight: bold;
+}
+
+.tab_content {
+	padding: 5px;
+	background: #fafafa;
+	border-bottom: 1px solid #dadada;
+}
+
+b {
+	font-size: 11px;
+	color: #222222;
+	text-shadow: 0 1px 0 #F3F3F3;
+}
+
+
+/* Estilos para notificaciones */
+
+.notification {
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,.1);
+	border-radius: 5px;
+	display: flex;
+	height: 80px;
+	justify-content: space-between;
+	opacity: 0;
+	padding-right: 15px;
+	position:fixed;
+	right: 30px;
+	top: 150px;
+	visibility: hidden;
+	transition: all .5s ease;
+	width: 270px;
+}
+
+.notification.visible {
+	opacity: .8;
+	top: 20px;
+	visibility: visible;
+}
+.notification.info {
+	background-color: #2980b9;
+}
+.notification.error {
+	background-color: #e74c3c;
+}
+.notification.warning {
+	background-color: #f39c12;
+}
+.notification.success {
+	background-color: #27AE60;
+}
+
+.notification > .text {
+	align-items: center;
+	color: white;
+	cursor: default;
+	display: flex;
+	font-family: 'Open Sans';
+	font-weight: 400;
+	font-size: 15px;
+	width: calc(95% - 50px);
+	word-wrap: normal;
+}
+.notification > .close {
+	color: rgba(255, 255, 255, .8);
+	cursor: pointer;
+	position: absolute;
+	right: 8px;
+	top: 5px;
+	transition: color .3s ease;
+}
+.notification > .close:hover {
+	color: #fff;
+}
+
+.btnimg {
+	border: 0 !important;
+    background: none !important;
+	cursor: pointer !important;
+}

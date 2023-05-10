@@ -41,9 +41,11 @@ class Account extends ActiveRecord
 	protected function initialize()
 	{
 		$this->belongsTo('AccountMaster');
+		$this->belongsTo(array('account_master_id', 'cuenta'), 'AccountCuentas', array('account_master_id', 'cuenta'));
 		$this->belongsTo('MenusItems');
 		$this->belongsTo('SalonMesas');
 		$this->hasMany('AccountModifiers');
+		$this->hasMany('DetalleFactura');
 	}
 
 }

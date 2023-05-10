@@ -18,6 +18,8 @@ Flash::notice("Liquidando Cuenta: ".$cuentas[0][1]) ?>
 <div id='messages'></div>
 <?php
 
+
+
 $AccountMaster->findFirst((int)$cuentas[0][0]);
 $conditions = "cuenta={$cuentas[0][1]} AND account_master_id='{$cuentas[0][0]}' AND estado in ('A', 'B')";
 $accountCuenta = $AccountCuentas->findFirst($conditions);
@@ -104,11 +106,41 @@ echo Tag::form("pay/savePay", 'autocomplete: off')
 		foreach($Account->find($conditions) as $account){
 			$MenusItems->findFirst($account->menus_items_id);
 			$tvalor = $account->valor * $account->cantidad;
+
+
+			$total_modifier = 0;
+			$modifier_base = 0;
+			$modifier_iva = 0;
 			foreach($AccountModifiers->find("account_id='{$account->id}'") as $acc_mod){
 				$modifier = $Modifiers->find($acc_mod->modifiers_id);
-				$tvalor+=$modifier->valor;
-				$total_cuenta+=$modifier->valor;
+				$total_modifier = $modifier->valor;
 			}
+
+			$menuItem = $MenusItems->find($account->menus_items_id);
+			if ($menuItem->porcentaje_iva > 0) {
+				if ($accountCuenta->tipo_venta == 'F') {
+					$modifier_base = $total_modifier / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+					$modifier_iva = $total_modifier - ($total_modifier / (1 + ($menuItem->porcentaje_iva / 100)));
+				} else {
+					if (Facturacion::_esExento($accountCuenta, $menuItem)) {
+						$modifier_base = $total_modifier / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+						$modifier_iva = 0;
+					} else {
+						$modifier_base = $total_modifier / (($menuItem->porcentaje_iva + $menuItem->porcentaje_servicio) / 100 + 1);
+						$modifier_iva = $total_modifier - ($total_modifier / (1 + ($menuItem->porcentaje_iva / 100)));
+					}
+				}
+				$account->impo = 0;
+			} else {
+				$modifier_base = $total_modifier / (($menuItem->porcentaje_impoconsumo + $menuItem->porcentaje_servicio) / 100 + 1);
+				$modifier_impo = $total_modifier - ($total_modifier / (1 + ($menuItem->porcentaje_impoconsumo / 100)));
+				$modifier_iva = 0;
+			}
+
+			$tvalor+=$modifier_base;
+			$account->total += $total_modifier;
+			$account->iva += $modifier_iva;
+
 			if($account->descuento>0){
 				$tvalor -= (($tvalor*$account->descuento/100));
 				$account->total -= (($account->total*$account->descuento/100));
@@ -234,9 +266,30 @@ if($accountCuenta->propina_fija=='N'){
 }
 $propina = LocaleMath::round($propina, 0);
 
+if($accountCuenta->tipo_venta=='F'){ 
+	$total_facturacion = 0;
+	$total_cuenta+$propina
 ?>
+<div align="center" style="margin-bottom: 10px;margin-top: 10px;">
+	<table align='center' cellspacing="0" cellpadding='0' id='tab_formas'>
+		<thead>
+			<tr>
+				<th width="40%">Resolución Factura</th>
+				<th width="40%">Tipo factura</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><select name='autorizacion' id='autorizacion' style="width: 100%;"></select></td>
+				<td id='tipo_factura_text' style="text-align: center;">&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<?php } ?>
+<input type='hidden' name='tipo_venta' id='tipo_venta' value='<?php echo $accountCuenta->tipo_venta ?>'>
+<input type='hidden' name='salon_id' id='salon_id' value='<?php echo $SalonMesas->salon_id ?>'>
 <br/>
-<div align="center">
 <table align='center' cellspacing="0" cellpadding='0' id='tab_formas'>
 	<thead>
 		<tr>
@@ -401,7 +454,7 @@ $propina = LocaleMath::round($propina, 0);
 				value="<?php echo $total_cuenta+$propina ?>"/>
 		</td>
 		<td align='center' rowspan="3">
-			<?php echo Tag::button("value: Pagar", "class: okButton", "onclick: pay()" ) ?>
+			<?php echo Tag::button("value: Pagar", "class: okButton", "onclick: pay()") ?>
 		</td>
 	</tr>
 	<tr class='tr_tot'>
@@ -421,6 +474,7 @@ $propina = LocaleMath::round($propina, 0);
 </div>
 </div>
 <br/>
+<?php echo  Tag::endForm(); ?>
 <script>
 	redeban.cargarCuenta('<?= $account_cuenta_id?>')
 	redeban.setUsuario('<?= $usuario_id?>')
