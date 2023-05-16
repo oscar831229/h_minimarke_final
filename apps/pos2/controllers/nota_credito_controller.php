@@ -349,14 +349,28 @@ class Nota_CreditoController extends ApplicationController
 			}
 
 			# GENERAR XML
-			require_once KEF_ABS_PATH.'../fepos/factura_cajasan/notas_credito.class.php';
+			if($nota_credito->tipo_nota == 'E'){
+
+				# VALIDAMOS QUE EXISTA LAS LIBRERIAS DE PROCESAMIENTO XML CARVAL
+				if(!file_exists(KEF_ABS_PATH.'../fepos/factura_cajasan/notas_credito.class.php'))
+					throw new Exception("No existe la libreria de procesamiento xml nota credito carvajal", 1);
+
+				# CARGAR LA LIBRERIA DE PROCESAMIENTO XML
+				require_once KEF_ABS_PATH.'../fepos/factura_cajasan/notas_credito.class.php';
+
+				# VALIDAR QUE LA CLASE EXISTA
+				if(!class_exists('NotasCredito'))
+					throw new Exception("No existe exite la clase de procesamiento de xml de carvajal", 1);
+
+			}
 			
 			# CONFIRMAMOS TRANSACCION
 			$transaction->commit();
 
-			$facturacion = new NotasCredito();
-			$facturacion->generarXMLNota($nota_credito->id);
-
+			if($nota_credito->tipo_nota == 'E'){
+				$facturacion = new NotasCredito();
+				$facturacion->generarXMLNota($nota_credito->id);
+			}
 
 			$response['data']['urlprint'] = Utils::getKumbiaURL("nota_credito/imprimir/".base64_encode($nota_credito->id));
 
