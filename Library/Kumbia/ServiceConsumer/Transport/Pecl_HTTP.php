@@ -73,13 +73,32 @@ class Pecl_HTTPTransport
 	 * @param string $method
 	 * @param int $port
 	 */
+	
+	/*
+	* Respuesta Nuevo adapter
+	*
+	*/
+	private $response;
+	
+	private $url;
+	
+	private $data;
+	
+	private $method;
+
+	private $header;
+	 
+	 
+	 
 	public function __construct($scheme, $host, $uri, $method, $port=80)
 	{
 		$url = $scheme.'://'.$host.'/'.$uri;
+		$this->_transport = new http\Client\Request;
+		$this->method = $method;
 		if ($method == 'POST') {
-			$this->_transport = new HttpRequest($url, HttpRequest::METH_POST);
+			$this->_transport->setRequestMethod('POST');
 		} else {
-			$this->_transport = new HttpRequest($url, HttpRequest::METH_GET);
+			$this->_transport->setRequestMethod('GET');
 		}
 		$this->_host = $host;
 	}
@@ -102,9 +121,7 @@ class Pecl_HTTPTransport
 	 */
 	public function setHeaders($headers)
 	{
-		foreach ($headers as $name => $value) {
-			$this->_headers[$name] = $value;
-		}
+		$this->header = $headers;
 	}
 
 	/**
@@ -114,7 +131,7 @@ class Pecl_HTTPTransport
 	 */
 	public function setUrl($url)
 	{
-		$this->_transport->setUrl($url);
+		$this->url = $url;
 	}
 
 	/**
@@ -124,7 +141,7 @@ class Pecl_HTTPTransport
 	 */
 	public function setRawPostData($rawBody)
 	{
-		return $this->_transport->setBody($rawBody);
+		$this->data = $rawBody;
 	}
 
 	/**
@@ -133,12 +150,16 @@ class Pecl_HTTPTransport
 	 */
 	public function send()
 	{
+
+
+		$addCookies = false;
+
 		if ($this->_enableCookies==true) {
+
 			if (isset($_SESSION['KHC'][$this->_host])) {
 				if (isset($_SESSION['KHC'][$this->_host]['time'])) {
 					if ($_SESSION['KHC'][$this->_host]['time']>($_SERVER['REQUEST_TIME']-900)) {
-						$this->_transport->resetCookies();
-						$this->_transport->setCookies($_SESSION['KHC'][$this->_host]['cookie']);
+						$addCookies = true;
 					} else {
 						unset($_SESSION['KHC'][$this->_host]);
 					}
@@ -146,36 +167,59 @@ class Pecl_HTTPTransport
 					unset($_SESSION['KHC'][$this->_host]);
 				}
 			}
+
 		}
-		$this->_transport->setOptions(array(
+
+
+		# DATOS
+		$body = new http\Message\Body;
+		$body->append($this->data);
+
+
+		# OBJETO REQUEST
+		$request = new http\Client\Request("POST", $this->url);
+		$request->setHeaders($this->header);
+		$request->setBody($body);
+		$request->setOptions(array(
 			'timeout' => 900,
 			'connecttimeout' => 30,
 			'dns_cache_timeout' => 30
 		));
-		$this->_transport->setHeaders($this->_headers);
-		for($i=0;$i<3;$i++){
-			try {
-				$this->_transport->send();
-				break;
-			}
-			catch(HttpInvalidParamException $e){
-				if($i==2){
-					throw new ServiceConsumerException($e->getMessage(), $e->getCode());
-				}
+		
+		# CLIENTE 
+		$cliente = (new http\Client);
+
+		if($addCookies)
+			$cliente->setCookies($_SESSION['KHC'][$this->_host]['cookie']);
+
+		$this->response = $cliente
+			->enqueue($request)
+			->send()
+			->getResponse();
+
+
+		$cookies = array();
+		foreach ($this->response->getCookies() as $cookie) {
+			foreach ($cookie->getCookies() as $name => $value) {
+				$cookies[][$name] = $value;
 			}
 		}
+
+
 		if($this->_enableCookies==true){
 			if(!isset($_SESSION['KHC'][$this->_host])){
-				$cookies = $this->_transport->getResponseCookies();
-				if(count($cookies)){
+
+				if(count($cookies) >0 ){
 					$_SESSION['KHC'][$this->_host] = array(
 						'time' => $_SERVER['REQUEST_TIME'],
-						'cookie' => $cookies[0]->cookies
+						'cookie' => $cookies[0]
 					);
 				}
 			}
 		}
+
 		return true;
+
 	}
 
 	/**
@@ -184,7 +228,7 @@ class Pecl_HTTPTransport
 	 * @return int
 	 */
 	public function getResponseCode(){
-		return $this->_transport->getResponseCode();
+		return $this->response->getResponseCode();
 	}
 
 	/**
@@ -193,7 +237,7 @@ class Pecl_HTTPTransport
 	 * @return string
 	 */
 	public function getResponseBody(){
-		return $this->_transport->getResponseBody();
+		return $this->response->getBody()->toString();
 	}
 
 	/**
@@ -203,9 +247,6 @@ class Pecl_HTTPTransport
 	 */
 	public function enableCookies($enableCookies){
 		$this->_enableCookies = $enableCookies;
-		if($enableCookies==true){
-			$this->_transport->enableCookies();
-		}
 	}
 
 	/**
