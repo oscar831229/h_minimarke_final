@@ -225,3 +225,6 @@ ALTER TABLE nota_credito ADD COLUMN tipo_nota VARCHAR(1) NULL;
 ALTER TABLE account_cuentas MODIFY prefijo CHAR(5) NOT NULL;
 
 ALTER TABLE salon ADD COLUMN factu_elect_monto_desde DECIMAL(10, 2) DEFAULT 0 AFTER autorizacion;
+ALTER TABLE datos ADD COLUMN impue_default VARCHAR(2) DEFAULT 'NI' AFTER `version`;
+ALTER TABLE datos ADD COLUMN porce_iva_default DECIMAL(5, 2) DEFAULT 0;
+ALTER TABLE datos ADD COLUMN porce_imp_default DECIMAL(5, 2) DEFAULT 0;

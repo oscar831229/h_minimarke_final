@@ -59,6 +59,15 @@ class DatosController extends StandardForm
 			array('S', 'SERVIDOR'),
 			array('J', 'COLA LOCAL')
 		));
+		$this->setComboStatic('impue_default', array(
+			array('NI', 'NINGUNO'),
+			array('IV', 'IVA'),
+			array('IM', 'IMPOCONSUMO')
+		));
+
+		$this->setCaption('impue_default', 'Tipo impuesto por defecto');
+		$this->setCaption('porce_iva_default', 'Porcentaje iva');
+		$this->setCaption('porce_imp_default', 'Porcentaje impoconsumo');
 	}
 
 }

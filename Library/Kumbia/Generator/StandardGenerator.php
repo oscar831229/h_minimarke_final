@@ -374,7 +374,7 @@ class StandardGenerator
 		self::formsPrint("<script  type='text/javascript' src='".Core::getInstancePath()."javascript/core/calendar.js'></script>\r\n");
 
 		if(Core::fileExists("public/javascript/".$controllerName.".js")){
-			self::formsPrint("<script type='text/javascript' src='".Core::getInstancePath()."javascript/{$_REQUEST["controller"]}.js'></script>\r\n");
+			self::formsPrint("<script type='text/javascript' src='".Core::getInstancePath()."javascript/{$controllerName}.js'></script>\r\n");
 		}
 
 		if(Core::fileExists("public/css/$controllerName.css")){
@@ -429,7 +429,20 @@ class StandardGenerator
 
 		self::formsPrint("</div>");
 
+		if($controllerName == 'menus_items'){
+			$querySQL = "SELECT * FROM datos";
+			$db = DbBase::rawConnect();
+			$datos = $db->inQueryAssoc($querySQL);
+			$tipo_impuesto = $datos[0]['impue_default'];
+			$valor_iva = $datos[0]['porce_iva_default'];
+			$valor_impoconsumo = $datos[0]['porce_imp_default'];
+			echo '<input type="hidden" name="impue_default"     id="impue_default"     value="'.$tipo_impuesto.'">';
+			echo '<input type="hidden" name="porce_iva_default" id="porce_iva_default" value="'.$valor_iva.'">';
+			echo '<input type="hidden" name="porce_imp_default" id="porce_imp_default" value="'.$valor_impoconsumo.'">';
+		}
+
 		self::buildFormOut();
+
 	}
 
 	/**
