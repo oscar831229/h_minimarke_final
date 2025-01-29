@@ -270,7 +270,20 @@ class TercerosController extends HyperFormController {
 				'notNull'	=> false,
 				'filters' => array('int')
 			),
-
+			'docum_sopor' => array(
+				'single' => 'Generar documento soporte',
+				'type' => 'closed-domain',
+				'size' => 1,
+				'maxlength' => 1,
+				'values' => array(
+					'S' => 'SI',
+					'N' => 'NO'
+				),
+				'notBrowse' => true,
+				'notSearch' => true,
+				'notReport' => true,
+				'filters' => array('alpha')
+			),
 		)
 	);
 

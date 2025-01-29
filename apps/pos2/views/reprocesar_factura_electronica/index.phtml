@@ -80,7 +80,94 @@ if(Flash::hasMessages()){
 		margin-top: 20px;
 	}
 
+	.btnzip {
+		box-shadow:inset 0px 1px 0px 0px #bee2f9;
+		background:linear-gradient(to bottom, #63b8ee 5%, #468ccf 100%);
+		background-color:#63b8ee;
+		border-radius:6px;
+		border:1px solid #3866a3;
+		display:inline-block;
+		cursor:pointer;
+		color:#14396a;
+		font-family:Arial;
+		font-size:15px;
+		font-weight:bold;
+		padding:6px 24px;
+		text-decoration:none;
+		text-shadow:0px 1px 0px #7cacde;
+		margin-top:15px;
+	}
+	.btnzip:hover {
+		background:linear-gradient(to bottom, #468ccf 5%, #63b8ee 100%);
+		background-color:#468ccf;
+	}
+	.btnzip:active {
+		position:relative;
+		top:1px;
+	}
+
+	.imghidden{
+		display:none;
+		margin-left: 15px;
+	}
+
 </style>
+
+<script type="text/javascript">
+	new Event.observe(document, 'dom:loaded', function(){
+		$('generarxml').observe('click', function(){
+
+			
+			if($('prefijo_facturacion_batch').value == ''){
+				Growler.show('debe indicar el prefijo de facturación');
+				return false;
+			}
+
+			if($('consecutivo_facturacion_inicial_batch').value == ''){
+				Growler.show('debe indicar el número de consecutivo inicial');
+				return false;
+			}
+
+			if($('consecutivo_facturacion_final_batch').value == ''){
+				Growler.show('debe indicar el número de consecutivo final');
+				return false;
+			}
+
+			if($('fecha_generacion_batch').value == ''){
+				Growler.show('debe indicar la fecha con la cual se trasmitiran las facturas');
+				return false;
+			}
+
+			if($('consecutivo_facturacion_inicial_batch').value > $('consecutivo_facturacion_final_batch').value){
+				Growler.show('La factura inicial no puede ser mayor que la factura final');
+				return false;
+			}
+
+			$('imgprocesar').removeClassName('imghidden');
+
+			new Ajax.Request(Utils.getKumbiaURL('reprocesar_factura_electronica/facturabatch'), {
+				parameters: {
+					"prefijo_facturacion" : $('prefijo_facturacion_batch').value,
+					"consecutivo_inicial" : $('consecutivo_facturacion_inicial_batch').value,
+					"consecutivo_final"   : $('consecutivo_facturacion_final_batch').value,
+					"fecha_trasmision"    : $('fecha_generacion_batch').value
+				},
+				type:'POST',
+				onSuccess: function(transport){
+					var response = transport.responseText.evalJSON();
+					$('imgprocesar').addClassName('imghidden');
+					if(response.status == 'OK'){
+						alert('Proceso terminado, xml generados ' + response.cantidad);
+						document.getElementById('myForm').reset();
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+	});
+	
+</script>
 
 <!-- notificciones -->
 <div class="notification">
@@ -107,6 +194,8 @@ if(Flash::hasMessages()){
 						<td width="18%" class='tab_basic active_tab' align="center" onclick="Tabs.setActiveTab(this, 1)">Consecutivo</td>
 						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
 						<td width="18%" class='tab_basic inactive_tab' align="center" onclick="Tabs.setActiveTab(this, 2)">Hoy</td>
+						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
+						<td width="18%" class='tab_basic inactive_tab' align="center" onclick="Tabs.setActiveTab(this, 3)">Facturas lote</td>
 						<td width='2%' style='border-bottom:1px solid #dadada'>&nbsp;</td>
 					</tr>
 					<tr>
@@ -184,6 +273,43 @@ if(Flash::hasMessages()){
 								}
 
 								?>
+							</div>
+							<div id='tab3' class='tab_content' style="display:none" align="center">
+								<div align="center" style='padding: 20px;'>
+									<form id="myForm">
+									<table id='anularTab'>
+										<tr>
+											<td align="right"><b>Prefijo factuarción</b></td>
+											<td>
+												<input type="text" name="prefijo_facturacion_batch" id="prefijo_facturacion_batch">
+											</td>
+										</tr>
+										<tr>
+											<td align="right"><b>Factura inicial</b></td>
+											<td>
+												<input type="text" name="consecutivo_facturacion_inicial_batch" id="consecutivo_facturacion_inicial_batch">
+											</td>
+										</tr>
+										<tr>
+											<td align="right"><b>Factura final</b></td>
+											<td>
+												<input type="text" name="consecutivo_facturacion_final_batch" id="consecutivo_facturacion_final_batch">
+											</td>
+										</tr>
+										<tr>
+											<td align="right"><b>Fecha reporte DIAN</b></td>
+											<td>
+												<input type="date" name="fecha_generacion_batch" id="fecha_generacion_batch">
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2" align="center">
+												<a href="#" id="generarxml" class="btnzip">Generar 	XML</a><?php echo Tag::image("spinner.gif", "class: imghidden", "id: imgprocesar") ?>
+											</td>
+										</tr>
+									</table>
+								</form>
+								</div>
 							</div>
 						</td>
 					</tr>

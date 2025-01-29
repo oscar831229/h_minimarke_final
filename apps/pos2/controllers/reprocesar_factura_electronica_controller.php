@@ -131,6 +131,70 @@ class Reprocesar_Factura_ElectronicaController extends ApplicationController
 
 	}
 
+	public function facturaBatchAction(){
+
+		$this->setResponse('json');
+
+		# VALIDAMOS QUE EXISTA LAS LIBRERIAS DE PROCESAMIENTO XML CARVAL
+		if(!file_exists(KEF_ABS_PATH.'../fepos/factura_cajasan/procesar_facturas.class.php')){
+			return array(
+				'status' => 'ERROR',
+				'name' => '',
+				'message' => 'NO existe las librerias de facturación electrónica.'
+			);
+		}
+
+		# CARGAR LA LIBRERIA DE PROCESAMIENTO XML
+		require_once KEF_ABS_PATH.'../fepos/factura_cajasan/procesar_facturas.class.php';
+
+		# VALIDAR QUE LA CLASE EXISTA
+		if(!class_exists('procesarFacturas')){
+			return array(
+				'status' => 'ERROR',
+				'name' => '',
+				'message' => 'NO existe el metodo de procesamiento de xml procesarFacturas.'
+			);
+		}
+
+		$prefijo_facturacion = $this->getPostParam('prefijo_facturacion');
+		$consecutivo_inicial = $this->getPostParam('consecutivo_inicial');
+		$consecutivo_final   = $this->getPostParam('consecutivo_final');
+		$fecha_trasmision    = $this->getPostParam('fecha_trasmision');;
+
+		# GENERA FACTURAS O ORDENES
+		$condicion = "tipo_factura = 'E' AND tipo = 'F' AND prefijo_facturacion = '{$prefijo_facturacion}' AND consecutivo_facturacion >={$consecutivo_inicial}  AND consecutivo_facturacion <= {$consecutivo_final}";
+		$facturas = $this->factura->find($condicion);
+
+		# LIBRERIA CREACION PDF
+		require_once 'Library/Mpdf/mpdf.php';
+
+		$filesPDF = [];
+
+		if($facturas->count() == 0){
+			return array(
+				'status' => 'ERROR',
+				'name' => '',
+				'message' => 'No existen registros que cumplan con el criterio indicado.'
+			);
+		}
+
+		$facturacion = new procesarFacturas();
+
+		foreach ($facturas as $factura) {
+
+			# Generar xml
+			$facturacion->generarXML($factura->id, $fecha_trasmision);
+			
+		}
+
+		return array(
+			'status'   => 'OK',
+			'name'     => $namezip,
+			'cantidad' => $facturas->count()
+		);
+
+	}
+
 
 
 	

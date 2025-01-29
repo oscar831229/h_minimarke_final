@@ -33,7 +33,7 @@ class CentrosController extends HyperFormController {
 				'single' => 'Código',
 				'type' => 'text',
 				'size' => 6,
-				'maxlength' => 6,
+				'maxlength' => 7,
 				'primary' => true,
 				'filters' => array('int')
 			),

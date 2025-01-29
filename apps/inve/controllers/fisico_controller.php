@@ -190,7 +190,8 @@ class FisicoController extends ApplicationController
 		try {
 
 			$count = count($item);
-			$inputs = ini_get('max_input_nesting_level');
+			//$inputs = ini_get('max_input_nesting_level');
+			$inputs = 600;
 
 			if ($count > $inputs) {
 				throw new TaticoException(

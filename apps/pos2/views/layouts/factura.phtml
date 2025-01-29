@@ -56,7 +56,7 @@ if ($preview == false) {
 	if($factura->tipo=='O'){
 		$nombre_documento = 'ORDEN DE SERVICIO ';
 	}else{
-		$nombre_documento = $factura->tipo_factura == 'E' ? 'FACTURA ELECTRÓNICA DE VENTA' : 'FACTURA DE VENTA';
+		$nombre_documento = $factura->tipo_factura == 'E' ? 'COMPROBANTE DE PAGO' : 'FACTURA DE VENTA';
 	}
 	echo center($nombre_documento.' No. '.
 	($factura->tipo=='O' ? '' : $factura->prefijo_facturacion.'-').$factura->consecutivo_facturacion, 35)."\n";
@@ -300,6 +300,15 @@ ESTE DOCUMENTO NO ES UNA <br>FACTURA DE VENTA
 </td>
 </tr>
 </table>
+<?php
+	if($factura->tipo_venta=='F' && !$preview)
+	{
+?>
+	<div align='justify' style='width:270px'>No valida como factura. La representación gráfica de la factura, le llegara al correo electrónico</div>
+<?php
+	}
+?>
+
 <?php
 
 ?>
