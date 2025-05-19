@@ -77,6 +77,13 @@ $accessList = array(
 		),
 		'require' => 'appmenu'
 	),
+	'sincronizar_terceros' => array(
+		'description' => 'Sincronizar terceros seven',
+		'actions' => array(
+			'index' => 'Sincronizar terceros seven',
+		),
+		'require' => 'appmenu'
+	),
 	'appmenu' => array(
 		'description' => 'Punto de Venta',
 		'actions' => array(

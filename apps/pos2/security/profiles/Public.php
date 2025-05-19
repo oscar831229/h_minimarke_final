@@ -15,5 +15,9 @@ $acl = array(
 	'panic' => array('index' => 1),
 	'firefox' => array('index' => 1),
 	'cata' => array('index' => 1),
-	'spool' => array('index' => 1)
+	'spool' => array('index' => 1),
+	'invoice' => array('save' => 1),
+	'sincronizar_terceros' => array(
+		'sincronizar' => 1
+	)
 );

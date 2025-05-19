@@ -76,6 +76,14 @@ function ReprocesarNotaElectronica(){
 	Clave.authForModule('reprocesar_nota_electronica');
 }
 
+function repararTablaRevisions(){
+	Clave.authForModule('reparar_revisions');
+}
+
+function sincronizarTercerosSeven(){
+	Clave.authForModule('sincronizar_terceros');
+}
+
 function reimprimirFactura(){
 	Clave.authForModule('reimprimir');
 }

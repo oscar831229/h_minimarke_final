@@ -63,7 +63,10 @@ class Hfos_Loader {
 		'TaticoKardex' => 'Tatico/Kardex/TaticoKardex',
 		'TaticoException' => 'Tatico/Exception',
 		'Upgrade' => 'Upgrade/Upgrade',
-		'Wepax' => 'Wepax/Wepax'
+		'Wepax' => 'Wepax/Wepax',
+		'SincronizarTercero' => 'Seven/SincronizarTercero',
+		'Tercero' => 'Seven/Tercero',
+		'ServiciosSeven' => 'Seven/ServiciosSeven'
 	);
 
 	public static function autoLoader($className){

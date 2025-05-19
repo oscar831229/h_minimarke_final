@@ -34,6 +34,8 @@ class CloseController extends ApplicationController
 
 			$this->_calculateDiaryReport($transaction, $fechaPOS);
 
+			$fecha_cierre = $fechaPOS;
+
 			$note = "REALIZÓ EL CIERRE DEL DÍA DE {$fechaPOS}";
 			$fecha = new Date($datos->getFecha());
 			$fecha->addDays(1);
@@ -60,6 +62,27 @@ class CloseController extends ApplicationController
 				}
 			}
 			$transaction->commit();
+
+			try {
+
+				// $config = CoreConfig::readFromActiveApplication('app.ini');
+			
+				// $envio_emails = isset($config->pos->envio_emails) ? $config->pos->envio_emails: '';
+			
+				// Ejecutar el comando en segundo plano
+				$urlservicio = Utils::getExternalUrl("pos2/sincronizar_terceros/sincronizar/{$fecha_cierre}");
+				if (substr(php_uname(), 0, 7) == "Windows"){ 
+					$comando = 'start /B curl --request GET "'.$urlservicio.'" > NUL 2>&1';
+					pclose(popen($comando, "r"));  
+				} 
+				else { 
+					$comando = "curl --request GET '{$urlservicio}' > /dev/null 2>&1 &";
+					exec($comando);   
+				}
+			
+			} catch (Exception $e) {
+				
+			}
 
 		}
 		catch(TransactionFailed $e){

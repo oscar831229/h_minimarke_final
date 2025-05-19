@@ -1,0 +1,212 @@
+<?php
+
+/**
+ * Hotel Front-Office Solution
+ *
+ * LICENSE
+ *
+ * This source file is subject to license that is bundled
+ * with this package in the file docs/LICENSE.txt.
+ *
+ * @package 	Back-Office
+ * @copyright 	BH-TECK Inc. 2009-2010
+ * @version		$Id$
+ */
+
+ $config = CoreConfig::readAppConfig();
+ if($config->application->mode=='development'){
+     Tag::stylesheetLink('pos2/nota_credito');
+     Tag::stylesheetLink('pos2/numero');
+     Tag::stylesheetLink('pos2/status');
+     echo Tag::javascriptInclude('pos2/windows');
+     echo Tag::javascriptInclude('pos2/modal');
+     echo Tag::javascriptInclude('pos2/numero');
+     echo Tag::javascriptInclude('pos2/hash');
+     echo Tag::javascriptInclude('pos2/reprocesar_factura_electronica');
+     echo Tag::javascriptInclude('pos2/comunes');
+ } else {
+    echo Tag::javascriptInclude('pos2/production/reprocesar_factura_electronica', true, 'v='.ControllerBase::APP_VERSION);
+ }
+
+echo View::getContent(); ?>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-image:url("../img/pos2/food4.png")
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+    label {
+        font-weight: bold;
+    }
+    input[type="date"] {
+        padding: 10px;
+        width: 95%;
+        margin-bottom: 10px;
+    }
+    .btn-container {
+        display: flex;
+        gap: 10px;
+    }
+    button {
+        flex: 1;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+    #btnConsultar {
+        background-color: #007BFF;
+        color: white;
+    }
+    #btnConsultar:hover {
+        background-color: #0056b3;
+    }
+    #btnProcesar {
+        background-color: #6c757d;
+        color: white;
+    }
+    #btnProcesar:enabled {
+        background-color: #28a745;
+    }
+    #btnProcesar:enabled:hover {
+        background-color: #218838;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px !important;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        font-size: 11px !important;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .spinner {
+        display: none;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #007BFF;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="container">
+    <h1>Sincronización Terceros Seven</h1>
+    <form>
+        <label for="fecha">Fecha del día facturado:</label>
+        <input type="date" id="fecha">
+        <div class="btn-container">
+            <button type="button" onclick="consultarDatos()" id="btnConsultar">Consultar</button>
+            <button type="button" onclick="procesarDatos()" id="btnProcesar" disabled>Procesar</button>
+        </div>
+    </form>
+    <div class="spinner" id="spinner"></div>
+    <table id="tabla">
+        <thead>
+            <tr>
+                <th>Tipo Documento</th>
+                <th>Número Documento</th>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán los datos dinámicamente -->
+        </tbody>
+    </table>
+    <br><br>
+    <table align="center">
+        <tr>
+            <td style="text-align: center;">
+                <button class='commandButton' onclick='new Utils.redirectToAction("appmenu")'>
+                    <?php echo Tag::image("pos2/home-p.png", "width: 23") ?><br>
+                    <b>Salir</b>
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+
+    function consultarDatos() {
+        const fecha = document.getElementById('fecha').value;
+        if (!fecha) {
+            alert('Por favor, seleccione una fecha.');
+            return;
+        }
+
+        new Ajax.Request(`sincronizar_terceros/consultar/${fecha}`, {
+            onSuccess: function(transport){
+                var response = transport.responseText.evalJSON();
+                const tbody = document.querySelector('#tabla tbody');
+                tbody.innerHTML = '';
+
+                response.data.forEach(dato => {
+                    const row = `<tr>
+                        <td>${dato.tipo_documento}</td>
+                        <td>${dato.numero_documento}</td>
+                        <td>${dato.primer_nombre} ${dato.segundo_nombre} ${dato.primer_apellido} ${dato.segundo_apellido}</td>
+                        <td>${dato.estado}</td>
+                        <td>${dato.txterror}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            }
+        });
+
+        document.getElementById('btnProcesar').disabled = false;
+
+    }
+
+    function procesarDatos() {
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block';
+        document.getElementById('btnProcesar').disabled = true;
+
+        const fecha = document.getElementById('fecha').value;
+        if (!fecha) {
+            alert('Por favor, seleccione una fecha.');
+            return;
+        }
+        
+        setTimeout(() => {
+
+            new Ajax.Request(`sincronizar_terceros/procesar/${fecha}`, {
+                onSuccess: function(transport){
+                    var response = transport.responseText.evalJSON();
+                    alert('Procesamiento completado.');
+                    spinner.style.display = 'none';
+                    document.getElementById('btnProcesar').disabled = false;
+                    document.getElementById('btnConsultar').click();
+                }
+            });
+            
+        }, 100);
+    }
+
+</script>
+
